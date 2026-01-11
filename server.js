@@ -40,6 +40,11 @@ app.use('/api', (req, res, next) => {
   next();
 });
 
+// Тестовый эндпоинт для проверки работы API
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API работает!', timestamp: new Date().toISOString() });
+});
+
 // API Routes - должны быть ДО статики
 app.get('/api/get-chat-id', async (req, res) => {
   try {
@@ -70,6 +75,12 @@ app.get('/api/get-chat-id', async (req, res) => {
     console.error('Ошибка при получении CHAT_ID:', error.response?.data || error.message);
     res.status(500).json({ error: 'Ошибка при получении CHAT_ID' });
   }
+});
+
+// Тестовый POST эндпоинт
+app.post('/api/test', (req, res) => {
+  console.log('=== POST /api/test ===');
+  res.json({ message: 'POST API работает!', body: req.body, timestamp: new Date().toISOString() });
 });
 
 app.post('/api/submit', async (req, res) => {
