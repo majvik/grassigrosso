@@ -165,22 +165,15 @@ app.post('/api/submit', async (req, res) => {
 
 // Статические файлы фронтенда (после API routes)
 // ВАЖНО: статика должна быть ПОСЛЕ всех API роутов
-// Используем функцию для явного исключения API запросов
+// Явно исключаем API запросы из статики
 app.use((req, res, next) => {
-  // Пропускаем API запросы мимо статики
   if (req.path.startsWith('/api/')) {
-    console.log(`⏭️  Пропускаем API запрос мимо статики: ${req.path}`);
-    return next();
+    console.log(`⏭️  Пропускаем API запрос мимо статики: ${req.method} ${req.path}`);
+    return next(); // Пропускаем API запросы
   }
-  // Для всех остальных запросов используем статику
-  express.static(path.join(__dirname, 'dist'))(req, res, next);
+  next(); // Продолжаем для остальных запросов
 });
-
-// Обработка несуществующих API роутов (только для неизвестных путей)
-app.all('/api/*', (req, res) => {
-  console.log(`❌ Неизвестный API роут: ${req.method} ${req.path}`);
-  res.status(404).json({ error: `API endpoint ${req.path} not found` });
-});
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Fallback для SPA - все остальные GET запросы отдаем index.html
 app.get('*', (req, res) => {
