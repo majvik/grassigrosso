@@ -3,56 +3,461 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grassigrosso - Главная</title>
+    <title>Grassi Grosso - Любовь с первого утра</title>
+    <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
-    <header class="header">
-      <div class="container">
-        <nav class="nav">
-          <div class="logo">Grassigrosso</div>
-          <ul class="nav-menu">
-            <li><a href="#home">Главная</a></li>
-            <li><a href="#services">Услуги</a></li>
-            <li><a href="#about">О нас</a></li>
-            <li><a href="#contact">Контакты</a></li>
-          </ul>
+    <!-- Header Top Bar -->
+    <div class="header-top">
+      <div class="header-top-content">
+        <span class="header-top-left">Доброе утро!</span>
+        <div class="header-top-right">
+          <span>+7 (495) 123-45-67</span>
+          <span class="separator"></span>
+          <span>Пн-Пт: 9-18</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Main -->
+    <header class="header-main">
+      <div class="header-main-content">
+        <div class="logo">
+          <img src="./public/9c92af1c1d8e170d6f2ccb8c5a57987b40cae398.svg" alt="Grassi Grosso" class="logo-img" />
+        </div>
+        <nav class="nav-menu">
+          <a href="#hotels">Отелям</a>
+          <a href="#dealers">Дилерам</a>
+          <a href="#catalog">Каталог</a>
+          <a href="#docs">Документы</a>
+          <a href="#contacts">Контакты</a>
         </nav>
+        <a href="#contact" class="btn-contact">Связаться</a>
       </div>
     </header>
 
     <main>
-      <section id="home" class="hero">
-        <div class="container">
-          <h1>Добро пожаловать в Grassigrosso</h1>
-          <p class="hero-subtitle">Ваш надежный партнер в бизнесе</p>
-          <a href="#services" class="btn btn-primary">Наши услуги</a>
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1 class="hero-title">Любовь с первого утра</h1>
+            <p class="hero-description">Продуманные решения для естественного восстановления — чтобы утро начиналось легко и спокойно</p>
+          </div>
+          <div class="hero-link-wrapper">
+            <a href="#info" class="hero-link">
+              <span>Получить подробную<br>информацию</span>
+              <span class="arrow-icon">
+                <img src="./public/3ba76016c2e219a6410b70ed800e919c0fbd47fb.svg" alt="" />
+              </span>
+            </a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Интерьер спальни" />
+        </div>
+        
+        <!-- Cookie Banner -->
+        <div class="cookie-banner">
+          <img src="./public/c3a1c10fe4d236c2811be9c86637e78f6d97212d.png" alt="" class="cookie-icon" />
+          <p class="cookie-text">Мы используем <span class="underline">cookie</span>, чтобы улучшить работу нашего сайта</p>
+          <button class="btn-cookie">ОК</button>
         </div>
       </section>
 
-      <section id="services" class="services">
-        <div class="container">
-          <h2>Наши услуги</h2>
-          <div class="services-grid">
-            <div class="service-card">
-              <h3>Услуга 1</h3>
-              <p>Описание первой услуги</p>
+      <!-- Business Solutions -->
+      <section class="business-solutions">
+        <h2 class="section-title">Решения для бизнеса</h2>
+        <div class="solutions-grid">
+          <div class="solution-card">
+            <div class="solution-icon">
+              <img src="./public/4a72126c7921d7b60905e31ee07a9025e1cccb4e.svg" alt="" />
             </div>
-            <div class="service-card">
-              <h3>Услуга 2</h3>
-              <p>Описание второй услуги</p>
+            <div class="solution-content">
+              <h3 class="solution-title">Отелям</h3>
+              <p class="solution-text">Сон, о котором хочется написать в отзыве. Матрасы, которые создают впечатление и повышают лояльность гостей.</p>
+              <a href="#" class="solution-link">
+                Узнать больше
+                <img src="./public/7a71625174f29781755dd74f4905e2178a5929b7.svg" alt="" class="arrow-small" />
+              </a>
             </div>
-            <div class="service-card">
-              <h3>Услуга 3</h3>
-              <p>Описание третьей услуги</p>
+          </div>
+          <div class="solution-divider"></div>
+          <div class="solution-card">
+            <div class="solution-icon">
+              <img src="./public/4965bc94831f6bf5e6e879b6e5cec56816d6abdb.svg" alt="" />
+            </div>
+            <div class="solution-content">
+              <h3 class="solution-title">ДилераМ</h3>
+              <p class="solution-text">Инвестиция в восстановление каждого утра ближайших 10 лет. Продуманные решения для ваших клиентов.</p>
+              <a href="#" class="solution-link">
+                Условия партнёрства
+                <img src="./public/7a71625174f29781755dd74f4905e2178a5929b7.svg" alt="" class="arrow-small" />
+              </a>
+            </div>
+          </div>
+          <div class="solution-divider"></div>
+          <div class="solution-card">
+            <div class="solution-icon">
+              <img src="./public/d9df263d338ab2235084cd71a535412995f7b770.svg" alt="" />
+            </div>
+            <div class="solution-content">
+              <h3 class="solution-title">Каталог</h3>
+              <p class="solution-text">Матрас, в котором всё на своём месте — и вы тоже. Коллекции, созданные для естественного восстановления.</p>
+              <a href="#" class="solution-link">
+                Смотреть коллекции
+                <img src="./public/7a71625174f29781755dd74f4905e2178a5929b7.svg" alt="" class="arrow-small" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Philosophy -->
+      <section class="philosophy">
+        <div class="philosophy-left">
+          <h2 class="section-title">Наша философия</h2>
+          <p class="philosophy-description">Мы создаём условия, в которых природа делает своё. Каждый слой — осмысленный, каждое решение — логичное.</p>
+        </div>
+        <div class="philosophy-right">
+          <div class="philosophy-feature">
+            <div class="feature-icon">
+              <img src="./public/e1dfba289f02558b13369357a67a631ec9551163.svg" alt="" />
+            </div>
+            <div class="feature-content">
+              <h3 class="feature-title">Инженерная точность сна</h3>
+              <p class="feature-text">Мы собираем современные технологии и лучшие инженерные решения в продуманные продукты для сна.</p>
+            </div>
+          </div>
+          <div class="philosophy-divider"></div>
+          <div class="philosophy-feature">
+            <div class="feature-icon">
+              <img src="./public/6feee551ae5f25623597ff17221b1ecae4593359.svg" alt="" />
+            </div>
+            <div class="feature-content">
+              <h3 class="feature-title">Естественное восстановление</h3>
+              <p class="feature-text">Оставлено только то, что действительно работает. Чистые формы снаружи и внутри.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Collections -->
+      <section class="collections">
+        <div class="collections-header">
+          <div class="collections-header-left">
+            <h2 class="section-title">Коллекции</h2>
+            <p class="collections-subtitle">В каждом слое — смысл. В каждом решении — логика.</p>
+          </div>
+          <a href="#" class="collections-link">
+            смотреть Все коллекции
+            <img src="./public/7a71625174f29781755dd74f4905e2178a5929b7.svg" alt="" class="arrow-small" />
+          </a>
+        </div>
+        <div class="collections-grid">
+          <div class="collection-card">
+            <div class="collection-image">
+              <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Classic" />
+            </div>
+            <div class="collection-content">
+              <h3 class="collection-title">Classic</h3>
+              <ul class="collection-features">
+                <li>Доступные модели</li>
+                <li>Классические технологии</li>
+                <li>Базовый, понятный комфорт</li>
+              </ul>
+            </div>
+          </div>
+          <div class="collection-card">
+            <div class="collection-image">
+              <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Flexi" />
+            </div>
+            <div class="collection-content">
+              <h3 class="collection-title">Flexi</h3>
+              <ul class="collection-features">
+                <li>Современные пены</li>
+                <li>Упругая адаптивная поддержка</li>
+                <li>Минималистичный дизайн</li>
+              </ul>
+            </div>
+          </div>
+          <div class="collection-card">
+            <div class="collection-image">
+              <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Relax" />
+            </div>
+            <div class="collection-content">
+              <h3 class="collection-title">Relax</h3>
+              <ul class="collection-features">
+                <li>Пружины малого диаметра</li>
+                <li>Высокая адаптивность поддержки</li>
+                <li>Высокая несущая способность</li>
+              </ul>
+            </div>
+          </div>
+          <div class="collection-card">
+            <div class="collection-image">
+              <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Trend" />
+            </div>
+            <div class="collection-content">
+              <h3 class="collection-title">Trend</h3>
+              <ul class="collection-features">
+                <li>Проверенные решения</li>
+                <li>Популярный дизайн</li>
+                <li>Для современных интерьеров</li>
+              </ul>
+            </div>
+          </div>
+          <div class="collection-card">
+            <div class="collection-image">
+              <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Viva Natura" />
+            </div>
+            <div class="collection-content">
+              <h3 class="collection-title">Viva Natura</h3>
+              <ul class="collection-features">
+                <li>Натуральные компоненты</li>
+                <li>Экологичность</li>
+                <li>Премиальный комфорт</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="collections-nav">
+          <div class="collections-progress"></div>
+          <div class="collections-arrows">
+            <button class="arrow-btn prev">
+              <img src="./public/3ba76016c2e219a6410b70ed800e919c0fbd47fb.svg" alt="" />
+            </button>
+            <button class="arrow-btn next">
+              <img src="./public/3ba76016c2e219a6410b70ed800e919c0fbd47fb.svg" alt="" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Partners -->
+      <section class="partners">
+        <h2 class="section-title">Партнеры и технологии</h2>
+        <div class="partners-grid">
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+          <div class="partner-cell"></div>
+        </div>
+      </section>
+
+      <!-- Testimonials -->
+      <section class="testimonials">
+        <h2 class="section-title">Нам доверяют</h2>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <span class="testimonial-tag">Отель</span>
+            <h3 class="testimonial-company">Grand Hotel Sevastopol</h3>
+            <div class="testimonial-author">
+              <p class="author-name">Сергей Дмитриев</p>
+              <p class="author-position">Директор отеля</p>
+            </div>
+            <div class="testimonial-rating">
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+            </div>
+            <p class="testimonial-text">Работаем с Grassi Grosso уже 3 года. Качество матрасов на высшем уровне, гости отмечают комфорт и качество сна. Особенно радует оперативность в выполнении заказов и гибкий подход к нашим потребностям.</p>
+          </div>
+          <div class="testimonial-card">
+            <span class="testimonial-tag">Отель</span>
+            <h3 class="testimonial-company">Marina Bay Resort</h3>
+            <div class="testimonial-author">
+              <p class="author-name">Дмитрий Соколов</p>
+              <p class="author-position">Управляющий</p>
+            </div>
+            <div class="testimonial-rating">
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+            </div>
+            <p class="testimonial-text">Отличное соотношение цены и качества. За два года эксплуатации матрасы не потеряли своих свойств. Рекомендуем как надежного партнера для гостиничного бизнеса.</p>
+          </div>
+          <div class="testimonial-card">
+            <span class="testimonial-tag">Отель</span>
+            <h3 class="testimonial-company">Grand Hotel Sevastopol</h3>
+            <div class="testimonial-author">
+              <p class="author-name">Анна Петрова</p>
+              <p class="author-position">Директор отеля</p>
+            </div>
+            <div class="testimonial-rating">
+              <img src="./public/7e383573e3faf0db45e4562695aca5975f72f861.svg" alt="★" />
+              <img src="./public/7e383573e3faf0db45e4562695aca5975f72f861.svg" alt="★" />
+              <img src="./public/7e383573e3faf0db45e4562695aca5975f72f861.svg" alt="★" />
+              <img src="./public/7e383573e3faf0db45e4562695aca5975f72f861.svg" alt="★" />
+              <img src="./public/7e383573e3faf0db45e4562695aca5975f72f861.svg" alt="★" />
+            </div>
+            <p class="testimonial-text">Работаем с Grassi Grosso уже 3 года. Качество матрасов на высшем уровне, гости отмечают комфорт и качество сна. Особенно радует оперативность в выполнении заказов и гибкий подход к нашим потребностям.</p>
+          </div>
+          <div class="testimonial-card">
+            <span class="testimonial-tag">Дилер</span>
+            <h3 class="testimonial-company">Мебельный салон<br>"Комфорт"</h3>
+            <div class="testimonial-author">
+              <p class="author-name">Елена Волкова</p>
+              <p class="author-position">Коммерческий директор</p>
+            </div>
+            <div class="testimonial-rating">
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+            </div>
+            <p class="testimonial-text">Профессиональный подход на всех этапах сотрудничества. От консультации до поставки — всё на высшем уровне. Матрасы полностью соответствуют заявленным характеристикам премиум-сегмента.</p>
+          </div>
+          <div class="testimonial-card">
+            <span class="testimonial-tag">Отель</span>
+            <h3 class="testimonial-company">Crimea Beach Hotel</h3>
+            <div class="testimonial-author">
+              <p class="author-name">Игорь Морозов</p>
+              <p class="author-position">Генеральный директор</p>
+            </div>
+            <div class="testimonial-rating">
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+              <img src="./public/501243b3e8e06524dbe6ad88ec417a8a09b5c645.svg" alt="★" />
+            </div>
+            <p class="testimonial-text">Выбрали Grassi Grosso для оснащения нового корпуса отеля. Результат превзошел ожидания — идеальное качество, своевременная доставка и отличный сервис. Планируем долгосрочное сотрудничество.</p>
+          </div>
+          <div class="testimonial-card">
+            <span class="testimonial-tag">Дилер</span>
+            <h3 class="testimonial-company">Мебельный салон<br>"Комфорт"</h3>
+            <div class="testimonial-author">
+              <p class="author-name">Елена Волкова</p>
+              <p class="author-position">Коммерческий директор</p>
+            </div>
+            <div class="testimonial-rating">
+              <img src="./public/7e383573e3faf0db45e4562695aca5975f72f861.svg" alt="★" />
+              <img src="./public/7e383573e3faf0db45e4562695aca5975f72f861.svg" alt="★" />
+              <img src="./public/7e383573e3faf0db45e4562695aca5975f72f861.svg" alt="★" />
+              <img src="./public/7e383573e3faf0db45e4562695aca5975f72f861.svg" alt="★" />
+              <img src="./public/7e383573e3faf0db45e4562695aca5975f72f861.svg" alt="★" />
+            </div>
+            <p class="testimonial-text">Профессиональный подход на всех этапах сотрудничества. От консультации до поставки — всё на высшем уровне. Матрасы полностью соответствуют заявленным характеристикам премиум-сегмента.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Certification -->
+      <section class="certification">
+        <div class="certification-header">
+          <h2 class="section-title">Сертификация и документация</h2>
+          <a href="#" class="certification-link">
+            Документы и сертификаты
+            <img src="./public/89e12f756db29a727aa2e650fb765e31a0be32b2.svg" alt="" class="arrow-medium" />
+          </a>
+        </div>
+        <div class="certification-grid">
+          <div class="certification-card">
+            <div class="certification-image">
+              <img src="./public/8d2c50c9cf7b44797a30252319517874d7ae0cc4.png" alt="Производство" />
+            </div>
+            <div class="certification-content">
+              <h3 class="certification-title">Производство</h3>
+              <p class="certification-text">Собственные производственные линии с полным циклом. Контроль качества на каждом этапе. Тестирование на износостойкость более 100,000 циклов. Сертифицированные материалы от европейских поставщиков.</p>
+            </div>
+          </div>
+          <div class="certification-card">
+            <div class="certification-image">
+              <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Особенности сотрудничества" />
+            </div>
+            <div class="certification-content">
+              <h3 class="certification-title">Особенности сотрудничества</h3>
+              <p class="certification-text">SLA с гарантированными сроками поставки 7-14 дней. Логистика по всей России и СНГ. Гарантия 5 лет на все модели. Техническая поддержка для B2B клиентов.</p>
+            </div>
+          </div>
+          <div class="certification-card">
+            <div class="certification-image">
+              <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Сертификация" />
+            </div>
+            <div class="certification-content">
+              <h3 class="certification-title">Сертификация</h3>
+              <p class="certification-text">Мы предоставляем полный пакет документов и сертификатов соответствия на всю продукцию.<br><br>Прозрачность требований, подтверждённые характеристики и единые стандарты качества для уверенной работы.</p>
             </div>
           </div>
         </div>
       </section>
     </main>
 
+    <!-- Footer -->
     <footer class="footer">
-      <div class="container">
-        <p>&copy; 2024 Grassigrosso. Все права защищены.</p>
+      <div class="footer-content">
+        <div class="footer-column footer-about">
+          <div class="footer-logo">
+            <img src="./public/c07b31ba30671e6091c3e853ed76510c8500ed24.svg" alt="Grassi Grosso" />
+          </div>
+          <p class="footer-description">Продуманные решения для естественного восстановления. Каждое утро — как лучшее.</p>
+          <div class="footer-legal">
+            <p>ИНН: 7701234567</p>
+            <p>ОГРН: 1157746123456</p>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-heading">Решения</h4>
+          <ul class="footer-links">
+            <li><a href="#">Отелям</a></li>
+            <li><a href="#">Дилерам</a></li>
+            <li><a href="#">Каталог матрасов</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-heading">Информация</h4>
+          <ul class="footer-links">
+            <li><a href="#">Коллекции</a></li>
+            <li><a href="#">Документы</a></li>
+            <li><a href="#">Контакты</a></li>
+          </ul>
+        </div>
+        <div class="footer-column footer-contacts">
+          <h4 class="footer-heading">Связь</h4>
+          <div class="contact-item">
+            <span class="contact-label">Телефон:</span>
+            <span class="contact-value">+7 (495) 123-45-67</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">Email:</span>
+            <span class="contact-value">b2b@grassigrosso.com</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">Режим работы:</span>
+            <span class="contact-value">Пн-Пт: 9:00 - 18:00 МСК</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-divider"></div>
+        <div class="footer-bottom-content">
+          <p class="footer-copyright">© 2025 Grassi Grosso. Все права защищены.</p>
+          <div class="footer-policies">
+            <a href="#">Политика конфиденциальности</a>
+            <span class="separator"></span>
+            <a href="#">Пользовательское соглашение</a>
+          </div>
+        </div>
       </div>
     </footer>
 
