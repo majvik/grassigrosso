@@ -164,23 +164,26 @@ app.post('/api/submit', async (req, res) => {
 });
 
 // Статические файлы фронтенда (после API routes)
-// Создаем middleware для статики с явным исключением API
-const staticMiddleware = express.static(path.join(__dirname, 'dist'));
+// ВАЖНО: статика должна быть ПОСЛЕ всех API роутов
+// Используем функцию для явного исключения API запросов
 app.use((req, res, next) => {
   // Пропускаем API запросы мимо статики
   if (req.path.startsWith('/api/')) {
+    console.log(`⏭️  Пропускаем API запрос мимо статики: ${req.path}`);
     return next();
   }
   // Для всех остальных запросов используем статику
-  staticMiddleware(req, res, next);
+  express.static(path.join(__dirname, 'dist'))(req, res, next);
+});
+
+// Обработка несуществующих API роутов (только для неизвестных путей)
+app.all('/api/*', (req, res) => {
+  console.log(`❌ Неизвестный API роут: ${req.method} ${req.path}`);
+  res.status(404).json({ error: `API endpoint ${req.path} not found` });
 });
 
 // Fallback для SPA - все остальные GET запросы отдаем index.html
 app.get('*', (req, res) => {
-  // Пропускаем API запросы
-  if (req.path.startsWith('/api/')) {
-    return res.status(404).json({ error: 'API endpoint not found' });
-  }
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
