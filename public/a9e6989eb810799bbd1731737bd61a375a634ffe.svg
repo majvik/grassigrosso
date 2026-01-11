@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Frame 149">
+<g id="Rectangle 48">
+<path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="var(--fill-0, white)"/>
+<path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4L0.504883 3.82031C0.595411 2.03035 2.03035 0.595411 3.82031 0.504883L4 0.5Z" stroke="var(--stroke-0, #283E37)" stroke-opacity="0.1"/>
+</g>
+<path id="Vector 2" d="M6 10.5L11 16L18 8" stroke="var(--stroke-0, #283E37)" stroke-width="2"/>
+</g>
+</svg>

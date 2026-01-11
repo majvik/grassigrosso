@@ -246,3 +246,71 @@ if (testimonialsSlider && testimonialsSection) {
     isUserInteracting = false
   })
 }
+
+// Hotel Categories Switcher
+const categoryItems = document.querySelectorAll('.category-item')
+const categoriesText = document.querySelector('.categories-text')
+
+if (categoryItems.length > 0 && categoriesText) {
+  categoryItems.forEach(item => {
+    item.addEventListener('click', () => {
+      // Remove active from all items
+      categoryItems.forEach(otherItem => {
+        otherItem.classList.remove('category-active')
+      })
+      
+      // Add active to clicked item
+      item.classList.add('category-active')
+      
+      // Update description text
+      const newText = item.dataset.text
+      if (newText) {
+        categoriesText.textContent = newText
+      }
+    })
+  })
+}
+
+// Refresh section image height sync
+const refreshContent = document.querySelector('.refresh-content')
+const refreshImage = document.querySelector('.refresh-image')
+
+if (refreshContent && refreshImage) {
+  function syncRefreshImageHeight() {
+    const contentHeight = refreshContent.offsetHeight
+    refreshImage.style.height = `${contentHeight}px`
+  }
+  
+  // Sync on load
+  syncRefreshImageHeight()
+  
+  // Sync on resize
+  window.addEventListener('resize', syncRefreshImageHeight)
+  
+  // Sync when content changes (e.g., FAQ toggles if they affect height)
+  const observer = new ResizeObserver(() => {
+    syncRefreshImageHeight()
+  })
+  observer.observe(refreshContent)
+}
+
+// FAQ Accordion
+const faqItems = document.querySelectorAll('.faq-item')
+
+if (faqItems.length > 0) {
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question')
+    
+    question.addEventListener('click', () => {
+      // Close other items
+      faqItems.forEach(otherItem => {
+        if (otherItem !== item && otherItem.classList.contains('active')) {
+          otherItem.classList.remove('active')
+        }
+      })
+      
+      // Toggle current item
+      item.classList.toggle('active')
+    })
+  })
+}

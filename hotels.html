@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grassi Grosso - Отелям</title>
+    <link rel="icon" type="image/svg+xml" href="./public/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./public/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./public/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./public/apple-touch-icon.png" />
+    <link rel="manifest" href="./public/site.webmanifest" />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <!-- Header Top Bar -->
+    <div class="header-top">
+      <div class="header-top-content">
+        <span class="header-top-left">Доброе утро!</span>
+        <div class="header-top-right">
+          <span>+7 (495) 123-45-67</span>
+          <span class="separator"></span>
+          <span>Пн-Пт: 9-18</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Main -->
+    <header class="header-main">
+      <div class="header-main-content">
+        <a href="index.html" class="logo">
+          <img src="./public/header-logo.svg" alt="Grassi Grosso" class="logo-img" />
+        </a>
+        <div class="header-nav-wrapper">
+          <nav class="nav-menu">
+            <a href="hotels.html" class="active">Отелям</a>
+            <a href="dealers.html">Дилерам</a>
+            <a href="#catalog">Каталог</a>
+            <a href="#docs">Документы</a>
+            <a href="#contacts">Контакты</a>
+          </nav>
+          <a href="#contact" class="btn-contact">Связаться</a>
+        </div>
+        <button class="mobile-menu-btn" aria-label="Открыть меню">
+          <img src="./public/menu.svg" alt="" />
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay">
+      <div class="mobile-menu">
+        <div class="mobile-menu-header">
+          <div class="logo">
+            <img src="./public/header-logo.svg" alt="Grassi Grosso" class="logo-img" />
+          </div>
+          <button class="mobile-menu-close" aria-label="Закрыть меню">
+            <img src="./public/menu-close.svg" alt="" />
+          </button>
+        </div>
+        <nav class="mobile-nav">
+          <a href="hotels.html">Отелям</a>
+          <a href="dealers.html">Дилерам</a>
+          <a href="#catalog">Каталог</a>
+          <a href="#docs">Документы</a>
+          <a href="#contacts">Контакты</a>
+        </nav>
+        <a href="#contact" class="mobile-menu-cta">Связаться</a>
+      </div>
+    </div>
+
+    <main>
+      <!-- Hero Section -->
+      <section class="page-hero">
+        <div class="page-hero-content">
+          <div class="page-hero-text">
+            <div class="page-hero-text-top">
+              <h1 class="page-hero-title">Сон, о котором хочется написать в отзыве</h1>
+              <p class="page-hero-description">Не просто комфорт, а ощущение, с которым человек просыпается. Инвестиция в первое впечатление от утра ваших гостей.</p>
+              <a href="#contact-form" class="btn-primary-large">Рассчитать КП</a>
+            </div>
+            <a href="#catalog" class="catalog-link">
+              <span>Смотреть<br>каталог</span>
+              <img src="./public/arrow-hero-catalog.svg" alt="" class="catalog-arrow" />
+            </a>
+          </div>
+          <div class="page-hero-image">
+            <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Интерьер спальни отеля" />
+          </div>
+        </div>
+        <div class="section-divider"></div>
+        <!-- Stats -->
+        <div class="stats-wrapper">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-label">Матрасов</span>
+              <span class="stat-value">700+</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">На рынке</span>
+              <span class="stat-value">2 года</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Гарантия</span>
+              <span class="stat-value">18 мес</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Расширенная гарантия</span>
+              <span class="stat-value">5 лет<span class="stat-note">*</span></span>
+            </div>
+          </div>
+          <p class="stats-note">* При заключении договора на плановую замену матрасов</p>
+        </div>
+      </section>
+
+      <!-- Hotel Categories Section -->
+      <section class="hotel-categories-section">
+        <div class="hotel-categories-header">
+          <h2 class="section-title">Решения по категории отеля</h2>
+        </div>
+        <div class="hotel-categories-content">
+          <div class="categories-list">
+            <div class="category-item" data-text="Бескомпромиссный комфорт для самых взыскательных гостей. Высокие матрасы с натуральными наполнителями премиум-класса. Индивидуальный подход к каждому номеру.">
+              <div class="category-item-row">
+                <span class="category-name">Люкс</span>
+                <img src="./public/arrow-category.svg" alt="" class="category-arrow" />
+              </div>
+              <div class="category-divider"></div>
+            </div>
+            <div class="category-item" data-text="Баланс комфорта и практичности для требовательных гостей. Качественные материалы и продуманная эргономика. Оптимальное соотношение цены и качества.">
+              <div class="category-item-row">
+                <span class="category-name">Полулюкс</span>
+                <img src="./public/arrow-category.svg" alt="" class="category-arrow" />
+              </div>
+              <div class="category-divider"></div>
+            </div>
+            <div class="category-item category-active" data-text="Мы подобрали оптимальные модели для каждого сегмента. Надежные матрасы с отличной поддержкой. Долговечность и простота в обслуживании.">
+              <div class="category-item-row">
+                <span class="category-name">Стандарт</span>
+                <img src="./public/arrow-category.svg" alt="" class="category-arrow" />
+              </div>
+              <div class="category-divider"></div>
+            </div>
+            <div class="category-item" data-text="Компактные решения для небольших номеров. Функциональность без компромиссов по качеству сна. Экономичные варианты для оптимизации бюджета.">
+              <div class="category-item-row">
+                <span class="category-name">Мини-отели</span>
+                <img src="./public/arrow-category.svg" alt="" class="category-arrow" />
+              </div>
+              <div class="category-divider"></div>
+            </div>
+          </div>
+          <div class="categories-description">
+            <p class="categories-text">Мы подобрали оптимальные модели для каждого сегмента. Надежные матрасы с отличной поддержкой. Долговечность и простота в обслуживании.</p>
+            <div class="categories-cta">
+              <p class="categories-question">Хотите узнать больше о характеристиках и стоимости этих моделей?</p>
+              <a href="#contact-form" class="btn-primary-large">Подобрать наилучшее предложение</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Product Cards Section -->
+      <section class="product-cards-section">
+        <div class="product-card">
+          <div class="product-card-content">
+            <div class="product-card-text">
+              <h3 class="product-card-title">BoxSpring</h3>
+              <p class="product-card-description">Основания для кроватей и изголовья. Надежная база и стильный дизайн для любого интерьера.</p>
+            </div>
+            <a href="#" class="product-card-link">
+              <span>Подробнее</span>
+              <img src="./public/arrow-small.svg" alt="" />
+            </a>
+          </div>
+          <div class="product-card-image">
+            <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="BoxSpring" />
+          </div>
+        </div>
+        <div class="section-divider"></div>
+        <div class="product-card">
+          <div class="product-card-content">
+            <div class="product-card-text">
+              <h3 class="product-card-title">Аксессуары</h3>
+              <p class="product-card-description">Подушки, наматрасники и постельное белье. Финальные штрихи для идеального спального места.</p>
+            </div>
+            <a href="#" class="product-card-link">
+              <span>Подробнее</span>
+              <img src="./public/arrow-small.svg" alt="" />
+            </a>
+          </div>
+          <div class="product-card-image">
+            <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Аксессуары" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Discount Section -->
+      <section class="discount-section">
+        <div class="discount-header">
+          <h2 class="section-title">Система скидок от объема</h2>
+          <p class="discount-subtitle">Чем больше сумма заказа — тем выгоднее условия</p>
+        </div>
+        <div class="discount-wrapper">
+          <div class="discount-table">
+            <div class="discount-table-header">
+              <span class="discount-col">Сумма заказа</span>
+              <span class="discount-col">Скидка</span>
+              <span class="discount-col">Условия</span>
+            </div>
+            <div class="discount-table-body">
+              <div class="discount-row highlight">
+                <span class="discount-col">от 250 000 ₽</span>
+                <span class="discount-col"><span class="discount-badge">10%</span></span>
+                <span class="discount-col">Базовые условия</span>
+              </div>
+              <div class="discount-row">
+                <span class="discount-col">от 300 000 ₽</span>
+                <span class="discount-col"><span class="discount-badge">15%</span></span>
+                <span class="discount-col">Расширенные условия</span>
+              </div>
+              <div class="discount-row highlight">
+                <span class="discount-col">от 1 млн ₽</span>
+                <span class="discount-col"><span class="discount-badge">Индивидуально</span></span>
+                <span class="discount-col">Персональное предложение</span>
+              </div>
+            </div>
+          </div>
+          <p class="discount-note">* Точную стоимость и размер скидки рассчитает менеджер</p>
+        </div>
+      </section>
+
+      <!-- Contact Form Section -->
+      <section class="contact-section" id="contact-form">
+        <h2 class="section-title">Доброе утро!</h2>
+        <div class="contact-grid">
+          <div class="contact-form-wrapper">
+            <h3 class="contact-form-title">Форма обратной связи</h3>
+            <form class="contact-form">
+              <div class="form-group">
+                <label for="name">Имя</label>
+                <input type="text" id="name" placeholder="Иван Иванов" />
+              </div>
+              <div class="form-group">
+                <label for="city">Город</label>
+                <input type="text" id="city" placeholder="Москва" />
+              </div>
+              <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" placeholder="example@company.com" />
+              </div>
+              <div class="form-group">
+                <label for="phone">Телефон</label>
+                <input type="tel" id="phone" placeholder="+7 (999) 123-45-67" />
+              </div>
+              <div class="form-group">
+                <label for="message">Сообщение</label>
+                <textarea id="message" placeholder="Ваше сообщение"></textarea>
+              </div>
+              <div class="form-checkbox">
+                <input type="checkbox" id="privacy" checked />
+                <label for="privacy">
+                  <span class="checkbox-custom">
+                    <svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white"/>
+                      <path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" stroke-opacity="0.1"/>
+                      <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2"/>
+                    </svg>
+                  </span>
+                  <span class="checkbox-text">Я согласен на обработку моих персональных данных в соответствии с <a href="#">Политикой конфиденциальности</a></span>
+                </label>
+              </div>
+              <button type="submit" class="btn-primary">Отправить</button>
+            </form>
+          </div>
+          <div class="contact-info">
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <img src="./public/icon-phone-vectorly.svg" alt="" />
+              </div>
+              <div class="contact-info-content">
+                <h4 class="contact-info-title">Телефон</h4>
+                <p class="contact-info-value">+7 (495) 123-45-67</p>
+                <p class="contact-info-note">Пн-Пт: 9:00 - 18:00 МСК</p>
+              </div>
+            </div>
+            <div class="contact-info-divider"></div>
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <img src="./public/icon-email-vectorly.svg" alt="" />
+              </div>
+              <div class="contact-info-content">
+                <h4 class="contact-info-title">Email</h4>
+                <p class="contact-info-value">b2b@grassigrosso.com</p>
+                <p class="contact-info-note">Ответим в течение 24 часов</p>
+              </div>
+            </div>
+            <div class="contact-info-divider"></div>
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <img src="./public/icon-location-vectorly.svg" alt="" />
+              </div>
+              <div class="contact-info-content">
+                <h4 class="contact-info-title">Адрес</h4>
+                <p class="contact-info-value">Москва, ул. Производственная, д. 1</p>
+                <p class="contact-info-note">Склад и шоурум</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Refresh Program Section -->
+      <section class="refresh-section">
+        <div class="refresh-content">
+          <div class="refresh-badge">Refresh-программа</div>
+          <h2 class="section-title">Плановая замена матрасов</h2>
+          <p class="refresh-description">Программа регулярного обновления матрасного фонда отеля. Поддерживайте высокий стандарт комфорта без лишних хлопот.</p>
+          <div class="refresh-features">
+            <div class="refresh-feature">
+              <div class="refresh-feature-icon">
+                <img src="./public/icon-calendar.svg" alt="" />
+              </div>
+              <div class="refresh-feature-content">
+                <h4 class="refresh-feature-title">Плановая замена</h4>
+                <p class="refresh-feature-text">График замены матрасов раз в 5-7 лет согласно регламенту отеля</p>
+              </div>
+            </div>
+            <div class="refresh-feature-divider"></div>
+            <div class="refresh-feature">
+              <div class="refresh-feature-icon">
+                <img src="./public/icon-hand-gesture.svg" alt="" />
+              </div>
+              <div class="refresh-feature-content">
+                <h4 class="refresh-feature-title">Специальные условия</h4>
+                <p class="refresh-feature-text">Фиксированная цена и приоритетное производство для участников программы</p>
+              </div>
+            </div>
+          </div>
+          <a href="#contact-form" class="btn-primary-large">Подключить Refresh-программу</a>
+        </div>
+        <div class="refresh-image">
+          <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Refresh программа" />
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="faq-section">
+        <h2 class="section-title">Часто задаваемые вопросы</h2>
+        <div class="faq-list">
+          <div class="faq-item active">
+            <div class="faq-question">
+              <h3>Какой минимальный заказ?</h3>
+              <span class="faq-toggle"></span>
+            </div>
+            <div class="faq-answer">
+              <p>Минимальный заказ зависит от модели и условий. Для мини-опта — от 10 матрасов, для индивидуальных решений можем обсудить любые объемы.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              <h3>Как быстро производите?</h3>
+              <span class="faq-toggle"></span>
+            </div>
+            <div class="faq-answer">
+              <p>Срок производства составляет от 7 дней в зависимости от объёма заказа и выбранных моделей.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              <h3>Доставляете ли в регионы?</h3>
+              <span class="faq-toggle"></span>
+            </div>
+            <div class="faq-answer">
+              <p>Да, мы осуществляем доставку по всей России. Сроки и стоимость зависят от региона.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              <h3>Какие есть способы оплаты?</h3>
+              <span class="faq-toggle"></span>
+            </div>
+            <div class="faq-answer">
+              <p>Мы работаем с безналичной оплатой для юридических лиц. Возможна отсрочка платежа в зависимости от выбранного пакета сотрудничества.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-column footer-about">
+          <div class="footer-logo">
+            <img src="./public/footer-logo.svg" alt="Grassi Grosso" />
+          </div>
+          <p class="footer-description">Продуманные решения для естественного восстановления. Каждое утро — как лучшее.</p>
+          <div class="footer-legal">
+            <p>ИНН: 7701234567</p>
+            <p>ОГРН: 1157746123456</p>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-heading">Решения</h4>
+          <ul class="footer-links">
+            <li><a href="hotels.html">Отелям</a></li>
+            <li><a href="dealers.html">Дилерам</a></li>
+            <li><a href="#">Каталог матрасов</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-heading">Информация</h4>
+          <ul class="footer-links">
+            <li><a href="#">Коллекции</a></li>
+            <li><a href="#">Документы</a></li>
+            <li><a href="#">Контакты</a></li>
+          </ul>
+        </div>
+        <div class="footer-column footer-contacts">
+          <h4 class="footer-heading">Связь</h4>
+          <div class="contact-item">
+            <span class="contact-label">Телефон:</span>
+            <span class="contact-value">+7 (495) 123-45-67</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">Email:</span>
+            <span class="contact-value">b2b@grassigrosso.com</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">Режим работы:</span>
+            <span class="contact-value">Пн-Пт: 9:00 - 18:00 МСК</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-divider"></div>
+        <div class="footer-bottom-content">
+          <p class="footer-copyright">© 2025 Grassi Grosso. Все права защищены.</p>
+          <div class="footer-policies">
+            <a href="#">Политика конфиденциальности</a>
+            <span class="separator"></span>
+            <a href="#">Пользовательское соглашение</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
