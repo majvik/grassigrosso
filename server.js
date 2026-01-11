@@ -99,7 +99,7 @@ app.post('/api/test', (req, res) => {
 });
 
 app.post('/api/submit', async (req, res) => {
-  console.log('=== POST /api/submit ===');
+  console.log('\n✅ === POST /api/submit HANDLER CALLED ===');
   console.log('Method:', req.method);
   console.log('Path:', req.path);
   console.log('Body:', req.body);
@@ -182,29 +182,6 @@ app.get('*', (req, res) => {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
-
-// Обработка всех остальных методов для известных API роутов
-app.all('/api/submit', (req, res, next) => {
-  if (req.method !== 'POST' && req.method !== 'OPTIONS') {
-    console.log(`[${req.method}] /api/submit - method not allowed`);
-    return res.status(405).json({ 
-      error: `Method ${req.method} not allowed`,
-      allowed: ['POST', 'OPTIONS']
-    });
-  }
-  next();
-});
-
-app.all('/api/get-chat-id', (req, res, next) => {
-  if (req.method !== 'GET' && req.method !== 'OPTIONS') {
-    console.log(`[${req.method}] /api/get-chat-id - method not allowed`);
-    return res.status(405).json({ 
-      error: `Method ${req.method} not allowed`,
-      allowed: ['GET', 'OPTIONS']
-    });
-  }
-  next();
 });
 
 app.listen(PORT, () => {
