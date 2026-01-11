@@ -68,7 +68,13 @@ app.use('/api', (req, res, next) => {
 
 // Healthcheck endpoint для проверки работоспособности
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  console.log('✅ Healthcheck request received');
+  res.status(200).json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    port: PORT,
+    uptime: process.uptime()
+  });
 });
 
 // Тестовый эндпоинт для проверки работы API
