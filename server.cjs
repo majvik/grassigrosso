@@ -67,14 +67,11 @@ app.use('/api', (req, res, next) => {
 });
 
 // Healthcheck endpoint для проверки работоспособности
+// ВАЖНО: должен отвечать быстро и всегда возвращать 200
+// Timeweb проверяет этот endpoint изнутри контейнера
 app.get('/health', (req, res) => {
-  console.log('✅ Healthcheck request received');
-  res.status(200).json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    port: PORT,
-    uptime: process.uptime()
-  });
+  // Минимальный ответ для быстрой проверки - без логирования
+  res.status(200).json({ status: 'ok' });
 });
 
 // Тестовый эндпоинт для проверки работы API
