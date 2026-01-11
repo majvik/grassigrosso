@@ -623,13 +623,24 @@ if (contactForms.length > 0) {
       }
 
       try {
+        console.log('Отправка запроса на:', API_URL)
+        console.log('Данные формы:', formData)
+        
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         })
 
-        const data = await response.json().catch(() => ({}))
+        console.log('Ответ сервера:', response.status, response.statusText)
+        console.log('Headers ответа:', [...response.headers.entries()])
+
+        const data = await response.json().catch((err) => {
+          console.error('Ошибка парсинга JSON:', err)
+          return {}
+        })
+        
+        console.log('Данные ответа:', data)
         
         if (response.ok) {
           alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.')

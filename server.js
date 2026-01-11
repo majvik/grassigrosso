@@ -29,14 +29,21 @@ if (!CHAT_ID) {
   console.log('✅ BOT_TOKEN и CHAT_ID загружены');
 }
 
-// Обработка OPTIONS для CORS preflight
-app.options('/api/submit', cors());
-app.options('/api/get-chat-id', cors());
+// Обработка OPTIONS для CORS preflight (для всех API роутов)
+app.options('/api/*', cors());
 
-// Логирование всех API запросов для отладки (ПЕРЕД определением роутов)
-app.use('/api', (req, res, next) => {
-  console.log(`[${new Date().toISOString()}] [${req.method}] ${req.path}`);
-  console.log('Headers:', JSON.stringify(req.headers, null, 2));
+// Логирование всех запросов для отладки (ПЕРЕД определением роутов)
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    console.log(`\n=== [${new Date().toISOString()}] API REQUEST ===`);
+    console.log(`Method: ${req.method}`);
+    console.log(`Path: ${req.path}`);
+    console.log(`URL: ${req.url}`);
+    console.log(`Headers:`, req.headers);
+    if (req.method === 'POST' && req.body) {
+      console.log(`Body:`, req.body);
+    }
+  }
   next();
 });
 
@@ -169,8 +176,35 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
+// Обработка всех остальных методов для известных API роутов
+app.all('/api/submit', (req, res, next) => {
+  if (req.method !== 'POST' && req.method !== 'OPTIONS') {
+    console.log(`[${req.method}] /api/submit - method not allowed`);
+    return res.status(405).json({ 
+      error: `Method ${req.method} not allowed`,
+      allowed: ['POST', 'OPTIONS']
+    });
+  }
+  next();
+});
+
+app.all('/api/get-chat-id', (req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'OPTIONS') {
+    console.log(`[${req.method}] /api/get-chat-id - method not allowed`);
+    return res.status(405).json({ 
+      error: `Method ${req.method} not allowed`,
+      allowed: ['GET', 'OPTIONS']
+    });
+  }
+  next();
+});
+
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`API endpoints: /api/submit, /api/get-chat-id`);
-  console.log(`Frontend: http://localhost:${PORT}`);
+  console.log(`\n🚀 Server running on port ${PORT}`);
+  console.log(`📡 API endpoints:`);
+  console.log(`   - POST /api/submit`);
+  console.log(`   - GET  /api/get-chat-id`);
+  console.log(`   - GET  /api/test`);
+  console.log(`   - POST /api/test`);
+  console.log(`🌐 Frontend: http://localhost:${PORT}\n`);
 });
