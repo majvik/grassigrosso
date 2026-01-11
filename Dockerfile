@@ -21,8 +21,9 @@ EXPOSE 3000
 
 # Healthcheck для проверки работоспособности приложения
 # Используем простой endpoint /health для быстрой проверки
-HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"
+# Увеличено время ожидания до 60 секунд для полной инициализации приложения
+HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 \
+  CMD node -e "const http = require('http'); const req = http.get('http://localhost:3000/health', (r) => { let data = ''; r.on('data', (chunk) => { data += chunk; }); r.on('end', () => { process.exit(r.statusCode === 200 ? 0 : 1); }); }); req.on('error', () => process.exit(1)); req.setTimeout(5000, () => { req.destroy(); process.exit(1); });"
 
 # Запускаем Node.js сервер
 # Важно: слушаем на 0.0.0.0, а не на localhost
