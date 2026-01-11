@@ -144,7 +144,12 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist'), {
+  // Не обрабатываем API запросы в статике
+  setHeaders: (res, path) => {
+    // Ничего особенного
+  }
+}));
 
 // Fallback для SPA - все остальные GET запросы отдаем index.html
 app.get('*', (req, res) => {
