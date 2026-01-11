@@ -138,14 +138,15 @@ app.post('/api/submit', async (req, res) => {
 });
 
 // Статические файлы фронтенда (после API routes)
-// Используем функцию для исключения API запросов из статики
+// Создаем middleware для статики с явным исключением API
+const staticMiddleware = express.static(path.join(__dirname, 'dist'));
 app.use((req, res, next) => {
   // Пропускаем API запросы мимо статики
   if (req.path.startsWith('/api/')) {
     return next();
   }
   // Для всех остальных запросов используем статику
-  express.static(path.join(__dirname, 'dist'))(req, res, next);
+  staticMiddleware(req, res, next);
 });
 
 // Fallback для SPA - все остальные GET запросы отдаем index.html
