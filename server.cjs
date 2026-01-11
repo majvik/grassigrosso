@@ -192,5 +192,17 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`   - GET  /api/get-chat-id`);
   console.log(`   - GET  /api/test`);
   console.log(`   - POST /api/test`);
+  console.log(`   - GET  /health`);
   console.log(`🌐 Frontend: http://0.0.0.0:${PORT}\n`);
+});
+
+// Обработка ошибок для предотвращения падения приложения
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  // Не завершаем процесс, чтобы приложение продолжало работать
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  // Не завершаем процесс, чтобы приложение продолжало работать
 });
