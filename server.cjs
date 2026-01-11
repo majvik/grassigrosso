@@ -192,7 +192,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🚀 Server running on port ${PORT}`);
   console.log(`📡 API endpoints:`);
   console.log(`   - POST /api/submit`);
@@ -201,6 +201,18 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`   - POST /api/test`);
   console.log(`   - GET  /health`);
   console.log(`🌐 Frontend: http://0.0.0.0:${PORT}\n`);
+  console.log(`✅ Server is ready to accept connections\n`);
+});
+
+// Обработка ошибок сервера
+server.on('error', (error) => {
+  console.error('❌ Server error:', error);
+  if (error.code === 'EADDRINUSE') {
+    console.error(`   Port ${PORT} is already in use`);
+    process.exit(1);
+  } else {
+    console.error('   Unexpected server error, but continuing...');
+  }
 });
 
 // Обработка ошибок для предотвращения падения приложения
