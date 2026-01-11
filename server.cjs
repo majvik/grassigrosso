@@ -29,6 +29,13 @@ const PORT = process.env.PORT || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 
+// Логирование переменных окружения при запуске
+console.log('\n📋 Environment variables:');
+console.log(`   PORT: ${PORT}`);
+console.log(`   BOT_TOKEN: ${BOT_TOKEN ? '✅ Set' : '❌ Not set'}`);
+console.log(`   CHAT_ID: ${CHAT_ID ? '✅ Set' : '❌ Not set'}`);
+console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}\n`);
+
 // Проверка переменных окружения при запуске
 if (!BOT_TOKEN) {
   console.warn('⚠️  BOT_TOKEN не найден в переменных окружения!');
