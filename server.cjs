@@ -22,6 +22,10 @@ app.use(cors({
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
+// Настройка для работы за прокси (Timeweb Cloud Apps)
+app.set('trust proxy', true);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
