@@ -129,6 +129,27 @@ if (slider && prevBtn && nextBtn && progressFill) {
     slider.scrollLeft = scrollLeftStart - walk
   })
   
+  // Touch support for drag to scroll
+  slider.addEventListener('touchstart', (e) => {
+    isDown = true
+    slider.classList.add('active')
+    startX = e.touches[0].pageX - slider.offsetLeft
+    scrollLeftStart = slider.scrollLeft
+  }, { passive: false })
+  
+  slider.addEventListener('touchend', () => {
+    isDown = false
+    slider.classList.remove('active')
+  })
+  
+  slider.addEventListener('touchmove', (e) => {
+    if (!isDown) return
+    e.preventDefault()
+    const x = e.touches[0].pageX - slider.offsetLeft
+    const walk = (x - startX) * 1.5
+    slider.scrollLeft = scrollLeftStart - walk
+  }, { passive: false })
+  
   // Initialize: ensure scroll is at start
   slider.scrollLeft = 0
   
@@ -226,6 +247,27 @@ if (testimonialsSlider && testimonialsSection) {
     testimonialsSlider.scrollLeft = scrollLeftStart - walk
   })
   
+  // Touch support for drag to scroll
+  testimonialsSlider.addEventListener('touchstart', (e) => {
+    isDown = true
+    testimonialsSlider.classList.add('active')
+    startX = e.touches[0].pageX - testimonialsSlider.offsetLeft
+    scrollLeftStart = testimonialsSlider.scrollLeft
+  }, { passive: false })
+  
+  testimonialsSlider.addEventListener('touchend', () => {
+    isDown = false
+    testimonialsSlider.classList.remove('active')
+  })
+  
+  testimonialsSlider.addEventListener('touchmove', (e) => {
+    if (!isDown) return
+    e.preventDefault()
+    const x = e.touches[0].pageX - testimonialsSlider.offsetLeft
+    const walk = (x - startX) * 1.5
+    testimonialsSlider.scrollLeft = scrollLeftStart - walk
+  }, { passive: false })
+  
   // Pause autoplay on hover
   testimonialsSlider.addEventListener('mouseenter', () => {
     isUserInteracting = true
@@ -271,12 +313,21 @@ if (categoryItems.length > 0 && categoriesText) {
   })
 }
 
-// Page hero image aspect ratio sync
+// Page hero image aspect ratio sync (desktop only)
 const pageHeroText = document.querySelector('.page-hero-text')
 const pageHeroImage = document.querySelector('.page-hero-image')
 
 if (pageHeroText && pageHeroImage) {
   function syncPageHeroImage() {
+    // Only sync on desktop (width > 1024px)
+    if (window.innerWidth <= 1024) {
+      // Reset styles on mobile
+      pageHeroImage.style.aspectRatio = ''
+      pageHeroImage.style.height = ''
+      pageHeroText.style.height = ''
+      return
+    }
+    
     // Reset styles to get natural dimensions
     pageHeroImage.style.aspectRatio = '1 / 1'
     pageHeroImage.style.height = 'auto'
@@ -320,12 +371,18 @@ if (pageHeroText && pageHeroImage) {
   observer.observe(pageHeroImage)
 }
 
-// Refresh section image height sync
+// Refresh section image height sync (desktop only)
 const refreshContent = document.querySelector('.refresh-content')
 const refreshImage = document.querySelector('.refresh-image')
 
 if (refreshContent && refreshImage) {
   function syncRefreshImageHeight() {
+    // Only sync on desktop (width > 1024px)
+    if (window.innerWidth <= 1024) {
+      refreshImage.style.height = ''
+      return
+    }
+    
     const contentHeight = refreshContent.offsetHeight
     refreshImage.style.height = `${contentHeight}px`
   }
