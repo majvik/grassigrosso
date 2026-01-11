@@ -7,8 +7,13 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN;
@@ -23,6 +28,16 @@ if (!CHAT_ID) {
 } else {
   console.log('✅ BOT_TOKEN и CHAT_ID загружены');
 }
+
+// Обработка OPTIONS для CORS preflight
+app.options('/api/submit', cors());
+app.options('/api/get-chat-id', cors());
+
+// Логирование всех API запросов для отладки
+app.use('/api', (req, res, next) => {
+  console.log(`[${req.method}] ${req.path}`);
+  next();
+});
 
 // API Routes - должны быть ДО статики
 app.get('/api/get-chat-id', async (req, res) => {
@@ -57,7 +72,11 @@ app.get('/api/get-chat-id', async (req, res) => {
 });
 
 app.post('/api/submit', async (req, res) => {
-  console.log('Получен запрос на /api/submit:', req.body);
+  console.log('=== POST /api/submit ===');
+  console.log('Method:', req.method);
+  console.log('Path:', req.path);
+  console.log('Body:', req.body);
+  console.log('Headers:', req.headers);
   const { name, phone, comment, email, city, company, page } = req.body;
   
   try {
@@ -117,10 +136,16 @@ app.post('/api/submit', async (req, res) => {
   }
 });
 
+// Обработка всех остальных методов для API (если не найден роут)
+app.all('/api/*', (req, res) => {
+  console.log(`[${req.method}] ${req.path} - метод не поддерживается`);
+  res.status(405).json({ error: `Method ${req.method} not allowed for ${req.path}` });
+});
+
 // Статические файлы фронтенда (после API routes)
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// Fallback для SPA - все остальные запросы отдаем index.html
+// Fallback для SPA - все остальные GET запросы отдаем index.html
 app.get('*', (req, res) => {
   // Не обрабатываем API запросы
   if (req.path.startsWith('/api/')) {
