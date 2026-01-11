@@ -180,12 +180,12 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🚀 Server running on port ${PORT}`);
   console.log(`📡 API endpoints:`);
   console.log(`   - POST /api/submit`);
   console.log(`   - GET  /api/get-chat-id`);
   console.log(`   - GET  /api/test`);
   console.log(`   - POST /api/test`);
-  console.log(`🌐 Frontend: http://localhost:${PORT}\n`);
+  console.log(`🌐 Frontend: http://0.0.0.0:${PORT}\n`);
 });
