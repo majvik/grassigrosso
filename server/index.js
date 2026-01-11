@@ -4,8 +4,13 @@ const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
-app.use(cors()); // Разрешаем запросы с вашего фронтенда
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN;
@@ -21,9 +26,13 @@ if (!CHAT_ID) {
   console.log('✅ BOT_TOKEN и CHAT_ID загружены');
 }
 
+// Обработка OPTIONS для CORS preflight
+app.options('/api/submit', cors());
+app.options('/api/get-chat-id', cors());
+
 // Вспомогательный endpoint для получения CHAT_ID
-// Отправьте сообщение боту @grassigrosso_form_bot, затем вызовите GET /get-chat-id
-app.get('/get-chat-id', async (req, res) => {
+// Отправьте сообщение боту @grassigrosso_form_bot, затем вызовите GET /api/get-chat-id
+app.get('/api/get-chat-id', async (req, res) => {
   try {
     if (!BOT_TOKEN) {
       return res.status(500).json({ error: 'BOT_TOKEN не настроен' });
@@ -55,8 +64,12 @@ app.get('/get-chat-id', async (req, res) => {
   }
 });
 
-app.post('/submit', async (req, res) => {
-  console.log('Получен запрос на /submit:', req.body);
+app.post('/api/submit', async (req, res) => {
+  console.log('=== POST /api/submit ===');
+  console.log('Method:', req.method);
+  console.log('Path:', req.path);
+  console.log('Body:', req.body);
+  console.log('Headers:', req.headers);
   const { name, phone, comment, email, city, company, page } = req.body;
   
   // Формируем текст сообщения

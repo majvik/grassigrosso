@@ -136,13 +136,14 @@ app.post('/api/submit', async (req, res) => {
   }
 });
 
-// Обработка всех остальных методов для API (если не найден роут)
-app.all('/api/*', (req, res) => {
-  console.log(`[${req.method}] ${req.path} - метод не поддерживается`);
-  res.status(405).json({ error: `Method ${req.method} not allowed for ${req.path}` });
-});
-
 // Статические файлы фронтенда (после API routes)
+// НЕ обрабатываем API запросы в статике
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    return next(); // Пропускаем API запросы
+  }
+  next();
+});
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // Fallback для SPA - все остальные GET запросы отдаем index.html
