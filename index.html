@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
+    <!-- Cookie Banner (Mobile: top fixed, Desktop: bottom-right fixed) -->
+    <div class="cookie-banner">
+      <img src="./public/c3a1c10fe4d236c2811be9c86637e78f6d97212d.png" alt="" class="cookie-icon" />
+      <p class="cookie-text">Мы используем <span class="underline">cookie</span>, чтобы улучшить работу нашего сайта</p>
+      <button class="btn-cookie">ОК</button>
+    </div>
+
     <!-- Header Top Bar -->
     <div class="header-top">
       <div class="header-top-content">
@@ -23,7 +30,7 @@
     <header class="header-main">
       <div class="header-main-content">
         <div class="logo">
-          <img src="./public/9c92af1c1d8e170d6f2ccb8c5a57987b40cae398.svg" alt="Grassi Grosso" class="logo-img" />
+          <img src="./public/header-logo.svg" alt="Grassi Grosso" class="logo-img" />
         </div>
         <div class="header-nav-wrapper">
           <nav class="nav-menu">
@@ -35,8 +42,33 @@
           </nav>
           <a href="#contact" class="btn-contact">Связаться</a>
         </div>
+        <button class="mobile-menu-btn" aria-label="Открыть меню">
+          <img src="./public/menu.svg" alt="" />
+        </button>
       </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay">
+      <div class="mobile-menu">
+        <div class="mobile-menu-header">
+          <div class="logo">
+            <img src="./public/header-logo.svg" alt="Grassi Grosso" class="logo-img" />
+          </div>
+          <button class="mobile-menu-close" aria-label="Закрыть меню">
+            <img src="./public/menu-close.svg" alt="" />
+          </button>
+        </div>
+        <nav class="mobile-nav">
+          <a href="#hotels">Отелям</a>
+          <a href="#dealers">Дилерам</a>
+          <a href="#catalog">Каталог</a>
+          <a href="#docs">Документы</a>
+          <a href="#contacts">Контакты</a>
+        </nav>
+        <a href="#contact" class="mobile-menu-cta">Связаться</a>
+      </div>
+    </div>
 
     <main>
       <!-- Hero Section -->
@@ -57,13 +89,6 @@
         </div>
         <div class="hero-image">
           <img src="./public/ae98652d49f18b974f936ee8df9597ae213be9a8.png" alt="Интерьер спальни" />
-        </div>
-        
-        <!-- Cookie Banner -->
-        <div class="cookie-banner">
-          <img src="./public/c3a1c10fe4d236c2811be9c86637e78f6d97212d.png" alt="" class="cookie-icon" />
-          <p class="cookie-text">Мы используем <span class="underline">cookie</span>, чтобы улучшить работу нашего сайта</p>
-          <button class="btn-cookie">ОК</button>
         </div>
       </section>
 

@@ -7,15 +7,52 @@ const cookieBtn = document.querySelector('.btn-cookie')
 if (cookieBtn && cookieBanner) {
   if (localStorage.getItem('cookieAccepted')) {
     cookieBanner.style.display = 'none'
+    document.body.classList.remove('cookie-visible')
+  } else {
+    document.body.classList.add('cookie-visible')
   }
   
   cookieBtn.addEventListener('click', () => {
-    cookieBanner.style.opacity = '0'
-    cookieBanner.style.transform = 'translateY(20px)'
+    cookieBanner.classList.add('hiding')
+    document.body.classList.remove('cookie-visible')
     setTimeout(() => {
       cookieBanner.style.display = 'none'
     }, 300)
     localStorage.setItem('cookieAccepted', 'true')
+  })
+}
+
+// Mobile menu
+const mobileMenuBtn = document.querySelector('.mobile-menu-btn')
+const mobileMenuClose = document.querySelector('.mobile-menu-close')
+const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay')
+const mobileNavLinks = document.querySelectorAll('.mobile-nav a, .mobile-menu-cta')
+
+if (mobileMenuBtn && mobileMenuClose && mobileMenuOverlay) {
+  // Open menu
+  mobileMenuBtn.addEventListener('click', () => {
+    mobileMenuOverlay.classList.add('active')
+    document.body.style.overflow = 'hidden'
+  })
+  
+  // Close menu
+  const closeMenu = () => {
+    mobileMenuOverlay.classList.remove('active')
+    document.body.style.overflow = ''
+  }
+  
+  mobileMenuClose.addEventListener('click', closeMenu)
+  
+  // Close when clicking on overlay (outside menu)
+  mobileMenuOverlay.addEventListener('click', (e) => {
+    if (e.target === mobileMenuOverlay) {
+      closeMenu()
+    }
+  })
+  
+  // Close when clicking nav links
+  mobileNavLinks.forEach(link => {
+    link.addEventListener('click', closeMenu)
   })
 }
 
