@@ -33,9 +33,10 @@ if (!CHAT_ID) {
 app.options('/api/submit', cors());
 app.options('/api/get-chat-id', cors());
 
-// Логирование всех API запросов для отладки
+// Логирование всех API запросов для отладки (ПЕРЕД определением роутов)
 app.use('/api', (req, res, next) => {
-  console.log(`[${req.method}] ${req.path}`);
+  console.log(`[${new Date().toISOString()}] [${req.method}] ${req.path}`);
+  console.log('Headers:', JSON.stringify(req.headers, null, 2));
   next();
 });
 
@@ -137,23 +138,19 @@ app.post('/api/submit', async (req, res) => {
 });
 
 // Статические файлы фронтенда (после API routes)
-// НЕ обрабатываем API запросы в статике
+// Используем функцию для исключения API запросов из статики
 app.use((req, res, next) => {
+  // Пропускаем API запросы мимо статики
   if (req.path.startsWith('/api/')) {
-    return next(); // Пропускаем API запросы
+    return next();
   }
-  next();
+  // Для всех остальных запросов используем статику
+  express.static(path.join(__dirname, 'dist'))(req, res, next);
 });
-app.use(express.static(path.join(__dirname, 'dist'), {
-  // Не обрабатываем API запросы в статике
-  setHeaders: (res, path) => {
-    // Ничего особенного
-  }
-}));
 
 // Fallback для SPA - все остальные GET запросы отдаем index.html
 app.get('*', (req, res) => {
-  // Не обрабатываем API запросы
+  // Пропускаем API запросы
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
