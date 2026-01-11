@@ -6,11 +6,21 @@ require('dotenv').config();
 
 const app = express();
 
+// ВАЖНО: Логирование ВСЕХ входящих запросов для диагностики
+app.use((req, res, next) => {
+  console.log(`\n🔵 [${new Date().toISOString()}] INCOMING REQUEST`);
+  console.log(`   Method: ${req.method}`);
+  console.log(`   Path: ${req.path}`);
+  console.log(`   URL: ${req.url}`);
+  console.log(`   Original URL: ${req.originalUrl}`);
+  next();
+});
+
 // Middleware
 app.use(cors({
   origin: '*',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -32,17 +42,15 @@ if (!CHAT_ID) {
 // Обработка OPTIONS для CORS preflight (для всех API роутов)
 app.options('/api/*', cors());
 
-// Логирование всех запросов для отладки (ПЕРЕД определением роутов)
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api/')) {
-    console.log(`\n=== [${new Date().toISOString()}] API REQUEST ===`);
-    console.log(`Method: ${req.method}`);
-    console.log(`Path: ${req.path}`);
-    console.log(`URL: ${req.url}`);
-    console.log(`Headers:`, req.headers);
-    if (req.method === 'POST' && req.body) {
-      console.log(`Body:`, req.body);
-    }
+// Дополнительное логирование для API запросов
+app.use('/api', (req, res, next) => {
+  console.log(`\n🟢 [${new Date().toISOString()}] API REQUEST DETECTED`);
+  console.log(`   Method: ${req.method}`);
+  console.log(`   Path: ${req.path}`);
+  console.log(`   Full URL: ${req.protocol}://${req.get('host')}${req.originalUrl}`);
+  console.log(`   Headers:`, JSON.stringify(req.headers, null, 2));
+  if (req.method === 'POST' && req.body) {
+    console.log(`   Body:`, JSON.stringify(req.body, null, 2));
   }
   next();
 });
