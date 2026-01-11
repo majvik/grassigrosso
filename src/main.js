@@ -420,3 +420,238 @@ if (faqItems.length > 0) {
     })
   })
 }
+
+// Form submission handler
+const contactForms = document.querySelectorAll('.contact-form')
+
+if (contactForms.length > 0) {
+  // API endpoint из переменной окружения
+  const API_URL = import.meta.env.VITE_API_URL
+  
+  if (!API_URL) {
+    console.error('VITE_API_URL не установлен в переменных окружения!')
+  }
+
+  // Функция для определения названия страницы
+  const getPageName = () => {
+    const path = window.location.pathname
+    const filename = path.split('/').pop() || 'index.html'
+    
+    const pageNames = {
+      'index.html': 'Главная страница',
+      'hotels.html': 'Страница "Отелям"',
+      'dealers.html': 'Страница "Дилерам"'
+    }
+    
+    return pageNames[filename] || filename
+  }
+
+  // Функция для очистки ошибок
+  const clearErrors = (form) => {
+    form.querySelectorAll('.form-group').forEach(group => {
+      group.classList.remove('error')
+      const input = group.querySelector('input, textarea')
+      if (input) {
+        input.classList.remove('error')
+      }
+      const errorMsg = group.querySelector('.error-message')
+      if (errorMsg) {
+        errorMsg.remove()
+      }
+    })
+  }
+
+  // Функция для показа ошибки
+  const showError = (input, message) => {
+    const formGroup = input.closest('.form-group')
+    if (!formGroup) return
+    
+    formGroup.classList.add('error')
+    input.classList.add('error')
+    
+    // Удаляем предыдущее сообщение об ошибке
+    const existingError = formGroup.querySelector('.error-message')
+    if (existingError) {
+      existingError.remove()
+    }
+    
+    // Создаем новое сообщение об ошибке
+    const errorMsg = document.createElement('div')
+    errorMsg.className = 'error-message'
+    errorMsg.textContent = message
+    formGroup.appendChild(errorMsg)
+  }
+
+  // Функция валидации
+  const validateForm = (form) => {
+    let isValid = true
+    clearErrors(form)
+
+    // Валидация имени
+    const nameInput = form.querySelector('#name')
+    if (nameInput) {
+      const name = nameInput.value.trim()
+      if (!name) {
+        showError(nameInput, 'Пожалуйста, укажите ваше имя')
+        isValid = false
+      } else if (name.length < 2) {
+        showError(nameInput, 'Имя должно содержать минимум 2 символа')
+        isValid = false
+      }
+    }
+
+    // Валидация телефона
+    const phoneInput = form.querySelector('#phone')
+    if (phoneInput) {
+      const phone = phoneInput.value.trim()
+      if (!phone) {
+        showError(phoneInput, 'Пожалуйста, укажите ваш телефон')
+        isValid = false
+      } else {
+        // Простая валидация телефона (цифры, +, -, пробелы, скобки)
+        const phoneRegex = /^[\d\s\+\-\(\)]{10,}$/
+        if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+          showError(phoneInput, 'Пожалуйста, укажите корректный номер телефона')
+          isValid = false
+        }
+      }
+    }
+
+    // Валидация email (если указан)
+    const emailInput = form.querySelector('#email')
+    if (emailInput && emailInput.value.trim()) {
+      const email = emailInput.value.trim()
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(email)) {
+        showError(emailInput, 'Пожалуйста, укажите корректный email адрес')
+        isValid = false
+      }
+    }
+
+    // Проверка согласия на обработку данных
+    const privacyCheckbox = form.querySelector('#privacy')
+    if (privacyCheckbox && !privacyCheckbox.checked) {
+      alert('Необходимо согласие на обработку персональных данных')
+      isValid = false
+    }
+
+    return isValid
+  }
+
+  contactForms.forEach(form => {
+    // Валидация при потере фокуса
+    form.querySelectorAll('input, textarea').forEach(input => {
+      input.addEventListener('blur', () => {
+        if (input.id === 'name' || input.id === 'phone' || input.id === 'email') {
+          const formGroup = input.closest('.form-group')
+          if (formGroup && formGroup.classList.contains('error')) {
+            // Перепроверяем только это поле
+            if (input.id === 'name') {
+              const name = input.value.trim()
+              if (name && name.length >= 2) {
+                formGroup.classList.remove('error')
+                input.classList.remove('error')
+                const errorMsg = formGroup.querySelector('.error-message')
+                if (errorMsg) errorMsg.remove()
+              }
+            } else if (input.id === 'phone') {
+              const phone = input.value.trim()
+              if (phone) {
+                const phoneRegex = /^[\d\s\+\-\(\)]{10,}$/
+                if (phoneRegex.test(phone.replace(/\s/g, ''))) {
+                  formGroup.classList.remove('error')
+                  input.classList.remove('error')
+                  const errorMsg = formGroup.querySelector('.error-message')
+                  if (errorMsg) errorMsg.remove()
+                }
+              }
+            } else if (input.id === 'email') {
+              const email = input.value.trim()
+              if (!email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                formGroup.classList.remove('error')
+                input.classList.remove('error')
+                const errorMsg = formGroup.querySelector('.error-message')
+                if (errorMsg) errorMsg.remove()
+              }
+            }
+          }
+        }
+      })
+    })
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      
+      // Валидация формы
+      if (!validateForm(form)) {
+        // Прокручиваем к первой ошибке
+        const firstError = form.querySelector('.form-group.error')
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          firstError.querySelector('input, textarea')?.focus()
+        }
+        return
+      }
+      
+      // Получаем кнопку отправки
+      const submitBtn = form.querySelector('button[type="submit"]')
+      const originalText = submitBtn?.textContent
+      
+      // Собираем данные формы
+      const formData = {
+        name: form.querySelector('#name')?.value.trim() || '',
+        phone: form.querySelector('#phone')?.value.trim() || '',
+        comment: form.querySelector('#message')?.value.trim() || '',
+        email: form.querySelector('#email')?.value.trim() || '',
+        city: form.querySelector('#city')?.value.trim() || '',
+        company: form.querySelector('#company')?.value.trim() || '',
+        page: getPageName()
+      }
+
+      // Блокируем кнопку и показываем состояние загрузки
+      if (submitBtn) {
+        submitBtn.disabled = true
+        submitBtn.textContent = 'Отправка...'
+      }
+
+      // Проверка наличия API_URL
+      if (!API_URL) {
+        alert('Ошибка конфигурации: API URL не настроен. Обратитесь к администратору.')
+        console.error('VITE_API_URL не установлен в переменных окружения')
+        if (submitBtn) {
+          submitBtn.disabled = false
+          submitBtn.textContent = originalText
+        }
+        return
+      }
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        })
+
+        const data = await response.json().catch(() => ({}))
+        
+        if (response.ok) {
+          alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.')
+          form.reset()
+          clearErrors(form)
+        } else {
+          console.error('Ошибка сервера:', data)
+          alert(data.error || data.details || 'Ошибка сервера. Попробуйте позже.')
+        }
+      } catch (error) {
+        console.error('Ошибка:', error)
+        alert('Не удалось отправить данные. Проверьте подключение к интернету и убедитесь, что сервер запущен.')
+      } finally {
+        // Восстанавливаем кнопку
+        if (submitBtn) {
+          submitBtn.disabled = false
+          submitBtn.textContent = originalText
+        }
+      }
+    })
+  })
+}

@@ -3024,6 +3024,26 @@ a:hover .arrow-medium {
   opacity: 0.4;
 }
 
+.form-group input.error,
+.form-group textarea.error {
+  border-color: #d32f2f;
+  background-color: #ffebee;
+}
+
+.form-group .error-message {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  color: #d32f2f;
+  line-height: 1.4;
+  margin-top: 4px;
+  display: none;
+}
+
+.form-group.error .error-message {
+  display: block;
+}
+
 .form-checkbox {
   display: flex;
   align-items: flex-start;
