@@ -209,6 +209,11 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`   - GET  /health`);
   console.log(`🌐 Frontend: http://0.0.0.0:${PORT}\n`);
   console.log(`✅ Server is ready to accept connections\n`);
+  console.log(`🔍 DEBUG INFO:`);
+  console.log(`   - Listening on: 0.0.0.0:${PORT}`);
+  console.log(`   - Protocol: HTTP (SSL termination at load balancer)`);
+  console.log(`   - Healthcheck: http://127.0.0.1:${PORT}/health`);
+  console.log(`   - Trust proxy: enabled\n`);
 });
 
 // Обработка ошибок сервера
