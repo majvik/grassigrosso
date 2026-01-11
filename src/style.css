@@ -786,7 +786,7 @@ a:hover .arrow-small {
 
 /* Testimonials */
 .testimonials {
-  padding: 120px 0;
+  padding: 0 0 120px 0;
 }
 
 .testimonials .section-title {
@@ -1358,7 +1358,7 @@ a:hover .arrow-medium {
   }
 
   .testimonials {
-    padding: 80px 0;
+    padding: 0 0 80px 0;
   }
 
   .testimonials .section-title {
@@ -1510,7 +1510,7 @@ a:hover .arrow-medium {
   }
 
   .testimonials {
-    padding: 64px 0;
+    padding: 0 0 64px 0;
   }
 
   .testimonials .section-title {
@@ -2106,7 +2106,7 @@ a:hover .arrow-medium {
 
   /* Testimonials */
   .testimonials {
-    padding: 64px 0;
+    padding: 0 0 64px 0;
   }
 
   .testimonials .section-title {
