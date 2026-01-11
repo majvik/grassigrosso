@@ -6,6 +6,13 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        hotels: './hotels.html',
+        dealers: './dealers.html',
+      }
+    }
   },
   server: {
     proxy: {
