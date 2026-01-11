@@ -55,6 +55,11 @@ app.use('/api', (req, res, next) => {
   next();
 });
 
+// Healthcheck endpoint для проверки работоспособности
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Тестовый эндпоинт для проверки работы API
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API работает!', timestamp: new Date().toISOString() });
