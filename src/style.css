@@ -68,6 +68,38 @@ body {
   overflow-x: hidden;
 }
 
+/* Scale proportionally on screens larger than 1920px */
+@media (min-width: 1921px) {
+  body {
+    max-width: 1920px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 2100px) {
+  html {
+    zoom: 1.1;
+  }
+}
+
+@media (min-width: 2400px) {
+  html {
+    zoom: 1.25;
+  }
+}
+
+@media (min-width: 2880px) {
+  html {
+    zoom: 1.5;
+  }
+}
+
+@media (min-width: 3840px) {
+  html {
+    zoom: 2;
+  }
+}
+
 /* Header Top Bar */
 .header-top {
   padding: 24px 64px 0;
@@ -356,11 +388,11 @@ body {
   display: flex;
   gap: 56px;
   align-items: flex-end;
+  justify-content: space-between;
 }
 
 .solution-card {
   flex: 1;
-  max-width: 392px;
   display: flex;
   flex-direction: column;
   gap: 32px;
