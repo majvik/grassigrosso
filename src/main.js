@@ -141,8 +141,9 @@ if (slider && prevBtn && nextBtn && progressFill) {
 
 // Testimonials slider with autoplay
 const testimonialsSlider = document.querySelector('.testimonials-grid')
+const testimonialsSection = document.querySelector('.testimonials')
 
-if (testimonialsSlider) {
+if (testimonialsSlider && testimonialsSection) {
   // Get actual card width + gap for 2 columns
   const getScrollStep = () => {
     const card = testimonialsSlider.querySelector('.testimonial-card')
@@ -150,11 +151,13 @@ if (testimonialsSlider) {
   }
   let autoplayInterval
   let isUserInteracting = false
+  let isInView = false
   
   // Autoplay function
   function startAutoplay() {
+    if (autoplayInterval) return // Already running
     autoplayInterval = setInterval(() => {
-      if (isUserInteracting) return
+      if (isUserInteracting || !isInView) return
       
       const maxScroll = testimonialsSlider.scrollWidth - testimonialsSlider.clientWidth
       
@@ -169,7 +172,24 @@ if (testimonialsSlider) {
   
   function stopAutoplay() {
     clearInterval(autoplayInterval)
+    autoplayInterval = null
   }
+  
+  // Intersection Observer - start autoplay when 2/3 visible
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      isInView = entry.isIntersecting
+      if (entry.isIntersecting) {
+        startAutoplay()
+      } else {
+        stopAutoplay()
+      }
+    })
+  }, {
+    threshold: 0.66 // 2/3 visible
+  })
+  
+  observer.observe(testimonialsSection)
   
   // Drag to scroll
   let isDown = false
@@ -182,7 +202,6 @@ if (testimonialsSlider) {
     testimonialsSlider.classList.add('active')
     startX = e.pageX - testimonialsSlider.offsetLeft
     scrollLeftStart = testimonialsSlider.scrollLeft
-    stopAutoplay()
   })
   
   testimonialsSlider.addEventListener('mouseleave', () => {
@@ -190,7 +209,6 @@ if (testimonialsSlider) {
       isDown = false
       testimonialsSlider.classList.remove('active')
       isUserInteracting = false
-      startAutoplay()
     }
   })
   
@@ -198,7 +216,6 @@ if (testimonialsSlider) {
     isDown = false
     testimonialsSlider.classList.remove('active')
     isUserInteracting = false
-    startAutoplay()
   })
   
   testimonialsSlider.addEventListener('mousemove', (e) => {
@@ -223,14 +240,9 @@ if (testimonialsSlider) {
   // Touch support
   testimonialsSlider.addEventListener('touchstart', () => {
     isUserInteracting = true
-    stopAutoplay()
   })
   
   testimonialsSlider.addEventListener('touchend', () => {
     isUserInteracting = false
-    startAutoplay()
   })
-  
-  // Start autoplay
-  startAutoplay()
 }
