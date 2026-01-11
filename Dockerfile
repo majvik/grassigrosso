@@ -27,4 +27,4 @@ HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 \
 
 # Запускаем Node.js сервер
 # Важно: слушаем на 0.0.0.0, а не на localhost
-CMD ["node", "server.js"]
+CMD ["node", "server.cjs"]
