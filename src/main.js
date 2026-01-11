@@ -271,6 +271,55 @@ if (categoryItems.length > 0 && categoriesText) {
   })
 }
 
+// Page hero image aspect ratio sync
+const pageHeroText = document.querySelector('.page-hero-text')
+const pageHeroImage = document.querySelector('.page-hero-image')
+
+if (pageHeroText && pageHeroImage) {
+  function syncPageHeroImage() {
+    // Reset styles to get natural dimensions
+    pageHeroImage.style.aspectRatio = '1 / 1'
+    pageHeroImage.style.height = 'auto'
+    pageHeroText.style.height = 'auto'
+    
+    // Force reflow
+    pageHeroImage.offsetHeight
+    
+    // Get dimensions
+    const imageWidth = pageHeroImage.offsetWidth
+    const squareHeight = imageWidth // Height if image stays square
+    const textHeight = pageHeroText.offsetHeight
+    
+    if (textHeight > squareHeight) {
+      // Text is taller, remove aspect-ratio and stretch image to match text height
+      pageHeroImage.style.aspectRatio = 'none'
+      pageHeroImage.style.height = `${textHeight}px`
+    } else {
+      // Image square height is taller or equal, keep aspect-ratio and set text to match
+      pageHeroImage.style.aspectRatio = '1 / 1'
+      pageHeroImage.style.height = 'auto'
+      pageHeroText.style.height = `${squareHeight}px`
+    }
+  }
+  
+  // Sync on load
+  setTimeout(syncPageHeroImage, 0)
+  
+  // Sync on resize
+  let resizeTimeout
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout)
+    resizeTimeout = setTimeout(syncPageHeroImage, 100)
+  })
+  
+  // Sync when content changes
+  const observer = new ResizeObserver(() => {
+    syncPageHeroImage()
+  })
+  observer.observe(pageHeroText)
+  observer.observe(pageHeroImage)
+}
+
 // Refresh section image height sync
 const refreshContent = document.querySelector('.refresh-content')
 const refreshImage = document.querySelector('.refresh-image')
