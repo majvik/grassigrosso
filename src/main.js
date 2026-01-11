@@ -425,12 +425,9 @@ if (faqItems.length > 0) {
 const contactForms = document.querySelectorAll('.contact-form')
 
 if (contactForms.length > 0) {
-  // API endpoint из переменной окружения
-  const API_URL = import.meta.env.VITE_API_URL
-  
-  if (!API_URL) {
-    console.error('VITE_API_URL не установлен в переменных окружения!')
-  }
+  // API endpoint - используем относительный путь для работы в одном приложении
+  // В dev режиме будет проксироваться через Vite, на продакшене будет работать напрямую
+  const API_URL = import.meta.env.VITE_API_URL || '/api/submit'
 
   // Функция для определения названия страницы
   const getPageName = () => {
