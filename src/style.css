@@ -65,7 +65,6 @@ body {
   color: var(--color-text);
   background-color: var(--color-bg-white);
   min-height: 100vh;
-  min-width: 1440px;
   overflow-x: hidden;
 }
 
@@ -1255,6 +1254,494 @@ a:hover .arrow-medium {
 
 /* ==================== RESPONSIVE STYLES ==================== */
 
+/* Tablet landscape and small desktops */
+@media (max-width: 1439px) {
+  .header-top {
+    padding: 24px 40px 0;
+  }
+
+  .header-main {
+    padding: 40px 40px 0;
+  }
+
+  .hero {
+    padding: 80px 40px;
+    gap: 60px;
+  }
+
+  .hero-title {
+    font-size: 64px;
+  }
+
+  .hero-image {
+    height: 600px;
+  }
+
+  .business-solutions {
+    padding: 80px 40px;
+  }
+
+  .solutions-grid {
+    gap: 40px;
+  }
+
+  .solution-card {
+    max-width: none;
+  }
+
+  .philosophy {
+    padding: 80px 40px;
+  }
+
+  .philosophy-left {
+    width: 450px;
+  }
+
+  .philosophy-right {
+    width: 550px;
+    padding-top: 120px;
+  }
+
+  .collections {
+    padding: 80px 0;
+  }
+
+  .collections-header {
+    padding: 0 40px;
+  }
+
+  .collections-grid {
+    padding-left: 40px;
+    padding-right: 40px;
+    scroll-padding-left: 40px;
+    gap: 40px;
+  }
+
+  .collections-nav {
+    padding: 0 40px;
+  }
+
+  .partners {
+    padding: 80px 40px;
+  }
+
+  .testimonials {
+    padding: 80px 0;
+  }
+
+  .testimonials .section-title {
+    padding: 0 40px;
+  }
+
+  .testimonials-grid {
+    padding-left: 40px;
+    padding-right: 40px;
+    scroll-padding-left: 40px;
+  }
+
+  .testimonial-card {
+    width: calc((100vw - 40px - 40px - 32px) / 2);
+    min-width: 400px;
+  }
+
+  .certification {
+    padding: 80px 40px;
+  }
+
+  .certification-grid {
+    gap: 40px;
+  }
+
+  .footer-content {
+    padding: 0 40px;
+  }
+
+  .footer-bottom {
+    padding: 0 40px 24px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1200px) {
+  .header-top {
+    padding: 20px 32px 0;
+  }
+
+  .header-main {
+    padding: 32px 32px 0;
+  }
+
+  .header-main-content {
+    padding-bottom: 32px;
+  }
+
+  .nav-menu {
+    gap: 24px;
+  }
+
+  .hero {
+    padding: 64px 32px;
+    gap: 48px;
+  }
+
+  .hero-title {
+    font-size: 56px;
+  }
+
+  .hero-description {
+    font-size: 18px;
+  }
+
+  .hero-image {
+    height: 500px;
+  }
+
+  .business-solutions {
+    padding: 64px 32px;
+  }
+
+  .business-solutions .section-title {
+    margin-bottom: 48px;
+  }
+
+  .solutions-grid {
+    gap: 32px;
+  }
+
+  .solution-title {
+    font-size: 28px;
+  }
+
+  .philosophy {
+    padding: 64px 32px;
+  }
+
+  .philosophy-left {
+    width: 380px;
+    gap: 20px;
+  }
+
+  .philosophy-right {
+    width: 480px;
+    padding-top: 100px;
+    gap: 40px;
+  }
+
+  .feature-title {
+    font-size: 28px;
+  }
+
+  .collections {
+    padding: 64px 0;
+  }
+
+  .collections-header {
+    padding: 0 32px;
+    margin-bottom: 48px;
+  }
+
+  .collections-grid {
+    padding-left: 32px;
+    padding-right: 32px;
+    scroll-padding-left: 32px;
+    gap: 32px;
+  }
+
+  .collection-card {
+    width: 340px;
+  }
+
+  .collection-image {
+    width: 340px;
+    height: 192px;
+  }
+
+  .collection-title {
+    font-size: 28px;
+  }
+
+  .collections-nav {
+    padding: 0 32px;
+  }
+
+  .partners {
+    padding: 64px 32px;
+  }
+
+  .partners .section-title {
+    margin-bottom: 48px;
+  }
+
+  .partners-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 100px);
+  }
+
+  .testimonials {
+    padding: 64px 0;
+  }
+
+  .testimonials .section-title {
+    padding: 0 32px;
+    margin-bottom: 48px;
+  }
+
+  .testimonials-grid {
+    padding-left: 32px;
+    padding-right: 32px;
+    scroll-padding-left: 32px;
+    gap: 24px;
+  }
+
+  .testimonial-card {
+    width: calc((100vw - 32px - 32px - 24px) / 2);
+    min-width: 360px;
+    padding: 32px;
+  }
+
+  .testimonial-company {
+    font-size: 22px;
+  }
+
+  .certification {
+    padding: 64px 32px;
+  }
+
+  .certification-header {
+    margin-bottom: 48px;
+  }
+
+  .certification-grid {
+    gap: 32px;
+  }
+
+  .certification-title {
+    font-size: 28px;
+  }
+
+  .footer-content {
+    padding: 0 32px;
+    gap: 24px;
+  }
+
+  .footer-bottom {
+    padding: 0 32px 24px;
+  }
+}
+
+/* Tablet portrait */
+@media (max-width: 1024px) {
+  .header-nav-wrapper {
+    gap: 32px;
+  }
+
+  .nav-menu {
+    gap: 20px;
+  }
+
+  .nav-menu a {
+    font-size: 13px;
+  }
+
+  .btn-contact {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .hero-content {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .hero-text {
+    max-width: 100%;
+  }
+
+  .hero-link-wrapper {
+    padding-top: 0;
+  }
+
+  .hero-image {
+    height: 400px;
+  }
+
+  .section-title {
+    font-size: 48px;
+  }
+
+  .philosophy {
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .philosophy-left {
+    width: 100%;
+  }
+
+  .philosophy-right {
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .partners-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: unset;
+    grid-auto-rows: 90px;
+  }
+
+  .testimonial-card {
+    min-width: 320px;
+  }
+
+  .certification-grid {
+    flex-wrap: wrap;
+  }
+
+  .certification-card {
+    flex: 1 1 calc(50% - 16px);
+    min-width: 300px;
+  }
+
+  .footer-content {
+    flex-wrap: wrap;
+  }
+
+  .footer-column {
+    flex: 1 1 calc(50% - 12px);
+    min-width: 200px;
+  }
+
+  .footer-about {
+    flex: 1 1 100%;
+  }
+}
+
+/* Small tablet */
+@media (max-width: 900px) {
+  .header-top {
+    display: none;
+  }
+
+  .header-main {
+    padding: 24px 24px 0;
+  }
+
+  .header-nav-wrapper {
+    display: none;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-menu-overlay {
+    display: block;
+  }
+
+  .hero {
+    padding: 48px 24px;
+  }
+
+  .hero-title {
+    font-size: 48px;
+  }
+
+  .hero-image {
+    height: 350px;
+  }
+
+  .business-solutions {
+    padding: 48px 24px;
+  }
+
+  .solutions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .solution-card:nth-child(1),
+  .solution-card:nth-child(2) {
+    grid-column: auto;
+  }
+
+  .solution-card:nth-child(3) {
+    grid-column: span 2;
+    grid-row: auto;
+  }
+
+  .solution-divider {
+    display: none;
+  }
+
+  .philosophy {
+    padding: 48px 24px;
+  }
+
+  .collections-header {
+    padding: 0 24px;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .collections-grid {
+    padding-left: 24px;
+    padding-right: 24px;
+    scroll-padding-left: 24px;
+  }
+
+  .collections-nav {
+    padding: 0 24px;
+  }
+
+  .partners {
+    padding: 48px 24px;
+  }
+
+  .partners-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 80px;
+  }
+
+  .testimonials .section-title {
+    padding: 0 24px;
+  }
+
+  .testimonials-grid {
+    padding-left: 24px;
+    padding-right: 24px;
+    scroll-padding-left: 24px;
+    grid-template-rows: repeat(1, auto);
+  }
+
+  .testimonial-card {
+    width: 300px;
+    min-width: 300px;
+  }
+
+  .certification {
+    padding: 48px 24px;
+  }
+
+  .certification-card {
+    flex: 1 1 100%;
+  }
+
+  .footer {
+    padding: 40px 24px 24px;
+  }
+
+  .footer-content {
+    padding: 0;
+  }
+
+  .footer-bottom {
+    padding: 0;
+  }
+}
+
 @media (max-width: 768px) {
   /* Remove min-width on body */
   body {
@@ -1461,6 +1948,7 @@ a:hover .arrow-medium {
   .philosophy {
     padding: 64px 16px;
     flex-direction: column;
+    gap: 40px;
   }
 
   .philosophy-left {
@@ -1474,7 +1962,7 @@ a:hover .arrow-medium {
   .philosophy-right {
     width: 100%;
     padding-top: 0;
-    margin-top: 64px;
+    margin-top: 0;
   }
 
   .philosophy-feature {
@@ -1771,5 +2259,15 @@ a:hover .arrow-medium {
   .solution-card:nth-child(3) {
     grid-column: 1;
     grid-row: auto;
+  }
+
+  /* Philosophy - icon on top */
+  .philosophy-feature {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .feature-title {
+    font-size: 22px;
   }
 }
