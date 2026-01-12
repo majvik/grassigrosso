@@ -61,10 +61,10 @@ PORT=3000
 
 1. **Тип приложения:** Node.js (не статический сайт!)
 2. **Команда сборки:** `npm run build`
-3. **Команда запуска:** `npm start` (уже в package.json)
+3. **Команда запуска:** `node server.cjs` (уже в Dockerfile CMD)
 4. **Переменные окружения:** добавьте `BOT_TOKEN` и `CHAT_ID` в настройках
 
-Timeweb автоматически определит Node.js приложение по наличию `package.json` и `server.js`.
+Timeweb автоматически определит Node.js приложение по наличию `package.json`.
 
 ## Структура проекта
 
@@ -74,7 +74,6 @@ Timeweb автоматически определит Node.js приложени
 │   ├── main.js      # Основной JavaScript
 │   ├── style.css    # Стили
 │   └── fonts/       # Шрифты
-├── server.js        # Обёртка для Timeweb (требует server.cjs)
 ├── server.cjs       # Express сервер
 ├── index.html       # Главная страница
 ├── hotels.html      # Страница для отелей
