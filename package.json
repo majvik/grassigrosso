@@ -2,12 +2,12 @@
   "name": "grassigrosso",
   "version": "1.0.0",
   "private": true,
+  "type": "commonjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node server.cjs",
-    "dev:full": "concurrently \"npm run dev\" \"node server.cjs\""
+    "start": "node server.cjs"
   },
   "dependencies": {
     "express": "^4.18.2",
