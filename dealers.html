@@ -73,9 +73,11 @@
       <section class="page-hero">
         <div class="page-hero-content">
           <div class="page-hero-text">
-            <h1 class="page-hero-title">Дилерская программа Grassigrosso</h1>
-            <p class="page-hero-description">Станьте официальным дилером премиальных матрасов. Развивайте свой бизнес с надежным производителем.</p>
-            <a href="#contact-form" class="btn-primary-large">Стать дилером</a>
+            <div class="page-hero-text-top">
+              <h1 class="page-hero-title">Дилерская программа Grassigrosso</h1>
+              <p class="page-hero-description">Станьте официальным дилером премиальных матрасов. Развивайте свой бизнес с надежным производителем.</p>
+              <a href="#contact-form" class="btn-primary-large">Стать дилером</a>
+            </div>
           </div>
           <div class="page-hero-image">
             <img src="./public/hero-bedroom.png" alt="Интерьер спальни" />
@@ -83,8 +85,9 @@
         </div>
         <div class="section-divider"></div>
         <!-- Stats -->
-        <div class="stats-grid">
-          <div class="stat-item">
+        <div class="stats-wrapper">
+          <div class="stats-grid">
+            <div class="stat-item">
             <span class="stat-label">Партнеров</span>
             <span class="stat-value">250+</span>
           </div>
@@ -103,6 +106,7 @@
           <div class="stat-item">
             <span class="stat-label">Дней гарантии</span>
             <span class="stat-value">6 500</span>
+          </div>
           </div>
         </div>
       </section>
@@ -329,10 +333,6 @@
                 <input type="text" id="name" placeholder="Иван Иванов" />
               </div>
               <div class="form-group">
-                <label for="company">Компания</label>
-                <input type="text" id="company" placeholder="ООО «Ваша компания»" />
-              </div>
-              <div class="form-group">
                 <label for="city">Город</label>
                 <input type="text" id="city" placeholder="Москва" />
               </div>
@@ -349,8 +349,17 @@
                 <textarea id="message" placeholder="Ваше сообщение"></textarea>
               </div>
               <div class="form-checkbox">
-                <input type="checkbox" id="privacy" />
-                <label for="privacy">Я согласен на обработку моих персональных данных в соответствии с <a href="#">Политикой конфиденциальности</a></label>
+                <input type="checkbox" id="privacy" checked />
+                <label for="privacy">
+                  <span class="checkbox-custom">
+                    <svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white"/>
+                      <path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" stroke-opacity="0.1"/>
+                      <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2"/>
+                    </svg>
+                  </span>
+                  <span class="checkbox-text">Я согласен на обработку моих персональных данных в соответствии с <a href="#">Политикой конфиденциальности</a></span>
+                </label>
               </div>
               <button type="submit" class="btn-primary">Отправить</button>
             </form>
@@ -358,7 +367,7 @@
           <div class="contact-info">
             <div class="contact-info-item">
               <div class="contact-info-icon">
-                <img src="./public/icon-phone.svg" alt="" />
+                <img src="./public/icon-phone-vectorly.svg" alt="" />
               </div>
               <div class="contact-info-content">
                 <h4 class="contact-info-title">Телефон</h4>
@@ -369,7 +378,7 @@
             <div class="contact-info-divider"></div>
             <div class="contact-info-item">
               <div class="contact-info-icon">
-                <img src="./public/icon-email.svg" alt="" />
+                <img src="./public/icon-email-vectorly.svg" alt="" />
               </div>
               <div class="contact-info-content">
                 <h4 class="contact-info-title">Email</h4>
@@ -380,7 +389,7 @@
             <div class="contact-info-divider"></div>
             <div class="contact-info-item">
               <div class="contact-info-icon">
-                <img src="./public/icon-location.svg" alt="" />
+                <img src="./public/icon-location-vectorly.svg" alt="" />
               </div>
               <div class="contact-info-content">
                 <h4 class="contact-info-title">Адрес</h4>

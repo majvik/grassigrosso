@@ -2311,6 +2311,16 @@ a:hover .arrow-medium {
   gap: 32px;
 }
 
+.page-hero-text > div:not(.page-hero-text-top) {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-self: flex-start;
+  height: auto;
+  width: 100%;
+  flex-shrink: 0;
+}
+
 .page-hero-title {
   font-family: var(--font-bounded);
   font-size: 56px;

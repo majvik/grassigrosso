@@ -317,8 +317,31 @@ if (categoryItems.length > 0 && categoriesText) {
 const pageHeroText = document.querySelector('.page-hero-text')
 const pageHeroImage = document.querySelector('.page-hero-image')
 
-if (pageHeroText && pageHeroImage) {
+// Check if we're on dealers page - don't sync height there
+// Check by looking for conditions-section which is unique to dealers page
+function isDealersPage() {
+  const path = window.location.pathname
+  const href = window.location.href
+  return path.includes('dealers.html') || 
+         path.includes('/dealers') ||
+         href.includes('dealers.html') ||
+         href.includes('/dealers') ||
+         document.querySelector('.conditions-section') !== null ||
+         document.title.includes('Дилер') ||
+         document.title.includes('дилер')
+}
+
+if (pageHeroText && pageHeroImage && !isDealersPage()) {
   function syncPageHeroImage() {
+    // Double check we're not on dealers page
+    if (isDealersPage()) {
+      // Reset any styles that might have been set
+      pageHeroImage.style.aspectRatio = ''
+      pageHeroImage.style.height = ''
+      pageHeroText.style.height = ''
+      return
+    }
+    
     // Only sync on desktop (width > 1024px)
     if (window.innerWidth <= 1024) {
       // Reset styles on mobile
@@ -365,10 +388,17 @@ if (pageHeroText && pageHeroImage) {
   
   // Sync when content changes
   const observer = new ResizeObserver(() => {
-    syncPageHeroImage()
+    if (!isDealersPage()) {
+      syncPageHeroImage()
+    }
   })
   observer.observe(pageHeroText)
   observer.observe(pageHeroImage)
+} else if (pageHeroText && pageHeroImage && isDealersPage()) {
+  // On dealers page, make sure styles are reset
+  pageHeroImage.style.aspectRatio = ''
+  pageHeroImage.style.height = ''
+  pageHeroText.style.height = ''
 }
 
 // Refresh section image height sync (desktop only)

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const path = require('path');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 require('dotenv').config();
 
 const app = express();
@@ -142,12 +143,29 @@ app.post('/api/submit', async (req, res) => {
 });
 
 // Статические файлы (после API routes)
-app.use(express.static(path.join(__dirname, 'dist')));
+const isDev = process.env.NODE_ENV !== 'production';
 
-// Fallback для SPA - все остальные GET запросы отдаем index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+if (isDev) {
+  // В dev режиме проксируем запросы к Vite (кроме API)
+  app.use(createProxyMiddleware({
+    target: 'http://localhost:5173',
+    changeOrigin: true,
+    ws: true, // для WebSocket (HMR)
+    logLevel: 'silent',
+    filter: (pathname) => {
+      // Не проксируем API запросы
+      return !pathname.startsWith('/api');
+    }
+  }));
+} else {
+  // В production отдаем статические файлы из dist
+  app.use(express.static(path.join(__dirname, 'dist')));
+  
+  // Fallback для SPA - все остальные GET запросы отдаем index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  });
+}
 
 // Запуск сервера
 const server = app.listen(PORT, '0.0.0.0', () => {
