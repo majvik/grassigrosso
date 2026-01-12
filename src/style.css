@@ -595,6 +595,7 @@ a:hover .arrow-small {
   background-color: var(--color-bg-beige);
   padding: 120px 0;
   position: relative;
+  overflow: hidden;
 }
 
 .collections-header {
@@ -640,16 +641,11 @@ a:hover .arrow-small {
   padding-left: 64px;
   padding-right: 64px;
   padding-bottom: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-left: 64px;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  overflow: visible;
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
+  will-change: transform;
 }
 
 .collections-grid:active {
@@ -686,6 +682,7 @@ a:hover .arrow-small {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  will-change: transform;
 }
 
 .collection-content {
@@ -820,6 +817,7 @@ a:hover .arrow-small {
 /* Testimonials */
 .testimonials {
   padding: 0 0 120px 0;
+  overflow: hidden;
 }
 
 .testimonials .section-title {
@@ -835,16 +833,11 @@ a:hover .arrow-small {
   padding-left: 64px;
   padding-right: 64px;
   padding-bottom: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-left: 64px;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  overflow: visible;
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
+  will-change: transform;
 }
 
 .testimonials-grid:active {
@@ -871,7 +864,7 @@ a:hover .arrow-small {
   width: calc((100vw - 64px - 64px - 32px) / 2);
   min-width: 500px;
   flex-shrink: 0;
-  scroll-snap-align: start;
+  will-change: transform;
 }
 
 /* Fixed width for screens 1920px and larger to work with scaling */

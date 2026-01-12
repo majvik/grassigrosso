@@ -1,4 +1,5 @@
 import './style.css'
+import { gsap } from 'gsap'
 
 // Geography cities animation - start only when in viewport
 const geographySection = document.querySelector('.geography-section')
@@ -167,7 +168,7 @@ if (mobileMenuBtn && mobileMenuClose && mobileMenuOverlay) {
   })
 }
 
-// Collections slider
+// Collections slider with LERP and parallax
 const slider = document.querySelector('.collections-grid')
 const prevBtn = document.querySelector('.collections-arrows .arrow-btn.prev')
 const nextBtn = document.querySelector('.collections-arrows .arrow-btn.next')
@@ -175,142 +176,298 @@ const progressFill = document.querySelector('.collections-progress-fill')
 
 if (slider && prevBtn && nextBtn && progressFill) {
   const cardWidth = 392 + 56 // card width + gap
+  const cards = slider.querySelectorAll('.collection-card')
+  const cardImages = slider.querySelectorAll('.collection-image img')
   
-  // Update progress and button states
-  function updateSlider() {
-    const scrollLeft = slider.scrollLeft
-    const maxScroll = slider.scrollWidth - slider.clientWidth
-    const scrollProgress = maxScroll > 0 ? scrollLeft / maxScroll : 0
+  // State for smooth scrolling
+  const state = {
+    currentX: 0,
+    targetX: 0,
+    isDragging: false,
+    startX: 0,
+    lastX: 0,
+    lastMouseX: 0
+  }
+  
+  // LERP factor for smooth animation
+  const LERP_FACTOR = 0.08
+  
+  // Set up images for parallax
+  cardImages.forEach(img => {
+    img.style.willChange = 'transform'
+    img.style.transformOrigin = 'center center'
+  })
+  
+  // Update parallax effect on images
+  function updateParallax() {
+    const viewportCenter = window.innerWidth / 2
     
-    // Calculate thumb size based on visible/total ratio
+    cards.forEach((card) => {
+      const img = card.querySelector('.collection-image img')
+      if (!img) return
+      
+      const cardRect = card.getBoundingClientRect()
+      
+      // Skip if card is far outside viewport
+      if (cardRect.right < -500 || cardRect.left > window.innerWidth + 500) {
+        return
+      }
+      
+      const cardCenter = cardRect.left + cardRect.width / 2
+      const distanceFromCenter = cardCenter - viewportCenter
+      const parallaxOffset = distanceFromCenter * -0.25
+      
+      img.style.transform = `translateX(${parallaxOffset}px) scale(2.25)`
+    })
+  }
+  
+  // Update progress bar and buttons
+  function updateUI() {
+    const maxScroll = Math.max(0, slider.scrollWidth - slider.clientWidth)
+    const scrollProgress = maxScroll > 0 ? Math.min(1, Math.max(0, state.currentX / maxScroll)) : 0
+    
     const visibleRatio = slider.clientWidth / slider.scrollWidth
-    const thumbWidth = Math.max(visibleRatio * 100, 15) // minimum 15%
-    
-    // Calculate thumb position
+    const thumbWidth = Math.max(visibleRatio * 100, 15)
     const trackSpace = 100 - thumbWidth
     const thumbPosition = scrollProgress * trackSpace
     
     progressFill.style.width = `${thumbWidth}%`
     progressFill.style.left = `${thumbPosition}%`
     
-    // Update button states
-    prevBtn.disabled = scrollLeft <= 1
-    nextBtn.disabled = scrollLeft >= maxScroll - 1
+    const prevDisabled = state.currentX <= 1
+    const nextDisabled = state.currentX >= maxScroll - 1
+    
+    prevBtn.style.opacity = prevDisabled ? '0.25' : '0.7'
+    nextBtn.style.opacity = nextDisabled ? '0.25' : '0.7'
+    prevBtn.disabled = prevDisabled
+    nextBtn.disabled = nextDisabled
+  }
+  
+  // Main animation loop
+  function animate() {
+    // Limit targetX to valid range
+    const maxScroll = Math.max(0, slider.scrollWidth - slider.clientWidth)
+    state.targetX = Math.max(0, Math.min(maxScroll, state.targetX))
+    
+    // LERP interpolation for smooth movement
+    state.currentX += (state.targetX - state.currentX) * LERP_FACTOR
+    
+    // Apply transform
+    slider.style.transform = `translate3d(${-state.currentX}px, 0, 0)`
+    
+    // Update parallax and UI
+    updateParallax()
+    updateUI()
+    
+    requestAnimationFrame(animate)
   }
   
   // Arrow navigation
   prevBtn.addEventListener('click', () => {
-    slider.scrollBy({ left: -cardWidth, behavior: 'smooth' })
+    state.targetX = Math.max(0, state.targetX - cardWidth)
   })
   
   nextBtn.addEventListener('click', () => {
-    slider.scrollBy({ left: cardWidth, behavior: 'smooth' })
+    const maxScroll = Math.max(0, slider.scrollWidth - slider.clientWidth)
+    state.targetX = Math.min(maxScroll, state.targetX + cardWidth)
   })
   
-  // Listen to scroll events
-  slider.addEventListener('scroll', updateSlider)
-  
-  // Drag to scroll
-  let isDown = false
-  let startX
-  let scrollLeftStart
-  
+  // Mouse drag
   slider.addEventListener('mousedown', (e) => {
-    isDown = true
+    state.isDragging = true
+    state.startX = e.clientX
+    state.lastMouseX = e.clientX
+    state.lastX = state.targetX
     slider.classList.add('active')
-    startX = e.pageX - slider.offsetLeft
-    scrollLeftStart = slider.scrollLeft
+    e.preventDefault()
+  })
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!state.isDragging) return
+    e.preventDefault()
+    const deltaX = (e.clientX - state.lastMouseX) * 2
+    state.targetX -= deltaX
+    state.lastMouseX = e.clientX
+  })
+  
+  document.addEventListener('mouseup', () => {
+    if (state.isDragging) {
+      state.isDragging = false
+      slider.classList.remove('active')
+    }
   })
   
   slider.addEventListener('mouseleave', () => {
-    isDown = false
-    slider.classList.remove('active')
+    if (state.isDragging) {
+      state.isDragging = false
+      slider.classList.remove('active')
+    }
   })
   
-  slider.addEventListener('mouseup', () => {
-    isDown = false
-    slider.classList.remove('active')
-  })
-  
-  slider.addEventListener('mousemove', (e) => {
-    if (!isDown) return
-    e.preventDefault()
-    const x = e.pageX - slider.offsetLeft
-    const walk = (x - startX) * 1.5
-    slider.scrollLeft = scrollLeftStart - walk
-  })
-  
-  // Touch support for drag to scroll
+  // Touch support
   slider.addEventListener('touchstart', (e) => {
-    isDown = true
+    state.isDragging = true
+    state.startX = e.touches[0].clientX
+    state.lastX = state.targetX
     slider.classList.add('active')
-    startX = e.touches[0].pageX - slider.offsetLeft
-    scrollLeftStart = slider.scrollLeft
+  }, { passive: false })
+  
+  slider.addEventListener('touchmove', (e) => {
+    if (!state.isDragging) return
+    const deltaX = (e.touches[0].clientX - state.startX) * 1.5
+    state.targetX = state.lastX - deltaX
   }, { passive: false })
   
   slider.addEventListener('touchend', () => {
-    isDown = false
+    state.isDragging = false
     slider.classList.remove('active')
   })
   
-  slider.addEventListener('touchmove', (e) => {
-    if (!isDown) return
-    e.preventDefault()
-    const x = e.touches[0].pageX - slider.offsetLeft
-    const walk = (x - startX) * 1.5
-    slider.scrollLeft = scrollLeftStart - walk
-  }, { passive: false })
+  // Prevent default drag behavior
+  slider.addEventListener('dragstart', (e) => e.preventDefault())
   
-  // Initialize: ensure scroll is at start
-  slider.scrollLeft = 0
+  // Initialize
+  slider.style.overflow = 'visible'
+  slider.style.transform = 'translate3d(0, 0, 0)'
+  state.currentX = 0
+  state.targetX = 0
   
-  // Wait for layout then update
-  requestAnimationFrame(() => {
-    slider.scrollLeft = 0
-    updateSlider()
-  })
+  // Start animation loop
+  animate()
+  
+  // Animate cards on initial load
+  if (cards.length > 0) {
+    gsap.set(cards, { opacity: 0, y: 30 })
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          gsap.to(entry.target, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            delay: index * 0.1,
+            ease: 'power2.out'
+          })
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.1 })
+    
+    cards.forEach(card => observer.observe(card))
+  }
 }
 
-// Testimonials slider with autoplay
+// Testimonials slider with LERP, parallax and autoplay
 const testimonialsSlider = document.querySelector('.testimonials-grid')
 const testimonialsSection = document.querySelector('.testimonials')
 
 if (testimonialsSlider && testimonialsSection) {
+  let testimonialCards = testimonialsSlider.querySelectorAll('.testimonial-card')
+  const originalCardCount = testimonialCards.length
+  
+  // Duplicate cards for infinite loop (5 copies for smoother transition)
+  if (originalCardCount > 0) {
+    const copies = 5
+    const cardWidth = testimonialCards[0].offsetWidth + 32 // width + gap
+    const sequenceWidth = cardWidth * originalCardCount
+    
+    // Clone cards
+    for (let i = 0; i < copies; i++) {
+      testimonialCards.forEach(card => {
+        const clone = card.cloneNode(true)
+        testimonialsSlider.appendChild(clone)
+      })
+    }
+    
+    // Update cards list
+    testimonialCards = testimonialsSlider.querySelectorAll('.testimonial-card')
+    
+    // Start from middle copy (copy 2 of 5, so we have 2 copies before and 2 after)
+    const startOffset = sequenceWidth * 2
+    testimonialsSlider.style.transform = `translate3d(${-startOffset}px, 0, 0)`
+  }
+  
+  // State for smooth scrolling
+  const state = {
+    currentX: originalCardCount > 0 ? (testimonialCards[0].offsetWidth + 32) * originalCardCount * 2 : 0,
+    targetX: originalCardCount > 0 ? (testimonialCards[0].offsetWidth + 32) * originalCardCount * 2 : 0,
+    isDragging: false,
+    startX: 0,
+    lastX: 0,
+    lastMouseX: 0,
+    isUserInteracting: false,
+    isInView: false
+  }
+  
+  // LERP factor for smooth animation (lower = smoother but slower)
+  const LERP_FACTOR = 0.05
+  const AUTOPLAY_LERP_FACTOR = 0.03 // Slower for autoplay
+  let autoplayInterval = null
+  let isAutoplayActive = false
+  
+  // Animate cards on initial load
+  if (testimonialCards.length > 0) {
+    gsap.set(testimonialCards, { opacity: 0, x: 50 })
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          gsap.to(entry.target, {
+            opacity: 1,
+            x: 0,
+            duration: 0.7,
+            delay: index * 0.08,
+            ease: 'power2.out'
+          })
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.1 })
+    
+    testimonialCards.forEach(card => observer.observe(card))
+  }
+  
   // Get actual card width + gap for 2 columns
   const getScrollStep = () => {
-    const card = testimonialsSlider.querySelector('.testimonial-card')
+    const card = testimonialCards[0]
     return card ? (card.offsetWidth + 32) * 2 : 1000
   }
-  let autoplayInterval
-  let isUserInteracting = false
-  let isInView = false
+  
+  // Get sequence width (one full set of original cards)
+  const getSequenceWidth = () => {
+    const card = testimonialCards[0]
+    return card ? (card.offsetWidth + 32) * originalCardCount : 0
+  }
+  
   
   // Autoplay function
   function startAutoplay() {
-    if (autoplayInterval) return // Already running
+    if (autoplayInterval) return
+    isAutoplayActive = true
     autoplayInterval = setInterval(() => {
-      if (isUserInteracting || !isInView) return
-      
-      const maxScroll = testimonialsSlider.scrollWidth - testimonialsSlider.clientWidth
-      
-      if (testimonialsSlider.scrollLeft >= maxScroll - 1) {
-        // Reset to start smoothly
-        testimonialsSlider.scrollTo({ left: 0, behavior: 'smooth' })
-      } else {
-        testimonialsSlider.scrollBy({ left: getScrollStep(), behavior: 'smooth' })
+      if (state.isUserInteracting || !state.isInView) {
+        isAutoplayActive = false
+        return
       }
-    }, 8000)
+      
+      // Infinite loop - just keep moving forward
+      state.targetX += getScrollStep()
+    }, 16000) // 2x slower (was 8000)
   }
   
   function stopAutoplay() {
-    clearInterval(autoplayInterval)
-    autoplayInterval = null
+    if (autoplayInterval) {
+      clearInterval(autoplayInterval)
+      autoplayInterval = null
+      isAutoplayActive = false
+    }
   }
   
   // Intersection Observer - start autoplay when 2/3 visible
-  const observer = new IntersectionObserver((entries) => {
+  const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      isInView = entry.isIntersecting
+      state.isInView = entry.isIntersecting
       if (entry.isIntersecting) {
         startAutoplay()
       } else {
@@ -318,86 +475,130 @@ if (testimonialsSlider && testimonialsSection) {
       }
     })
   }, {
-    threshold: 0.66 // 2/3 visible
+    threshold: 0.66
   })
   
-  observer.observe(testimonialsSection)
+  sectionObserver.observe(testimonialsSection)
   
-  // Drag to scroll
-  let isDown = false
-  let startX
-  let scrollLeftStart
+  // Main animation loop
+  function animate() {
+    const sequenceWidth = getSequenceWidth()
+    
+    // Use slower LERP for autoplay, faster for manual interaction
+    const lerpFactor = isAutoplayActive && !state.isDragging ? AUTOPLAY_LERP_FACTOR : LERP_FACTOR
+    
+    // LERP interpolation for smooth movement
+    state.currentX += (state.targetX - state.currentX) * lerpFactor
+    
+    // Handle infinite loop - reset position when reaching boundaries
+    // Check both currentX and targetX to prevent visible edge
+    const minBound = sequenceWidth * 1.5  // Start checking earlier
+    const maxBound = sequenceWidth * 2.5  // Start checking earlier
+    
+    if (state.currentX > maxBound || state.targetX > maxBound) {
+      // Moved too far right, jump back one sequence
+      const offset = sequenceWidth
+      state.currentX -= offset
+      state.targetX -= offset
+    } else if (state.currentX < minBound || state.targetX < minBound) {
+      // Moved too far left, jump forward one sequence
+      const offset = sequenceWidth
+      state.currentX += offset
+      state.targetX += offset
+    }
+    
+    // Apply transform
+    testimonialsSlider.style.transform = `translate3d(${-state.currentX}px, 0, 0)`
+    
+    requestAnimationFrame(animate)
+  }
   
+  // Mouse drag
   testimonialsSlider.addEventListener('mousedown', (e) => {
-    isDown = true
-    isUserInteracting = true
+    state.isDragging = true
+    state.isUserInteracting = true
+    stopAutoplay() // Stop autoplay on drag
+    state.startX = e.clientX
+    state.lastMouseX = e.clientX
+    state.lastX = state.targetX
     testimonialsSlider.classList.add('active')
-    startX = e.pageX - testimonialsSlider.offsetLeft
-    scrollLeftStart = testimonialsSlider.scrollLeft
+    e.preventDefault()
   })
   
-  testimonialsSlider.addEventListener('mouseleave', () => {
-    if (isDown) {
-      isDown = false
+  document.addEventListener('mousemove', (e) => {
+    if (!state.isDragging) return
+    e.preventDefault()
+    const deltaX = (e.clientX - state.lastMouseX) * 2
+    state.targetX -= deltaX
+    state.lastMouseX = e.clientX
+  })
+  
+  document.addEventListener('mouseup', () => {
+    if (state.isDragging) {
+      state.isDragging = false
       testimonialsSlider.classList.remove('active')
-      isUserInteracting = false
+      setTimeout(() => {
+        state.isUserInteracting = false
+      }, 300)
     }
   })
   
-  testimonialsSlider.addEventListener('mouseup', () => {
-    isDown = false
-    testimonialsSlider.classList.remove('active')
-    isUserInteracting = false
-  })
-  
-  testimonialsSlider.addEventListener('mousemove', (e) => {
-    if (!isDown) return
-    e.preventDefault()
-    const x = e.pageX - testimonialsSlider.offsetLeft
-    const walk = (x - startX) * 1.5
-    testimonialsSlider.scrollLeft = scrollLeftStart - walk
-  })
-  
-  // Touch support for drag to scroll
-  testimonialsSlider.addEventListener('touchstart', (e) => {
-    isDown = true
-    testimonialsSlider.classList.add('active')
-    startX = e.touches[0].pageX - testimonialsSlider.offsetLeft
-    scrollLeftStart = testimonialsSlider.scrollLeft
-  }, { passive: false })
-  
-  testimonialsSlider.addEventListener('touchend', () => {
-    isDown = false
-    testimonialsSlider.classList.remove('active')
-  })
-  
-  testimonialsSlider.addEventListener('touchmove', (e) => {
-    if (!isDown) return
-    e.preventDefault()
-    const x = e.touches[0].pageX - testimonialsSlider.offsetLeft
-    const walk = (x - startX) * 1.5
-    testimonialsSlider.scrollLeft = scrollLeftStart - walk
-  }, { passive: false })
-  
-  // Pause autoplay on hover
-  testimonialsSlider.addEventListener('mouseenter', () => {
-    isUserInteracting = true
-  })
-  
   testimonialsSlider.addEventListener('mouseleave', () => {
-    if (!isDown) {
-      isUserInteracting = false
+    if (state.isDragging) {
+      state.isDragging = false
+      testimonialsSlider.classList.remove('active')
+      setTimeout(() => {
+        state.isUserInteracting = false
+      }, 300)
     }
   })
   
   // Touch support
-  testimonialsSlider.addEventListener('touchstart', () => {
-    isUserInteracting = true
-  })
+  testimonialsSlider.addEventListener('touchstart', (e) => {
+    state.isDragging = true
+    state.isUserInteracting = true
+    stopAutoplay() // Stop autoplay on drag
+    state.startX = e.touches[0].clientX
+    state.lastX = state.targetX
+    testimonialsSlider.classList.add('active')
+  }, { passive: false })
+  
+  testimonialsSlider.addEventListener('touchmove', (e) => {
+    if (!state.isDragging) return
+    const deltaX = (e.touches[0].clientX - state.startX) * 1.5
+    state.targetX = state.lastX - deltaX
+  }, { passive: false })
   
   testimonialsSlider.addEventListener('touchend', () => {
-    isUserInteracting = false
+    state.isDragging = false
+    testimonialsSlider.classList.remove('active')
+    setTimeout(() => {
+      state.isUserInteracting = false
+    }, 300)
   })
+  
+  // Pause autoplay on hover
+  testimonialsSlider.addEventListener('mouseenter', () => {
+    state.isUserInteracting = true
+  })
+  
+  testimonialsSlider.addEventListener('mouseleave', () => {
+    if (!state.isDragging) {
+      state.isUserInteracting = false
+    }
+  })
+  
+  // Prevent default drag behavior
+  testimonialsSlider.addEventListener('dragstart', (e) => e.preventDefault())
+  
+  // Initialize
+  testimonialsSlider.style.overflow = 'visible'
+  testimonialsSlider.style.transform = 'translate3d(0, 0, 0)'
+  state.currentX = 0
+  state.targetX = 0
+  
+  // Start animation loop
+  animate()
 }
 
 // Hotel Categories Switcher
