@@ -95,6 +95,22 @@ initPageLoad().catch(err => {
   }, 2000)
 })
 
+// Scale page on screens 1920px and larger
+function scalePage() {
+  if (window.innerWidth >= 1920) {
+    const scale = window.innerWidth / 1920
+    document.body.style.transform = `scale(${scale})`
+    document.body.style.transformOrigin = 'top center'
+  } else {
+    document.body.style.transform = ''
+    document.body.style.transformOrigin = ''
+  }
+}
+
+// Apply scale on load and resize
+scalePage()
+window.addEventListener('resize', scalePage)
+
 // Cookie banner
 const cookieBanner = document.querySelector('.cookie-banner')
 const cookieBtn = document.querySelector('.btn-cookie')

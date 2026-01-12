@@ -119,35 +119,17 @@ body {
   overflow-x: hidden;
 }
 
-/* Scale proportionally on screens larger than 1920px */
-@media (min-width: 1921px) {
+/* Scale proportionally on screens 1920px and larger */
+@media (min-width: 1920px) {
+  html {
+    overflow-x: hidden;
+  }
+  
   body {
-    max-width: 1920px;
-    margin: 0 auto;
-  }
-}
-
-@media (min-width: 2100px) {
-  html {
-    zoom: 1.1;
-  }
-}
-
-@media (min-width: 2400px) {
-  html {
-    zoom: 1.25;
-  }
-}
-
-@media (min-width: 2880px) {
-  html {
-    zoom: 1.5;
-  }
-}
-
-@media (min-width: 3840px) {
-  html {
-    zoom: 2;
+    width: 1920px;
+    margin-left: auto;
+    margin-right: auto;
+    transform-origin: top center;
   }
 }
 
@@ -890,6 +872,13 @@ a:hover .arrow-small {
   min-width: 500px;
   flex-shrink: 0;
   scroll-snap-align: start;
+}
+
+/* Fixed width for screens 1920px and larger to work with scaling */
+@media (min-width: 1920px) {
+  .testimonial-card {
+    width: calc((1920px - 64px - 64px - 32px) / 2);
+  }
 }
 
 .testimonial-tag {
