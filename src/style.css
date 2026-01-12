@@ -8,7 +8,7 @@
 /* Nunito font - variable font for all weights */
 @font-face {
   font-family: 'Nunito';
-  src: url('./fonts/nunito-variable.ttf') format('truetype-variations');
+  src: url('./fonts/nunito-variable.woff2') format('woff2-variations');
   font-weight: 200 1000;
   font-style: normal;
   font-display: swap;
@@ -17,16 +17,16 @@
 /* Bounded font - variable font for all weights */
 @font-face {
   font-family: 'Bounded';
-  src: url('./fonts/bounded-variable.ttf') format('truetype-variations');
+  src: url('./fonts/bounded-variable.woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
-/* Bounded regular fallback */
+/* Bounded regular fallback - only load if variable font fails */
 @font-face {
   font-family: 'Bounded';
-  src: url('./fonts/bounded-regular.ttf') format('truetype');
+  src: url('./fonts/bounded-regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -44,6 +44,57 @@
   --color-partner-cell: #e1e1e1;
   --font-family: 'Nunito', sans-serif;
   --font-bounded: 'Bounded', sans-serif;
+}
+
+/* Preloader */
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.preloader.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(40, 62, 55, 0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Hide body content until fonts are loaded */
+body:not(.fonts-loaded) {
+  visibility: hidden;
+}
+
+body.fonts-loaded {
+  visibility: visible;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Arrow nudge animation */
@@ -2533,7 +2584,7 @@ a:hover .arrow-medium {
 
 /* Offers Section */
 .offers-section {
-  padding: 120px 64px;
+  padding: 120px 0;
   display: flex;
   flex-direction: column;
   gap: 64px;
@@ -2543,6 +2594,8 @@ a:hover .arrow-medium {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  padding-left: 64px;
+  padding-right: 64px;
 }
 
 .offers-header .section-title {
@@ -2560,7 +2613,9 @@ a:hover .arrow-medium {
 
 .offers-grid {
   display: flex;
-  gap: 32px;
+  gap: 64px;
+  padding-left: 64px;
+  padding-right: 64px;
 }
 
 .offer-card {
@@ -2685,14 +2740,23 @@ a:hover .arrow-medium {
 .quality-section {
   padding: 120px 64px;
   display: flex;
-  gap: 32px;
+  flex-direction: column;
+  gap: 80px;
+}
+
+.quality-content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 64px;
 }
 
 .quality-content {
-  width: 640px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
+  padding-right: 48px;
   gap: 24px;
 }
 
@@ -2713,11 +2777,11 @@ a:hover .arrow-medium {
 }
 
 .quality-image {
-  width: 640px;
-  height: 726px;
+  flex: 1;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
   border-radius: 24px;
   overflow: hidden;
-  flex-shrink: 0;
 }
 
 .quality-image img {
@@ -2729,7 +2793,7 @@ a:hover .arrow-medium {
 /* Requirements Section */
 .requirements-section {
   background-color: var(--color-bg-beige);
-  padding: 120px 64px;
+  padding: 120px 0;
   display: flex;
   flex-direction: column;
   gap: 64px;
@@ -2738,6 +2802,8 @@ a:hover .arrow-medium {
 .requirements-header {
   display: flex;
   justify-content: space-between;
+  padding-left: 64px;
+  padding-right: 64px;
   align-items: flex-end;
 }
 
@@ -2755,7 +2821,9 @@ a:hover .arrow-medium {
 
 .requirements-grid {
   display: flex;
-  gap: 32px;
+  gap: 64px;
+  padding-left: 64px;
+  padding-right: 64px;
 }
 
 .requirement-card {
@@ -3324,7 +3392,17 @@ a:hover .arrow-medium {
   }
 
   .offers-section {
-    padding: 80px 40px;
+    padding: 80px 0;
+  }
+
+  .offers-header {
+    padding-left: 64px;
+    padding-right: 64px;
+  }
+
+  .offers-grid {
+    padding-left: 64px;
+    padding-right: 64px;
   }
 
   .geography-section {
@@ -3333,19 +3411,35 @@ a:hover .arrow-medium {
 
   .quality-section {
     padding: 80px 40px;
+    gap: 60px;
+  }
+
+  .quality-content-wrapper {
+    gap: 40px;
   }
 
   .quality-content {
     width: 520px;
+    padding-right: 0;
   }
 
   .quality-image {
     width: 520px;
-    height: 600px;
+    aspect-ratio: 1 / 1;
   }
 
   .requirements-section {
-    padding: 80px 40px;
+    padding: 80px 0;
+  }
+
+  .requirements-header {
+    padding-left: 64px;
+    padding-right: 64px;
+  }
+
+  .requirements-grid {
+    padding-left: 64px;
+    padding-right: 64px;
   }
 
   .packages-section {
@@ -3426,7 +3520,7 @@ a:hover .arrow-medium {
   }
 
   .offers-section {
-    padding: 64px 32px;
+    padding: 64px 0;
     gap: 48px;
   }
 
@@ -3434,6 +3528,13 @@ a:hover .arrow-medium {
     flex-direction: column;
     align-items: flex-start;
     gap: 24px;
+    padding-left: 64px;
+    padding-right: 64px;
+  }
+
+  .offers-grid {
+    padding-left: 64px;
+    padding-right: 64px;
   }
 
   .offer-title {
@@ -3466,11 +3567,11 @@ a:hover .arrow-medium {
 
   .quality-image {
     width: 400px;
-    height: 500px;
+    aspect-ratio: 1 / 1;
   }
 
   .requirements-section {
-    padding: 64px 32px;
+    padding: 64px 0;
     gap: 48px;
   }
 
@@ -3478,6 +3579,13 @@ a:hover .arrow-medium {
     flex-direction: column;
     align-items: flex-start;
     gap: 24px;
+    padding-left: 64px;
+    padding-right: 64px;
+  }
+
+  .requirements-grid {
+    padding-left: 64px;
+    padding-right: 64px;
   }
 
   .requirement-title {
@@ -3614,18 +3722,21 @@ a:hover .arrow-medium {
     gap: 48px;
   }
 
-  .quality-section {
+  .quality-content-wrapper {
     flex-direction: column;
-    gap: 48px;
+    gap: 32px;
   }
 
   .quality-content {
     width: 100%;
+    padding-right: 0;
   }
 
   .quality-image {
     width: 100%;
-    height: 400px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    margin-top: 40px;
   }
 
   .requirements-grid {
@@ -3738,8 +3849,18 @@ a:hover .arrow-medium {
   }
 
   .offers-section {
-    padding: 64px 16px;
+    padding: 64px 0;
     gap: 40px;
+  }
+
+  .offers-header {
+    padding-left: 64px;
+    padding-right: 64px;
+  }
+
+  .offers-grid {
+    padding-left: 64px;
+    padding-right: 64px;
   }
 
   .offer-title {
@@ -3774,13 +3895,24 @@ a:hover .arrow-medium {
   }
 
   .quality-image {
-    height: 300px;
+    height: auto;
+    aspect-ratio: 16 / 9;
     border-radius: 16px;
   }
 
   .requirements-section {
-    padding: 64px 16px;
+    padding: 64px 0;
     gap: 40px;
+  }
+
+  .requirements-header {
+    padding-left: 64px;
+    padding-right: 64px;
+  }
+
+  .requirements-grid {
+    padding-left: 64px;
+    padding-right: 64px;
   }
 
   .requirement-title {

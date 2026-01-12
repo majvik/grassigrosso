@@ -1,5 +1,80 @@
 import './style.css'
 
+// Font loading and preloader
+const preloader = document.getElementById('preloader')
+
+// Function to check if fonts are loaded
+async function waitForFonts() {
+  // Wait for document to be ready
+  if (document.readyState === 'loading') {
+    await new Promise(resolve => {
+      document.addEventListener('DOMContentLoaded', resolve)
+    })
+  }
+
+  // Check if document.fonts API is available
+  if (document.fonts && document.fonts.ready) {
+    try {
+      // Wait for all fonts to be loaded
+      await document.fonts.ready
+      
+      // Additional check: verify specific fonts are loaded
+      const nunitoLoaded = document.fonts.check('16px Nunito')
+      const boundedLoaded = document.fonts.check('16px Bounded')
+      
+      // If fonts are not loaded yet, wait a bit more
+      if (!nunitoLoaded || !boundedLoaded) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+    } catch (e) {
+      console.warn('Font loading check failed:', e)
+    }
+  } else {
+    // Fallback: wait a reasonable time for fonts to load
+    await new Promise(resolve => setTimeout(resolve, 500))
+  }
+}
+
+// Initialize page load
+async function initPageLoad() {
+  // Wait for fonts to load
+  await waitForFonts()
+  
+  // Small delay to ensure fonts are rendered
+  await new Promise(resolve => requestAnimationFrame(resolve))
+  
+  // Mark fonts as loaded - this will show the body with fade
+  document.body.classList.add('fonts-loaded')
+  
+  // Hide preloader with fade
+  if (preloader) {
+    preloader.classList.add('hidden')
+    // Remove from DOM after animation
+    setTimeout(() => {
+      if (preloader && preloader.parentNode) {
+        preloader.remove()
+      }
+    }, 500)
+  }
+}
+
+// Start initialization
+initPageLoad().catch(err => {
+  console.error('Error initializing page:', err)
+  // Fallback: show page anyway after timeout
+  setTimeout(() => {
+    document.body.classList.add('fonts-loaded')
+    if (preloader) {
+      preloader.classList.add('hidden')
+      setTimeout(() => {
+        if (preloader && preloader.parentNode) {
+          preloader.remove()
+        }
+      }, 500)
+    }
+  }, 2000)
+})
+
 // Cookie banner
 const cookieBanner = document.querySelector('.cookie-banner')
 const cookieBtn = document.querySelector('.btn-cookie')

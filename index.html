@@ -9,9 +9,17 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./public/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="./public/apple-touch-icon.png" />
     <link rel="manifest" href="./public/site.webmanifest" />
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="./src/fonts/nunito-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="./src/fonts/bounded-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+      <div class="preloader-spinner"></div>
+    </div>
+    
     <!-- Cookie Banner (Mobile: top fixed, Desktop: bottom-right fixed) -->
     <div class="cookie-banner">
       <img src="./public/cookie-icon.png" alt="" class="cookie-icon" />
