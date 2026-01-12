@@ -2902,13 +2902,13 @@ a:hover .arrow-medium {
 
 .packages-grid {
   display: flex;
-  gap: 32px;
-  align-items: center;
+  gap: 24px;
+  align-items: stretch;
 }
 
 .package-card {
-  width: 416px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
   background-color: var(--color-bg-beige);
   border-radius: 16px;
   padding: 48px;
@@ -2919,7 +2919,7 @@ a:hover .arrow-medium {
 
 .package-card.package-featured {
   background-color: var(--color-primary);
-  padding: 56px 48px;
+  padding: 48px;
 }
 
 .package-header {
@@ -2978,6 +2978,11 @@ a:hover .arrow-medium {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  flex: 1;
+}
+
+.package-card > a {
+  margin-top: auto;
 }
 
 .package-features li {
@@ -3446,8 +3451,13 @@ a:hover .arrow-medium {
     padding: 80px 40px;
   }
 
+  .packages-grid {
+    gap: 20px;
+  }
+
   .package-card {
-    width: 360px;
+    flex: 1;
+    min-width: 0;
     padding: 40px;
   }
 
@@ -3605,12 +3615,14 @@ a:hover .arrow-medium {
 
   .packages-grid {
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
+    gap: 16px;
   }
 
   .package-card {
-    width: calc(50% - 16px);
-    min-width: 300px;
+    width: calc(50% - 8px);
+    min-width: 280px;
+    flex: 0 1 calc(50% - 8px);
   }
 
   .contact-section {
