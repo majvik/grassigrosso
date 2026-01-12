@@ -1,19 +1,36 @@
-FROM node:24-slim
-
+# ---------- build stage ----------
+FROM node:22-slim AS build
 WORKDIR /app
 
-# Только один манифест, без дублей
 COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
 RUN npm run build
 
+
+# ---------- runtime stage ----------
+FROM node:22-slim
+WORKDIR /app
+
+# (опционально, но полезно для health/debug)
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV NODE_ENV=production
 ENV PORT=3000
+
+# ставим только прод-зависимости
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+# код сервера + собранный фронт
+COPY server.cjs ./
+COPY dist ./dist
+
 EXPOSE 3000
 
-# Healthcheck на чистом Node (без curl)
-HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=5 \
+HEALTHCHECK --interval=10s --timeout=3s --start-period=20s --retries=10 \
   CMD node -e "require('http').get('http://127.0.0.1:'+(process.env.PORT||3000)+'/health', r=>process.exit(r.statusCode===200?0:1)).on('error', ()=>process.exit(1))"
 
 CMD ["node", "server.cjs"]
