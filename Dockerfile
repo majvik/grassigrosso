@@ -1,15 +1,12 @@
-# Используем официальный образ Node.js
-# Версия: 2026-01-12 - исправлен конфликт ES модулей
-FROM node:24-slim
+FROM node:22-slim
 
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем package.json и package-lock.json
-COPY package*.json ./
+# Копируем только нужные файлы манифеста
+COPY package.json package-lock.json ./
 
 # Устанавливаем зависимости
-RUN npm ci --verbose
+RUN npm ci
 
 # Копируем весь код проекта
 COPY . .
@@ -17,14 +14,14 @@ COPY . .
 # Собираем фронтенд
 RUN npm run build
 
-# Открываем порт (Timeweb Cloud Apps использует переменную PORT)
+# Переменные окружения
+ENV HOST=0.0.0.0
+ENV PORT=3000
+
 EXPOSE 3000
 
-# Healthcheck для проверки работоспособности приложения
-# Используем простой endpoint /health
-HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
-  CMD node -e "require('http').get('http://127.0.0.1:'+(process.env.PORT||3000)+'/health',(r)=>{r.on('data',()=>{});r.on('end',()=>process.exit(r.statusCode===200?0:1))}).on('error',()=>process.exit(1))"
+# Healthcheck убран - используем Timeweb healthcheck через /health endpoint
+# В настройках Timeweb укажите "Путь проверки состояния" = /health
 
-# Запускаем Node.js сервер
-# Важно: слушаем на 0.0.0.0, а не на localhost
-CMD ["node", "server.cjs"]
+# Запускаем Node.js сервер через npm start (использует server.js -> server.cjs)
+CMD ["npm", "start"]
