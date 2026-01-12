@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node server.js",
+    "start": "node server.cjs",
     "dev:full": "concurrently \"npm run dev\" \"node server.cjs\""
   },
   "dependencies": {

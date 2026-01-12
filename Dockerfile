@@ -2,26 +2,17 @@ FROM node:22-slim
 
 WORKDIR /app
 
-# Копируем только нужные файлы манифеста
 COPY package.json package-lock.json ./
-
-# Устанавливаем зависимости
 RUN npm ci
 
-# Копируем весь код проекта
 COPY . .
-
-# Собираем фронтенд
 RUN npm run build
 
-# Переменные окружения
 ENV HOST=0.0.0.0
 ENV PORT=3000
-
 EXPOSE 3000
 
-# Healthcheck убран - используем Timeweb healthcheck через /health endpoint
-# В настройках Timeweb укажите "Путь проверки состояния" = /health
+HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=5 \
+  CMD node -e "require('http').get('http://127.0.0.1:'+(process.env.PORT||3000)+'/health', r=>process.exit(r.statusCode===200?0:1)).on('error', ()=>process.exit(1))"
 
-# Запускаем Node.js сервер через npm start (использует server.js -> server.cjs)
-CMD ["npm", "start"]
+CMD ["node", "server.cjs"]
