@@ -24,9 +24,9 @@ ENV PORT=3000
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-# код сервера + собранный фронт
-COPY server.cjs ./
-COPY dist ./dist
+# код сервера + собранный фронт из build stage
+COPY --from=build /app/server.cjs ./
+COPY --from=build /app/dist ./dist
 
 EXPOSE 3000
 
