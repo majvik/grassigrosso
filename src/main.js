@@ -1,5 +1,25 @@
 import './style.css'
 
+// Geography cities animation - start only when in viewport
+const geographySection = document.querySelector('.geography-section')
+const geographyCities = document.querySelector('.geography-cities')
+
+if (geographySection && geographyCities) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        geographyCities.classList.add('animate')
+      } else {
+        geographyCities.classList.remove('animate')
+      }
+    })
+  }, {
+    threshold: 0.1 // Start animation when 10% of section is visible
+  })
+
+  observer.observe(geographySection)
+}
+
 // Font loading and preloader
 const preloader = document.getElementById('preloader')
 

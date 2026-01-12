@@ -2584,7 +2584,7 @@ a:hover .arrow-medium {
 
 /* Offers Section */
 .offers-section {
-  padding: 120px 0;
+  padding: 120px 64px;
   display: flex;
   flex-direction: column;
   gap: 64px;
@@ -2594,8 +2594,6 @@ a:hover .arrow-medium {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding-left: 64px;
-  padding-right: 64px;
 }
 
 .offers-header .section-title {
@@ -2614,8 +2612,6 @@ a:hover .arrow-medium {
 .offers-grid {
   display: flex;
   gap: 64px;
-  padding-left: 64px;
-  padding-right: 64px;
 }
 
 .offer-card {
@@ -2700,11 +2696,37 @@ a:hover .arrow-medium {
   border-radius: 24px;
 }
 
+.geography-cities-wrapper {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow-x: hidden;
+  padding-left: 64px;
+  padding-right: 64px;
+}
+
 .geography-cities {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  white-space: nowrap;
   gap: 24px;
+  will-change: transform;
+}
+
+.geography-cities.animate {
+  animation: scroll-cities 120s linear infinite;
+}
+
+@keyframes scroll-cities {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .city-item {
@@ -2734,6 +2756,7 @@ a:hover .arrow-medium {
   height: 15px;
   background-color: var(--color-text);
   opacity: 0.4;
+  flex-shrink: 0;
 }
 
 /* Quality Section */
@@ -2793,7 +2816,7 @@ a:hover .arrow-medium {
 /* Requirements Section */
 .requirements-section {
   background-color: var(--color-bg-beige);
-  padding: 120px 0;
+  padding: 120px 64px;
   display: flex;
   flex-direction: column;
   gap: 64px;
@@ -2802,8 +2825,6 @@ a:hover .arrow-medium {
 .requirements-header {
   display: flex;
   justify-content: space-between;
-  padding-left: 64px;
-  padding-right: 64px;
   align-items: flex-end;
 }
 
@@ -2822,8 +2843,6 @@ a:hover .arrow-medium {
 .requirements-grid {
   display: flex;
   gap: 64px;
-  padding-left: 64px;
-  padding-right: 64px;
 }
 
 .requirement-card {
@@ -3363,6 +3382,17 @@ a:hover .arrow-medium {
 
 /* ==================== DEALERS PAGE RESPONSIVE ==================== */
 
+@media (min-width: 1024px) {
+  .stats-grid {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .stat-item {
+    width: 100%;
+  }
+}
+
 @media (max-width: 1439px) {
   .page-hero {
     padding: 80px 40px;
@@ -3397,21 +3427,20 @@ a:hover .arrow-medium {
   }
 
   .offers-section {
-    padding: 80px 0;
+    padding: 80px 40px;
   }
 
-  .offers-header {
-    padding-left: 64px;
-    padding-right: 64px;
-  }
-
-  .offers-grid {
-    padding-left: 64px;
-    padding-right: 64px;
+  .requirements-section {
+    padding: 80px 40px;
   }
 
   .geography-section {
     padding: 80px 40px;
+  }
+
+  .geography-cities-wrapper {
+    padding-left: 40px;
+    padding-right: 40px;
   }
 
   .quality-section {
@@ -3434,17 +3463,7 @@ a:hover .arrow-medium {
   }
 
   .requirements-section {
-    padding: 80px 0;
-  }
-
-  .requirements-header {
-    padding-left: 64px;
-    padding-right: 64px;
-  }
-
-  .requirements-grid {
-    padding-left: 64px;
-    padding-right: 64px;
+    padding: 80px 40px;
   }
 
   .packages-section {
@@ -3530,7 +3549,7 @@ a:hover .arrow-medium {
   }
 
   .offers-section {
-    padding: 64px 0;
+    padding: 64px 32px;
     gap: 48px;
   }
 
@@ -3538,13 +3557,6 @@ a:hover .arrow-medium {
     flex-direction: column;
     align-items: flex-start;
     gap: 24px;
-    padding-left: 64px;
-    padding-right: 64px;
-  }
-
-  .offers-grid {
-    padding-left: 64px;
-    padding-right: 64px;
   }
 
   .offer-title {
@@ -3554,6 +3566,11 @@ a:hover .arrow-medium {
   .geography-section {
     padding: 64px 32px;
     gap: 48px;
+  }
+
+  .geography-cities-wrapper {
+    padding-left: 32px;
+    padding-right: 32px;
   }
 
   .geography-header {
@@ -3581,7 +3598,7 @@ a:hover .arrow-medium {
   }
 
   .requirements-section {
-    padding: 64px 0;
+    padding: 64px 32px;
     gap: 48px;
   }
 
@@ -3589,13 +3606,6 @@ a:hover .arrow-medium {
     flex-direction: column;
     align-items: flex-start;
     gap: 24px;
-    padding-left: 64px;
-    padding-right: 64px;
-  }
-
-  .requirements-grid {
-    padding-left: 64px;
-    padding-right: 64px;
   }
 
   .requirement-title {
@@ -3861,18 +3871,8 @@ a:hover .arrow-medium {
   }
 
   .offers-section {
-    padding: 64px 0;
+    padding: 64px 16px;
     gap: 40px;
-  }
-
-  .offers-header {
-    padding-left: 64px;
-    padding-right: 64px;
-  }
-
-  .offers-grid {
-    padding-left: 64px;
-    padding-right: 64px;
   }
 
   .offer-title {
@@ -3884,6 +3884,11 @@ a:hover .arrow-medium {
     gap: 40px;
   }
 
+  .geography-cities-wrapper {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
   .geography-map {
     height: 300px;
     border-radius: 16px;
@@ -3893,8 +3898,13 @@ a:hover .arrow-medium {
     font-size: 16px;
   }
 
+  .geography-cities-wrapper {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
   .geography-cities {
-    gap: 16px;
+    gap: 12px;
   }
 
   .quality-section {
@@ -3913,18 +3923,8 @@ a:hover .arrow-medium {
   }
 
   .requirements-section {
-    padding: 64px 0;
+    padding: 64px 16px;
     gap: 40px;
-  }
-
-  .requirements-header {
-    padding-left: 64px;
-    padding-right: 64px;
-  }
-
-  .requirements-grid {
-    padding-left: 64px;
-    padding-right: 64px;
   }
 
   .requirement-title {
