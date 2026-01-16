@@ -777,6 +777,110 @@ if (catalogCollectionsHeaderLeft && catalogCollectionsHeaderRight && catalogColl
   observer1.observe(catalogCollectionsTitle)
 }
 
+// Documents certification header - sync padding-top with title height
+const documentsCertificationHeaderLeft = document.querySelector('.documents-certification-header-left')
+const documentsCertificationHeaderRight = document.querySelector('.documents-certification-header-right')
+const documentsCertificationTitle = document.querySelector('.documents-certification-header-left .section-title')
+
+if (documentsCertificationHeaderLeft && documentsCertificationHeaderRight && documentsCertificationTitle) {
+  function syncDocumentsCertificationPadding() {
+    // Only sync on desktop (width > 1024px)
+    if (window.innerWidth <= 1024) {
+      documentsCertificationHeaderRight.style.paddingTop = '0'
+      return
+    }
+    
+    // Get the actual height of the title
+    const titleHeight = documentsCertificationTitle.offsetHeight
+    documentsCertificationHeaderRight.style.paddingTop = `${titleHeight}px`
+  }
+  
+  // Sync on load
+  setTimeout(syncDocumentsCertificationPadding, 0)
+  
+  // Sync on resize
+  let resizeTimeout3
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout3)
+    resizeTimeout3 = setTimeout(syncDocumentsCertificationPadding, 100)
+  })
+  
+  // Sync when content changes (e.g., font loading)
+  const observer3 = new ResizeObserver(() => {
+    syncDocumentsCertificationPadding()
+  })
+  observer3.observe(documentsCertificationTitle)
+}
+
+// Documents help section - sync padding-top with title height
+const documentsHelpLeft = document.querySelector('.documents-help-left')
+const documentsHelpRight = document.querySelector('.documents-help-right')
+const documentsHelpTitle = document.querySelector('.documents-help-left .section-title')
+
+if (documentsHelpLeft && documentsHelpRight && documentsHelpTitle) {
+  function syncDocumentsHelpPadding() {
+    // Only sync on desktop (width > 1024px)
+    if (window.innerWidth <= 1024) {
+      documentsHelpRight.style.paddingTop = '0'
+      return
+    }
+    
+    // Get the actual height of the title
+    const titleHeight = documentsHelpTitle.offsetHeight
+    documentsHelpRight.style.paddingTop = `${titleHeight}px`
+  }
+  
+  // Sync on load
+  setTimeout(syncDocumentsHelpPadding, 0)
+  
+  // Sync on resize
+  let resizeTimeout4
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout4)
+    resizeTimeout4 = setTimeout(syncDocumentsHelpPadding, 100)
+  })
+  
+  // Sync when content changes (e.g., font loading)
+  const observer4 = new ResizeObserver(() => {
+    syncDocumentsHelpPadding()
+  })
+  observer4.observe(documentsHelpTitle)
+}
+
+// Documents commercial section - sync padding-top with title height
+const documentsCommercialTitle = document.querySelector('.documents-commercial-title')
+const documentsCommercialRight = document.querySelector('.documents-commercial-right')
+
+if (documentsCommercialTitle && documentsCommercialRight) {
+  function syncDocumentsCommercialPadding() {
+    // Only sync on desktop (width > 1024px)
+    if (window.innerWidth <= 1024) {
+      documentsCommercialRight.style.paddingTop = '0'
+      return
+    }
+    
+    // Get the actual height of the title
+    const titleHeight = documentsCommercialTitle.offsetHeight
+    documentsCommercialRight.style.paddingTop = `${titleHeight}px`
+  }
+  
+  // Sync on load
+  setTimeout(syncDocumentsCommercialPadding, 0)
+  
+  // Sync on resize
+  let resizeTimeout5
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout5)
+    resizeTimeout5 = setTimeout(syncDocumentsCommercialPadding, 100)
+  })
+  
+  // Sync when content changes (e.g., font loading)
+  const observer5 = new ResizeObserver(() => {
+    syncDocumentsCommercialPadding()
+  })
+  observer5.observe(documentsCommercialTitle)
+}
+
 // Catalog custom section - sync padding-top with title height
 const catalogCustomLeft = document.querySelector('.catalog-custom-left')
 const catalogCustomRight = document.querySelector('.catalog-custom-right')

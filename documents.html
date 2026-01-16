@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grassi Grosso - Каталог продукции</title>
+    <title>Grassi Grosso - Документы и сертификаты</title>
     <link rel="icon" type="image/svg+xml" href="./public/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="./public/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="./public/favicon-16x16.png" />
@@ -50,8 +50,8 @@
             <a href="index.html">Главная</a>
             <a href="hotels.html">Отелям</a>
             <a href="dealers.html">Дилерам</a>
-            <a href="catalog.html" class="active">Каталог</a>
-            <a href="documents.html">Документы</a>
+            <a href="catalog.html">Каталог</a>
+            <a href="documents.html" class="active">Документы</a>
             <a href="#contacts">Контакты</a>
           </nav>
           <a href="#contact" class="btn-contact">Связаться</a>
@@ -87,165 +87,179 @@
 
     <main>
       <!-- Hero Section -->
-      <section class="catalog-hero">
-        <div class="catalog-hero-content">
-          <div class="catalog-hero-text">
-            <h1 class="catalog-hero-title">Каталог продукции</h1>
-            <p class="catalog-hero-description">
-              Мы предлагаем комплексные решения для оснащения отелей, медицинских учреждений и апартаментов. Изучите наши коллекции и скачайте подробный каталог.
+      <section class="documents-hero">
+        <div class="documents-hero-content">
+          <div class="documents-hero-text">
+            <h1 class="documents-hero-title">Документы и сертификаты</h1>
+            <p class="documents-hero-description">
+              Полная прозрачность и соответствие стандартам. Мы предоставляем всю необходимую документацию для работы.
             </p>
           </div>
-          <div class="catalog-hero-image">
+          <div class="documents-hero-image">
             <img src="./public/hero-bedroom.png" alt="Интерьер спальни" />
           </div>
         </div>
       </section>
 
-      <!-- Collections Section -->
-      <section class="catalog-collections">
-        <div class="catalog-collections-header">
-          <div class="catalog-collections-header-left">
-            <h2 class="section-title">Коллекции</h2>
+      <!-- Official Certification Section -->
+      <section class="documents-certification">
+        <div class="documents-certification-header">
+          <div class="documents-certification-header-left">
+            <h2 class="section-title">Официальная сертификация</h2>
           </div>
-          <div class="catalog-collections-header-right">
-            <p class="catalog-collections-intro">
-              Мы разработали 5 уникальных линеек матрасов, чтобы закрыть потребности отелей любого уровня — от хостелов до 5*. Каждая коллекция — это выверенный баланс комфорта, долговечности и стоимости.
+          <div class="documents-certification-header-right">
+            <p class="documents-certification-intro">
+              В каждом слое — смысл. В каждом решении — логика.
             </p>
           </div>
         </div>
-        <div class="catalog-collections-list">
-          <!-- Classic Collection -->
-          <div class="catalog-collection-item">
-            <div class="catalog-collection-content">
-              <h3 class="catalog-collection-title">Classic</h3>
-              <ul class="catalog-collection-features">
-                <li>Классический пружинный блок</li>
-                <li>Надежность и долговечность</li>
-                <li>Базовый комфорт</li>
-              </ul>
-              <a href="#" class="catalog-collection-link">
-                Подробнее
-                <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
-              </a>
+        <div class="documents-certification-grid">
+          <div class="documents-cert-card">
+            <div class="documents-cert-icon">
+              <img src="./public/document.svg" alt="" />
             </div>
-            <div class="catalog-collection-image">
-              <img src="./public/hero-bedroom.png" alt="Classic Collection" />
+            <h3 class="documents-cert-title">Евразийский Экономический Союз. Декларация о соответствии</h3>
+            <span class="documents-cert-type">Декларация</span>
+            <div class="documents-cert-footer">
+              <a href="#" class="documents-cert-download">
+                Скачать
+                <img src="./public/arrow-down.svg" alt="" class="arrow-down" />
+              </a>
+              <span class="documents-cert-size">2.5 MB</span>
             </div>
           </div>
 
-          <!-- Flexi Collection -->
-          <div class="catalog-collection-item">
-            <div class="catalog-collection-content">
-              <h3 class="catalog-collection-title">Flexi</h3>
-              <ul class="catalog-collection-features">
-                <li>Беспружинные технологии</li>
-                <li>Адаптивная поддержка</li>
-                <li>Высокая эластичность</li>
-              </ul>
-              <a href="#" class="catalog-collection-link">
-                Подробнее
-                <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
-              </a>
+          <div class="documents-cert-card">
+            <div class="documents-cert-icon">
+              <img src="./public/document.svg" alt="" />
             </div>
-            <div class="catalog-collection-image">
-              <img src="./public/hero-bedroom.png" alt="Flexi Collection" />
+            <h3 class="documents-cert-title">Сертификат соответствия «ПромТехСтандарт»</h3>
+            <span class="documents-cert-type">Сертификат</span>
+            <div class="documents-cert-footer">
+              <a href="#" class="documents-cert-download">
+                Скачать
+                <img src="./public/arrow-down.svg" alt="" class="arrow-down" />
+              </a>
+              <span class="documents-cert-size">1.8 MB</span>
             </div>
           </div>
 
-          <!-- Relax Collection -->
-          <div class="catalog-collection-item">
-            <div class="catalog-collection-content">
-              <h3 class="catalog-collection-title">Relax</h3>
-              <ul class="catalog-collection-features">
-                <li>Анатомический эффект</li>
-                <li>Снятие мышечного напряжения</li>
-                <li>Материалы с памятью формы</li>
-              </ul>
-              <a href="#" class="catalog-collection-link">
-                Подробнее
-                <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
-              </a>
+          <div class="documents-cert-card">
+            <div class="documents-cert-icon">
+              <img src="./public/document.svg" alt="" />
             </div>
-            <div class="catalog-collection-image">
-              <img src="./public/hero-bedroom.png" alt="Relax Collection" />
+            <h3 class="documents-cert-title">Свидетельство на товарный знак Grassiflex</h3>
+            <span class="documents-cert-type">Товарный знак</span>
+            <div class="documents-cert-footer">
+              <a href="#" class="documents-cert-download">
+                Скачать
+                <img src="./public/arrow-down.svg" alt="" class="arrow-down" />
+              </a>
+              <span class="documents-cert-size">1.2 MB</span>
             </div>
           </div>
 
-          <!-- Trend Collection -->
-          <div class="catalog-collection-item">
-            <div class="catalog-collection-content">
-              <h3 class="catalog-collection-title">Trend</h3>
-              <ul class="catalog-collection-features">
-                <li>Стильный дизайн</li>
-                <li>Инновационные материалы</li>
-                <li>Трендовые решения</li>
-              </ul>
-              <a href="#" class="catalog-collection-link">
-                Подробнее
-                <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
+          <div class="documents-cert-card">
+            <div class="documents-cert-icon">
+              <img src="./public/document.svg" alt="" />
+            </div>
+            <h3 class="documents-cert-title">Свидетельство на товарный знак GrassiGrosso</h3>
+            <span class="documents-cert-type">Товарный знак</span>
+            <div class="documents-cert-footer">
+              <a href="#" class="documents-cert-download">
+                Скачать
+                <img src="./public/arrow-down.svg" alt="" class="arrow-down" />
               </a>
-            </div>
-            <div class="catalog-collection-image">
-              <img src="./public/hero-bedroom.png" alt="Trend Collection" />
-            </div>
-          </div>
-
-          <!-- Viva Natura Collection -->
-          <div class="catalog-collection-item">
-            <div class="catalog-collection-content">
-              <h3 class="catalog-collection-title">Viva Natura</h3>
-              <ul class="catalog-collection-features">
-                <li>Натуральные компоненты</li>
-                <li>Экологичность</li>
-                <li>Премиальный комфорт</li>
-              </ul>
-              <a href="#" class="catalog-collection-link">
-                Подробнее
-                <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
-              </a>
-            </div>
-            <div class="catalog-collection-image">
-              <img src="./public/hero-bedroom.png" alt="Viva Natura Collection" />
-            </div>
-          </div>
-
-          <!-- Accessories Collection -->
-          <div class="catalog-collection-item">
-            <div class="catalog-collection-content">
-              <h3 class="catalog-collection-title">Аксессуары</h3>
-              <ul class="catalog-collection-features">
-                <li>Подушки, наматрасники и постельное белье.</li>
-                <li>Финальные штрихи для идеального спального места.</li>
-              </ul>
-              <a href="#" class="catalog-collection-link">
-                Подробнее
-                <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
-              </a>
-            </div>
-            <div class="catalog-collection-image">
-              <img src="./public/hero-bedroom.png" alt="Accessories Collection" />
+              <span class="documents-cert-size">1.2 MB</span>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Custom Request Section -->
-      <section class="catalog-custom">
-        <div class="catalog-custom-content">
-          <div class="catalog-custom-left">
-            <h2 class="section-title">Не нашли то, что искали?</h2>
+      <!-- Commercial Documentation Section -->
+      <section class="documents-commercial">
+        <div class="documents-commercial-content">
+          <div class="documents-commercial-left">
+            <h2 class="section-title documents-commercial-title">Коммерческая документация</h2>
+            <div class="documents-commercial-icon">
+              <img src="./public/catalog-illustration.svg" alt="" />
+            </div>
           </div>
-          <div class="catalog-custom-right">
-            <p class="catalog-custom-text">
-              Мы можем изготовить матрасы и аксессуары по вашим индивидуальным требованиям и размерам. Свяжитесь с нами для обсуждения проекта.
+          <div class="documents-commercial-right">
+            <div class="documents-commercial-list">
+          <div class="documents-commercial-item">
+            <div class="documents-commercial-item-icon">
+              <img src="./public/catalog.svg" alt="" />
+            </div>
+            <div class="documents-commercial-item-content">
+              <h3 class="documents-commercial-item-title">Каталог продукции 2025</h3>
+              <p class="documents-commercial-item-type">Декларация</p>
+            </div>
+            <a href="#" class="documents-commercial-item-download">
+              <img src="./public/arrow-down.svg" alt="" />
+            </a>
+          </div>
+
+          <div class="documents-commercial-item">
+            <div class="documents-commercial-item-icon">
+              <img src="./public/catalog.svg" alt="" />
+            </div>
+            <div class="documents-commercial-item-content">
+              <h3 class="documents-commercial-item-title">Технические спецификации</h3>
+              <p class="documents-commercial-item-type">Декларация</p>
+            </div>
+            <a href="#" class="documents-commercial-item-download">
+              <img src="./public/arrow-down.svg" alt="" />
+            </a>
+          </div>
+
+          <div class="documents-commercial-item">
+            <div class="documents-commercial-item-icon">
+              <img src="./public/catalog.svg" alt="" />
+            </div>
+            <div class="documents-commercial-item-content">
+              <h3 class="documents-commercial-item-title">Шаблон договора поставки</h3>
+              <p class="documents-commercial-item-type">Декларация</p>
+            </div>
+            <a href="#" class="documents-commercial-item-download">
+              <img src="./public/arrow-down.svg" alt="" />
+            </a>
+          </div>
+
+          <div class="documents-commercial-item">
+            <div class="documents-commercial-item-icon">
+              <img src="./public/catalog.svg" alt="" />
+            </div>
+            <div class="documents-commercial-item-content">
+              <h3 class="documents-commercial-item-title">Презентация компании</h3>
+              <p class="documents-commercial-item-type">Декларация</p>
+            </div>
+            <a href="#" class="documents-commercial-item-download">
+              <img src="./public/arrow-down.svg" alt="" />
+            </a>
+          </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Help Section -->
+      <section class="documents-help">
+        <div class="documents-help-content">
+          <div class="documents-help-left">
+            <h2 class="section-title">Нужна помощь с документами?</h2>
+          </div>
+          <div class="documents-help-right">
+            <p class="documents-help-text">
+              Наши менеджеры готовы предоставить любые необходимые документы по запросу
             </p>
-            <a href="#contact" class="btn-primary-large">Запросить консультацию</a>
+            <a href="#contact" class="btn-primary-large">Связаться с менеджером</a>
           </div>
         </div>
       </section>
 
       <!-- FAQ Section -->
-      <section class="catalog-faq">
+      <section class="documents-faq">
         <h2 class="section-title">Часто задаваемые вопросы</h2>
         <div class="faq-list">
           <div class="faq-item active">
@@ -267,8 +281,7 @@
             </div>
             <div class="faq-answer">
               <p>
-                Стандартные сроки производства составляют 7-14 рабочих дней с момента подтверждения заказа. 
-                Для индивидуальных проектов сроки согласовываются отдельно.
+                Стандартные сроки производства составляют 7-14 рабочих дней с момента подтверждения заказа. Для индивидуальных проектов сроки согласовываются отдельно.
               </p>
             </div>
           </div>
