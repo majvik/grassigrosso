@@ -159,11 +159,35 @@ if (isDev) {
   }));
 } else {
   // В production отдаем статические файлы из dist
-  app.use(express.static(path.join(__dirname, 'dist')));
+  const staticPath = path.join(__dirname, 'dist');
+  app.use(express.static(staticPath, {
+    extensions: ['html', 'htm'],
+    index: false // не используем index по умолчанию
+  }));
   
-  // Fallback для SPA - все остальные GET запросы отдаем index.html
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  // Fallback для SPA - только для несуществующих маршрутов отдаем index.html
+  app.get('*', (req, res, next) => {
+    // Пропускаем API запросы
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    
+    const fs = require('fs');
+    const requestedPath = path.join(staticPath, req.path);
+    const htmlPath = path.join(staticPath, req.path + '.html');
+    
+    // Если запрашивается конкретный файл и он существует - отдаем его
+    if (fs.existsSync(requestedPath) && !fs.statSync(requestedPath).isDirectory()) {
+      return res.sendFile(requestedPath);
+    }
+    
+    // Если запрашивается путь без расширения, проверяем .html версию
+    if (fs.existsSync(htmlPath)) {
+      return res.sendFile(htmlPath);
+    }
+    
+    // Для всех остальных маршрутов отдаем index.html (SPA fallback)
+    res.sendFile(path.join(staticPath, 'index.html'));
   });
 }
 

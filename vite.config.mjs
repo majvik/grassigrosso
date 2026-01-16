@@ -11,6 +11,8 @@ export default defineConfig({
         main: './index.html',
         hotels: './hotels.html',
         dealers: './dealers.html',
+        catalog: './catalog.html',
+        documents: './documents.html',
       }
     }
   },
