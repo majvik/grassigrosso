@@ -742,6 +742,76 @@ if (refreshContent && refreshImage) {
   observer.observe(refreshContent)
 }
 
+// Catalog collections header - sync padding-top with title height
+const catalogCollectionsHeaderLeft = document.querySelector('.catalog-collections-header-left')
+const catalogCollectionsHeaderRight = document.querySelector('.catalog-collections-header-right')
+const catalogCollectionsTitle = document.querySelector('.catalog-collections-header-left .section-title')
+
+if (catalogCollectionsHeaderLeft && catalogCollectionsHeaderRight && catalogCollectionsTitle) {
+  function syncCatalogCollectionsPadding() {
+    // Only sync on desktop (width > 1024px)
+    if (window.innerWidth <= 1024) {
+      catalogCollectionsHeaderRight.style.paddingTop = '0'
+      return
+    }
+    
+    // Get the actual height of the title
+    const titleHeight = catalogCollectionsTitle.offsetHeight
+    catalogCollectionsHeaderRight.style.paddingTop = `${titleHeight}px`
+  }
+  
+  // Sync on load
+  setTimeout(syncCatalogCollectionsPadding, 0)
+  
+  // Sync on resize
+  let resizeTimeout1
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout1)
+    resizeTimeout1 = setTimeout(syncCatalogCollectionsPadding, 100)
+  })
+  
+  // Sync when content changes (e.g., font loading)
+  const observer1 = new ResizeObserver(() => {
+    syncCatalogCollectionsPadding()
+  })
+  observer1.observe(catalogCollectionsTitle)
+}
+
+// Catalog custom section - sync padding-top with title height
+const catalogCustomLeft = document.querySelector('.catalog-custom-left')
+const catalogCustomRight = document.querySelector('.catalog-custom-right')
+const catalogCustomTitle = document.querySelector('.catalog-custom-left .section-title')
+
+if (catalogCustomLeft && catalogCustomRight && catalogCustomTitle) {
+  function syncCatalogCustomPadding() {
+    // Only sync on desktop (width > 1024px)
+    if (window.innerWidth <= 1024) {
+      catalogCustomRight.style.paddingTop = '0'
+      return
+    }
+    
+    // Get the actual height of the title
+    const titleHeight = catalogCustomTitle.offsetHeight
+    catalogCustomRight.style.paddingTop = `${titleHeight}px`
+  }
+  
+  // Sync on load
+  setTimeout(syncCatalogCustomPadding, 0)
+  
+  // Sync on resize
+  let resizeTimeout2
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout2)
+    resizeTimeout2 = setTimeout(syncCatalogCustomPadding, 100)
+  })
+  
+  // Sync when content changes (e.g., font loading)
+  const observer2 = new ResizeObserver(() => {
+    syncCatalogCustomPadding()
+  })
+  observer2.observe(catalogCustomTitle)
+}
+
 // FAQ Accordion
 const faqItems = document.querySelectorAll('.faq-item')
 
