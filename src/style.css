@@ -5565,7 +5565,7 @@ a:hover .arrow-medium {
 .arrow-down {
   width: 17px;
   height: 23px;
-  transform: rotate(90deg);
+  transform: rotate(-90deg);
 }
 
 .documents-cert-size {
@@ -5653,8 +5653,6 @@ a:hover .arrow-medium {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-bg-beige);
-  border-radius: 8px;
 }
 
 .documents-commercial-item-icon img {
@@ -5706,7 +5704,7 @@ a:hover .arrow-medium {
 .documents-commercial-item-download img {
   width: 17px;
   height: 23px;
-  transform: rotate(90deg);
+  transform: rotate(-90deg);
 }
 
 /* Documents Help Section */
