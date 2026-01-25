@@ -13,6 +13,7 @@ export default defineConfig({
         dealers: './dealers.html',
         catalog: './catalog.html',
         documents: './documents.html',
+        contacts: './contacts.html',
       }
     }
   },

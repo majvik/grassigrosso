@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grassi Grosso - Контакты</title>
+    <link rel="icon" type="image/svg+xml" href="./public/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./public/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./public/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./public/apple-touch-icon.png" />
+    <link rel="manifest" href="./public/site.webmanifest" />
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="./src/fonts/nunito-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="./src/fonts/bounded-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+      <div class="preloader-spinner"></div>
+    </div>
+    
+    <!-- Cookie Banner -->
+    <div class="cookie-banner">
+      <img src="./public/cookie-icon.png" alt="" class="cookie-icon" />
+      <p class="cookie-text">Мы используем <span class="underline">cookie</span>, чтобы улучшить работу нашего сайта</p>
+      <button class="btn-cookie">ОК</button>
+    </div>
+
+    <!-- Header Top Bar -->
+    <div class="header-top">
+      <div class="header-top-content">
+        <span class="header-top-left">Доброе утро!</span>
+        <div class="header-top-right">
+          <span>+7 (495) 123-45-67</span>
+          <span class="separator"></span>
+          <span>Пн-Пт: 9-18</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Main -->
+    <header class="header-main">
+      <div class="header-main-content">
+        <a href="index.html" class="logo">
+          <img src="./public/header-logo.svg" alt="Grassi Grosso" class="logo-img" />
+        </a>
+        <div class="header-nav-wrapper">
+          <nav class="nav-menu">
+            <a href="index.html">Главная</a>
+            <a href="hotels.html">Отелям</a>
+            <a href="dealers.html">Дилерам</a>
+            <a href="catalog.html">Каталог</a>
+            <a href="documents.html">Документы</a>
+            <a href="contacts.html" class="active">Контакты</a>
+          </nav>
+          <a href="#contact-form" class="btn-contact">Связаться</a>
+        </div>
+        <button class="mobile-menu-btn" aria-label="Открыть меню">
+          <img src="./public/menu.svg" alt="" />
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay">
+      <div class="mobile-menu">
+        <div class="mobile-menu-header">
+          <div class="logo">
+            <img src="./public/header-logo.svg" alt="Grassi Grosso" class="logo-img" />
+          </div>
+          <button class="mobile-menu-close" aria-label="Закрыть меню">
+            <img src="./public/menu-close.svg" alt="" />
+          </button>
+        </div>
+        <nav class="mobile-nav">
+          <a href="index.html">Главная</a>
+          <a href="hotels.html">Отелям</a>
+          <a href="dealers.html">Дилерам</a>
+          <a href="catalog.html">Каталог</a>
+          <a href="documents.html">Документы</a>
+          <a href="contacts.html">Контакты</a>
+        </nav>
+        <a href="#contact-form" class="mobile-menu-cta">Связаться</a>
+      </div>
+    </div>
+
+    <main>
+      <!-- Hero Section -->
+      <section class="contacts-hero">
+        <div class="contacts-hero-content">
+          <div class="contacts-hero-text">
+            <h1 class="contacts-hero-title">Контакты</h1>
+            <p class="contacts-hero-description">
+              Свяжитесь с нами удобным способом. Мы всегда готовы ответить на ваши вопросы.
+            </p>
+          </div>
+          <div class="contacts-hero-image">
+            <img src="./public/hero-bedroom.png" alt="Интерьер спальни" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Offices Section -->
+      <section class="contacts-offices">
+        <h2 class="section-title">Наши офисы</h2>
+        <div class="contacts-offices-grid">
+          <!-- Главный офис -->
+          <div class="contacts-office-card">
+            <div class="contacts-office-header">
+              <span class="contacts-office-badge">Главный офис</span>
+              <h3 class="contacts-office-city">Симферополь</h3>
+            </div>
+            <div class="contacts-office-info">
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Адрес:</span>
+                <span class="contacts-office-value">ул. Кубанская д. 25</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Телефон:</span>
+                <span class="contacts-office-value">+ 7 (978) 248-43-80</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Email:</span>
+                <span class="contacts-office-value">ofis@grassigrosso.ru</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Время работы:</span>
+                <span class="contacts-office-value">Пн-Пт: 9:00 - 18:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Воронеж -->
+          <div class="contacts-office-card">
+            <div class="contacts-office-header">
+              <span class="contacts-office-badge">Представительство</span>
+              <p class="contacts-office-region">Центральная Россия</p>
+              <h3 class="contacts-office-city">Воронеж</h3>
+            </div>
+            <div class="contacts-office-info">
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Адрес:</span>
+                <span class="contacts-office-value">ул. Остужева 43 И</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Телефон:</span>
+                <span class="contacts-office-value">+7 (978) 075-71-74</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Email:</span>
+                <span class="contacts-office-value">voronezh@grassigrosso.ru</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Время работы:</span>
+                <span class="contacts-office-value">Пн-Пт: 9:00 - 18:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Луганск -->
+          <div class="contacts-office-card">
+            <div class="contacts-office-header">
+              <span class="contacts-office-badge">Представительство</span>
+              <p class="contacts-office-region">Луганская Народная Республика</p>
+              <h3 class="contacts-office-city">Луганск</h3>
+            </div>
+            <div class="contacts-office-info">
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Адрес:</span>
+                <span class="contacts-office-value">ул. Фабричная д 1</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Телефон:</span>
+                <span class="contacts-office-value">+7 (959) 201-18-08</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Email:</span>
+                <span class="contacts-office-value">mebel.postavka@promeks-lnr.ru</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Время работы:</span>
+                <span class="contacts-office-value">Пн-Пт: 9:00 - 18:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Харцизск -->
+          <div class="contacts-office-card">
+            <div class="contacts-office-header">
+              <span class="contacts-office-badge">Представительство</span>
+              <p class="contacts-office-region">Донецкая Народная Республика</p>
+              <h3 class="contacts-office-city">Харцизск</h3>
+            </div>
+            <div class="contacts-office-info">
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Адрес:</span>
+                <span class="contacts-office-value">ул. Вокзальная, д. 52</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Телефон:</span>
+                <span class="contacts-office-value">+7 (949) 410-67-60</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Email:</span>
+                <span class="contacts-office-value">salonwds@yandex.com</span>
+              </div>
+              <div class="contacts-office-item">
+                <span class="contacts-office-label">Время работы:</span>
+                <span class="contacts-office-value">Пн-Пт: 9:00 - 18:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Map Section -->
+      <section class="contacts-map">
+        <div class="contacts-map-header">
+          <h2 class="section-title">Как нас найти</h2>
+          <div class="contacts-map-tabs">
+            <button class="contacts-map-tab active" data-office="main">Главный офис</button>
+            <button class="contacts-map-tab" data-office="voronezh">Центральная Россия</button>
+            <button class="contacts-map-tab" data-office="lnr">ЛНР</button>
+            <button class="contacts-map-tab" data-office="dnr">ДНР</button>
+          </div>
+        </div>
+        <div class="contacts-map-container">
+          <div class="contacts-map-placeholder">
+            <img src="./public/hero-bedroom.png" alt="Карта" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Form Section -->
+      <section class="contact-section" id="contact-form">
+        <h2 class="section-title">Доброе утро!</h2>
+        <div class="contact-grid">
+          <div class="contact-form-wrapper">
+            <h3 class="contact-form-title">Форма обратной связи</h3>
+            <form class="contact-form">
+              <div class="form-group">
+                <label for="name">Имя</label>
+                <input type="text" id="name" placeholder="Иван Иванов" />
+              </div>
+              <div class="form-group">
+                <label for="company">Компания</label>
+                <input type="text" id="company" placeholder="ООО «Ваша компания»" />
+              </div>
+              <div class="form-group">
+                <label for="city">Город</label>
+                <input type="text" id="city" placeholder="Москва" />
+              </div>
+              <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" placeholder="example@company.com" />
+              </div>
+              <div class="form-group">
+                <label for="phone">Телефон</label>
+                <input type="tel" id="phone" placeholder="+7 (999) 123-45-67" />
+              </div>
+              <div class="form-group">
+                <label for="message">Сообщение</label>
+                <textarea id="message" placeholder="Ваше сообщение"></textarea>
+              </div>
+              <div class="form-checkbox">
+                <input type="checkbox" id="privacy" />
+                <label for="privacy">Я согласен на обработку моих персональных данных в соответствии с Политикой конфиденциальности</label>
+              </div>
+              <button type="submit" class="btn-primary-large">Отправить</button>
+            </form>
+          </div>
+          <div class="contact-info">
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <img src="./public/icon-phone.svg" alt="" />
+              </div>
+              <div class="contact-info-content">
+                <h4 class="contact-info-title">Телефон</h4>
+                <p class="contact-info-value">+7 (495) 123-45-67</p>
+                <p class="contact-info-note">Пн-Пт: 9:00 - 18:00 МСК</p>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <img src="./public/icon-email.svg" alt="" />
+              </div>
+              <div class="contact-info-content">
+                <h4 class="contact-info-title">Email</h4>
+                <p class="contact-info-value">b2b@grassigrosso.com</p>
+                <p class="contact-info-note">Ответим в течение 24 часов</p>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <img src="./public/icon-location.svg" alt="" />
+              </div>
+              <div class="contact-info-content">
+                <h4 class="contact-info-title">Адрес</h4>
+                <p class="contact-info-value">Москва, ул. Производственная, д. 1</p>
+                <p class="contact-info-note">Склад и шоурум</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-column footer-about">
+          <div class="footer-logo">
+            <img src="./public/footer-logo.svg" alt="Grassi Grosso" />
+          </div>
+          <p class="footer-description">Продуманные решения для естественного восстановления. Каждое утро — как лучшее.</p>
+          <div class="footer-legal">
+            <p>ИНН: 7701234567</p>
+            <p>ОГРН: 1157746123456</p>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-heading">Решения</h4>
+          <ul class="footer-links">
+            <li><a href="hotels.html">Отелям</a></li>
+            <li><a href="dealers.html">Дилерам</a></li>
+            <li><a href="catalog.html">Каталог матрасов</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-heading">Информация</h4>
+          <ul class="footer-links">
+            <li><a href="catalog.html">Коллекции</a></li>
+            <li><a href="documents.html">Документы</a></li>
+            <li><a href="contacts.html">Контакты</a></li>
+          </ul>
+        </div>
+        <div class="footer-column footer-contacts">
+          <h4 class="footer-heading">Связь</h4>
+          <div class="contact-item">
+            <span class="contact-label">Телефон:</span>
+            <span class="contact-value">+7 (495) 123-45-67</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">Email:</span>
+            <span class="contact-value">b2b@grassigrosso.com</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">Режим работы:</span>
+            <span class="contact-value">Пн-Пт: 9:00 - 18:00 МСК</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-divider"></div>
+        <div class="footer-bottom-content">
+          <p class="footer-copyright">© 2025 Grassi Grosso. Все права защищены.</p>
+          <div class="footer-policies">
+            <a href="#">Политика конфиденциальности</a>
+            <span class="separator"></span>
+            <a href="#">Пользовательское соглашение</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
