@@ -6240,13 +6240,6 @@ a:hover .arrow-medium {
   display: flex;
   align-items: flex-start;
   gap: 32px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid rgba(40, 62, 55, 0.1);
-}
-
-.contact-info-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
 }
 
 .contact-info-icon {
