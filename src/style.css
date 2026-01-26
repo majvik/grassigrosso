@@ -6131,7 +6131,7 @@ a:hover .arrow-medium {
 /* Contacts Offices Section */
 .contacts-offices {
   padding: 120px 64px;
-  background-color: var(--color-bg-white);
+  background-color: var(--color-bg-beige);
 }
 
 .contacts-offices .section-title {
@@ -6145,7 +6145,7 @@ a:hover .arrow-medium {
 }
 
 .contacts-office-card {
-  background-color: var(--color-bg-beige);
+  background-color: var(--color-bg-white);
   border-radius: 16px;
   padding: 32px;
   display: flex;
@@ -6226,7 +6226,6 @@ a:hover .arrow-medium {
 /* Contacts Map Section */
 .contacts-map {
   padding: 120px 64px;
-  background-color: var(--color-bg-beige);
 }
 
 .contacts-map-header {
@@ -6274,7 +6273,7 @@ a:hover .arrow-medium {
   aspect-ratio: 1312 / 562;
   border-radius: 24px;
   overflow: hidden;
-  background-color: var(--color-bg-white);
+  background-color: #e1e1e1;
 }
 
 
