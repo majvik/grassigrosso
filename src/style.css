@@ -5894,6 +5894,12 @@ a:hover .arrow-medium {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .documents-commercial-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
   .documents-commercial-content {
     flex-direction: column;
     gap: 32px;
@@ -5954,6 +5960,10 @@ a:hover .arrow-medium {
     gap: 16px;
   }
 
+  .documents-certification-header .section-title {
+    font-size: 32px;
+  }
+
   .documents-certification-intro {
     font-size: 16px;
   }
@@ -5971,6 +5981,10 @@ a:hover .arrow-medium {
     font-size: 20px;
   }
 
+  .documents-cert-type {
+    font-size: 14px;
+  }
+
   .documents-cert-download {
     font-size: 14px;
   }
@@ -5979,8 +5993,28 @@ a:hover .arrow-medium {
     font-size: 14px;
   }
 
+  .documents-cert-icon {
+    width: 48px;
+    height: 48px;
+  }
+
   .documents-commercial {
     padding: 64px 16px;
+  }
+
+  .documents-commercial-header {
+    margin-bottom: 40px;
+    gap: 16px;
+  }
+
+  .documents-commercial-title {
+    font-size: 32px;
+  }
+
+  .documents-commercial-icon {
+    width: 96px;
+    height: 96px;
+    margin-top: 24px;
   }
 
   .documents-commercial-content {
@@ -6013,6 +6047,14 @@ a:hover .arrow-medium {
     gap: 24px;
   }
 
+  .documents-help-left {
+    max-width: 100%;
+  }
+
+  .documents-help-title {
+    font-size: 32px;
+  }
+
   .documents-help-text {
     font-size: 16px;
   }
@@ -6024,6 +6066,12 @@ a:hover .arrow-medium {
   .documents-faq .section-title {
     font-size: 32px;
     margin-bottom: 40px;
+  }
+
+  .documents-certification .section-title,
+  .documents-commercial .section-title,
+  .documents-help .section-title {
+    font-size: 32px;
   }
 }
 
@@ -6204,6 +6252,8 @@ a:hover .arrow-medium {
   padding: 16px 0;
   opacity: 0.5;
   transition: opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .contacts-map-tab:hover {
@@ -6371,11 +6421,21 @@ a:hover .arrow-medium {
   }
 
   .contacts-hero-description {
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .contacts-hero-image {
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
   }
 
   .contacts-offices {
     padding: 64px 16px;
+  }
+
+  .contacts-offices .section-title {
+    font-size: 32px;
+    margin-bottom: 40px;
   }
 
   .contacts-offices-grid {
@@ -6384,13 +6444,63 @@ a:hover .arrow-medium {
 
   .contacts-office-card {
     gap: 40px;
+    padding: 24px;
+  }
+
+  .contacts-office-region {
+    font-size: 14px;
+  }
+
+  .contacts-office-city {
+    font-size: 18px;
+  }
+
+  .contacts-office-label {
+    font-size: 14px;
+  }
+
+  .contacts-office-value {
+    font-size: 16px;
   }
 
   .contacts-map {
     padding: 64px 16px;
   }
 
+  .contacts-map .section-title {
+    font-size: 32px;
+  }
+
   .contacts-map-header {
+    margin-bottom: 40px;
+    gap: 16px;
+  }
+
+  .contacts-map-tabs {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .contacts-map-tab {
+    font-size: 16px;
+    padding: 12px 0;
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+  }
+
+  .contacts-map-placeholder {
+    aspect-ratio: 3 / 4;
+    border-radius: 16px;
+  }
+
+  .contact-section {
+    padding: 64px 16px;
+  }
+
+  .contact-section .section-title {
+    font-size: 32px;
     margin-bottom: 40px;
   }
 
@@ -6409,5 +6519,30 @@ a:hover .arrow-medium {
 
   .contacts-office-badge {
     font-size: 12px;
+  }
+
+  .contact-form-wrapper {
+    padding: 24px;
+  }
+
+  .contact-form-title {
+    font-size: 20px;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .contact-info {
+    gap: 32px;
+  }
+
+  .contact-info-item {
+    padding-bottom: 24px;
+  }
+
+  .contact-info-note {
+    font-size: 14px;
   }
 }
