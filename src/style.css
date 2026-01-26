@@ -6080,29 +6080,30 @@ a:hover .arrow-medium {
 /* Contacts Hero Section */
 .contacts-hero {
   padding: 120px 64px;
-  background-color: var(--color-bg-beige);
 }
 
 .contacts-hero-content {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 32px;
+  align-items: flex-start;
+  gap: 64px;
 }
 
 .contacts-hero-text {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
   max-width: 640px;
 }
 
 .contacts-hero-title {
   font-family: var(--font-bounded);
   font-size: 56px;
-  font-weight: 300;
+  font-weight: 400;
   color: var(--color-primary);
   line-height: 1.2;
-  margin-bottom: 32px;
 }
 
 .contacts-hero-description {
@@ -6111,7 +6112,6 @@ a:hover .arrow-medium {
   font-weight: 400;
   color: var(--color-text);
   line-height: 1.4;
-  opacity: 0.8;
 }
 
 .contacts-hero-image {
@@ -6342,6 +6342,10 @@ a:hover .arrow-medium {
 @media (max-width: 1439px) {
   .contacts-hero {
     padding: 80px 40px;
+  }
+
+  .contacts-hero-content {
+    gap: 40px;
   }
 
   .contacts-offices {
