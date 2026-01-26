@@ -881,6 +881,26 @@ if (documentsCommercialTitle && documentsCommercialRight) {
   observer5.observe(documentsCommercialTitle)
 }
 
+// Contacts map tabs switching
+const contactsMapTabs = document.querySelectorAll('.contacts-map-tab')
+const mapPlaceholder = document.getElementById('map-placeholder')
+
+if (contactsMapTabs.length > 0 && mapPlaceholder) {
+  contactsMapTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs
+      contactsMapTabs.forEach(t => t.classList.remove('active'))
+      // Add active class to clicked tab
+      tab.classList.add('active')
+      
+      // Here you can add logic to switch map when Yandex Maps is integrated
+      const office = tab.getAttribute('data-office')
+      console.log('Switched to office:', office)
+      // In future: switch Yandex Map to show selected office
+    })
+  })
+}
+
 // Catalog custom section - sync padding-top with title height
 const catalogCustomLeft = document.querySelector('.catalog-custom-left')
 const catalogCustomRight = document.querySelector('.catalog-custom-right')
@@ -953,7 +973,8 @@ if (contactForms.length > 0) {
     const pageNames = {
       'index.html': 'Главная страница',
       'hotels.html': 'Страница "Отелям"',
-      'dealers.html': 'Страница "Дилерам"'
+      'dealers.html': 'Страница "Дилерам"',
+      'contacts.html': 'Страница "Контакты"'
     }
     
     return pageNames[filename] || filename

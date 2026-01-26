@@ -6108,19 +6108,24 @@ a:hover .arrow-medium {
 .contacts-office-header {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 0;
 }
 
 .contacts-office-badge {
-  display: inline-block;
-  background-color: var(--color-bg-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px 16px;
-  border-radius: 4px;
+  background-color: var(--color-tag-bg);
+  border-radius: 24px;
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 400;
   color: var(--color-text);
+  line-height: 1.4;
+  text-transform: uppercase;
   width: fit-content;
+  margin-bottom: 24px;
 }
 
 .contacts-office-region {
@@ -6129,6 +6134,7 @@ a:hover .arrow-medium {
   font-weight: 400;
   color: var(--color-text);
   opacity: 0.6;
+  margin-bottom: 8px;
 }
 
 .contacts-office-city {
@@ -6137,6 +6143,7 @@ a:hover .arrow-medium {
   font-weight: 300;
   color: var(--color-primary);
   line-height: 1.2;
+  margin-top: 0;
 }
 
 .contacts-office-info {
@@ -6220,11 +6227,6 @@ a:hover .arrow-medium {
   background-color: var(--color-bg-white);
 }
 
-.contacts-map-placeholder img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
 /* Contact Info for Contacts Page */
 .contact-info {
@@ -6410,5 +6412,9 @@ a:hover .arrow-medium {
 
   .contact-info-value {
     font-size: 18px;
+  }
+
+  .contacts-office-badge {
+    font-size: 12px;
   }
 }
