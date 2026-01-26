@@ -1,5 +1,6 @@
 import './style.css'
 import { gsap } from 'gsap'
+import Lenis from '@studio-freight/lenis'
 
 // Geography cities animation - start only when in viewport
 const geographySection = document.querySelector('.geography-section')
@@ -19,6 +20,45 @@ if (geographySection && geographyCities) {
   })
 
   observer.observe(geographySection)
+}
+
+// Lenis smooth scroll - только для десктопа
+if (window.innerWidth > 1024) {
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: 'vertical',
+    gestureOrientation: 'vertical',
+    smoothWheel: true,
+    wheelMultiplier: 1,
+    smoothTouch: false,
+    touchMultiplier: 2,
+    infinite: false,
+  })
+
+  function raf(time) {
+    lenis.raf(time)
+    requestAnimationFrame(raf)
+  }
+
+  requestAnimationFrame(raf)
+
+  // Обработка якорных ссылок
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const href = this.getAttribute('href')
+      if (href !== '#' && href !== '') {
+        const target = document.querySelector(href)
+        if (target) {
+          e.preventDefault()
+          lenis.scrollTo(target, {
+            offset: 0,
+            duration: 1.5,
+          })
+        }
+      }
+    })
+  })
 }
 
 // Font loading and preloader
