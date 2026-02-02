@@ -814,6 +814,63 @@ a:hover .arrow-small {
   background-color: var(--color-partner-cell);
 }
 
+/* Partners: decorative image (normal + hover) */
+.partners-grid-image {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1920 / 640;
+  overflow: hidden;
+}
+
+.partners-grid-image .partners-img {
+  display: block;
+  object-fit: contain;
+  object-position: center;
+}
+
+.partners-grid-image .partners-img-normal,
+.partners-grid-image .partners-img-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.partners-grid-image .partners-img-normal {
+  z-index: 0;
+}
+
+.partners-grid-image .partners-img-hover {
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.partners-grid-image:hover .partners-img-hover {
+  opacity: 1;
+}
+
+/* Планшеты и мобилка: одна картинка без ховера */
+.partners-grid-image .partners-img-mobile {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .partners-grid-image .partners-img-normal,
+  .partners-grid-image .partners-img-hover {
+    display: none;
+  }
+
+  .partners-grid-image .partners-img-mobile {
+    display: block;
+    position: relative;
+    z-index: 0;
+  }
+}
+
 /* Testimonials */
 .testimonials {
   padding: 0 0 120px 0;
