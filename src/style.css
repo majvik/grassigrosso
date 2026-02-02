@@ -6605,3 +6605,9 @@ a:hover .arrow-medium {
     font-size: 14px;
   }
 }
+
+@media (max-width: 767px) {
+  .contacts-map-placeholder {
+    aspect-ratio: 1 / 1;
+  }
+}

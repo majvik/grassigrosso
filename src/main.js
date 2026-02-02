@@ -923,20 +923,17 @@ if (documentsCommercialTitle && documentsCommercialRight) {
 
 // Contacts map tabs switching
 const contactsMapTabs = document.querySelectorAll('.contacts-map-tab')
-const mapPlaceholder = document.getElementById('map-placeholder')
+const contactsMapFrames = document.querySelectorAll('.contacts-map-frame')
 
-if (contactsMapTabs.length > 0 && mapPlaceholder) {
+if (contactsMapTabs.length > 0 && contactsMapFrames.length > 0) {
   contactsMapTabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      // Remove active class from all tabs
       contactsMapTabs.forEach(t => t.classList.remove('active'))
-      // Add active class to clicked tab
       tab.classList.add('active')
-      
-      // Here you can add logic to switch map when Yandex Maps is integrated
       const office = tab.getAttribute('data-office')
-      console.log('Switched to office:', office)
-      // In future: switch Yandex Map to show selected office
+      contactsMapFrames.forEach(frame => {
+        frame.hidden = frame.getAttribute('data-office') !== office
+      })
     })
   })
 }
