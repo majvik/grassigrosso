@@ -103,8 +103,27 @@
             </a>
           </div>
         </div>
-        <div class="hero-image">
-          <img src="./public/hero-bedroom.png" alt="Интерьер спальни" />
+        <div class="hero-image" id="heroVideo">
+          <video
+            class="hero-video"
+            src="./public/grassigrosso-silent.webm"
+            poster="./public/grassigrosso-poster.jpg"
+            autoplay
+            loop
+            muted
+            playsinline
+          ></video>
+          <img
+            class="hero-poster"
+            src="./public/grassigrosso-poster.jpg"
+            alt="Grassi Grosso"
+          />
+          <button class="hero-play-btn" aria-label="Воспроизвести видео">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="32" r="32" fill="white" fill-opacity="0.9"/>
+              <path d="M26 20L46 32L26 44V20Z" fill="#243731"/>
+            </svg>
+          </button>
         </div>
       </section>
 
@@ -760,6 +779,24 @@
         </div>
       </div>
     </footer>
+
+    <!-- Video Modal -->
+    <div class="modal-overlay" id="videoModal">
+      <button class="modal-close" aria-label="Закрыть">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 14L34 34M34 14L14 34" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="modal-content">
+        <video
+          class="modal-video"
+          src="./public/grassigrosso-sound.webm"
+          poster="./public/grassigrosso-poster.jpg"
+          controls
+          playsinline
+        ></video>
+      </div>
+    </div>
 
     <script type="module" src="./src/main.js"></script>
   </body>

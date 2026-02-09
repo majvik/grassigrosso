@@ -1237,3 +1237,56 @@ if (contactForms.length > 0) {
     })
   })
 }
+
+// Video Modal
+const videoModal = document.getElementById('videoModal')
+const heroVideoContainer = document.getElementById('heroVideo')
+const heroPlayBtn = heroVideoContainer?.querySelector('.hero-play-btn')
+const modalClose = videoModal?.querySelector('.modal-close')
+const modalVideo = videoModal?.querySelector('.modal-video')
+
+function isMobileView() {
+  return window.innerWidth <= 768
+}
+
+function openVideoModal() {
+  if (!videoModal || !modalVideo || isMobileView()) return
+  videoModal.classList.add('active')
+  document.body.style.overflow = 'hidden'
+  modalVideo.currentTime = 0
+  modalVideo.play()
+}
+
+function closeVideoModal() {
+  if (!videoModal || !modalVideo) return
+  videoModal.classList.remove('active')
+  document.body.style.overflow = ''
+  modalVideo.pause()
+  modalVideo.currentTime = 0
+}
+
+if (heroVideoContainer && videoModal) {
+  heroVideoContainer.addEventListener('click', (e) => {
+    if (isMobileView()) return
+    openVideoModal()
+  })
+
+  if (modalClose) {
+    modalClose.addEventListener('click', (e) => {
+      e.stopPropagation()
+      closeVideoModal()
+    })
+  }
+
+  videoModal.addEventListener('click', (e) => {
+    if (e.target === videoModal) {
+      closeVideoModal()
+    }
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && videoModal.classList.contains('active')) {
+      closeVideoModal()
+    }
+  })
+}
