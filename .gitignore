@@ -19,6 +19,11 @@ lerna-debug.log*
 .env
 .env.local
 
+# Source video and data files
+*.mov
+*.xlsx
+*.mp4
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
