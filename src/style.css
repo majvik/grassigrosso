@@ -83,11 +83,11 @@
 }
 
 /* Hide body content until fonts are loaded */
-body:not(.fonts-loaded) {
+body:not(.fonts-loaded) > *:not(.preloader) {
   visibility: hidden;
 }
 
-body.fonts-loaded {
+body.fonts-loaded > *:not(.preloader) {
   visibility: visible;
   animation: fadeIn 0.5s ease;
 }

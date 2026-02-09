@@ -96,34 +96,29 @@ async function waitForFonts() {
   }
 }
 
-// Function to wait for inline videos (not modal) to be ready to play
-async function waitForVideos() {
+// Kick off autoplay for inline videos after page is visible
+function startInlineVideos() {
   const videos = document.querySelectorAll('video:not(.modal-video)')
-  const promises = Array.from(videos).map(video => {
-    // Already has enough data to play
-    if (video.readyState >= 3) return Promise.resolve()
-    return new Promise(resolve => {
-      video.addEventListener('canplay', resolve, { once: true })
-      video.addEventListener('error', resolve, { once: true })
-      // Fallback timeout per video — don't block forever
-      setTimeout(resolve, 8000)
-    })
+  videos.forEach(video => {
+    if (video.paused && video.autoplay) {
+      video.play().catch(() => {})
+    }
   })
-  if (promises.length > 0) {
-    await Promise.all(promises)
-  }
 }
 
 // Initialize page load
 async function initPageLoad() {
-  // Wait for fonts and inline videos to load
-  await Promise.all([waitForFonts(), waitForVideos()])
+  // Wait for fonts to load
+  await waitForFonts()
   
   // Small delay to ensure fonts are rendered
   await new Promise(resolve => requestAnimationFrame(resolve))
   
   // Mark fonts as loaded - this will show the body with fade
   document.body.classList.add('fonts-loaded')
+  
+  // Ensure inline videos start playing now that page is visible
+  startInlineVideos()
   
   // Hide preloader with fade
   if (preloader) {
