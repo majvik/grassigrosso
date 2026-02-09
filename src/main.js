@@ -63,110 +63,65 @@ if (window.innerWidth > 1024) {
 
 // Font loading and preloader
 const preloader = document.getElementById('preloader')
-const t0 = performance.now()
-const log = (msg) => console.log(`[PRELOADER +${Math.round(performance.now() - t0)}ms] ${msg}`)
-
-log(`Script started. readyState=${document.readyState}`)
-
-// Diagnostic: list ALL fonts the browser is tracking
-function logAllFonts() {
-  if (!document.fonts) return
-  const fonts = []
-  document.fonts.forEach(f => {
-    fonts.push(`  "${f.family}" weight=${f.weight} style=${f.style} status=${f.status}`)
-  })
-  log(`All tracked fonts (${fonts.length}):\n${fonts.join('\n')}`)
-}
 
 // Wait only for the specific fonts we need
 async function waitForFonts() {
-  log('waitForFonts: start')
-  
   if (document.readyState === 'loading') {
-    log('waitForFonts: waiting for DOMContentLoaded...')
     await new Promise(resolve => {
       document.addEventListener('DOMContentLoaded', resolve)
     })
-    log('waitForFonts: DOMContentLoaded fired')
   }
 
   if (!document.fonts) {
-    log('waitForFonts: no fonts API, fallback 300ms')
     await new Promise(resolve => setTimeout(resolve, 300))
     return
   }
 
-  // Log what fonts the browser sees
-  logAllFonts()
-
-  // Also start fonts.ready in background to see how long it takes
-  document.fonts.ready.then(() => {
-    log('>>> document.fonts.ready finally resolved (background)')
-    logAllFonts()
-  })
-
-  // Poll for our specific fonts
+  // Poll for our specific fonts — don't use document.fonts.ready
   const needed = ['Nunito', 'Bounded']
   const maxWait = 3000
   const start = performance.now()
   
   while (performance.now() - start < maxWait) {
-    const status = needed.map(f => ({ name: f, loaded: document.fonts.check(`16px ${f}`) }))
-    const allLoaded = status.every(s => s.loaded)
-    if (allLoaded) {
-      log(`waitForFonts: Nunito+Bounded ready in ${Math.round(performance.now() - start)}ms`)
-      return
-    }
-    log(`waitForFonts: ${status.map(s => `${s.name}=${s.loaded}`).join(', ')}`)
+    if (needed.every(f => document.fonts.check(`16px ${f}`))) return
     await new Promise(resolve => setTimeout(resolve, 50))
   }
-  log('waitForFonts: timeout 3s, proceeding anyway')
-  logAllFonts()
 }
 
 // Kick off autoplay for inline videos after page is visible
 function startInlineVideos() {
   const videos = document.querySelectorAll('video:not(.modal-video)')
-  log(`startInlineVideos: found ${videos.length} video(s)`)
-  videos.forEach((video, i) => {
-    log(`  video[${i}]: src=${video.src || video.querySelector('source')?.src}, paused=${video.paused}, readyState=${video.readyState}, autoplay=${video.autoplay}`)
+  videos.forEach(video => {
     if (video.paused && video.autoplay) {
-      video.play().then(() => log(`  video[${i}]: play() succeeded`)).catch(e => log(`  video[${i}]: play() failed — ${e.message}`))
+      video.play().catch(() => {})
     }
   })
 }
 
 // Initialize page load
 async function initPageLoad() {
-  log('initPageLoad: start')
   
   await waitForFonts()
   
-  log('initPageLoad: requestAnimationFrame...')
   await new Promise(resolve => requestAnimationFrame(resolve))
-  log('initPageLoad: rAF done')
   
   document.body.classList.add('fonts-loaded')
-  log('initPageLoad: fonts-loaded class added')
   
   startInlineVideos()
   
   if (preloader) {
     preloader.classList.add('hidden')
-    log('initPageLoad: preloader hidden')
     setTimeout(() => {
       if (preloader && preloader.parentNode) {
         preloader.remove()
-        log('initPageLoad: preloader removed from DOM')
       }
     }, 500)
   }
-  log('initPageLoad: DONE')
 }
 
 // Start initialization
 initPageLoad().catch(err => {
-  log(`initPageLoad: CATCH — ${err.message}`)
+  console.error('initPageLoad error:', err)
   setTimeout(() => {
     document.body.classList.add('fonts-loaded')
     if (preloader) {
@@ -177,7 +132,7 @@ initPageLoad().catch(err => {
         }
       }, 500)
     }
-    log('initPageLoad: fallback applied')
+    
   }, 2000)
 })
 

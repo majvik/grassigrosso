@@ -8,7 +8,7 @@
 /* Nunito font - variable font for all weights */
 @font-face {
   font-family: 'Nunito';
-  src: url('./fonts/nunito-variable.woff2') format('woff2-variations');
+  src: url('./fonts/nunito-variable.woff2') format('woff2');
   font-weight: 200 1000;
   font-style: normal;
   font-display: swap;
@@ -17,17 +17,8 @@
 /* Bounded font - variable font for all weights */
 @font-face {
   font-family: 'Bounded';
-  src: url('./fonts/bounded-variable.woff2') format('woff2-variations');
+  src: url('./fonts/bounded-variable.woff2') format('woff2');
   font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Bounded regular fallback - only load if variable font fails */
-@font-face {
-  font-family: 'Bounded';
-  src: url('./fonts/bounded-regular.woff2') format('woff2');
-  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
