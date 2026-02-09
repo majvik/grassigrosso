@@ -1240,8 +1240,6 @@ if (contactForms.length > 0) {
 
 // Video Modal
 const videoModal = document.getElementById('videoModal')
-const heroVideoContainer = document.getElementById('heroVideo')
-const heroPlayBtn = heroVideoContainer?.querySelector('.hero-play-btn')
 const modalClose = videoModal?.querySelector('.modal-close')
 const modalVideo = videoModal?.querySelector('.modal-video')
 
@@ -1249,10 +1247,32 @@ function isMobileView() {
   return window.innerWidth <= 768
 }
 
+let scrollPosition = 0
+
+function lockScroll() {
+  scrollPosition = window.pageYOffset
+  document.body.style.overflow = 'hidden'
+  document.body.style.position = 'fixed'
+  document.body.style.top = `-${scrollPosition}px`
+  document.body.style.left = '0'
+  document.body.style.right = '0'
+  document.documentElement.style.overflow = 'hidden'
+}
+
+function unlockScroll() {
+  document.body.style.overflow = ''
+  document.body.style.position = ''
+  document.body.style.top = ''
+  document.body.style.left = ''
+  document.body.style.right = ''
+  document.documentElement.style.overflow = ''
+  window.scrollTo(0, scrollPosition)
+}
+
 function openVideoModal() {
   if (!videoModal || !modalVideo || isMobileView()) return
   videoModal.classList.add('active')
-  document.body.style.overflow = 'hidden'
+  lockScroll()
   modalVideo.currentTime = 0
   modalVideo.play()
 }
@@ -1260,17 +1280,22 @@ function openVideoModal() {
 function closeVideoModal() {
   if (!videoModal || !modalVideo) return
   videoModal.classList.remove('active')
-  document.body.style.overflow = ''
+  unlockScroll()
   modalVideo.pause()
   modalVideo.currentTime = 0
 }
 
-if (heroVideoContainer && videoModal) {
-  heroVideoContainer.addEventListener('click', (e) => {
+// Bind all video triggers to the modal
+const videoTriggers = document.querySelectorAll('#heroVideo, #qualityVideo')
+
+videoTriggers.forEach(trigger => {
+  trigger.addEventListener('click', (e) => {
     if (isMobileView()) return
     openVideoModal()
   })
+})
 
+if (videoModal) {
   if (modalClose) {
     modalClose.addEventListener('click', (e) => {
       e.stopPropagation()

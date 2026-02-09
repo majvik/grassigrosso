@@ -2957,12 +2957,25 @@ a:hover .arrow-medium {
   aspect-ratio: 1 / 1;
   border-radius: 24px;
   overflow: hidden;
+  position: relative;
+  cursor: pointer;
 }
 
 .quality-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.quality-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.quality-poster {
+  display: none;
 }
 
 /* Requirements Section */
@@ -3900,6 +3913,17 @@ a:hover .arrow-medium {
     height: auto;
     aspect-ratio: 16 / 9;
     margin-top: 40px;
+  }
+
+  .quality-video {
+    display: none;
+  }
+
+  .quality-poster {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .requirements-grid {
