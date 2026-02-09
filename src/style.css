@@ -384,9 +384,10 @@ body {
   -webkit-backdrop-filter: blur(20px);
   z-index: 10000;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 48px;
+  box-sizing: border-box;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -395,6 +396,13 @@ body {
 .modal-overlay.active {
   opacity: 1;
   visibility: visible;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  line-height: 0;
 }
 
 .modal-close {
@@ -407,7 +415,7 @@ body {
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 10001;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -418,22 +426,12 @@ body {
   opacity: 0.7;
 }
 
-.modal-content {
-  width: 100%;
-  max-width: calc(100% - 96px);
-  max-height: calc(100vh - 48px - 48px - 48px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: calc(48px + 48px);
-}
-
 .modal-video {
-  width: 100%;
-  max-height: calc(100vh - 48px - 48px - 48px);
+  max-width: 100%;
+  max-height: calc(100vh - 96px);
   border-radius: 16px;
-  background: #000;
   outline: none;
+  display: block;
 }
 
 /* Cookie Banner */
@@ -2104,19 +2102,17 @@ a:hover .arrow-medium {
   }
 
   /* Modal mobile */
+  .modal-overlay {
+    padding: 16px;
+  }
+
   .modal-close {
     top: 16px;
     right: 16px;
   }
 
-  .modal-content {
-    max-width: calc(100% - 32px);
-    margin-top: calc(16px + 48px);
-    max-height: calc(100vh - 16px - 48px - 16px);
-  }
-
   .modal-video {
-    max-height: calc(100vh - 16px - 48px - 16px);
+    max-height: calc(100vh - 32px);
     border-radius: 8px;
   }
 
