@@ -68,7 +68,17 @@ const log = (msg) => console.log(`[PRELOADER +${Math.round(performance.now() - t
 
 log(`Script started. readyState=${document.readyState}`)
 
-// Wait only for the specific fonts we need, not all fonts
+// Diagnostic: list ALL fonts the browser is tracking
+function logAllFonts() {
+  if (!document.fonts) return
+  const fonts = []
+  document.fonts.forEach(f => {
+    fonts.push(`  "${f.family}" weight=${f.weight} style=${f.style} status=${f.status}`)
+  })
+  log(`All tracked fonts (${fonts.length}):\n${fonts.join('\n')}`)
+}
+
+// Wait only for the specific fonts we need
 async function waitForFonts() {
   log('waitForFonts: start')
   
@@ -83,11 +93,19 @@ async function waitForFonts() {
   if (!document.fonts) {
     log('waitForFonts: no fonts API, fallback 300ms')
     await new Promise(resolve => setTimeout(resolve, 300))
-    log('waitForFonts: done (fallback)')
     return
   }
 
-  // Poll for specific fonts instead of waiting for ALL fonts via fonts.ready
+  // Log what fonts the browser sees
+  logAllFonts()
+
+  // Also start fonts.ready in background to see how long it takes
+  document.fonts.ready.then(() => {
+    log('>>> document.fonts.ready finally resolved (background)')
+    logAllFonts()
+  })
+
+  // Poll for our specific fonts
   const needed = ['Nunito', 'Bounded']
   const maxWait = 3000
   const start = performance.now()
@@ -95,14 +113,15 @@ async function waitForFonts() {
   while (performance.now() - start < maxWait) {
     const status = needed.map(f => ({ name: f, loaded: document.fonts.check(`16px ${f}`) }))
     const allLoaded = status.every(s => s.loaded)
-    log(`waitForFonts: ${status.map(s => `${s.name}=${s.loaded}`).join(', ')}`)
     if (allLoaded) {
-      log('waitForFonts: all needed fonts ready')
+      log(`waitForFonts: Nunito+Bounded ready in ${Math.round(performance.now() - start)}ms`)
       return
     }
+    log(`waitForFonts: ${status.map(s => `${s.name}=${s.loaded}`).join(', ')}`)
     await new Promise(resolve => setTimeout(resolve, 50))
   }
-  log('waitForFonts: timeout reached, proceeding anyway')
+  log('waitForFonts: timeout 3s, proceeding anyway')
+  logAllFonts()
 }
 
 // Kick off autoplay for inline videos after page is visible
