@@ -68,7 +68,7 @@ const log = (msg) => console.log(`[PRELOADER +${Math.round(performance.now() - t
 
 log(`Script started. readyState=${document.readyState}`)
 
-// Function to check if fonts are loaded
+// Wait only for the specific fonts we need, not all fonts
 async function waitForFonts() {
   log('waitForFonts: start')
   
@@ -80,29 +80,29 @@ async function waitForFonts() {
     log('waitForFonts: DOMContentLoaded fired')
   }
 
-  if (document.fonts && document.fonts.ready) {
-    try {
-      log('waitForFonts: awaiting document.fonts.ready...')
-      await document.fonts.ready
-      log('waitForFonts: document.fonts.ready resolved')
-      
-      const nunitoLoaded = document.fonts.check('16px Nunito')
-      const boundedLoaded = document.fonts.check('16px Bounded')
-      log(`waitForFonts: Nunito=${nunitoLoaded}, Bounded=${boundedLoaded}`)
-      
-      if (!nunitoLoaded || !boundedLoaded) {
-        log('waitForFonts: fonts not confirmed, waiting 100ms extra')
-        await new Promise(resolve => setTimeout(resolve, 100))
-        log(`waitForFonts: after extra wait — Nunito=${document.fonts.check('16px Nunito')}, Bounded=${document.fonts.check('16px Bounded')}`)
-      }
-    } catch (e) {
-      log(`waitForFonts: ERROR — ${e.message}`)
-    }
-  } else {
-    log('waitForFonts: no fonts API, fallback 500ms')
-    await new Promise(resolve => setTimeout(resolve, 500))
+  if (!document.fonts) {
+    log('waitForFonts: no fonts API, fallback 300ms')
+    await new Promise(resolve => setTimeout(resolve, 300))
+    log('waitForFonts: done (fallback)')
+    return
   }
-  log('waitForFonts: done')
+
+  // Poll for specific fonts instead of waiting for ALL fonts via fonts.ready
+  const needed = ['Nunito', 'Bounded']
+  const maxWait = 3000
+  const start = performance.now()
+  
+  while (performance.now() - start < maxWait) {
+    const status = needed.map(f => ({ name: f, loaded: document.fonts.check(`16px ${f}`) }))
+    const allLoaded = status.every(s => s.loaded)
+    log(`waitForFonts: ${status.map(s => `${s.name}=${s.loaded}`).join(', ')}`)
+    if (allLoaded) {
+      log('waitForFonts: all needed fonts ready')
+      return
+    }
+    await new Promise(resolve => setTimeout(resolve, 50))
+  }
+  log('waitForFonts: timeout reached, proceeding anyway')
 }
 
 // Kick off autoplay for inline videos after page is visible
