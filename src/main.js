@@ -63,79 +63,91 @@ if (window.innerWidth > 1024) {
 
 // Font loading and preloader
 const preloader = document.getElementById('preloader')
+const t0 = performance.now()
+const log = (msg) => console.log(`[PRELOADER +${Math.round(performance.now() - t0)}ms] ${msg}`)
+
+log(`Script started. readyState=${document.readyState}`)
 
 // Function to check if fonts are loaded
 async function waitForFonts() {
-  // Wait for document to be ready
+  log('waitForFonts: start')
+  
   if (document.readyState === 'loading') {
+    log('waitForFonts: waiting for DOMContentLoaded...')
     await new Promise(resolve => {
       document.addEventListener('DOMContentLoaded', resolve)
     })
+    log('waitForFonts: DOMContentLoaded fired')
   }
 
-  // Check if document.fonts API is available
   if (document.fonts && document.fonts.ready) {
     try {
-      // Wait for all fonts to be loaded
+      log('waitForFonts: awaiting document.fonts.ready...')
       await document.fonts.ready
+      log('waitForFonts: document.fonts.ready resolved')
       
-      // Additional check: verify specific fonts are loaded
       const nunitoLoaded = document.fonts.check('16px Nunito')
       const boundedLoaded = document.fonts.check('16px Bounded')
+      log(`waitForFonts: Nunito=${nunitoLoaded}, Bounded=${boundedLoaded}`)
       
-      // If fonts are not loaded yet, wait a bit more
       if (!nunitoLoaded || !boundedLoaded) {
+        log('waitForFonts: fonts not confirmed, waiting 100ms extra')
         await new Promise(resolve => setTimeout(resolve, 100))
+        log(`waitForFonts: after extra wait — Nunito=${document.fonts.check('16px Nunito')}, Bounded=${document.fonts.check('16px Bounded')}`)
       }
     } catch (e) {
-      console.warn('Font loading check failed:', e)
+      log(`waitForFonts: ERROR — ${e.message}`)
     }
   } else {
-    // Fallback: wait a reasonable time for fonts to load
+    log('waitForFonts: no fonts API, fallback 500ms')
     await new Promise(resolve => setTimeout(resolve, 500))
   }
+  log('waitForFonts: done')
 }
 
 // Kick off autoplay for inline videos after page is visible
 function startInlineVideos() {
   const videos = document.querySelectorAll('video:not(.modal-video)')
-  videos.forEach(video => {
+  log(`startInlineVideos: found ${videos.length} video(s)`)
+  videos.forEach((video, i) => {
+    log(`  video[${i}]: src=${video.src || video.querySelector('source')?.src}, paused=${video.paused}, readyState=${video.readyState}, autoplay=${video.autoplay}`)
     if (video.paused && video.autoplay) {
-      video.play().catch(() => {})
+      video.play().then(() => log(`  video[${i}]: play() succeeded`)).catch(e => log(`  video[${i}]: play() failed — ${e.message}`))
     }
   })
 }
 
 // Initialize page load
 async function initPageLoad() {
-  // Wait for fonts to load
+  log('initPageLoad: start')
+  
   await waitForFonts()
   
-  // Small delay to ensure fonts are rendered
+  log('initPageLoad: requestAnimationFrame...')
   await new Promise(resolve => requestAnimationFrame(resolve))
+  log('initPageLoad: rAF done')
   
-  // Mark fonts as loaded - this will show the body with fade
   document.body.classList.add('fonts-loaded')
+  log('initPageLoad: fonts-loaded class added')
   
-  // Ensure inline videos start playing now that page is visible
   startInlineVideos()
   
-  // Hide preloader with fade
   if (preloader) {
     preloader.classList.add('hidden')
-    // Remove from DOM after animation
+    log('initPageLoad: preloader hidden')
     setTimeout(() => {
       if (preloader && preloader.parentNode) {
         preloader.remove()
+        log('initPageLoad: preloader removed from DOM')
       }
     }, 500)
   }
+  log('initPageLoad: DONE')
 }
 
 // Start initialization
 initPageLoad().catch(err => {
-  console.error('Error initializing page:', err)
-  // Fallback: show page anyway after timeout
+  log(`initPageLoad: CATCH — ${err.message}`)
   setTimeout(() => {
     document.body.classList.add('fonts-loaded')
     if (preloader) {
@@ -146,6 +158,7 @@ initPageLoad().catch(err => {
         }
       }, 500)
     }
+    log('initPageLoad: fallback applied')
   }, 2000)
 })
 
