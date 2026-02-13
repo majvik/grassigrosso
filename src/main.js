@@ -63,6 +63,16 @@ if (window.innerWidth > 1024) {
 
 // Font loading and preloader
 const preloader = document.getElementById('preloader')
+const AUTOPLAY_VIDEO_VISIBILITY_THRESHOLD = 0.2
+
+function ensureVideoSource(video) {
+  const inlineSrc = video.getAttribute('src')
+  const deferredSrc = video.dataset.src
+  if (!inlineSrc && deferredSrc) {
+    video.setAttribute('src', deferredSrc)
+    video.load()
+  }
+}
 
 // Wait only for the specific fonts we need
 async function waitForFonts() {
@@ -77,24 +87,42 @@ async function waitForFonts() {
     return
   }
 
-  // Poll for our specific fonts — don't use document.fonts.ready
-  const needed = ['Nunito', 'Bounded']
-  const maxWait = 3000
-  const start = performance.now()
-  
-  while (performance.now() - start < maxWait) {
-    if (needed.every(f => document.fonts.check(`16px ${f}`))) return
-    await new Promise(resolve => setTimeout(resolve, 50))
-  }
+  await Promise.all([
+    document.fonts.load('400 1em "Nunito"'),
+    document.fonts.load('400 1em "Bounded"')
+  ])
 }
 
 // Kick off autoplay for inline videos after page is visible
 function startInlineVideos() {
-  const videos = document.querySelectorAll('video:not(.modal-video)')
-  videos.forEach(video => {
-    if (video.paused && video.autoplay) {
+  const videos = document.querySelectorAll('video[autoplay]:not(.modal-video)')
+  if (videos.length === 0) return
+
+  const activateVideo = (video) => {
+    ensureVideoSource(video)
+    if (video.paused) {
       video.play().catch(() => {})
     }
+  }
+
+  if (!window.IntersectionObserver) {
+    videos.forEach(activateVideo)
+    return
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return
+      const video = entry.target
+      activateVideo(video)
+      observer.unobserve(video)
+    })
+  }, {
+    threshold: AUTOPLAY_VIDEO_VISIBILITY_THRESHOLD
+  })
+
+  videos.forEach(video => {
+    observer.observe(video)
   })
 }
 
@@ -238,26 +266,27 @@ if (slider && prevBtn && nextBtn && progressFill) {
     img.style.transformOrigin = 'center center'
   })
   
-  // Update parallax effect on images
+  // Update parallax effect on images (offset < scale overflow so image always fills container)
+  const scale = 1.25
   function updateParallax() {
     const viewportCenter = window.innerWidth / 2
-    
+
     cards.forEach((card) => {
       const img = card.querySelector('.collection-image img')
       if (!img) return
-      
+
       const cardRect = card.getBoundingClientRect()
-      
-      // Skip if card is far outside viewport
       if (cardRect.right < -500 || cardRect.left > window.innerWidth + 500) {
         return
       }
-      
+
+      const maxParallaxPx = (cardRect.width * (scale - 1)) / 2
+      const coefficient = (maxParallaxPx / (viewportCenter || 1)) * 0.9
       const cardCenter = cardRect.left + cardRect.width / 2
       const distanceFromCenter = cardCenter - viewportCenter
-      const parallaxOffset = distanceFromCenter * -0.25
-      
-      img.style.transform = `translateX(${parallaxOffset}px) scale(2.25)`
+      const parallaxOffset = distanceFromCenter * -coefficient
+
+      img.style.transform = `translateX(${parallaxOffset}px) scale(${scale})`
     })
   }
   
@@ -926,6 +955,23 @@ const contactsMapTabs = document.querySelectorAll('.contacts-map-tab')
 const contactsMapFrames = document.querySelectorAll('.contacts-map-frame')
 
 if (contactsMapTabs.length > 0 && contactsMapFrames.length > 0) {
+  const loadMapFrame = (frame) => {
+    if (!frame || frame.dataset.mapLoaded === 'true') return
+    const mapSrc = frame.dataset.mapSrc
+    if (!mapSrc) return
+
+    const mapScript = document.createElement('script')
+    mapScript.type = 'text/javascript'
+    mapScript.charset = 'utf-8'
+    mapScript.async = true
+    mapScript.src = mapSrc
+    frame.appendChild(mapScript)
+    frame.dataset.mapLoaded = 'true'
+  }
+
+  const initialActiveFrame = Array.from(contactsMapFrames).find(frame => !frame.hidden)
+  loadMapFrame(initialActiveFrame)
+
   contactsMapTabs.forEach(tab => {
     tab.addEventListener('click', () => {
       contactsMapTabs.forEach(t => t.classList.remove('active'))
@@ -933,6 +979,9 @@ if (contactsMapTabs.length > 0 && contactsMapFrames.length > 0) {
       const office = tab.getAttribute('data-office')
       contactsMapFrames.forEach(frame => {
         frame.hidden = frame.getAttribute('data-office') !== office
+        if (!frame.hidden) {
+          loadMapFrame(frame)
+        }
       })
     })
   })
@@ -1271,6 +1320,7 @@ function unlockScroll() {
 
 function openVideoModal() {
   if (!videoModal || !modalVideo || isMobileView()) return
+  ensureVideoSource(modalVideo)
   videoModal.classList.add('active')
   lockScroll()
   modalVideo.currentTime = 0

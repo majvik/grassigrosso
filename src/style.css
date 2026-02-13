@@ -641,8 +641,8 @@ a:hover .arrow-small {
 }
 
 .feature-icon {
-  width: 64px;
-  height: 64px;
+  width: 88px;
+  height: 88px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -771,6 +771,12 @@ a:hover .arrow-small {
   height: 221px;
   border-radius: 16px;
   overflow: hidden;
+}
+
+.collection-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .collection-image img {
@@ -1134,6 +1140,12 @@ a:hover .arrow-medium {
   aspect-ratio: 1;
   border-radius: 16px;
   overflow: hidden;
+}
+
+.certification-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .certification-image img {
@@ -2196,13 +2208,8 @@ a:hover .arrow-medium {
   }
 
   .feature-icon {
-    width: 64px;
-    height: 64px;
-  }
-
-  .feature-icon img {
-    width: 48px;
-    height: 56px;
+    width: 88px;
+    height: 88px;
   }
 
   .feature-content {
@@ -5287,6 +5294,12 @@ a:hover .arrow-medium {
   aspect-ratio: 16 / 9;
   border-radius: 24px;
   overflow: hidden;
+}
+
+.catalog-collection-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .catalog-collection-image img {

@@ -9,10 +9,30 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./public/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="./public/apple-touch-icon.png" />
     <link rel="manifest" href="./public/site.webmanifest" />
-    <!-- Preload critical fonts -->
+    <style>
+      html, body { margin: 0; background: #fff; }
+      .preloader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        z-index: 10000;
+      }
+      .preloader-spinner {
+        width: 48px;
+        height: 48px;
+        border: 3px solid rgba(40, 62, 55, 0.1);
+        border-top-color: #283e37;
+        border-radius: 50%;
+        animation: preloader-spin 0.8s linear infinite;
+      }
+      @keyframes preloader-spin { to { transform: rotate(360deg); } }
+    </style>
+    <link rel="stylesheet" href="./src/style.css" />
     <link rel="preload" href="./src/fonts/nunito-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="./src/fonts/bounded-variable.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
     <!-- Preloader -->
@@ -224,17 +244,13 @@
           </div>
         </div>
         <div class="contacts-map-container">
-          <div class="contacts-map-placeholder contacts-map-frame" id="map-main" data-office="main">
-            <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Af5cfdb754456fcc3121a375605d670045573001a861b847c12cb56db78fdd928&amp;width=1280&amp;height=549&amp;lang=ru_RU&amp;scroll=false"></script>
+          <div class="contacts-map-placeholder contacts-map-frame" id="map-main" data-office="main" data-map-src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Af5cfdb754456fcc3121a375605d670045573001a861b847c12cb56db78fdd928&amp;width=1280&amp;height=549&amp;lang=ru_RU&amp;scroll=false">
           </div>
-          <div class="contacts-map-placeholder contacts-map-frame" id="map-voronezh" data-office="voronezh" hidden>
-            <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ac052184f5839257b30761232cb3f70709d2963e480336fed29874f796216026b&amp;width=1280&amp;height=549&amp;lang=ru_RU&amp;scroll=false"></script>
+          <div class="contacts-map-placeholder contacts-map-frame" id="map-voronezh" data-office="voronezh" data-map-src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ac052184f5839257b30761232cb3f70709d2963e480336fed29874f796216026b&amp;width=1280&amp;height=549&amp;lang=ru_RU&amp;scroll=false" hidden>
           </div>
-          <div class="contacts-map-placeholder contacts-map-frame" id="map-lnr" data-office="lnr" hidden>
-            <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ab1bca575aca6d4b05f10106de09ee095b03eebdb52108a5ad27138536ae36b32&amp;width=1280&amp;height=549&amp;lang=ru_RU&amp;scroll=false"></script>
+          <div class="contacts-map-placeholder contacts-map-frame" id="map-lnr" data-office="lnr" data-map-src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ab1bca575aca6d4b05f10106de09ee095b03eebdb52108a5ad27138536ae36b32&amp;width=1280&amp;height=549&amp;lang=ru_RU&amp;scroll=false" hidden>
           </div>
-          <div class="contacts-map-placeholder contacts-map-frame" id="map-dnr" data-office="dnr" hidden>
-            <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A64638a92698f5ab1c0b487f3cd84f6fb6bb38a092e8791a03a497130f8dbc21a&amp;width=1280&amp;height=549&amp;lang=ru_RU&amp;scroll=false"></script>
+          <div class="contacts-map-placeholder contacts-map-frame" id="map-dnr" data-office="dnr" data-map-src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A64638a92698f5ab1c0b487f3cd84f6fb6bb38a092e8791a03a497130f8dbc21a&amp;width=1280&amp;height=549&amp;lang=ru_RU&amp;scroll=false" hidden>
           </div>
         </div>
       </section>

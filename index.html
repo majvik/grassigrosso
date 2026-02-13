@@ -9,13 +9,30 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./public/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="./public/apple-touch-icon.png" />
     <link rel="manifest" href="./public/site.webmanifest" />
-    <!-- Preload critical fonts -->
+    <style>
+      html, body { margin: 0; background: #fff; }
+      .preloader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        z-index: 10000;
+      }
+      .preloader-spinner {
+        width: 48px;
+        height: 48px;
+        border: 3px solid rgba(40, 62, 55, 0.1);
+        border-top-color: #283e37;
+        border-radius: 50%;
+        animation: preloader-spin 0.8s linear infinite;
+      }
+      @keyframes preloader-spin { to { transform: rotate(360deg); } }
+    </style>
+    <link rel="stylesheet" href="./src/style.css" />
     <link rel="preload" href="./src/fonts/nunito-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="./src/fonts/bounded-variable.woff2" as="font" type="font/woff2" crossorigin />
-    <!-- Preload partners logos (normal + mobile) -->
-    <link rel="preload" href="./logos@2x-normal.png" as="image" />
-    <link rel="preload" href="./logos@2x-mobile.png" as="image" />
-    <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
     <!-- Preloader -->
@@ -106,7 +123,7 @@
         <div class="hero-image" id="heroVideo">
           <video
             class="hero-video"
-            src="./public/grassigrosso-silent.webm"
+            data-src="./public/grassigrosso-silent.webm"
             poster="./public/grassigrosso-poster.jpg"
             autoplay
             loop
@@ -219,7 +236,12 @@
         <div class="collections-grid">
           <div class="collection-card">
             <div class="collection-image">
-              <img src="./public/hero-bedroom.png" alt="Classic" />
+              <picture>
+                <source type="image/avif" srcset="./public/collection-Classic.avif 2x, ./public/collection-Classic@0.5x.avif 1x" />
+                <source type="image/webp" srcset="./public/collection-Classic.webp 2x, ./public/collection-Classic@0.5x.webp 1x" />
+                <source type="image/png" srcset="./public/collection-Classic.png 2x, ./public/collection-Classic@0.5x.png 1x" />
+                <img src="./public/collection-Classic@0.5x.png" alt="Classic" />
+              </picture>
             </div>
             <div class="collection-content">
               <h3 class="collection-title">Classic</h3>
@@ -232,7 +254,12 @@
           </div>
           <div class="collection-card">
             <div class="collection-image">
-              <img src="./public/hero-bedroom.png" alt="Flexi" />
+              <picture>
+                <source type="image/avif" srcset="./public/collection-Flexi.avif 2x, ./public/collection-Flexi@0.5x.avif 1x" />
+                <source type="image/webp" srcset="./public/collection-Flexi.webp 2x, ./public/collection-Flexi@0.5x.webp 1x" />
+                <source type="image/png" srcset="./public/collection-Flexi.png 2x, ./public/collection-Flexi@0.5x.png 1x" />
+                <img src="./public/collection-Flexi@0.5x.png" alt="Flexi" />
+              </picture>
             </div>
             <div class="collection-content">
               <h3 class="collection-title">Flexi</h3>
@@ -245,7 +272,12 @@
           </div>
           <div class="collection-card">
             <div class="collection-image">
-              <img src="./public/hero-bedroom.png" alt="Relax" />
+              <picture>
+                <source type="image/avif" srcset="./public/collection-Relax.avif 2x, ./public/collection-Relax@0.5x.avif 1x" />
+                <source type="image/webp" srcset="./public/collection-Relax.webp 2x, ./public/collection-Relax@0.5x.webp 1x" />
+                <source type="image/png" srcset="./public/collection-Relax.png 2x, ./public/collection-Relax@0.5x.png 1x" />
+                <img src="./public/collection-Relax@0.5x.png" alt="Relax" />
+              </picture>
             </div>
             <div class="collection-content">
               <h3 class="collection-title">Relax</h3>
@@ -258,7 +290,12 @@
           </div>
           <div class="collection-card">
             <div class="collection-image">
-              <img src="./public/hero-bedroom.png" alt="Trend" />
+              <picture>
+                <source type="image/avif" srcset="./public/collection-Trend.avif 2x, ./public/collection-Trend@0.5x.avif 1x" />
+                <source type="image/webp" srcset="./public/collection-Trend.webp 2x, ./public/collection-Trend@0.5x.webp 1x" />
+                <source type="image/png" srcset="./public/collection-Trend.png 2x, ./public/collection-Trend@0.5x.png 1x" />
+                <img src="./public/collection-Trend@0.5x.png" alt="Trend" />
+              </picture>
             </div>
             <div class="collection-content">
               <h3 class="collection-title">Trend</h3>
@@ -271,7 +308,12 @@
           </div>
           <div class="collection-card">
             <div class="collection-image">
-              <img src="./public/hero-bedroom.png" alt="Viva Natura" />
+              <picture>
+                <source type="image/avif" srcset="./public/collection-Viva-Natura@2x.avif 2x, ./public/collection-Viva-Natura@0.5x.avif 1x" />
+                <source type="image/webp" srcset="./public/collection-Viva-Natura@2x.webp 2x, ./public/collection-Viva-Natura@0.5x.webp 1x" />
+                <source type="image/png" srcset="./public/collection-Viva-Natura@2x.png 2x, ./public/collection-Viva-Natura@0.5x.png 1x" />
+                <img src="./public/collection-Viva-Natura@0.5x.png" alt="Viva Natura" />
+              </picture>
             </div>
             <div class="collection-content">
               <h3 class="collection-title">Viva Natura</h3>
@@ -527,7 +569,12 @@
           </div>
           <div class="certification-card">
             <div class="certification-image">
-              <img src="./public/hero-bedroom.png" alt="Особенности сотрудничества" />
+              <picture>
+                <source type="image/avif" srcset="./public/features-of-cooperation@2x.avif 2x, ./public/features-of-cooperation.avif 1x" />
+                <source type="image/webp" srcset="./public/features-of-cooperation@2x.webp 2x, ./public/features-of-cooperation.webp 1x" />
+                <source type="image/png" srcset="./public/features-of-cooperation@2x.png 2x, ./public/features-of-cooperation.png 1x" />
+                <img src="./public/features-of-cooperation.png" alt="Особенности сотрудничества" />
+              </picture>
             </div>
             <div class="certification-content">
               <h3 class="certification-title">Особенности сотрудничества</h3>
@@ -614,8 +661,9 @@
         </button>
         <video
           class="modal-video"
-          src="./public/grassigrosso-sound.webm"
+          data-src="./public/grassigrosso-sound.webm"
           poster="./public/grassigrosso-poster.jpg"
+          preload="none"
           controls
           playsinline
         ></video>
