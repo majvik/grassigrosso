@@ -29,7 +29,7 @@
   --color-text: #1e1e1e;
   --color-text-gray: #6b7280;
   --color-bg-beige: #f1f0ea;
-  --color-bg-white: #ffffff;
+  --color-bg-white: #f7f5f3;
   --color-footer-bg: #335040;
   --color-tag-bg: #f2e6c9;
   --color-partner-cell: #e1e1e1;
@@ -435,7 +435,7 @@ body {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background: white;
+  background: var(--color-bg-white);
   padding: 16px;
   border-radius: 16px;
   box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1);
@@ -1409,7 +1409,7 @@ a:hover .arrow-medium {
   top: 0;
   left: 0;
   right: 0;
-  background: white;
+  background: var(--color-bg-white);
   padding: 0 16px 16px;
   box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1);
   transform: translateY(-100%);
@@ -2632,7 +2632,7 @@ a:hover .arrow-medium {
   align-items: center;
   justify-content: center;
   padding: 16px 24px;
-  background-color: white;
+  background-color: var(--color-bg-white);
   color: var(--color-primary);
   font-family: var(--font-family);
   font-size: 21px;
@@ -3263,7 +3263,7 @@ a:hover .arrow-medium {
 }
 
 .contact-form-wrapper {
-  background-color: white;
+  background-color: var(--color-bg-white);
   padding: 48px;
   border-radius: 16px;
   box-sizing: border-box;
