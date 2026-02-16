@@ -409,17 +409,20 @@
             <video
               class="quality-video"
               src="./public/quality-video.webm"
-              poster="./public/quality-video-poster.jpg"
+              poster="./public/quality-video-poster.avif"
               autoplay
               loop
               muted
               playsinline
             ></video>
-            <img
-              class="quality-poster"
-              src="./public/quality-video-poster.jpg"
-              alt="Производство"
-            />
+            <picture class="quality-poster">
+              <source type="image/avif" srcset="./public/quality-video-poster.avif" />
+              <source type="image/webp" srcset="./public/quality-video-poster.webp" />
+              <img
+                src="./public/quality-video-poster.jpg"
+                alt="Производство"
+              />
+            </picture>
             <button class="hero-play-btn" aria-label="Воспроизвести видео">
               <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="32" r="32" fill="white" fill-opacity="0.9"/>
@@ -801,7 +804,7 @@
         <video
           class="modal-video"
           src="./public/quality-video-full.webm"
-          poster="./public/quality-video-poster.jpg"
+          poster="./public/quality-video-poster.avif"
           preload="none"
           controls
           playsinline

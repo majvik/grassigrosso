@@ -126,10 +126,48 @@ function startInlineVideos() {
   })
 }
 
+// Wait for the hero image or video poster to be ready
+function waitForHeroMedia() {
+  const container = document.querySelector(
+    '.hero-image, .page-hero-image, .catalog-hero-image, .contacts-hero-image, .documents-hero-image'
+  )
+  if (!container) return Promise.resolve()
+
+  const img = container.querySelector('picture img, img:not(.hero-poster img)')
+  const video = container.querySelector('video')
+
+  return new Promise(resolve => {
+    const timeout = setTimeout(resolve, 5000)
+
+    function done() {
+      clearTimeout(timeout)
+      resolve()
+    }
+
+    if (video && video.hasAttribute('poster')) {
+      const poster = new Image()
+      poster.onload = done
+      poster.onerror = done
+      poster.src = video.getAttribute('poster')
+      if (poster.complete) done()
+      return
+    }
+
+    if (img) {
+      if (img.complete && img.naturalWidth > 0) { done(); return }
+      img.addEventListener('load', done, { once: true })
+      img.addEventListener('error', done, { once: true })
+      return
+    }
+
+    resolve()
+  })
+}
+
 // Initialize page load
 async function initPageLoad() {
   
-  await waitForFonts()
+  await Promise.all([waitForFonts(), waitForHeroMedia()])
   
   await new Promise(resolve => requestAnimationFrame(resolve))
   
