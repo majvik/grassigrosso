@@ -114,7 +114,12 @@
             </p>
           </div>
           <div class="documents-hero-image">
-            <img src="./public/hero-bedroom.png" alt="Интерьер спальни" />
+            <picture>
+              <source type="image/avif" srcset="./public/docs-hero@2x.avif 2x, ./public/docs-hero.avif 1x" />
+              <source type="image/webp" srcset="./public/docs-hero@2x.webp 2x, ./public/docs-hero.webp 1x" />
+              <source type="image/png" srcset="./public/docs-hero@2x.png 2x, ./public/docs-hero.png 1x" />
+              <img src="./public/docs-hero.png" alt="Интерьер спальни" />
+            </picture>
           </div>
         </div>
       </section>

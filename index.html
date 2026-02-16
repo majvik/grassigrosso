@@ -306,7 +306,8 @@
               </ul>
             </div>
           </div>
-          <div class="collection-card">
+          <!-- Hidden: Viva Natura (скрыта, не удалена) -->
+          <div class="collection-card" style="display: none;">
             <div class="collection-image">
               <picture>
                 <source type="image/avif" srcset="./public/collection-Viva-Natura@2x.avif 2x, ./public/collection-Viva-Natura@0.5x.avif 1x" />
@@ -583,7 +584,12 @@
           </div>
           <div class="certification-card">
             <div class="certification-image">
-              <img src="./public/hero-bedroom.png" alt="Сертификация" />
+              <picture>
+                <source type="image/avif" srcset="./public/certification@2x.avif 2x, ./public/certification.avif 1x" />
+                <source type="image/webp" srcset="./public/certification@2x.webp 2x, ./public/certification.webp 1x" />
+                <source type="image/png" srcset="./public/certification@2x.png 2x, ./public/certification.png 1x" />
+                <img src="./public/certification.png" alt="Сертификация" />
+              </picture>
             </div>
             <div class="certification-content">
               <h3 class="certification-title">Сертификация</h3>
