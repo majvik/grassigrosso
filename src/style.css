@@ -797,6 +797,12 @@ a:hover .arrow-small {
   gap: 24px;
 }
 
+.collection-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .collection-title {
   font-family: var(--font-bounded);
   font-size: 32px;
@@ -804,6 +810,16 @@ a:hover .arrow-small {
   color: var(--color-primary);
   line-height: 1.2;
   text-transform: uppercase;
+}
+
+.collection-subtitle {
+  font-family: var(--font-family);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.4;
+  text-transform: uppercase;
+  opacity: 0.6;
 }
 
 .collection-features {
@@ -1675,6 +1691,10 @@ a:hover .arrow-medium {
     font-size: 28px;
   }
 
+  .collection-subtitle {
+    font-size: 16px;
+  }
+
   .collections-nav {
     padding: 0 32px;
   }
@@ -2275,6 +2295,10 @@ a:hover .arrow-medium {
 
   .collection-title {
     font-size: 24px;
+  }
+
+  .collection-subtitle {
+    font-size: 14px;
   }
 
   .collection-features {
@@ -5261,12 +5285,27 @@ a:hover .arrow-medium {
   max-width: 640px;
 }
 
+.catalog-collection-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .catalog-collection-title {
   font-family: var(--font-bounded);
   font-size: 32px;
   font-weight: 300;
   color: var(--color-primary);
   line-height: 1.2;
+}
+
+.catalog-collection-subtitle {
+  font-family: var(--font-family);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.4;
+  opacity: 0.6;
 }
 
 .catalog-collection-features {
@@ -5450,6 +5489,10 @@ a:hover .arrow-medium {
     font-size: 28px;
   }
 
+  .catalog-collection-subtitle {
+    font-size: 16px;
+  }
+
   .catalog-custom {
     padding: 64px 32px;
   }
@@ -5572,6 +5615,10 @@ a:hover .arrow-medium {
 
   .catalog-collection-title {
     font-size: 24px;
+  }
+
+  .catalog-collection-subtitle {
+    font-size: 14px;
   }
 
   .catalog-collection-features {
