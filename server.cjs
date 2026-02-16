@@ -425,6 +425,77 @@ app.get('/api/get-chat-id', async (req, res) => {
   }
 });
 
+app.get('/api/smtp-diag', async (req, res) => {
+  const net = require('net');
+  const dns = require('dns');
+  const results = {
+    timestamp: new Date().toISOString(),
+    config: {
+      SMTP_HOST,
+      SMTP_PORT,
+      SMTP_SECURE,
+      SMTP_USER: SMTP_USER ? '✅ Set' : '❌ Not set',
+      SMTP_PASS: SMTP_PASS ? '✅ Set' : '❌ Not set',
+      MAIL_FROM,
+      MAIL_TO,
+    },
+    tests: {}
+  };
+
+  // 1. DNS resolve
+  try {
+    const addresses = await new Promise((resolve, reject) => {
+      dns.resolve4(SMTP_HOST, (err, addrs) => err ? reject(err) : resolve(addrs));
+    });
+    results.tests.dns = { ok: true, addresses };
+  } catch (err) {
+    results.tests.dns = { ok: false, error: err.message };
+  }
+
+  // 2. TCP connect port 465
+  for (const port of [465, 587]) {
+    try {
+      await new Promise((resolve, reject) => {
+        const sock = net.createConnection({ host: SMTP_HOST, port, timeout: 10000 });
+        sock.once('connect', () => { sock.destroy(); resolve(); });
+        sock.once('timeout', () => { sock.destroy(); reject(new Error(`TCP timeout ${port}`)); });
+        sock.once('error', (e) => { sock.destroy(); reject(e); });
+      });
+      results.tests[`tcp_${port}`] = { ok: true };
+    } catch (err) {
+      results.tests[`tcp_${port}`] = { ok: false, error: err.message };
+    }
+  }
+
+  // 3. Nodemailer verify (current config)
+  try {
+    const transporter = createMailTransport();
+    await transporter.verify();
+    results.tests.nodemailer_verify = { ok: true, message: 'SMTP auth successful' };
+  } catch (err) {
+    results.tests.nodemailer_verify = { ok: false, error: err.message, code: err.code };
+  }
+
+  // 4. Nodemailer verify port 587 (if current is 465)
+  if (SMTP_PORT === 465) {
+    try {
+      const alt = nodemailer.createTransport({
+        host: SMTP_HOST, port: 587, secure: false, requireTLS: true,
+        auth: { user: SMTP_USER, pass: SMTP_PASS },
+        tls: { rejectUnauthorized: SMTP_TLS_REJECT_UNAUTHORIZED },
+        connectionTimeout: 15000, greetingTimeout: 10000, socketTimeout: 15000,
+      });
+      await alt.verify();
+      results.tests.nodemailer_verify_587 = { ok: true, message: 'SMTP auth on 587 successful' };
+    } catch (err) {
+      results.tests.nodemailer_verify_587 = { ok: false, error: err.message, code: err.code };
+    }
+  }
+
+  const allOk = Object.values(results.tests).every(t => t.ok);
+  res.status(allOk ? 200 : 500).json(results);
+});
+
 app.post('/api/submit', async (req, res) => {
   const lead = normalizeLeadPayload(req.body);
 
