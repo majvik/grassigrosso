@@ -4,9 +4,8 @@ const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
 const fsp = require('fs/promises');
-const tls = require('tls');
-const os = require('os');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 require('dotenv').config();
 
@@ -152,151 +151,29 @@ function extractErrorDetails(error) {
   return String(error);
 }
 
-function toBase64Lines(value) {
-  const base64 = Buffer.from(value, 'utf8').toString('base64');
-  return base64.match(/.{1,76}/g)?.join('\r\n') || '';
-}
+function createMailTransport() {
+  const transportOptions = {
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_SECURE,
+    auth: {
+      user: SMTP_USER,
+      pass: SMTP_PASS,
+    },
+    tls: {
+      rejectUnauthorized: SMTP_TLS_REJECT_UNAUTHORIZED,
+    },
+    connectionTimeout: 30000,
+    greetingTimeout: 15000,
+    socketTimeout: 30000,
+  };
 
-function encodeHeaderValue(value) {
-  if (!value) return '';
-  if (/^[\x20-\x7E]*$/.test(value)) return value;
-  return `=?UTF-8?B?${Buffer.from(value, 'utf8').toString('base64')}?=`;
-}
-
-function extractEmailAddress(value) {
-  if (!value) return '';
-  const match = String(value).match(/<([^>]+)>/);
-  return (match ? match[1] : String(value)).trim();
-}
-
-function buildRawEmailMessage(lead) {
-  const boundary = `----=_Part_${crypto.randomBytes(10).toString('hex')}`;
-  const smtpDomain = extractEmailAddress(SMTP_USER).split('@')[1] || 'localhost';
-
-  return [
-    `From: ${MAIL_FROM}`,
-    `To: ${MAIL_TO}`,
-    `Subject: ${encodeHeaderValue(buildEmailSubject(lead))}`,
-    `Date: ${new Date().toUTCString()}`,
-    `Message-ID: <${Date.now()}.${crypto.randomBytes(6).toString('hex')}@${smtpDomain}>`,
-    'MIME-Version: 1.0',
-    `Content-Type: multipart/alternative; boundary="${boundary}"`,
-    '',
-    `--${boundary}`,
-    'Content-Type: text/plain; charset="UTF-8"',
-    'Content-Transfer-Encoding: base64',
-    '',
-    toBase64Lines(buildEmailText(lead)),
-    '',
-    `--${boundary}`,
-    'Content-Type: text/html; charset="UTF-8"',
-    'Content-Transfer-Encoding: base64',
-    '',
-    toBase64Lines(buildEmailHtml(lead)),
-    '',
-    `--${boundary}--`,
-    ''
-  ].join('\r\n');
-}
-
-function dotStuff(data) {
-  return data.replace(/\r\n\./g, '\r\n..');
-}
-
-function createSmtpSocket() {
-  return new Promise((resolve, reject) => {
-    if (!SMTP_SECURE) {
-      reject(new Error('Поддерживается только SMTP_SECURE=true'));
-      return;
-    }
-
-    const socket = tls.connect({
-      host: SMTP_HOST,
-      port: SMTP_PORT,
-      servername: SMTP_HOST,
-      rejectUnauthorized: SMTP_TLS_REJECT_UNAUTHORIZED
-    });
-
-    socket.setEncoding('utf8');
-    socket.setTimeout(20000);
-
-    socket.once('secureConnect', () => resolve(socket));
-    socket.once('timeout', () => reject(new Error('SMTP timeout')));
-    socket.once('error', (error) => reject(error));
-  });
-}
-
-function readSmtpResponse(socket) {
-  return new Promise((resolve, reject) => {
-    let buffer = '';
-    const lines = [];
-
-    const cleanup = () => {
-      socket.off('data', onData);
-      socket.off('error', onError);
-      socket.off('end', onEnd);
-      socket.off('close', onClose);
-    };
-
-    const finalize = () => {
-      const lastLine = lines[lines.length - 1] || '';
-      const code = Number(lastLine.slice(0, 3));
-      cleanup();
-      resolve({ code, lines });
-    };
-
-    const onData = (chunk) => {
-      buffer += chunk;
-      let endIndex = buffer.indexOf('\r\n');
-
-      while (endIndex !== -1) {
-        const line = buffer.slice(0, endIndex);
-        buffer = buffer.slice(endIndex + 2);
-
-        if (line) {
-          lines.push(line);
-          if (/^\d{3} /.test(line)) {
-            finalize();
-            return;
-          }
-        }
-
-        endIndex = buffer.indexOf('\r\n');
-      }
-    };
-
-    const onError = (error) => {
-      cleanup();
-      reject(error);
-    };
-
-    const onEnd = () => {
-      cleanup();
-      reject(new Error('SMTP connection ended unexpectedly'));
-    };
-
-    const onClose = () => {
-      cleanup();
-      reject(new Error('SMTP connection closed unexpectedly'));
-    };
-
-    socket.on('data', onData);
-    socket.once('error', onError);
-    socket.once('end', onEnd);
-    socket.once('close', onClose);
-  });
-}
-
-async function sendSmtpCommand(socket, command, expectedCodes) {
-  if (command !== null) {
-    socket.write(`${command}\r\n`);
+  if (!SMTP_SECURE && SMTP_PORT === 587) {
+    transportOptions.secure = false;
+    transportOptions.requireTLS = true;
   }
 
-  const response = await readSmtpResponse(socket);
-  if (!expectedCodes.includes(response.code)) {
-    throw new Error(`SMTP unexpected response ${response.code}: ${response.lines.join(' | ')}`);
-  }
-  return response;
+  return nodemailer.createTransport(transportOptions);
 }
 
 async function sendLeadToEmail(lead) {
@@ -304,38 +181,15 @@ async function sendLeadToEmail(lead) {
     throw new Error('Email channel is not configured');
   }
 
-  const fromAddress = extractEmailAddress(MAIL_FROM);
-  const toAddress = extractEmailAddress(MAIL_TO);
+  const transporter = createMailTransport();
 
-  if (!fromAddress || !toAddress) {
-    throw new Error('MAIL_FROM/MAIL_TO заданы некорректно');
-  }
-
-  const socket = await createSmtpSocket();
-  const ehloDomain = os.hostname() || 'localhost';
-
-  try {
-    await sendSmtpCommand(socket, null, [220]);
-    await sendSmtpCommand(socket, `EHLO ${ehloDomain}`, [250]);
-    await sendSmtpCommand(socket, 'AUTH LOGIN', [334]);
-    await sendSmtpCommand(socket, Buffer.from(SMTP_USER, 'utf8').toString('base64'), [334]);
-    await sendSmtpCommand(socket, Buffer.from(SMTP_PASS, 'utf8').toString('base64'), [235]);
-    await sendSmtpCommand(socket, `MAIL FROM:<${fromAddress}>`, [250]);
-    await sendSmtpCommand(socket, `RCPT TO:<${toAddress}>`, [250, 251]);
-    await sendSmtpCommand(socket, 'DATA', [354]);
-
-    const rawMessage = dotStuff(buildRawEmailMessage(lead));
-    socket.write(`${rawMessage}\r\n.\r\n`);
-
-    const dataResponse = await readSmtpResponse(socket);
-    if (dataResponse.code !== 250) {
-      throw new Error(`SMTP DATA rejected: ${dataResponse.lines.join(' | ')}`);
-    }
-
-    await sendSmtpCommand(socket, 'QUIT', [221]);
-  } finally {
-    socket.end();
-  }
+  await transporter.sendMail({
+    from: MAIL_FROM,
+    to: MAIL_TO,
+    subject: buildEmailSubject(lead),
+    text: buildEmailText(lead),
+    html: buildEmailHtml(lead),
+  });
 }
 
 async function sendLeadToTelegram(lead) {
@@ -354,20 +208,28 @@ async function sendLeadToTelegram(lead) {
 async function deliverLeadWithFallback(lead) {
   const errors = {};
 
+  // Telegram — primary (быстрый, надёжный)
+  try {
+    await sendLeadToTelegram(lead);
+  } catch (error) {
+    errors.telegram = extractErrorDetails(error);
+    console.error('❌ Ошибка отправки Telegram:', errors.telegram);
+  }
+
+  // Email — secondary (дублирование)
   try {
     await sendLeadToEmail(lead);
-    return { ok: true, channel: 'email' };
   } catch (error) {
     errors.email = extractErrorDetails(error);
     console.error('❌ Ошибка отправки Email:', errors.email);
   }
 
-  try {
-    await sendLeadToTelegram(lead);
-    return { ok: true, channel: 'telegram_fallback', errors };
-  } catch (error) {
-    errors.telegram = extractErrorDetails(error);
-    console.error('❌ Ошибка отправки Telegram fallback:', errors.telegram);
+  // Успех, если хотя бы один канал сработал
+  if (!errors.telegram) {
+    return { ok: true, channel: errors.email ? 'telegram' : 'telegram+email', errors };
+  }
+  if (!errors.email) {
+    return { ok: true, channel: 'email', errors };
   }
 
   return { ok: false, errors };
@@ -474,16 +336,16 @@ async function processQueue() {
 }
 
 async function initializeDeliveryChannels() {
-  if (channelEmailConfigured()) {
-    console.log('📧 SMTP канал настроен (Email primary)');
+  if (channelTelegramConfigured()) {
+    console.log('📲 Telegram канал настроен (primary)');
   } else {
-    console.warn('⚠️ SMTP не настроен (проверьте SMTP_HOST/SMTP_USER/SMTP_PASS/MAIL_TO)');
+    console.warn('⚠️ Telegram не настроен (проверьте BOT_TOKEN/CHAT_ID)');
   }
 
-  if (channelTelegramConfigured()) {
-    console.log('📲 Telegram fallback настроен');
+  if (channelEmailConfigured()) {
+    console.log('📧 SMTP канал настроен (secondary)');
   } else {
-    console.warn('⚠️ Telegram fallback не настроен (проверьте BOT_TOKEN/CHAT_ID)');
+    console.warn('⚠️ SMTP не настроен (проверьте SMTP_HOST/SMTP_USER/SMTP_PASS/MAIL_TO)');
   }
 
   await loadQueueFromDisk();
