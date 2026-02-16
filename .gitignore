@@ -19,6 +19,9 @@ lerna-debug.log*
 .env
 .env.local
 
+# Runtime queue
+data/delivery-queue.json
+
 # Source video and data files
 *.mov
 *.xlsx

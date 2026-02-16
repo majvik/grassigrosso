@@ -2,15 +2,38 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const path = require('path');
+const fs = require('fs');
+const fsp = require('fs/promises');
+const tls = require('tls');
+const os = require('os');
+const crypto = require('crypto');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const BOT_TOKEN = process.env.BOT_TOKEN;
-const CHAT_ID = process.env.CHAT_ID;
 
-// Middleware
+const PORT = Number(process.env.PORT || 3000);
+
+const BOT_TOKEN = process.env.BOT_TOKEN || '';
+const CHAT_ID = process.env.CHAT_ID || '';
+
+const SMTP_HOST = process.env.SMTP_HOST || '';
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+const SMTP_SECURE = (process.env.SMTP_SECURE || 'true') === 'true';
+const SMTP_USER = process.env.SMTP_USER || '';
+const SMTP_PASS = process.env.SMTP_PASS || '';
+const MAIL_FROM = process.env.MAIL_FROM || SMTP_USER;
+const MAIL_TO = process.env.MAIL_TO || SMTP_USER;
+const SMTP_TLS_REJECT_UNAUTHORIZED = (process.env.SMTP_TLS_REJECT_UNAUTHORIZED || 'true') === 'true';
+
+const QUEUE_FILE_PATH = process.env.QUEUE_FILE_PATH || path.join(__dirname, 'data', 'delivery-queue.json');
+const QUEUE_RETRY_INTERVAL_MS = Number(process.env.QUEUE_RETRY_INTERVAL_MS || 15000);
+const QUEUE_BASE_RETRY_DELAY_MS = Number(process.env.QUEUE_BASE_RETRY_DELAY_MS || 30000);
+const QUEUE_MAX_RETRY_DELAY_MS = Number(process.env.QUEUE_MAX_RETRY_DELAY_MS || 15 * 60 * 1000);
+
+let deliveryQueue = [];
+let isQueueProcessing = false;
+
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'OPTIONS'],
@@ -18,37 +41,497 @@ app.use(cors({
 }));
 
 app.set('trust proxy', true);
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Логирование при запуске
+function escapeMarkdown(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/\*/g, '\\*')
+    .replace(/_/g, '\\_')
+    .replace(/\[/g, '\\[')
+    .replace(/\]/g, '\\]')
+    .replace(/\(/g, '\\(')
+    .replace(/\)/g, '\\)')
+    .replace(/~/g, '\\~')
+    .replace(/`/g, '\\`')
+    .replace(/>/g, '\\>')
+    .replace(/#/g, '\\#')
+    .replace(/\+/g, '\\+')
+    .replace(/-/g, '\\-')
+    .replace(/=/g, '\\=')
+    .replace(/\|/g, '\\|')
+    .replace(/\{/g, '\\{')
+    .replace(/\}/g, '\\}');
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function normalizeLeadPayload(body = {}) {
+  return {
+    name: String(body.name || '').trim(),
+    phone: String(body.phone || '').trim(),
+    comment: String(body.comment || '').trim(),
+    email: String(body.email || '').trim(),
+    city: String(body.city || '').trim(),
+    company: String(body.company || '').trim(),
+    page: String(body.page || '').trim() || 'Не указана',
+  };
+}
+
+function buildTelegramMessage(lead) {
+  return `🚀 *Новая заявка с сайта*\n\n` +
+    `📄 *Страница:* ${escapeMarkdown(lead.page) || 'Не указана'}\n` +
+    `👤 *Имя:* ${escapeMarkdown(lead.name) || 'Не указано'}\n` +
+    (lead.company ? `🏢 *Компания:* ${escapeMarkdown(lead.company)}\n` : '') +
+    (lead.city ? `📍 *Город:* ${escapeMarkdown(lead.city)}\n` : '') +
+    (lead.email ? `📧 *Email:* ${escapeMarkdown(lead.email)}\n` : '') +
+    `📞 *Телефон:* ${escapeMarkdown(lead.phone) || 'Не указан'}\n` +
+    `💬 *Сообщение:* ${escapeMarkdown(lead.comment) || 'Нет'}`;
+}
+
+function buildEmailSubject(lead) {
+  return `[Grassi Grosso] Новая заявка (${lead.page || 'Сайт'})`;
+}
+
+function buildEmailText(lead) {
+  return [
+    'Новая заявка с сайта Grassi Grosso',
+    '',
+    `Страница: ${lead.page || 'Не указана'}`,
+    `Имя: ${lead.name || 'Не указано'}`,
+    `Компания: ${lead.company || 'Не указана'}`,
+    `Город: ${lead.city || 'Не указан'}`,
+    `Email: ${lead.email || 'Не указан'}`,
+    `Телефон: ${lead.phone || 'Не указан'}`,
+    `Сообщение: ${lead.comment || 'Нет'}`,
+    '',
+    `Время: ${new Date().toISOString()}`
+  ].join('\n');
+}
+
+function buildEmailHtml(lead) {
+  return `
+    <div style="font-family: Arial, sans-serif; color: #1e1e1e; line-height: 1.45;">
+      <h2 style="margin: 0 0 16px;">Новая заявка с сайта Grassi Grosso</h2>
+      <table style="border-collapse: collapse; width: 100%; max-width: 760px;">
+        <tr><td style="padding: 6px 0; font-weight: bold;">Страница:</td><td style="padding: 6px 0;">${escapeHtml(lead.page || 'Не указана')}</td></tr>
+        <tr><td style="padding: 6px 0; font-weight: bold;">Имя:</td><td style="padding: 6px 0;">${escapeHtml(lead.name || 'Не указано')}</td></tr>
+        <tr><td style="padding: 6px 0; font-weight: bold;">Компания:</td><td style="padding: 6px 0;">${escapeHtml(lead.company || 'Не указана')}</td></tr>
+        <tr><td style="padding: 6px 0; font-weight: bold;">Город:</td><td style="padding: 6px 0;">${escapeHtml(lead.city || 'Не указан')}</td></tr>
+        <tr><td style="padding: 6px 0; font-weight: bold;">Email:</td><td style="padding: 6px 0;">${escapeHtml(lead.email || 'Не указан')}</td></tr>
+        <tr><td style="padding: 6px 0; font-weight: bold;">Телефон:</td><td style="padding: 6px 0;">${escapeHtml(lead.phone || 'Не указан')}</td></tr>
+        <tr><td style="padding: 6px 0; font-weight: bold; vertical-align: top;">Сообщение:</td><td style="padding: 6px 0;">${escapeHtml(lead.comment || 'Нет')}</td></tr>
+      </table>
+      <p style="margin-top: 16px; color: #666;">Время: ${new Date().toISOString()}</p>
+    </div>
+  `;
+}
+
+function channelEmailConfigured() {
+  return Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS && MAIL_TO && MAIL_FROM);
+}
+
+function channelTelegramConfigured() {
+  return Boolean(BOT_TOKEN && CHAT_ID);
+}
+
+function extractErrorDetails(error) {
+  if (!error) return 'Unknown error';
+  if (error.response?.data?.description) return String(error.response.data.description);
+  if (error.response?.data?.error) return String(error.response.data.error);
+  if (error.message) return String(error.message);
+  return String(error);
+}
+
+function toBase64Lines(value) {
+  const base64 = Buffer.from(value, 'utf8').toString('base64');
+  return base64.match(/.{1,76}/g)?.join('\r\n') || '';
+}
+
+function encodeHeaderValue(value) {
+  if (!value) return '';
+  if (/^[\x20-\x7E]*$/.test(value)) return value;
+  return `=?UTF-8?B?${Buffer.from(value, 'utf8').toString('base64')}?=`;
+}
+
+function extractEmailAddress(value) {
+  if (!value) return '';
+  const match = String(value).match(/<([^>]+)>/);
+  return (match ? match[1] : String(value)).trim();
+}
+
+function buildRawEmailMessage(lead) {
+  const boundary = `----=_Part_${crypto.randomBytes(10).toString('hex')}`;
+  const smtpDomain = extractEmailAddress(SMTP_USER).split('@')[1] || 'localhost';
+
+  return [
+    `From: ${MAIL_FROM}`,
+    `To: ${MAIL_TO}`,
+    `Subject: ${encodeHeaderValue(buildEmailSubject(lead))}`,
+    `Date: ${new Date().toUTCString()}`,
+    `Message-ID: <${Date.now()}.${crypto.randomBytes(6).toString('hex')}@${smtpDomain}>`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/plain; charset="UTF-8"',
+    'Content-Transfer-Encoding: base64',
+    '',
+    toBase64Lines(buildEmailText(lead)),
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset="UTF-8"',
+    'Content-Transfer-Encoding: base64',
+    '',
+    toBase64Lines(buildEmailHtml(lead)),
+    '',
+    `--${boundary}--`,
+    ''
+  ].join('\r\n');
+}
+
+function dotStuff(data) {
+  return data.replace(/\r\n\./g, '\r\n..');
+}
+
+function createSmtpSocket() {
+  return new Promise((resolve, reject) => {
+    if (!SMTP_SECURE) {
+      reject(new Error('Поддерживается только SMTP_SECURE=true'));
+      return;
+    }
+
+    const socket = tls.connect({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      servername: SMTP_HOST,
+      rejectUnauthorized: SMTP_TLS_REJECT_UNAUTHORIZED
+    });
+
+    socket.setEncoding('utf8');
+    socket.setTimeout(20000);
+
+    socket.once('secureConnect', () => resolve(socket));
+    socket.once('timeout', () => reject(new Error('SMTP timeout')));
+    socket.once('error', (error) => reject(error));
+  });
+}
+
+function readSmtpResponse(socket) {
+  return new Promise((resolve, reject) => {
+    let buffer = '';
+    const lines = [];
+
+    const cleanup = () => {
+      socket.off('data', onData);
+      socket.off('error', onError);
+      socket.off('end', onEnd);
+      socket.off('close', onClose);
+    };
+
+    const finalize = () => {
+      const lastLine = lines[lines.length - 1] || '';
+      const code = Number(lastLine.slice(0, 3));
+      cleanup();
+      resolve({ code, lines });
+    };
+
+    const onData = (chunk) => {
+      buffer += chunk;
+      let endIndex = buffer.indexOf('\r\n');
+
+      while (endIndex !== -1) {
+        const line = buffer.slice(0, endIndex);
+        buffer = buffer.slice(endIndex + 2);
+
+        if (line) {
+          lines.push(line);
+          if (/^\d{3} /.test(line)) {
+            finalize();
+            return;
+          }
+        }
+
+        endIndex = buffer.indexOf('\r\n');
+      }
+    };
+
+    const onError = (error) => {
+      cleanup();
+      reject(error);
+    };
+
+    const onEnd = () => {
+      cleanup();
+      reject(new Error('SMTP connection ended unexpectedly'));
+    };
+
+    const onClose = () => {
+      cleanup();
+      reject(new Error('SMTP connection closed unexpectedly'));
+    };
+
+    socket.on('data', onData);
+    socket.once('error', onError);
+    socket.once('end', onEnd);
+    socket.once('close', onClose);
+  });
+}
+
+async function sendSmtpCommand(socket, command, expectedCodes) {
+  if (command !== null) {
+    socket.write(`${command}\r\n`);
+  }
+
+  const response = await readSmtpResponse(socket);
+  if (!expectedCodes.includes(response.code)) {
+    throw new Error(`SMTP unexpected response ${response.code}: ${response.lines.join(' | ')}`);
+  }
+  return response;
+}
+
+async function sendLeadToEmail(lead) {
+  if (!channelEmailConfigured()) {
+    throw new Error('Email channel is not configured');
+  }
+
+  const fromAddress = extractEmailAddress(MAIL_FROM);
+  const toAddress = extractEmailAddress(MAIL_TO);
+
+  if (!fromAddress || !toAddress) {
+    throw new Error('MAIL_FROM/MAIL_TO заданы некорректно');
+  }
+
+  const socket = await createSmtpSocket();
+  const ehloDomain = os.hostname() || 'localhost';
+
+  try {
+    await sendSmtpCommand(socket, null, [220]);
+    await sendSmtpCommand(socket, `EHLO ${ehloDomain}`, [250]);
+    await sendSmtpCommand(socket, 'AUTH LOGIN', [334]);
+    await sendSmtpCommand(socket, Buffer.from(SMTP_USER, 'utf8').toString('base64'), [334]);
+    await sendSmtpCommand(socket, Buffer.from(SMTP_PASS, 'utf8').toString('base64'), [235]);
+    await sendSmtpCommand(socket, `MAIL FROM:<${fromAddress}>`, [250]);
+    await sendSmtpCommand(socket, `RCPT TO:<${toAddress}>`, [250, 251]);
+    await sendSmtpCommand(socket, 'DATA', [354]);
+
+    const rawMessage = dotStuff(buildRawEmailMessage(lead));
+    socket.write(`${rawMessage}\r\n.\r\n`);
+
+    const dataResponse = await readSmtpResponse(socket);
+    if (dataResponse.code !== 250) {
+      throw new Error(`SMTP DATA rejected: ${dataResponse.lines.join(' | ')}`);
+    }
+
+    await sendSmtpCommand(socket, 'QUIT', [221]);
+  } finally {
+    socket.end();
+  }
+}
+
+async function sendLeadToTelegram(lead) {
+  if (!channelTelegramConfigured()) {
+    throw new Error('Telegram channel is not configured');
+  }
+
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+  await axios.post(url, {
+    chat_id: CHAT_ID,
+    text: buildTelegramMessage(lead),
+    parse_mode: 'Markdown'
+  });
+}
+
+async function deliverLeadWithFallback(lead) {
+  const errors = {};
+
+  try {
+    await sendLeadToEmail(lead);
+    return { ok: true, channel: 'email' };
+  } catch (error) {
+    errors.email = extractErrorDetails(error);
+    console.error('❌ Ошибка отправки Email:', errors.email);
+  }
+
+  try {
+    await sendLeadToTelegram(lead);
+    return { ok: true, channel: 'telegram_fallback', errors };
+  } catch (error) {
+    errors.telegram = extractErrorDetails(error);
+    console.error('❌ Ошибка отправки Telegram fallback:', errors.telegram);
+  }
+
+  return { ok: false, errors };
+}
+
+function calculateRetryDelayMs(attemptNumber) {
+  const exponent = Math.max(0, attemptNumber - 1);
+  return Math.min(QUEUE_BASE_RETRY_DELAY_MS * (2 ** exponent), QUEUE_MAX_RETRY_DELAY_MS);
+}
+
+async function persistQueueToDisk() {
+  const dir = path.dirname(QUEUE_FILE_PATH);
+  await fsp.mkdir(dir, { recursive: true });
+
+  const tmpPath = `${QUEUE_FILE_PATH}.tmp`;
+  await fsp.writeFile(tmpPath, JSON.stringify(deliveryQueue, null, 2), 'utf8');
+  await fsp.rename(tmpPath, QUEUE_FILE_PATH);
+}
+
+async function loadQueueFromDisk() {
+  try {
+    const raw = await fsp.readFile(QUEUE_FILE_PATH, 'utf8');
+    const parsed = JSON.parse(raw);
+    deliveryQueue = Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      deliveryQueue = [];
+      await persistQueueToDisk();
+      return;
+    }
+
+    const backupName = `${QUEUE_FILE_PATH}.corrupted.${Date.now()}.json`;
+    console.error('⚠️ Очередь повреждена, создаю резервную копию:', backupName);
+    await fsp.mkdir(path.dirname(backupName), { recursive: true });
+    await fsp.copyFile(QUEUE_FILE_PATH, backupName).catch(() => {});
+    deliveryQueue = [];
+    await persistQueueToDisk();
+  }
+}
+
+function buildQueueId() {
+  if (typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+}
+
+async function enqueueLeadForRetry(lead, initialErrors = {}) {
+  const item = {
+    id: buildQueueId(),
+    lead,
+    attempts: 0,
+    createdAt: new Date().toISOString(),
+    lastAttemptAt: null,
+    nextAttemptAt: Date.now(),
+    lastErrors: initialErrors
+  };
+
+  deliveryQueue.push(item);
+  await persistQueueToDisk();
+  return item;
+}
+
+async function processQueue() {
+  if (isQueueProcessing) return;
+  isQueueProcessing = true;
+
+  try {
+    const now = Date.now();
+    let changed = false;
+
+    for (const item of [...deliveryQueue]) {
+      if ((item.nextAttemptAt || 0) > now) {
+        continue;
+      }
+
+      const attemptNumber = Number(item.attempts || 0) + 1;
+      item.attempts = attemptNumber;
+      item.lastAttemptAt = new Date().toISOString();
+
+      const result = await deliverLeadWithFallback(item.lead);
+      changed = true;
+
+      if (result.ok) {
+        deliveryQueue = deliveryQueue.filter((qItem) => qItem.id !== item.id);
+        console.log(`✅ Заявка ${item.id} доставлена из очереди через ${result.channel}`);
+        continue;
+      }
+
+      item.lastErrors = result.errors;
+      const delayMs = calculateRetryDelayMs(attemptNumber);
+      item.nextAttemptAt = Date.now() + delayMs;
+      console.error(`❌ Заявка ${item.id} не доставлена. Повтор через ${Math.round(delayMs / 1000)}s`);
+    }
+
+    if (changed) {
+      await persistQueueToDisk();
+    }
+  } catch (error) {
+    console.error('❌ Ошибка обработки очереди:', extractErrorDetails(error));
+  } finally {
+    isQueueProcessing = false;
+  }
+}
+
+async function initializeDeliveryChannels() {
+  if (channelEmailConfigured()) {
+    console.log('📧 SMTP канал настроен (Email primary)');
+  } else {
+    console.warn('⚠️ SMTP не настроен (проверьте SMTP_HOST/SMTP_USER/SMTP_PASS/MAIL_TO)');
+  }
+
+  if (channelTelegramConfigured()) {
+    console.log('📲 Telegram fallback настроен');
+  } else {
+    console.warn('⚠️ Telegram fallback не настроен (проверьте BOT_TOKEN/CHAT_ID)');
+  }
+
+  await loadQueueFromDisk();
+  console.log(`📥 Очередь доставки загружена: ${deliveryQueue.length} задач`);
+
+  const timer = setInterval(() => {
+    processQueue().catch((error) => {
+      console.error('❌ Queue tick error:', extractErrorDetails(error));
+    });
+  }, QUEUE_RETRY_INTERVAL_MS);
+  timer.unref();
+}
+
 console.log('\n🚀 Starting server...');
 console.log(`   PORT: ${PORT}`);
 console.log(`   BOT_TOKEN: ${BOT_TOKEN ? '✅ Set' : '❌ Not set'}`);
-console.log(`   CHAT_ID: ${CHAT_ID ? '✅ Set' : '❌ Not set'}\n`);
+console.log(`   CHAT_ID: ${CHAT_ID ? '✅ Set' : '❌ Not set'}`);
+console.log(`   SMTP_HOST: ${SMTP_HOST ? '✅ Set' : '❌ Not set'}`);
+console.log(`   SMTP_USER: ${SMTP_USER ? '✅ Set' : '❌ Not set'}`);
+console.log(`   MAIL_TO: ${MAIL_TO ? '✅ Set' : '❌ Not set'}`);
+console.log(`   QUEUE_FILE_PATH: ${QUEUE_FILE_PATH}\n`);
 
-// Healthcheck
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({
+    status: 'ok',
+    queueSize: deliveryQueue.length,
+    channels: {
+      email: channelEmailConfigured(),
+      telegram: channelTelegramConfigured()
+    }
+  });
 });
 
-// API: Test endpoint
 app.get('/api/test', (req, res) => {
-  res.json({ 
-    message: 'API работает!', 
-    timestamp: new Date().toISOString() 
+  res.json({
+    message: 'API работает!',
+    timestamp: new Date().toISOString()
   });
 });
 
 app.post('/api/test', (req, res) => {
-  res.json({ 
-    message: 'POST API работает!', 
+  res.json({
+    message: 'POST API работает!',
     body: req.body,
-    timestamp: new Date().toISOString() 
+    timestamp: new Date().toISOString()
   });
 });
 
-// API: Get Chat ID helper
 app.get('/api/get-chat-id', async (req, res) => {
   try {
     if (!BOT_TOKEN) {
@@ -57,153 +540,125 @@ app.get('/api/get-chat-id', async (req, res) => {
 
     const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`;
     const response = await axios.get(url);
-    
+
     if (response.data.ok && response.data.result.length > 0) {
       const lastUpdate = response.data.result[response.data.result.length - 1];
       const chatId = lastUpdate.message?.chat?.id;
-      
+
       if (chatId) {
-        return res.json({ 
+        return res.json({
           chat_id: chatId,
           message: `Ваш CHAT_ID: ${chatId}. Добавьте его в .env файл как CHAT_ID=${chatId}`
         });
       }
     }
-    
-    res.json({ 
+
+    return res.json({
       message: 'Не найдено сообщений. Отправьте любое сообщение боту и попробуйте снова.',
       hint: 'После отправки сообщения боту, обновите эту страницу'
     });
   } catch (error) {
-    console.error('Ошибка при получении CHAT_ID:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Ошибка при получении CHAT_ID' });
+    console.error('Ошибка при получении CHAT_ID:', extractErrorDetails(error));
+    return res.status(500).json({ error: 'Ошибка при получении CHAT_ID' });
   }
 });
 
-// API: Submit form
 app.post('/api/submit', async (req, res) => {
-  const { name, phone, comment, email, city, company, page } = req.body;
-  
+  const lead = normalizeLeadPayload(req.body);
+
+  if (!lead.name || !lead.phone) {
+    return res.status(400).json({
+      error: 'name и phone обязательны'
+    });
+  }
+
+  if (!channelEmailConfigured() && !channelTelegramConfigured()) {
+    return res.status(500).json({
+      error: 'Нет активных каналов доставки (email/telegram)'
+    });
+  }
+
   try {
-    if (!BOT_TOKEN || !CHAT_ID) {
-      console.error('BOT_TOKEN или CHAT_ID не настроены');
-      return res.status(500).json({ error: 'Сервер не настроен' });
+    const deliveryResult = await deliverLeadWithFallback(lead);
+
+    if (deliveryResult.ok) {
+      return res.status(200).json({
+        success: true,
+        delivery: deliveryResult.channel,
+        queued: false
+      });
     }
 
-    // Экранирование Markdown
-    const escapeMarkdown = (text) => {
-      if (!text) return '';
-      return String(text)
-        .replace(/\*/g, '\\*')
-        .replace(/_/g, '\\_')
-        .replace(/\[/g, '\\[')
-        .replace(/\]/g, '\\]')
-        .replace(/\(/g, '\\(')
-        .replace(/\)/g, '\\)')
-        .replace(/~/g, '\\~')
-        .replace(/`/g, '\\`')
-        .replace(/>/g, '\\>')
-        .replace(/#/g, '\\#')
-        .replace(/\+/g, '\\+')
-        .replace(/-/g, '\\-')
-        .replace(/=/g, '\\=')
-        .replace(/\|/g, '\\|')
-        .replace(/\{/g, '\\{')
-        .replace(/\}/g, '\\}');
-    };
+    const queuedItem = await enqueueLeadForRetry(lead, deliveryResult.errors);
+    console.error(`⚠️ Заявка ${queuedItem.id} добавлена в очередь ретраев`);
 
-    // Формирование сообщения
-    const message = `🚀 *Новая заявка с сайта*\n\n` +
-      `📄 *Страница:* ${escapeMarkdown(page) || 'Не указана'}\n` +
-      `👤 *Имя:* ${escapeMarkdown(name) || 'Не указано'}\n` +
-      (company ? `🏢 *Компания:* ${escapeMarkdown(company)}\n` : '') +
-      (city ? `📍 *Город:* ${escapeMarkdown(city)}\n` : '') +
-      (email ? `📧 *Email:* ${escapeMarkdown(email)}\n` : '') +
-      `📞 *Телефон:* ${escapeMarkdown(phone) || 'Не указан'}\n` +
-      `💬 *Сообщение:* ${escapeMarkdown(comment) || 'Нет'}`;
-
-    // Отправка в Telegram
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    await axios.post(url, {
-      chat_id: CHAT_ID,
-      text: message,
-      parse_mode: 'Markdown'
+    return res.status(202).json({
+      success: true,
+      delivery: 'queued_retry',
+      queued: true,
+      queueId: queuedItem.id
     });
-    
-    console.log('✅ Сообщение отправлено в Telegram');
-    res.status(200).json({ success: true });
   } catch (error) {
-    console.error('❌ Ошибка при отправке в Telegram:', error.response?.data || error.message);
-    const errorMessage = error.response?.data?.description || error.message || 'Неизвестная ошибка';
-    res.status(500).json({ 
-      error: 'Ошибка при отправке в Telegram',
-      details: errorMessage
+    console.error('❌ Ошибка при обработке формы:', extractErrorDetails(error));
+    return res.status(500).json({
+      error: 'Ошибка обработки заявки',
+      details: extractErrorDetails(error)
     });
   }
 });
 
-// Статические файлы (после API routes)
 const isDev = process.env.NODE_ENV !== 'production';
 
 if (isDev) {
-  // В dev режиме проксируем запросы к Vite (кроме API)
   app.use(createProxyMiddleware({
     target: 'http://localhost:5173',
     changeOrigin: true,
-    ws: true, // для WebSocket (HMR)
+    ws: true,
     logLevel: 'silent',
-    filter: (pathname) => {
-      // Не проксируем API запросы
-      return !pathname.startsWith('/api');
-    }
+    filter: (pathname) => !pathname.startsWith('/api')
   }));
 } else {
-  // В production отдаем статические файлы из dist
   const staticPath = path.join(__dirname, 'dist');
   app.use(express.static(staticPath, {
     extensions: ['html', 'htm'],
-    index: false // не используем index по умолчанию
+    index: false
   }));
-  
-  // Fallback для SPA - только для несуществующих маршрутов отдаем index.html
+
   app.get('*', (req, res, next) => {
-    // Пропускаем API запросы
     if (req.path.startsWith('/api')) {
       return next();
     }
-    
-    const fs = require('fs');
+
     const requestedPath = path.join(staticPath, req.path);
     const htmlPath = path.join(staticPath, req.path + '.html');
-    
-    // Если запрашивается конкретный файл и он существует - отдаем его
+
     if (fs.existsSync(requestedPath) && !fs.statSync(requestedPath).isDirectory()) {
       return res.sendFile(requestedPath);
     }
-    
-    // Если запрашивается путь без расширения, проверяем .html версию
+
     if (fs.existsSync(htmlPath)) {
       return res.sendFile(htmlPath);
     }
-    
-    // Для всех остальных маршрутов отдаем index.html (SPA fallback)
-    res.sendFile(path.join(staticPath, 'index.html'));
+
+    return res.sendFile(path.join(staticPath, 'index.html'));
   });
 }
 
-// Запуск сервера
+initializeDeliveryChannels().catch((error) => {
+  console.error('❌ Инициализация каналов не завершилась:', extractErrorDetails(error));
+});
+
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n✅ Server running on port ${PORT}`);
-  console.log(`📡 API endpoints:`);
-  console.log(`   - GET  /health`);
-  console.log(`   - GET  /api/test`);
-  console.log(`   - POST /api/test`);
-  console.log(`   - GET  /api/get-chat-id`);
-  console.log(`   - POST /api/submit`);
+  console.log('📡 API endpoints:');
+  console.log('   - GET  /health');
+  console.log('   - GET  /api/test');
+  console.log('   - POST /api/test');
+  console.log('   - GET  /api/get-chat-id');
+  console.log('   - POST /api/submit');
   console.log(`🌐 Frontend: http://0.0.0.0:${PORT}\n`);
 });
 
-// Обработка ошибок
 server.on('error', (error) => {
   console.error('❌ Server error:', error);
   if (error.code === 'EADDRINUSE') {
