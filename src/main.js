@@ -676,7 +676,7 @@ const categoriesText = document.querySelector('.categories-text')
 
 if (categoryItems.length > 0 && categoriesText) {
   categoryItems.forEach(item => {
-    item.addEventListener('click', () => {
+    item.addEventListener('mouseenter', () => {
       // Remove active from all items
       categoryItems.forEach(otherItem => {
         otherItem.classList.remove('category-active')
