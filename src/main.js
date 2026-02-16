@@ -126,10 +126,51 @@ function startInlineVideos() {
   })
 }
 
+// Wait for hero media so preloader covers the loading gap
+function waitForHeroMedia() {
+  try {
+    const container = document.querySelector(
+      '.hero-image, .page-hero-image, .catalog-hero-image, .contacts-hero-image, .documents-hero-image'
+    )
+    if (!container) return Promise.resolve()
+
+    const video = container.querySelector('video[poster]')
+    if (video) {
+      const src = video.getAttribute('poster')
+      return Promise.race([
+        new Promise(resolve => {
+          const img = new Image()
+          img.onload = resolve
+          img.onerror = resolve
+          img.src = src
+          if (img.complete) resolve()
+        }),
+        new Promise(resolve => setTimeout(resolve, 3000))
+      ])
+    }
+
+    const img = container.querySelector('picture img')
+    if (img) {
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve()
+      return Promise.race([
+        new Promise(resolve => {
+          img.addEventListener('load', resolve, { once: true })
+          img.addEventListener('error', resolve, { once: true })
+        }),
+        new Promise(resolve => setTimeout(resolve, 3000))
+      ])
+    }
+
+    return Promise.resolve()
+  } catch (e) {
+    return Promise.resolve()
+  }
+}
+
 // Initialize page load
 async function initPageLoad() {
   
-  await waitForFonts()
+  await Promise.all([waitForFonts(), waitForHeroMedia()])
   
   await new Promise(resolve => requestAnimationFrame(resolve))
   
