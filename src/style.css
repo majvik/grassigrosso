@@ -74,11 +74,11 @@
 }
 
 /* Hide body content until fonts are loaded */
-body:not(.fonts-loaded) > *:not(.preloader):not(.modal-overlay) {
+body:not(.fonts-loaded) > *:not(.preloader):not(.modal-overlay):not(.mobile-menu-overlay) {
   visibility: hidden;
 }
 
-body.fonts-loaded > *:not(.preloader):not(.modal-overlay) {
+body.fonts-loaded > *:not(.preloader):not(.modal-overlay):not(.mobile-menu-overlay) {
   visibility: visible;
   animation: fadeIn 0.5s ease;
 }
