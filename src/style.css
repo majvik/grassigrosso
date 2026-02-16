@@ -1159,7 +1159,7 @@ a:hover .arrow-medium {
 
 .certification-image {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 2 / 1;
   border-radius: 16px;
   overflow: hidden;
 }
@@ -2407,7 +2407,7 @@ a:hover .arrow-medium {
 
   .certification-image {
     width: 100%;
-    aspect-ratio: 1;
+    aspect-ratio: 2 / 1;
   }
 
   .certification-title {
