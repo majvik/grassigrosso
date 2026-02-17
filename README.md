@@ -1,12 +1,13 @@
 # Grassi Grosso
 
-Корпоративный сайт для компании Grassi Grosso - производителя матрасов.
+Корпоративный сайт Grassi Grosso с backend-обработкой заявок из форм.
 
 ## Технологии
 
-- **Frontend:** Vanilla JavaScript, Vite, HTML/CSS
+- **Frontend:** Vite, Vanilla JavaScript, HTML/CSS (MPA)
 - **Backend:** Node.js + Express
-- **Интеграция:** Telegram Bot API
+- **Доставка заявок:** Telegram Bot API + SMTP (Yandex) через `nodemailer`
+- **Надежность доставки:** очередь `Queue + Retry` с сохранением на диск
 
 ## Установка
 
@@ -14,76 +15,102 @@
 npm install
 ```
 
-## Разработка
+## Локальная разработка
 
 ```bash
-# Frontend (терминал 1)
+# Терминал 1: frontend (Vite)
 npm run dev
 
-# Backend (терминал 2)
-node server.cjs
-```
-
-Или вместе:
-
-```bash
-npm run dev:full  # если установлен concurrently
+# Терминал 2: backend API
+npm start
 ```
 
 ## Продакшен
 
-1. Соберите фронтенд:
 ```bash
 npm run build
-```
-
-2. Запустите сервер:
-```bash
 npm start
 ```
+
+## Логика доставки заявок
+
+Текущая реализация:
+
+1. **Primary:** Telegram
+2. **Secondary (дублирование):** Email (SMTP)
+3. Если оба канала недоступны: заявка попадает в очередь и отправляется повторно с backoff.
+
+Успешной считается доставка, если сработал хотя бы один канал.
+
+## Преимущества системы
+
+- Надежность: два канала доставки + очередь с повторными попытками.
+- Диагностика: есть отдельный endpoint `GET /api/smtp-diag` для проверки SMTP в проде.
+- Производительность frontend: управляемый preloader, отложенный autoplay видео, адаптивные изображения (`AVIF/WEBP/PNG`, `srcset`).
+- Удобство эксплуатации: healthcheck с состоянием каналов и размером очереди.
 
 ## Переменные окружения
 
 Скопируйте `.env.example` в `.env` и заполните:
 
 ```env
-BOT_TOKEN=ваш_токен_бота
-CHAT_ID=ваш_chat_id
+# Telegram
+BOT_TOKEN=your_bot_token
+CHAT_ID=your_chat_id
+
+# SMTP (Yandex)
+SMTP_HOST=smtp.yandex.ru
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_TLS_REJECT_UNAUTHORIZED=true
+SMTP_USER=callback@grassigrosso.com
+SMTP_PASS=your_app_password
+MAIL_FROM=callback@grassigrosso.com
+MAIL_TO=callback@grassigrosso.com
+
+# Queue + Retry
+QUEUE_FILE_PATH=./data/delivery-queue.json
+QUEUE_RETRY_INTERVAL_MS=15000
+QUEUE_BASE_RETRY_DELAY_MS=30000
+QUEUE_MAX_RETRY_DELAY_MS=900000
+
+# Frontend API URL (локально)
+VITE_API_URL=/api/submit
+
 PORT=3000
 ```
 
-**Важно:** 
-- `BOT_TOKEN` и `CHAT_ID` обязательны для работы форм
-- `PORT` обычно устанавливается автоматически на Timeweb Cloud Apps
-- Никогда не публикуйте секреты в репозиторий!
+Важно:
 
-## Деплой на Timeweb Cloud Apps
+- На проде переменные должны быть добавлены в окружение платформы (а не только в локальный `.env`).
+- Не публикуйте токены/пароли в Git.
 
-1. **Тип приложения:** Node.js (не статический сайт!)
-2. **Команда сборки:** `npm run build`
-3. **Команда запуска:** `node server.cjs` (уже в Dockerfile CMD)
-4. **Переменные окружения:** добавьте `BOT_TOKEN` и `CHAT_ID` в настройках
+## Деплой (Timeweb Cloud Apps)
 
-Timeweb автоматически определит Node.js приложение по наличию `package.json`.
+1. Тип приложения: Node.js
+2. Команда сборки: `npm run build`
+3. Команда запуска: `npm start`
+4. Обязательно задать ENV: Telegram + SMTP + Queue параметры
 
 ## Структура проекта
 
-```
-├── public/          # Статические файлы (изображения, иконки)
+```text
+├── public/                # статические файлы
 ├── src/
-│   ├── main.js      # Основной JavaScript
-│   ├── style.css    # Стили
-│   └── fonts/       # Шрифты
-├── server.cjs       # Express сервер
-├── index.html       # Главная страница
-├── hotels.html      # Страница для отелей
-└── dealers.html     # Страница для дилеров
+│   ├── main.js            # frontend логика + отправка форм
+│   ├── style.css
+│   └── fonts/
+├── server.cjs             # API + доставка заявок + очередь
+├── data/delivery-queue.json # runtime-очередь (игнорируется git)
+├── *.html                 # страницы сайта
+└── vite.config.mjs
 ```
 
 ## API Endpoints
 
-- `GET /health` - Healthcheck
-- `GET /api/test` - Тест API
-- `POST /api/test` - Тест POST API
-- `GET /api/get-chat-id` - Получить Chat ID для настройки
-- `POST /api/submit` - Отправка формы обратной связи
+- `GET /health` — статус сервиса, активность каналов и размер очереди
+- `GET /api/test` — тест API
+- `POST /api/test` — тест POST
+- `GET /api/get-chat-id` — получение `chat_id` через `getUpdates`
+- `GET /api/smtp-diag` — диагностика SMTP/DNS/TCP/авторизации
+- `POST /api/submit` — отправка заявки (с fallback и queue+retry)
