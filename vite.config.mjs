@@ -16,6 +16,7 @@ export default defineConfig({
         contacts: './contacts.html',
         privacy: './privacy.html',
         terms: './terms.html',
+        cookies: './cookies.html',
         '404': './404.html',
       }
     }

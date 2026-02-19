@@ -1480,3 +1480,179 @@ if (videoModal) {
     }
   })
 }
+
+// Commercial Offer Modal (3 steps) — только на главной
+const commercialOfferModal = document.getElementById('commercialOfferModal')
+const commercialOfferForm = document.getElementById('commercialOfferForm')
+const commercialOfferStepLabel = document.getElementById('commercialOfferStepLabel')
+
+if (commercialOfferModal && commercialOfferForm) {
+  let currentStep = 1
+  const steps = commercialOfferModal.querySelectorAll('.commercial-offer-step')
+  const totalSteps = steps.length
+
+  function showCommercialOfferStep(step) {
+    currentStep = step
+    steps.forEach((el) => {
+      el.classList.toggle('active', parseInt(el.dataset.step, 10) === step)
+    })
+    if (commercialOfferStepLabel) {
+      commercialOfferStepLabel.textContent = `Шаг ${step} из ${totalSteps}`
+    }
+  }
+
+  function openCommercialOfferModal() {
+    if (!commercialOfferModal) return
+    showCommercialOfferStep(1)
+    commercialOfferModal.classList.add('active')
+    if (typeof lockScroll === 'function') lockScroll()
+    document.body.classList.add('modal-open')
+  }
+
+  function closeCommercialOfferModal() {
+    if (!commercialOfferModal) return
+    commercialOfferModal.classList.remove('active')
+    if (typeof unlockScroll === 'function') unlockScroll()
+    document.body.classList.remove('modal-open')
+  }
+
+  const heroLink = document.getElementById('heroCommercialOfferLink')
+  if (heroLink) {
+    heroLink.addEventListener('click', (e) => {
+      e.preventDefault()
+      openCommercialOfferModal()
+    })
+  }
+
+  commercialOfferModal.querySelector('.commercial-offer-close')?.addEventListener('click', (e) => {
+    e.stopPropagation()
+    closeCommercialOfferModal()
+  })
+
+  commercialOfferModal.addEventListener('click', (e) => {
+    if (e.target === commercialOfferModal) closeCommercialOfferModal()
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && commercialOfferModal.classList.contains('active')) {
+      closeCommercialOfferModal()
+    }
+  })
+
+  commercialOfferForm.querySelectorAll('.btn-next').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const goto = parseInt(btn.dataset.goto, 10)
+      if (goto === 2) {
+        const phone = commercialOfferForm.querySelector('#co-phone')
+        const formGroup = phone?.closest('.form-group')
+        if (!phone || !phone.value.trim()) {
+          if (formGroup) {
+            formGroup.classList.add('error')
+            phone.classList.add('error')
+            let err = formGroup.querySelector('.error-message')
+            if (!err) {
+              err = document.createElement('div')
+              err.className = 'error-message'
+              formGroup.appendChild(err)
+            }
+            err.textContent = 'Пожалуйста, укажите телефон'
+          }
+          return
+        }
+        if (formGroup) {
+          formGroup.classList.remove('error')
+          phone.classList.remove('error')
+          formGroup.querySelector('.error-message')?.remove()
+        }
+      }
+      showCommercialOfferStep(goto)
+    })
+  })
+
+  commercialOfferForm.querySelectorAll('.btn-back').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      showCommercialOfferStep(parseInt(btn.dataset.goto, 10))
+    })
+  })
+
+  function showCONotification(message, type) {
+    const existing = commercialOfferForm.querySelector('.form-notification')
+    if (existing) existing.remove()
+    const notification = document.createElement('div')
+    notification.className = `form-notification form-notification-${type}`
+    notification.textContent = message
+    commercialOfferForm.querySelector('.commercial-offer-step[data-step="3"]')?.appendChild(notification)
+  }
+
+  commercialOfferForm.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const privacyCheck = commercialOfferForm.querySelector('#co-privacy')
+    if (privacyCheck && !privacyCheck.checked) {
+      showCONotification('Необходимо согласие на обработку персональных данных', 'error')
+      return
+    }
+    const phone = commercialOfferForm.querySelector('#co-phone')?.value.trim()
+    if (!phone) return
+    const name = commercialOfferForm.querySelector('#co-name')?.value.trim() || 'Не указано'
+    const email = commercialOfferForm.querySelector('#co-email')?.value.trim() || ''
+    const mattresses = commercialOfferForm.querySelector('#co-mattresses')?.value.trim() || ''
+    const segments = [...commercialOfferForm.querySelectorAll('input[name="segment"]:checked')].map((c) => c.value).join(', ') || 'Не указано'
+    const seasonal = commercialOfferForm.querySelector('#co-seasonal')?.checked ? 'Да' : 'Нет'
+    const timeFrom = commercialOfferForm.querySelector('#co-time-from')?.value.trim() || ''
+    const timeTo = commercialOfferForm.querySelector('#co-time-to')?.value.trim() || ''
+    const message = commercialOfferForm.querySelector('#co-message')?.value.trim() || ''
+    const commentParts = [
+      'Заявка на коммерческое предложение.',
+      mattresses ? `Количество матрасов: ${mattresses}.` : '',
+      `Сегмент: ${segments}.`,
+      `Сезонное обновление: ${seasonal}.`,
+      timeFrom || timeTo ? `Время для связи: ${[timeFrom, timeTo].filter(Boolean).join(' — ')}.` : '',
+      message ? `Сообщение: ${message}` : ''
+    ]
+    const comment = commentParts.filter(Boolean).join(' ')
+    const API_URL = import.meta.env.VITE_API_URL || '/api/submit'
+    const submitBtn = commercialOfferForm.querySelector('.btn-submit')
+    const originalText = submitBtn?.textContent
+    if (submitBtn) {
+      submitBtn.disabled = true
+      submitBtn.textContent = 'Отправка...'
+    }
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone,
+          email,
+          comment,
+          page: 'Главная (КП)'
+        })
+      })
+      const data = await response.json().catch(() => ({}))
+      if (response.ok) {
+        const container = commercialOfferForm.querySelector('.commercial-offer-step[data-step="3"] .commercial-offer-buttons')
+        if (container) {
+          const notification = document.createElement('div')
+          notification.className = 'form-notification form-notification-success'
+          notification.textContent = 'Заявка отправлена! Мы свяжемся с вами в ближайшее время.'
+          container.parentElement.insertBefore(notification, container)
+          setTimeout(() => notification.classList.add('form-notification-hide'), 3000)
+        }
+        commercialOfferForm.reset()
+        const mattressesInput = commercialOfferForm.querySelector('#co-mattresses')
+        if (mattressesInput) mattressesInput.value = 100
+        setTimeout(closeCommercialOfferModal, 1500)
+      } else {
+        showCONotification(data.error || data.details || 'Ошибка отправки. Попробуйте позже.', 'error')
+      }
+    } catch (err) {
+      showCONotification('Не удалось отправить заявку. Проверьте подключение к интернету.', 'error')
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false
+        submitBtn.textContent = originalText
+      }
+    }
+  })
+}

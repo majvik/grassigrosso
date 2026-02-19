@@ -43,7 +43,7 @@
     <!-- Cookie Banner (Mobile: top fixed, Desktop: bottom-right fixed) -->
     <div class="cookie-banner">
       <img src="./public/cookie-icon.png" alt="" class="cookie-icon" />
-      <p class="cookie-text">Мы используем <span class="underline">cookie</span>, чтобы улучшить работу нашего сайта</p>
+      <p class="cookie-text">Мы используем <a href="cookies.html" class="cookie-link">cookie</a>, чтобы улучшить работу нашего сайта</p>
       <button class="btn-cookie">ОК</button>
     </div>
 
@@ -112,7 +112,7 @@
             <p class="hero-description">Продуманные решения для естественного восстановления — чтобы утро начиналось легко и спокойно</p>
           </div>
           <div class="hero-link-wrapper">
-            <a href="#info" class="hero-link">
+            <a href="#" class="hero-link" id="heroCommercialOfferLink" aria-haspopup="dialog">
               <span>Получить подробную<br>информацию</span>
               <span class="arrow-icon">
                 <img src="./public/arrow-down.svg" alt="" />
@@ -660,10 +660,116 @@
             <a href="privacy.html">Политика конфиденциальности</a>
             <span class="separator"></span>
             <a href="terms.html">Пользовательское соглашение</a>
+            <span class="separator"></span>
+            <a href="cookies.html">Использование cookie</a>
           </div>
         </div>
       </div>
     </footer>
+
+    <!-- Commercial Offer Modal (3 steps) -->
+    <div class="modal-overlay" id="commercialOfferModal" aria-modal="true" aria-labelledby="commercialOfferTitle" role="dialog">
+      <div class="modal-content commercial-offer-modal-content">
+        <button type="button" class="modal-close commercial-offer-close" aria-label="Закрыть">
+          <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 14L34 34M34 14L14 34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <h2 class="commercial-offer-title" id="commercialOfferTitle">Получить коммерческое предложение</h2>
+        <p class="commercial-offer-step-label" id="commercialOfferStepLabel">Шаг 1 из 3</p>
+
+        <form class="commercial-offer-form" id="commercialOfferForm">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;" aria-hidden="true" />
+
+          <!-- Step 1 -->
+          <div class="commercial-offer-step" data-step="1">
+            <div class="form-group">
+              <label for="co-name">Имя представителя (не обязательно)</label>
+              <input type="text" id="co-name" name="name" placeholder="Иван Иванов" />
+            </div>
+            <div class="form-group">
+              <label for="co-phone">Телефон</label>
+              <input type="tel" id="co-phone" name="phone" placeholder="+7 (999) 123-45-67" required />
+            </div>
+            <div class="form-group">
+              <label for="co-email">E-mail</label>
+              <input type="email" id="co-email" name="email" placeholder="example@company.com" />
+            </div>
+            <div class="commercial-offer-buttons">
+              <button type="button" class="btn-commercial-offer btn-next" data-goto="2">Далее</button>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="commercial-offer-step" data-step="2">
+            <div class="form-group">
+              <label for="co-mattresses">Количество матрасов</label>
+              <input type="number" id="co-mattresses" name="mattresses" min="1" value="100" />
+            </div>
+            <div class="form-group">
+              <span class="form-label">Сегмент</span>
+              <div class="commercial-offer-segment">
+                <label class="segment-option">
+                  <input type="checkbox" name="segment" value="Premium" />
+                  <span>Premium</span>
+                </label>
+                <label class="segment-option">
+                  <input type="checkbox" name="segment" value="Standard" />
+                  <span>Standard</span>
+                </label>
+                <label class="segment-option">
+                  <input type="checkbox" name="segment" value="Economy" />
+                  <span>Economy</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-group form-group-toggle">
+              <span class="form-label">Требуется сезонное обновление</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="co-seasonal" name="seasonal" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="commercial-offer-buttons">
+              <button type="button" class="btn-commercial-offer btn-back" data-goto="1">Назад</button>
+              <button type="button" class="btn-commercial-offer btn-next" data-goto="3">Далее</button>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="commercial-offer-step" data-step="3">
+            <div class="form-group">
+              <label for="co-time-from">Удобное время обсуждения с менеджером (не обязательно)</label>
+              <div class="commercial-offer-time-row">
+                <input type="text" id="co-time-from" name="timeFrom" placeholder="Например, 10:00" />
+                <input type="text" id="co-time-to" name="timeTo" placeholder="До 18:00" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="co-message">Сообщение (не обязательно)</label>
+              <textarea id="co-message" name="message" placeholder="Расскажите подробнее о ваших потребностях"></textarea>
+            </div>
+            <div class="form-checkbox">
+              <input type="checkbox" id="co-privacy" name="privacy" required />
+              <label for="co-privacy">
+                <span class="checkbox-custom">
+                  <svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white"/>
+                    <path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" stroke-opacity="0.1"/>
+                    <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2"/>
+                  </svg>
+                </span>
+                <span class="checkbox-text">Я согласен на обработку моих персональных данных в соответствии с <a href="privacy.html" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
+              </label>
+            </div>
+            <div class="commercial-offer-buttons">
+              <button type="button" class="btn-commercial-offer btn-back" data-goto="2">Назад</button>
+              <button type="submit" class="btn-commercial-offer btn-submit">Получить КП</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Video Modal -->
     <div class="modal-overlay" id="videoModal">

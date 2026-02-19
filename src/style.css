@@ -452,6 +452,282 @@ body {
   display: block;
 }
 
+/* Commercial Offer Modal (3 steps) — сброс наследования от .modal-content (line-height: 0) */
+.commercial-offer-modal-content {
+  position: relative;
+  background: var(--color-bg-white);
+  border-radius: 16px;
+  padding: 48px 56px 40px;
+  max-width: 520px;
+  width: 100%;
+  min-width: 0;
+  max-height: calc(100vh - 96px);
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  line-height: 1.4;
+  box-sizing: border-box;
+  display: block;
+}
+
+.commercial-offer-modal-content .modal-close {
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  color: var(--color-primary);
+}
+
+.commercial-offer-title {
+  font-family: var(--font-bounded);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--color-primary);
+  margin: 0 0 8px;
+  padding-right: 24px;
+  line-height: 1.3;
+  word-wrap: break-word;
+}
+
+.commercial-offer-step-label {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text);
+  opacity: 0.7;
+  margin: 0 0 24px;
+  line-height: 1.4;
+}
+
+.commercial-offer-form {
+  min-width: 0;
+}
+
+/* Лейбл→поле 8px (gap), между блоками полей 24px (margin-bottom) */
+.commercial-offer-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+  min-width: 0;
+}
+
+.commercial-offer-form .form-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.commercial-offer-form .form-group label,
+.commercial-offer-form .form-group .form-label {
+  display: block;
+  font-family: var(--font-family);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.4;
+  margin-bottom: 0;
+  word-wrap: break-word;
+}
+
+.commercial-offer-form .form-group input,
+.commercial-offer-form .form-group textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+  width: 100%;
+}
+
+.commercial-offer-form .form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.commercial-offer-step {
+  display: none;
+  min-width: 0;
+}
+
+.commercial-offer-step.active {
+  display: block;
+}
+
+.commercial-offer-segment {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Перебиваем .commercial-offer-form .form-group label (display:block) */
+.commercial-offer-form label.segment-option,
+.commercial-offer-segment .segment-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-family);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--color-text);
+  cursor: pointer;
+  min-width: 0;
+}
+
+.commercial-offer-segment .segment-option span {
+  word-wrap: break-word;
+  line-height: 20px;
+}
+
+.commercial-offer-segment .segment-option input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+}
+
+/* Строка в одну линию: лейбл слева, свитч справа, по вертикали по центру */
+.form-group.form-group-toggle {
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 16px;
+  min-width: 0;
+  margin-bottom: 24px;
+}
+
+.form-group-toggle .form-label {
+  margin-bottom: 0;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.form-group-toggle .toggle-switch {
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(40, 62, 55, 0.2);
+  border-radius: 28px;
+  transition: 0.25s;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--color-bg-white);
+  border-radius: 50%;
+  transition: 0.25s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--color-primary);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(24px);
+}
+
+.commercial-offer-time-row {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+
+.commercial-offer-time-row input {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.commercial-offer-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;
+  margin-top: 28px;
+}
+
+.commercial-offer-buttons .btn-commercial-offer {
+  flex: 1 1 auto;
+  min-width: 120px;
+}
+
+.btn-commercial-offer {
+  font-family: var(--font-family);
+  font-size: 17px;
+  font-weight: 400;
+  padding: 14px 24px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Только «Назад» — вторичная (серая) кнопка */
+.btn-commercial-offer.btn-back {
+  background-color: rgba(40, 62, 55, 0.1);
+  color: var(--color-primary);
+}
+
+.btn-commercial-offer.btn-back:hover {
+  background-color: rgba(40, 62, 55, 0.18);
+}
+
+/* «Далее» и «Получить КП» — активная основная кнопка */
+.btn-commercial-offer.btn-next,
+.btn-commercial-offer.btn-submit {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-commercial-offer.btn-next:hover,
+.btn-commercial-offer.btn-submit:hover {
+  background-color: #1e2f2a;
+}
+
+.commercial-offer-form .form-checkbox {
+  min-width: 0;
+}
+
+.commercial-offer-form .form-checkbox .checkbox-text,
+.commercial-offer-form .form-checkbox .checkbox-text a {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.commercial-offer-form .form-notification {
+  margin-top: 16px;
+  min-width: 0;
+}
+
 /* Cookie Banner */
 .cookie-banner {
   position: fixed;
@@ -492,8 +768,15 @@ body {
   opacity: 0.8;
 }
 
-.cookie-text .underline {
+.cookie-text .underline,
+.cookie-text .cookie-link {
   text-decoration: underline;
+  color: inherit;
+  opacity: 1;
+}
+
+.cookie-text .cookie-link:hover {
+  opacity: 0.85;
 }
 
 .btn-cookie {
@@ -2211,6 +2494,40 @@ a:hover .arrow-medium {
   .modal-video {
     max-height: calc(100vh - 32px);
     border-radius: 8px;
+  }
+
+  .commercial-offer-modal-content {
+    padding: 32px 20px 24px;
+    max-height: calc(100vh - 32px);
+  }
+
+  .commercial-offer-modal-content .modal-close {
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .commercial-offer-title {
+    font-size: 20px;
+    padding-right: 40px;
+  }
+
+  .commercial-offer-form .form-group input,
+  .commercial-offer-form .form-group textarea {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .commercial-offer-buttons {
+    margin-top: 24px;
+    gap: 12px;
+  }
+
+  .commercial-offer-buttons .btn-commercial-offer {
+    min-width: 0;
+    padding: 12px 16px;
+    font-size: 15px;
   }
 
   /* Section Titles */
