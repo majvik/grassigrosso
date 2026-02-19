@@ -2,9 +2,11 @@ import './style.css'
 import { gsap } from 'gsap'
 import Lenis from 'lenis'
 
-// Geography cities animation - start only when in viewport
+// Geography section: cities animation + map points animation
 const geographySection = document.querySelector('.geography-section')
 const geographyCities = document.querySelector('.geography-cities')
+const geographyMapContainer = document.getElementById('geographyMapContainer')
+const geographyMapImg = document.getElementById('geographyMapImg')
 
 if (geographySection && geographyCities) {
   const observer = new IntersectionObserver((entries) => {
@@ -16,10 +18,55 @@ if (geographySection && geographyCities) {
       }
     })
   }, {
-    threshold: 0.1 // Start animation when 10% of section is visible
+    threshold: 0.1
   })
-
   observer.observe(geographySection)
+}
+
+// Geography map: load SVG inline and animate points when section is in view
+if (geographyMapContainer && geographyMapImg && geographySection) {
+  let mapPointsAnimated = false
+  const mapObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting || mapPointsAnimated) return
+      const svg = geographyMapContainer.querySelector('svg')
+      if (!svg) return
+      const g = svg.querySelector('g[clip-path]')
+      if (!g) return
+      const pointPaths = [...g.children].filter(
+        (el) => el.tagName === 'path' && (el.getAttribute('fill') === '#283E37' || el.getAttribute('fill') === 'white')
+      )
+      if (pointPaths.length === 0) return
+      mapPointsAnimated = true
+      const pathsPerPoint = 4
+      const groups = []
+      for (let i = 0; i < pointPaths.length; i += pathsPerPoint) {
+        groups.push(pointPaths.slice(i, i + pathsPerPoint))
+      }
+      groups.forEach((group, i) => {
+        gsap.fromTo(
+          group,
+          { opacity: 0, scale: 0, transformOrigin: '50% 50%' },
+          { opacity: 1, scale: 1, duration: 0.7, delay: i * 0.056, ease: 'back.out', transformOrigin: '50% 50%' }
+        )
+      })
+    })
+  }, { threshold: 0.15 })
+
+  fetch(geographyMapImg.getAttribute('src'))
+    .then((r) => r.text())
+    .then((text) => {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(text, 'image/svg+xml')
+      const svg = doc.querySelector('svg')
+      if (!svg) return
+      svg.setAttribute('role', 'img')
+      svg.setAttribute('aria-label', 'География дилеров')
+      geographyMapImg.remove()
+      geographyMapContainer.appendChild(svg)
+      mapObserver.observe(geographySection)
+    })
+    .catch(() => {})
 }
 
 // Lenis smooth scroll - только для десктопа
@@ -1524,6 +1571,18 @@ if (commercialOfferModal && commercialOfferForm) {
     })
   }
 
+  document.body.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-open-commercial-offer]')
+    if (trigger) {
+      e.preventDefault()
+      openCommercialOfferModal()
+      const seasonalCheckbox = commercialOfferForm.querySelector('#co-seasonal')
+      if (seasonalCheckbox) {
+        seasonalCheckbox.checked = trigger.getAttribute('data-open-commercial-offer') === 'seasonal'
+      }
+    }
+  })
+
   commercialOfferModal.querySelector('.commercial-offer-close')?.addEventListener('click', (e) => {
     e.stopPropagation()
     closeCommercialOfferModal()
@@ -1648,6 +1707,127 @@ if (commercialOfferModal && commercialOfferForm) {
       }
     } catch (err) {
       showCONotification('Не удалось отправить заявку. Проверьте подключение к интернету.', 'error')
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false
+        submitBtn.textContent = originalText
+      }
+    }
+  })
+}
+
+// Catalog Request Modal (Boxspring / Аксессуары) — на странице Отелям
+const catalogRequestModal = document.getElementById('catalogRequestModal')
+const catalogRequestForm = document.getElementById('catalogRequestForm')
+const catalogRequestText = document.getElementById('catalogRequestText')
+const catalogRequestTypeInput = document.getElementById('catalogRequestType')
+
+const CATALOG_MESSAGES = {
+  boxspring: 'Если вы хотите получить каталог Boxspring, укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
+  accessories: 'Если вы хотите получить каталог аксессуаров, укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.'
+}
+
+if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
+  function openCatalogRequestModal(catalogType) {
+    const message = CATALOG_MESSAGES[catalogType] || CATALOG_MESSAGES.boxspring
+    catalogRequestText.textContent = message
+    if (catalogRequestTypeInput) catalogRequestTypeInput.value = catalogType || 'boxspring'
+    catalogRequestModal.classList.add('active')
+    if (typeof lockScroll === 'function') lockScroll()
+    document.body.classList.add('modal-open')
+  }
+
+  function closeCatalogRequestModal() {
+    catalogRequestModal.classList.remove('active')
+    if (typeof unlockScroll === 'function') unlockScroll()
+    document.body.classList.remove('modal-open')
+  }
+
+  document.body.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-open-catalog]')
+    if (!link) return
+    e.preventDefault()
+    const card = link.closest('.product-card')
+    const catalogType = (card && card.dataset.catalog) || 'boxspring'
+    openCatalogRequestModal(catalogType)
+  })
+
+  catalogRequestModal.querySelector('.catalog-request-close')?.addEventListener('click', (e) => {
+    e.stopPropagation()
+    closeCatalogRequestModal()
+  })
+
+  catalogRequestModal.addEventListener('click', (e) => {
+    if (e.target === catalogRequestModal) closeCatalogRequestModal()
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && catalogRequestModal.classList.contains('active')) {
+      closeCatalogRequestModal()
+    }
+  })
+
+  catalogRequestForm.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const privacyCheck = catalogRequestForm.querySelector('#cr-privacy')
+    if (privacyCheck && !privacyCheck.checked) return
+    const name = catalogRequestForm.querySelector('#cr-name')?.value.trim() || 'Не указано'
+    const phone = catalogRequestForm.querySelector('#cr-phone')?.value.trim()
+    const email = catalogRequestForm.querySelector('#cr-email')?.value.trim() || ''
+    const catalogType = catalogRequestTypeInput?.value || 'boxspring'
+    if (!phone) return
+    const comment = `Запрос каталога: ${catalogType === 'boxspring' ? 'Boxspring' : 'Аксессуары'}.`
+    const API_URL = import.meta.env.VITE_API_URL || '/api/submit'
+    const submitBtn = catalogRequestForm.querySelector('button[type="submit"]')
+    const originalText = submitBtn?.textContent
+    if (submitBtn) {
+      submitBtn.disabled = true
+      submitBtn.textContent = 'Отправка...'
+    }
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone,
+          email,
+          comment,
+          page: 'Отелям (каталог)'
+        })
+      })
+      const data = await response.json().catch(() => ({}))
+      if (response.ok) {
+        const container = catalogRequestForm.querySelector('.catalog-request-buttons')
+        if (container) {
+          const notification = document.createElement('div')
+          notification.className = 'form-notification form-notification-success'
+          notification.textContent = 'Заявка отправлена! Каталог будет направлен на указанный e-mail.'
+          container.parentElement.insertBefore(notification, container)
+          setTimeout(() => notification.classList.add('form-notification-hide'), 3000)
+        }
+        catalogRequestForm.reset()
+        if (catalogRequestTypeInput) catalogRequestTypeInput.value = catalogType
+        setTimeout(closeCatalogRequestModal, 1500)
+      } else {
+        const container = catalogRequestForm.querySelector('.catalog-request-buttons')
+        if (container) {
+          const notification = document.createElement('div')
+          notification.className = 'form-notification form-notification-error'
+          notification.textContent = data.error || data.details || 'Ошибка отправки. Попробуйте позже.'
+          container.parentElement.insertBefore(notification, container)
+          setTimeout(() => notification.remove(), 5000)
+        }
+      }
+    } catch (err) {
+      const container = catalogRequestForm.querySelector('.catalog-request-buttons')
+      if (container) {
+        const notification = document.createElement('div')
+        notification.className = 'form-notification form-notification-error'
+        notification.textContent = 'Не удалось отправить заявку. Проверьте подключение к интернету.'
+        container.parentElement.insertBefore(notification, container)
+        setTimeout(() => notification.remove(), 5000)
+      }
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false
