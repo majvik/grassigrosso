@@ -60,6 +60,9 @@ if (geographyMapContainer && geographyMapImg && geographySection) {
       const doc = parser.parseFromString(text, 'image/svg+xml')
       const svg = doc.querySelector('svg')
       if (!svg) return
+      svg.removeAttribute('width')
+      svg.removeAttribute('height')
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid slice')
       svg.setAttribute('role', 'img')
       svg.setAttribute('aria-label', 'География дилеров')
       geographyMapImg.remove()
@@ -1389,6 +1392,10 @@ if (contactForms.length > 0) {
         website: form.querySelector('#website')?.value.trim() || '',
         page: getPageName()
       }
+      const packageSelect = form.querySelector('#dealer-package')
+      if (packageSelect) {
+        formData.package = packageSelect.value || ''
+      }
 
       // Блокируем кнопку и показываем состояние загрузки
       if (submitBtn) {
@@ -1446,6 +1453,19 @@ if (contactForms.length > 0) {
         }
       }
     })
+  })
+}
+
+// Dealers: pre-select package in form when clicking "Выбрать пакет"
+const dealerPackageSelect = document.getElementById('dealer-package')
+if (dealerPackageSelect) {
+  document.body.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href="#contact-form"][data-package]')
+    if (!link) return
+    const pkg = link.getAttribute('data-package')
+    if (pkg && ['standard', 'individual', 'exclusive'].includes(pkg)) {
+      dealerPackageSelect.value = pkg
+    }
   })
 }
 

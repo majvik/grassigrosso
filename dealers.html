@@ -424,7 +424,7 @@
               />
             </picture>
             <button class="hero-play-btn" aria-label="Воспроизвести видео">
-              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="32" r="32" fill="white" fill-opacity="0.9"/>
                 <path d="M26 20L46 32L26 44V20Z" fill="#243731"/>
               </svg>
@@ -491,7 +491,7 @@
               <li class="feature-included"><span class="feature-check">✓</span> Обучение</li>
               <li class="feature-included"><span class="feature-check">✓</span> Онлайн и телефон поддержка</li>
             </ul>
-            <a href="#contact-form" class="btn-primary">Выбрать пакет</a>
+            <a href="#contact-form" class="btn-primary" data-package="standard">Выбрать пакет</a>
           </div>
           <div class="package-card package-featured">
             <div class="package-header">
@@ -508,7 +508,7 @@
               <li class="feature-included"><span class="feature-check">✓</span> Сертификат Grassigrosso</li>
               <li class="feature-included"><span class="feature-check">✓</span> Гибкая система скидок</li>
             </ul>
-            <a href="#contact-form" class="btn-secondary">Выбрать пакет</a>
+            <a href="#contact-form" class="btn-secondary" data-package="individual">Выбрать пакет</a>
           </div>
           <div class="package-card">
             <div class="package-header">
@@ -528,7 +528,7 @@
               <li class="feature-included"><span class="feature-check">✓</span> Сертификат Grassigrosso</li>
               <li class="feature-included"><span class="feature-check">✓</span> Эксклюзивная представленность в городе (ТЦ)</li>
             </ul>
-            <a href="#contact-form" class="btn-primary">Выбрать пакет</a>
+            <a href="#contact-form" class="btn-primary" data-package="exclusive">Выбрать пакет</a>
           </div>
         </div>
       </section>
@@ -617,11 +617,20 @@
         <h2 class="section-title">Доброе утро!</h2>
         <div class="contact-grid">
           <div class="contact-form-wrapper">
-            <h3 class="contact-form-title">Форма обратной связи</h3>
+            <h3 class="contact-form-title">Стать дилером</h3>
             <form class="contact-form">
               <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
                 <label for="website">Website</label>
                 <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+              </div>
+              <div class="form-group form-group-package">
+                <label for="dealer-package">Пакет</label>
+                <select id="dealer-package" name="package" class="form-select" aria-label="Выберите пакет">
+                  <option value="">Выберите пакет</option>
+                  <option value="standard">СТАНДАРТ — От 100 000 р</option>
+                  <option value="individual">ИНДИВИДУАЛЬНЫЙ — От 300 000 р</option>
+                  <option value="exclusive">ЭКСКЛЮЗИВНЫЙ — От 800 000 р</option>
+                </select>
               </div>
               <div class="form-group">
                 <label for="name">Имя</label>
