@@ -1092,6 +1092,41 @@ if (contactForms.length > 0) {
   // В dev режиме будет проксироваться через Vite, на продакшене будет работать напрямую
   const API_URL = import.meta.env.VITE_API_URL || '/api/submit'
 
+  // Функция для показа уведомления рядом с кнопкой
+  const showNotification = (message, type = 'success', button) => {
+    // Удаляем предыдущее уведомление, если есть
+    const existingNotification = document.querySelector('.form-notification')
+    if (existingNotification) {
+      existingNotification.remove()
+    }
+
+    // Создаем элемент уведомления
+    const notification = document.createElement('div')
+    notification.className = `form-notification form-notification-${type}`
+    notification.textContent = message
+
+    // Вставляем после кнопки или в конец формы
+    if (button && button.parentNode) {
+      button.parentNode.insertBefore(notification, button.nextSibling)
+    } else {
+      const form = button?.closest('form')
+      if (form) {
+        form.appendChild(notification)
+      }
+    }
+
+    // Ждем завершения анимации появления (300ms), затем начинаем отсчет 5 секунд
+    setTimeout(() => {
+      // Автоматически скрываем через 5 секунд после появления
+      setTimeout(() => {
+        notification.classList.add('form-notification-hide')
+        setTimeout(() => {
+          notification.remove()
+        }, 300)
+      }, 5000)
+    }, 300)
+  }
+
   // Функция для определения названия страницы
   const getPageName = () => {
     const path = window.location.pathname
@@ -1192,7 +1227,8 @@ if (contactForms.length > 0) {
     // Проверка согласия на обработку данных
     const privacyCheckbox = form.querySelector('#privacy')
     if (privacyCheckbox && !privacyCheckbox.checked) {
-      alert('Необходимо согласие на обработку персональных данных')
+      const submitBtn = form.querySelector('button[type="submit"]')
+      showNotification('Необходимо согласие на обработку персональных данных', 'error', submitBtn)
       isValid = false
     }
 
@@ -1265,7 +1301,7 @@ if (contactForms.length > 0) {
         comment: form.querySelector('#message')?.value.trim() || '',
         email: form.querySelector('#email')?.value.trim() || '',
         city: form.querySelector('#city')?.value.trim() || '',
-        company: form.querySelector('#company')?.value.trim() || '',
+        website: form.querySelector('#website')?.value.trim() || '',
         page: getPageName()
       }
 
@@ -1277,7 +1313,7 @@ if (contactForms.length > 0) {
 
       // Проверка наличия API_URL
       if (!API_URL) {
-        alert('Ошибка конфигурации: API URL не настроен. Обратитесь к администратору.')
+        showNotification('Ошибка конфигурации: API URL не настроен. Обратитесь к администратору.', 'error', submitBtn)
         console.error('VITE_API_URL не установлен в переменных окружения')
         if (submitBtn) {
           submitBtn.disabled = false
@@ -1307,16 +1343,16 @@ if (contactForms.length > 0) {
         console.log('Данные ответа:', data)
         
         if (response.ok) {
-          alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.')
+          showNotification('Заявка отправлена! Мы свяжемся с вами в ближайшее время.', 'success', submitBtn)
           form.reset()
           clearErrors(form)
         } else {
           console.error('Ошибка сервера:', data)
-          alert(data.error || data.details || 'Ошибка сервера. Попробуйте позже.')
+          showNotification(data.error || data.details || 'Ошибка сервера. Попробуйте позже.', 'error', submitBtn)
         }
       } catch (error) {
         console.error('Ошибка:', error)
-        alert('Не удалось отправить данные. Проверьте подключение к интернету и убедитесь, что сервер запущен.')
+        showNotification('Не удалось отправить данные. Проверьте подключение к интернету и убедитесь, что сервер запущен.', 'error', submitBtn)
       } finally {
         // Восстанавливаем кнопку
         if (submitBtn) {

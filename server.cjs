@@ -7,6 +7,8 @@ const fsp = require('fs/promises');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createAntiSpamProtector } = require('./lib/anti-spam.cjs');
+const { normalizeOriginList, buildCorsOptions } = require('./lib/cors-config.cjs');
 require('dotenv').config();
 
 const app = express();
@@ -29,15 +31,25 @@ const QUEUE_FILE_PATH = process.env.QUEUE_FILE_PATH || path.join(__dirname, 'dat
 const QUEUE_RETRY_INTERVAL_MS = Number(process.env.QUEUE_RETRY_INTERVAL_MS || 15000);
 const QUEUE_BASE_RETRY_DELAY_MS = Number(process.env.QUEUE_BASE_RETRY_DELAY_MS || 30000);
 const QUEUE_MAX_RETRY_DELAY_MS = Number(process.env.QUEUE_MAX_RETRY_DELAY_MS || 15 * 60 * 1000);
+const SPAM_WINDOW_MS = Number(process.env.SPAM_WINDOW_MS || 10 * 60 * 1000);
+const SPAM_MAX_SUBMITS_PER_WINDOW = Number(process.env.SPAM_MAX_SUBMITS_PER_WINDOW || 6);
+const SPAM_MIN_SUBMIT_INTERVAL_MS = Number(process.env.SPAM_MIN_SUBMIT_INTERVAL_MS || 8000);
+const SPAM_BLOCK_MS = Number(process.env.SPAM_BLOCK_MS || 30 * 60 * 1000);
+const SPAM_MAX_COMMENT_LENGTH = Number(process.env.SPAM_MAX_COMMENT_LENGTH || 2500);
+const SPAM_MAX_NAME_LENGTH = Number(process.env.SPAM_MAX_NAME_LENGTH || 120);
+const SPAM_MAX_PHONE_LENGTH = Number(process.env.SPAM_MAX_PHONE_LENGTH || 40);
+const SPAM_MAX_EMAIL_LENGTH = Number(process.env.SPAM_MAX_EMAIL_LENGTH || 160);
+const CORS_ALLOWED_ORIGINS = normalizeOriginList(
+  process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173'
+);
 
 let deliveryQueue = [];
 let isQueueProcessing = false;
 
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+const corsOptions = buildCorsOptions({
+  allowedOrigins: CORS_ALLOWED_ORIGINS
+});
+app.use(cors(corsOptions));
 
 app.set('trust proxy', true);
 app.use(express.json({ limit: '1mb' }));
@@ -81,7 +93,6 @@ function normalizeLeadPayload(body = {}) {
     comment: String(body.comment || '').trim(),
     email: String(body.email || '').trim(),
     city: String(body.city || '').trim(),
-    company: String(body.company || '').trim(),
     page: String(body.page || '').trim() || 'Не указана',
   };
 }
@@ -90,7 +101,6 @@ function buildTelegramMessage(lead) {
   return `🚀 *Новая заявка с сайта*\n\n` +
     `📄 *Страница:* ${escapeMarkdown(lead.page) || 'Не указана'}\n` +
     `👤 *Имя:* ${escapeMarkdown(lead.name) || 'Не указано'}\n` +
-    (lead.company ? `🏢 *Компания:* ${escapeMarkdown(lead.company)}\n` : '') +
     (lead.city ? `📍 *Город:* ${escapeMarkdown(lead.city)}\n` : '') +
     (lead.email ? `📧 *Email:* ${escapeMarkdown(lead.email)}\n` : '') +
     `📞 *Телефон:* ${escapeMarkdown(lead.phone) || 'Не указан'}\n` +
@@ -98,16 +108,15 @@ function buildTelegramMessage(lead) {
 }
 
 function buildEmailSubject(lead) {
-  return `[Grassi Grosso] Новая заявка (${lead.page || 'Сайт'})`;
+  return `[Grassigrosso] Новая заявка (${lead.page || 'Сайт'})`;
 }
 
 function buildEmailText(lead) {
   return [
-    'Новая заявка с сайта Grassi Grosso',
+    'Новая заявка с сайта Grassigrosso',
     '',
     `Страница: ${lead.page || 'Не указана'}`,
     `Имя: ${lead.name || 'Не указано'}`,
-    `Компания: ${lead.company || 'Не указана'}`,
     `Город: ${lead.city || 'Не указан'}`,
     `Email: ${lead.email || 'Не указан'}`,
     `Телефон: ${lead.phone || 'Не указан'}`,
@@ -120,11 +129,10 @@ function buildEmailText(lead) {
 function buildEmailHtml(lead) {
   return `
     <div style="font-family: Arial, sans-serif; color: #1e1e1e; line-height: 1.45;">
-      <h2 style="margin: 0 0 16px;">Новая заявка с сайта Grassi Grosso</h2>
+      <h2 style="margin: 0 0 16px;">Новая заявка с сайта Grassigrosso</h2>
       <table style="border-collapse: collapse; width: 100%; max-width: 760px;">
         <tr><td style="padding: 6px 0; font-weight: bold;">Страница:</td><td style="padding: 6px 0;">${escapeHtml(lead.page || 'Не указана')}</td></tr>
         <tr><td style="padding: 6px 0; font-weight: bold;">Имя:</td><td style="padding: 6px 0;">${escapeHtml(lead.name || 'Не указано')}</td></tr>
-        <tr><td style="padding: 6px 0; font-weight: bold;">Компания:</td><td style="padding: 6px 0;">${escapeHtml(lead.company || 'Не указана')}</td></tr>
         <tr><td style="padding: 6px 0; font-weight: bold;">Город:</td><td style="padding: 6px 0;">${escapeHtml(lead.city || 'Не указан')}</td></tr>
         <tr><td style="padding: 6px 0; font-weight: bold;">Email:</td><td style="padding: 6px 0;">${escapeHtml(lead.email || 'Не указан')}</td></tr>
         <tr><td style="padding: 6px 0; font-weight: bold;">Телефон:</td><td style="padding: 6px 0;">${escapeHtml(lead.phone || 'Не указан')}</td></tr>
@@ -150,6 +158,26 @@ function extractErrorDetails(error) {
   if (error.message) return String(error.message);
   return String(error);
 }
+
+function getClientIp(req) {
+  const forwardedFor = req.headers['x-forwarded-for'];
+  if (typeof forwardedFor === 'string' && forwardedFor.length > 0) {
+    const firstIp = forwardedFor.split(',')[0].trim();
+    if (firstIp) return firstIp;
+  }
+  return req.ip || req.socket?.remoteAddress || 'unknown';
+}
+
+const antiSpamProtector = createAntiSpamProtector({
+  windowMs: SPAM_WINDOW_MS,
+  maxSubmitsPerWindow: SPAM_MAX_SUBMITS_PER_WINDOW,
+  minSubmitIntervalMs: SPAM_MIN_SUBMIT_INTERVAL_MS,
+  blockMs: SPAM_BLOCK_MS,
+  maxCommentLength: SPAM_MAX_COMMENT_LENGTH,
+  maxNameLength: SPAM_MAX_NAME_LENGTH,
+  maxPhoneLength: SPAM_MAX_PHONE_LENGTH,
+  maxEmailLength: SPAM_MAX_EMAIL_LENGTH
+});
 
 function createMailTransport() {
   const transportOptions = {
@@ -366,6 +394,11 @@ console.log(`   CHAT_ID: ${CHAT_ID ? '✅ Set' : '❌ Not set'}`);
 console.log(`   SMTP_HOST: ${SMTP_HOST ? '✅ Set' : '❌ Not set'}`);
 console.log(`   SMTP_USER: ${SMTP_USER ? '✅ Set' : '❌ Not set'}`);
 console.log(`   MAIL_TO: ${MAIL_TO ? '✅ Set' : '❌ Not set'}`);
+console.log(`   SPAM_WINDOW_MS: ${SPAM_WINDOW_MS}`);
+console.log(`   SPAM_MAX_SUBMITS_PER_WINDOW: ${SPAM_MAX_SUBMITS_PER_WINDOW}`);
+console.log(`   SPAM_MIN_SUBMIT_INTERVAL_MS: ${SPAM_MIN_SUBMIT_INTERVAL_MS}`);
+console.log(`   SPAM_BLOCK_MS: ${SPAM_BLOCK_MS}`);
+console.log(`   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS.length > 0 ? CORS_ALLOWED_ORIGINS.join(', ') : '(none)'}`);
 console.log(`   QUEUE_FILE_PATH: ${QUEUE_FILE_PATH}\n`);
 
 app.get('/health', (req, res) => {
@@ -379,125 +412,143 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.get('/api/test', (req, res) => {
-  res.json({
-    message: 'API работает!',
-    timestamp: new Date().toISOString()
+const isProd = process.env.NODE_ENV === 'production';
+if (!isProd) {
+  app.get('/api/test', (req, res) => {
+    res.json({
+      message: 'API работает!',
+      timestamp: new Date().toISOString()
+    });
   });
-});
 
-app.post('/api/test', (req, res) => {
-  res.json({
-    message: 'POST API работает!',
-    body: req.body,
-    timestamp: new Date().toISOString()
+  app.post('/api/test', (req, res) => {
+    res.json({
+      message: 'POST API работает!',
+      body: req.body,
+      timestamp: new Date().toISOString()
+    });
   });
-});
 
-app.get('/api/get-chat-id', async (req, res) => {
-  try {
-    if (!BOT_TOKEN) {
-      return res.status(500).json({ error: 'BOT_TOKEN не настроен' });
+  app.get('/api/get-chat-id', async (req, res) => {
+    try {
+      if (!BOT_TOKEN) {
+        return res.status(500).json({ error: 'BOT_TOKEN не настроен' });
+      }
+
+      const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`;
+      const response = await axios.get(url);
+
+      if (response.data.ok && response.data.result.length > 0) {
+        const lastUpdate = response.data.result[response.data.result.length - 1];
+        const chatId = lastUpdate.message?.chat?.id;
+
+        if (chatId) {
+          return res.json({
+            chat_id: chatId,
+            message: `Ваш CHAT_ID: ${chatId}. Добавьте его в .env файл как CHAT_ID=${chatId}`
+          });
+        }
+      }
+
+      return res.json({
+        message: 'Не найдено сообщений. Отправьте любое сообщение боту и попробуйте снова.',
+        hint: 'После отправки сообщения боту, обновите эту страницу'
+      });
+    } catch (error) {
+      console.error('Ошибка при получении CHAT_ID:', extractErrorDetails(error));
+      return res.status(500).json({ error: 'Ошибка при получении CHAT_ID' });
+    }
+  });
+
+  app.get('/api/smtp-diag', async (req, res) => {
+    const net = require('net');
+    const dns = require('dns');
+    const results = {
+      timestamp: new Date().toISOString(),
+      config: {
+        SMTP_HOST,
+        SMTP_PORT,
+        SMTP_SECURE,
+        SMTP_USER: SMTP_USER ? '✅ Set' : '❌ Not set',
+        SMTP_PASS: SMTP_PASS ? '✅ Set' : '❌ Not set',
+        MAIL_FROM,
+        MAIL_TO,
+      },
+      tests: {}
+    };
+
+    // 1. DNS resolve
+    try {
+      const addresses = await new Promise((resolve, reject) => {
+        dns.resolve4(SMTP_HOST, (err, addrs) => err ? reject(err) : resolve(addrs));
+      });
+      results.tests.dns = { ok: true, addresses };
+    } catch (err) {
+      results.tests.dns = { ok: false, error: err.message };
     }
 
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`;
-    const response = await axios.get(url);
-
-    if (response.data.ok && response.data.result.length > 0) {
-      const lastUpdate = response.data.result[response.data.result.length - 1];
-      const chatId = lastUpdate.message?.chat?.id;
-
-      if (chatId) {
-        return res.json({
-          chat_id: chatId,
-          message: `Ваш CHAT_ID: ${chatId}. Добавьте его в .env файл как CHAT_ID=${chatId}`
+    // 2. TCP connect port 465
+    for (const port of [465, 587]) {
+      try {
+        await new Promise((resolve, reject) => {
+          const sock = net.createConnection({ host: SMTP_HOST, port, timeout: 10000 });
+          sock.once('connect', () => { sock.destroy(); resolve(); });
+          sock.once('timeout', () => { sock.destroy(); reject(new Error(`TCP timeout ${port}`)); });
+          sock.once('error', (e) => { sock.destroy(); reject(e); });
         });
+        results.tests[`tcp_${port}`] = { ok: true };
+      } catch (err) {
+        results.tests[`tcp_${port}`] = { ok: false, error: err.message };
       }
     }
 
-    return res.json({
-      message: 'Не найдено сообщений. Отправьте любое сообщение боту и попробуйте снова.',
-      hint: 'После отправки сообщения боту, обновите эту страницу'
-    });
-  } catch (error) {
-    console.error('Ошибка при получении CHAT_ID:', extractErrorDetails(error));
-    return res.status(500).json({ error: 'Ошибка при получении CHAT_ID' });
-  }
-});
-
-app.get('/api/smtp-diag', async (req, res) => {
-  const net = require('net');
-  const dns = require('dns');
-  const results = {
-    timestamp: new Date().toISOString(),
-    config: {
-      SMTP_HOST,
-      SMTP_PORT,
-      SMTP_SECURE,
-      SMTP_USER: SMTP_USER ? '✅ Set' : '❌ Not set',
-      SMTP_PASS: SMTP_PASS ? '✅ Set' : '❌ Not set',
-      MAIL_FROM,
-      MAIL_TO,
-    },
-    tests: {}
-  };
-
-  // 1. DNS resolve
-  try {
-    const addresses = await new Promise((resolve, reject) => {
-      dns.resolve4(SMTP_HOST, (err, addrs) => err ? reject(err) : resolve(addrs));
-    });
-    results.tests.dns = { ok: true, addresses };
-  } catch (err) {
-    results.tests.dns = { ok: false, error: err.message };
-  }
-
-  // 2. TCP connect port 465
-  for (const port of [465, 587]) {
+    // 3. Nodemailer verify (current config)
     try {
-      await new Promise((resolve, reject) => {
-        const sock = net.createConnection({ host: SMTP_HOST, port, timeout: 10000 });
-        sock.once('connect', () => { sock.destroy(); resolve(); });
-        sock.once('timeout', () => { sock.destroy(); reject(new Error(`TCP timeout ${port}`)); });
-        sock.once('error', (e) => { sock.destroy(); reject(e); });
-      });
-      results.tests[`tcp_${port}`] = { ok: true };
+      const transporter = createMailTransport();
+      await transporter.verify();
+      results.tests.nodemailer_verify = { ok: true, message: 'SMTP auth successful' };
     } catch (err) {
-      results.tests[`tcp_${port}`] = { ok: false, error: err.message };
+      results.tests.nodemailer_verify = { ok: false, error: err.message, code: err.code };
     }
-  }
 
-  // 3. Nodemailer verify (current config)
-  try {
-    const transporter = createMailTransport();
-    await transporter.verify();
-    results.tests.nodemailer_verify = { ok: true, message: 'SMTP auth successful' };
-  } catch (err) {
-    results.tests.nodemailer_verify = { ok: false, error: err.message, code: err.code };
-  }
-
-  // 4. Nodemailer verify port 587 (if current is 465)
-  if (SMTP_PORT === 465) {
-    try {
-      const alt = nodemailer.createTransport({
-        host: SMTP_HOST, port: 587, secure: false, requireTLS: true,
-        auth: { user: SMTP_USER, pass: SMTP_PASS },
-        tls: { rejectUnauthorized: SMTP_TLS_REJECT_UNAUTHORIZED },
-        connectionTimeout: 15000, greetingTimeout: 10000, socketTimeout: 15000,
-      });
-      await alt.verify();
-      results.tests.nodemailer_verify_587 = { ok: true, message: 'SMTP auth on 587 successful' };
-    } catch (err) {
-      results.tests.nodemailer_verify_587 = { ok: false, error: err.message, code: err.code };
+    // 4. Nodemailer verify port 587 (if current is 465)
+    if (SMTP_PORT === 465) {
+      try {
+        const alt = nodemailer.createTransport({
+          host: SMTP_HOST, port: 587, secure: false, requireTLS: true,
+          auth: { user: SMTP_USER, pass: SMTP_PASS },
+          tls: { rejectUnauthorized: SMTP_TLS_REJECT_UNAUTHORIZED },
+          connectionTimeout: 15000, greetingTimeout: 10000, socketTimeout: 15000,
+        });
+        await alt.verify();
+        results.tests.nodemailer_verify_587 = { ok: true, message: 'SMTP auth on 587 successful' };
+      } catch (err) {
+        results.tests.nodemailer_verify_587 = { ok: false, error: err.message, code: err.code };
+      }
     }
-  }
 
-  const allOk = Object.values(results.tests).every(t => t.ok);
-  res.status(allOk ? 200 : 500).json(results);
-});
+    const allOk = Object.values(results.tests).every(t => t.ok);
+    res.status(allOk ? 200 : 500).json(results);
+  });
+}
 
 app.post('/api/submit', async (req, res) => {
   const lead = normalizeLeadPayload(req.body);
+
+  const antiSpamResult = antiSpamProtector.checkSubmission({
+    ip: getClientIp(req),
+    body: req.body,
+    lead
+  });
+  if (!antiSpamResult.ok) {
+    if (antiSpamResult.retryAfterSeconds) {
+      res.setHeader('Retry-After', String(antiSpamResult.retryAfterSeconds));
+    }
+    console.warn(`🛡️ Антиспам: блокировка submit с IP ${antiSpamResult.ip}. Причина: ${antiSpamResult.error}`);
+    return res.status(antiSpamResult.status).json({
+      error: antiSpamResult.error
+    });
+  }
 
   if (!lead.name || !lead.phone) {
     return res.status(400).json({
@@ -540,7 +591,7 @@ app.post('/api/submit', async (req, res) => {
   }
 });
 
-const isDev = process.env.NODE_ENV !== 'production';
+const isDev = !isProd;
 
 if (isDev) {
   app.use(createProxyMiddleware({
@@ -581,13 +632,21 @@ initializeDeliveryChannels().catch((error) => {
   console.error('❌ Инициализация каналов не завершилась:', extractErrorDetails(error));
 });
 
+const spamCleanupTimer = setInterval(() => {
+  antiSpamProtector.cleanupState();
+}, Math.max(60000, Math.floor(SPAM_WINDOW_MS / 2)));
+spamCleanupTimer.unref();
+
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n✅ Server running on port ${PORT}`);
   console.log('📡 API endpoints:');
   console.log('   - GET  /health');
-  console.log('   - GET  /api/test');
-  console.log('   - POST /api/test');
-  console.log('   - GET  /api/get-chat-id');
+  if (!isProd) {
+    console.log('   - GET  /api/test');
+    console.log('   - POST /api/test');
+    console.log('   - GET  /api/get-chat-id');
+    console.log('   - GET  /api/smtp-diag');
+  }
   console.log('   - POST /api/submit');
   console.log(`🌐 Frontend: http://0.0.0.0:${PORT}\n`);
 });
