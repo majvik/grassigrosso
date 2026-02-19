@@ -1305,6 +1305,13 @@ a:hover .arrow-medium {
   text-decoration: none;
   line-height: 1.4;
   opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+@media (hover: hover) {
+  .footer-links a:hover {
+    opacity: 1;
+  }
 }
 
 .footer-contacts {
@@ -1354,13 +1361,25 @@ a:hover .arrow-medium {
   text-decoration: none;
 }
 
-.contact-value a[href^="tel:"]:hover,
-.contact-value a[href^="mailto:"]:hover,
-.contact-info-value a[href^="tel:"]:hover,
-.contact-info-value a[href^="mailto:"]:hover,
-.contacts-office-value a[href^="tel:"]:hover,
-.contacts-office-value a[href^="mailto:"]:hover {
-  text-decoration: underline;
+.contact-value a[href^="tel:"],
+.contact-value a[href^="mailto:"] {
+  transition: opacity 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+@media (hover: hover) {
+  .contact-value a[href^="tel:"]:hover,
+  .contact-value a[href^="mailto:"]:hover,
+  .contact-info-value a[href^="tel:"]:hover,
+  .contact-info-value a[href^="mailto:"]:hover,
+  .contacts-office-value a[href^="tel:"]:hover,
+  .contacts-office-value a[href^="mailto:"]:hover {
+    text-decoration: underline;
+  }
+
+  .footer .contact-value a[href^="tel:"]:hover,
+  .footer .contact-value a[href^="mailto:"]:hover {
+    opacity: 1;
+  }
 }
 
 .footer-bottom {
@@ -1402,6 +1421,13 @@ a:hover .arrow-medium {
   color: white;
   text-decoration: none;
   line-height: 1;
+  transition: opacity 0.2s ease;
+}
+
+@media (hover: hover) {
+  .footer-policies a:hover {
+    text-decoration: underline;
+  }
 }
 
 .footer-policies .separator {
@@ -5829,6 +5855,62 @@ a:hover .arrow-medium {
   object-fit: cover;
 }
 
+/* Legal pages (Privacy, Terms) */
+.legal-page {
+  padding: 120px 64px 80px;
+}
+
+.legal-page-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.legal-page-title {
+  font-family: var(--font-bounded);
+  font-size: 40px;
+  font-weight: 400;
+  color: var(--color-primary);
+  line-height: 1.2;
+  margin: 0 0 32px;
+}
+
+.legal-page-content {
+  font-family: var(--font-family);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.legal-page-content h2 {
+  font-family: var(--font-bounded);
+  font-size: 21px;
+  font-weight: 400;
+  color: var(--color-primary);
+  margin: 32px 0 12px;
+}
+
+.legal-page-content p {
+  margin: 0 0 16px;
+}
+
+.legal-page-content a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.legal-page-content a:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .legal-page {
+    padding: 80px 24px 60px;
+  }
+  .legal-page-title {
+    font-size: 32px;
+  }
+}
+
 /* Documents Certification Section */
 .documents-certification {
   background-color: var(--color-bg-beige);
@@ -6656,7 +6738,7 @@ a:hover .arrow-medium {
   background-color: #e1e1e1;
 }
 
-/* Карта Яндекса: растягиваем на весь блок с сохранением пропорций */
+/* Карта Яндекса: растягиваем на весь блок с сохранением пропорций (обесцвечивание слоя карты задаётся в main.js через API) */
 .contacts-map-placeholder > div,
 .contacts-map-placeholder iframe {
   position: absolute !important;

@@ -14,6 +14,9 @@ export default defineConfig({
         catalog: './catalog.html',
         documents: './documents.html',
         contacts: './contacts.html',
+        privacy: './privacy.html',
+        terms: './terms.html',
+        '404': './404.html',
       }
     }
   },

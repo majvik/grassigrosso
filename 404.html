@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Страница не найдена — Grassigrosso</title>
+    <link rel="icon" type="image/svg+xml" href="./public/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./public/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./public/favicon-16x16.png" />
+    <link rel="stylesheet" href="./src/style.css" />
+    <style>
+      .page-404 {
+        position: relative;
+        min-height: calc(100vh - 180px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 24px 80px;
+        overflow: hidden;
+      }
+      .page-404-video-wrap {
+        position: relative;
+        width: min(90vw, 1000px);
+        aspect-ratio: 1260 / 410;
+        max-height: min(55vh, 320px);
+        flex-shrink: 0;
+        z-index: 0;
+        overflow: hidden;
+        clip-path: url(#clip404);
+        -webkit-clip-path: url(#clip404);
+      }
+      .page-404-video-wrap video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        clip-path: url(#clip404);
+        -webkit-clip-path: url(#clip404);
+      }
+      .page-404-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        margin-top: 80px;
+      }
+      .page-404-title {
+        font-family: var(--font-bounded);
+        font-size: 24px;
+        font-weight: 400;
+        color: var(--color-primary);
+        margin: 0 0 24px;
+      }
+      .page-404-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-family);
+        font-size: 17px;
+        font-weight: 400;
+        color: var(--color-primary);
+        text-decoration: none;
+        transition: opacity 0.2s ease;
+      }
+      .page-404-link:hover {
+        opacity: 0.85;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header-top">
+      <div class="header-top-content">
+        <span class="header-top-left">Доброе утро!</span>
+        <div class="header-top-right">
+          <a href="tel:+79782484380">+ 7 (978) 248-43-80</a>
+          <span class="separator"></span>
+          <span>Пн-Пт: 9:00 - 18:00</span>
+        </div>
+      </div>
+    </div>
+
+    <header class="header-main">
+      <div class="header-main-content">
+        <a href="index.html" class="logo">
+          <img src="./public/header-logo.svg" alt="Grassigrosso" class="logo-img" />
+        </a>
+        <div class="header-nav-wrapper">
+          <nav class="nav-menu">
+            <a href="hotels.html">Отелям</a>
+            <a href="dealers.html">Дилерам</a>
+            <a href="catalog.html">Каталог</a>
+            <a href="documents.html">Документы</a>
+            <a href="contacts.html">Контакты</a>
+          </nav>
+          <a href="contacts.html#contact-form" class="btn-contact">Связаться</a>
+        </div>
+        <button class="mobile-menu-btn" aria-label="Открыть меню">
+          <img src="./public/menu.svg" alt="" />
+        </button>
+      </div>
+    </header>
+
+    <div class="mobile-menu-overlay">
+      <div class="mobile-menu">
+        <div class="mobile-menu-header">
+          <div class="logo">
+            <img src="./public/header-logo.svg" alt="Grassigrosso" class="logo-img" />
+          </div>
+          <button class="mobile-menu-close" aria-label="Закрыть меню">
+            <img src="./public/menu-close.svg" alt="" />
+          </button>
+        </div>
+        <nav class="mobile-nav">
+          <a href="hotels.html">Отелям</a>
+          <a href="dealers.html">Дилерам</a>
+          <a href="catalog.html">Каталог</a>
+          <a href="documents.html">Документы</a>
+          <a href="contacts.html">Контакты</a>
+        </nav>
+        <a href="contacts.html#contact-form" class="mobile-menu-cta">Связаться</a>
+      </div>
+    </div>
+
+    <main>
+      <section class="page-404">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 410" width="1260" height="410" aria-hidden="true" style="position:absolute;pointer-events:none;width:0;height:0;overflow:hidden">
+          <defs>
+            <clipPath id="clip404" clipPathUnits="objectBoundingBox">
+              <path transform="translate(0.0000006, 0) scale(0.00079365, 0.00243902)" d="M323.324 7.35773V401.656H253.927V36.273H282.317L56.2524 287.573L54.6752 262.863H395.349V318.591H-0.000814685V268.646L235.001 7.35773H323.324ZM630.347 409.016C587.237 409.016 550.085 400.605 518.892 383.781C487.698 366.607 463.69 342.774 446.867 312.282C430.043 281.439 421.632 245.514 421.632 204.507C421.632 163.5 430.043 127.75 446.867 97.2578C463.69 66.4149 487.698 42.5817 518.892 25.7583C550.085 8.58444 587.237 -0.00251154 630.347 -0.00251154C673.457 -0.00251154 710.433 8.58444 741.276 25.7583C772.47 42.5817 796.478 66.4149 813.301 97.2578C830.125 127.75 838.537 163.5 838.537 204.507C838.537 245.514 830.125 281.439 813.301 312.282C796.478 342.774 772.47 366.607 741.276 383.781C710.433 400.605 673.457 409.016 630.347 409.016ZM630.347 351.712C674.158 351.712 708.155 338.919 732.339 313.333C756.522 287.397 768.614 251.122 768.614 204.507C768.614 157.892 756.522 121.792 732.339 96.2063C708.155 70.2703 674.158 57.3022 630.347 57.3022C586.536 57.3022 552.363 70.2703 527.829 96.2063C503.646 121.792 491.554 157.892 491.554 204.507C491.554 251.122 503.646 287.397 527.829 313.333C552.363 338.919 586.536 351.712 630.347 351.712ZM1187.91 7.35773V401.656H1118.51V36.273H1146.9L920.834 287.573L919.257 262.863H1259.93V318.591H864.581V268.646L1099.58 7.35773H1187.91Z"/>
+            </clipPath>
+          </defs>
+        </svg>
+        <div class="page-404-video-wrap">
+          <video
+            src="./public/grassigrosso-silent.webm"
+            poster="./public/grassigrosso-poster.avif"
+            autoplay
+            loop
+            muted
+            playsinline
+          ></video>
+        </div>
+        <div class="page-404-content">
+          <h1 class="page-404-title">Страница не найдена</h1>
+          <a href="index.html" class="page-404-link">Вернуться на главную →</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-column footer-about">
+          <div class="footer-logo">
+            <img src="./public/footer-logo.svg" alt="Grassigrosso" />
+          </div>
+          <p class="footer-description">Продуманные решения для естественного восстановления. Каждое утро — как лучшее.</p>
+          <div class="footer-legal">
+            <p>ИНН: 7701234567</p>
+            <p>ОГРН: 1157746123456</p>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-heading">Решения</h4>
+          <ul class="footer-links">
+            <li><a href="hotels.html">Отелям</a></li>
+            <li><a href="dealers.html">Дилерам</a></li>
+            <li><a href="catalog.html">Каталог матрасов</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-heading">Информация</h4>
+          <ul class="footer-links">
+            <li><a href="documents.html">Документы</a></li>
+            <li><a href="contacts.html">Контакты</a></li>
+          </ul>
+        </div>
+        <div class="footer-column footer-contacts">
+          <h4 class="footer-heading">Связь</h4>
+          <div class="contact-item">
+            <span class="contact-label">Телефон:</span>
+            <span class="contact-value"><a href="tel:+79782484380">+ 7 (978) 248-43-80</a></span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">Email:</span>
+            <span class="contact-value"><a href="mailto:sales@grassigrosso.com">sales@grassigrosso.com</a></span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">Режим работы:</span>
+            <span class="contact-value">Пн-Пт: 9:00 - 18:00 МСК</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-divider"></div>
+        <div class="footer-bottom-content">
+          <p class="footer-copyright">© 2025 Grassigrosso. Все права защищены.</p>
+          <div class="footer-policies">
+            <a href="privacy.html">Политика конфиденциальности</a>
+            <span class="separator"></span>
+            <a href="terms.html">Пользовательское соглашение</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

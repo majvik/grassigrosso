@@ -991,38 +991,76 @@ if (documentsCommercialTitle && documentsCommercialRight) {
   observer5.observe(documentsCommercialTitle)
 }
 
-// Contacts map tabs switching
+// Contacts map — Yandex API 2.1: метки фирменным цветом, балун с адресом по наведению
+// Ключ: .env → VITE_YANDEX_MAPS_API_KEY (на проде — в переменных окружения)
+const YANDEX_MAPS_API_KEY = import.meta.env.VITE_YANDEX_MAPS_API_KEY || ''
 const contactsMapTabs = document.querySelectorAll('.contacts-map-tab')
 const contactsMapFrames = document.querySelectorAll('.contacts-map-frame')
 
+const CONTACTS_OFFICES = [
+  { id: 'main', center: [44.9522, 34.1027], zoom: 16, title: 'Главный офис', address: 'Симферополь, ул. Кубанская д. 25' },
+  { id: 'voronezh', center: [51.6605, 39.2006], zoom: 16, title: 'Представительство в Центральной России', address: 'Воронеж, ул. Остужева 43 И' },
+  { id: 'lnr', center: [48.567, 39.3172], zoom: 16, title: 'Представительство в ЛНР', address: 'Луганск, ул. Фабричная д 1' },
+  { id: 'dnr', center: [48.0333, 38.2667], zoom: 16, title: 'Представительство в ДНР', address: 'Харцизск, ул. Вокзальная, д. 52' }
+]
+const CONTACTS_MARKER_COLOR = '#283e37'
+
+function applyMapGrayscale (mapContainer) {
+  if (!mapContainer) return
+  const groundPane = mapContainer.querySelector('[class*="ground-pane"]')
+  if (groundPane) groundPane.style.filter = 'grayscale(1)'
+}
+
+function initContactMaps () {
+  if (typeof ymaps === 'undefined') return
+  CONTACTS_OFFICES.forEach((office) => {
+    const container = document.getElementById('map-' + office.id)
+    if (!container) return
+    const map = new ymaps.Map('map-' + office.id, {
+      center: office.center,
+      zoom: office.zoom,
+      controls: ['zoomControl']
+    })
+    map.behaviors.disable('scrollZoom')
+    // Обесцвечиваем слой карты (тайлы) под фирменный стиль — через DOM слоя API
+    map.events.add('load', function () {
+      applyMapGrayscale(container)
+    })
+    setTimeout(function () { applyMapGrayscale(container) }, 300)
+    const placemark = new ymaps.Placemark(
+      office.center,
+      {
+        balloonContentHeader: '<strong>' + office.title + '</strong>',
+        balloonContentBody: office.address
+      },
+      {
+        preset: 'islands#circleDotIcon',
+        iconColor: CONTACTS_MARKER_COLOR,
+        hasHint: false,
+        openBalloonOnClick: false,
+        hideIconOnBalloonOpen: false
+      }
+    )
+    placemark.events.add('mouseenter', () => placemark.balloon.open())
+    placemark.events.add('mouseleave', () => placemark.balloon.close())
+    map.geoObjects.add(placemark)
+  })
+}
+
 if (contactsMapTabs.length > 0 && contactsMapFrames.length > 0) {
-  const loadMapFrame = (frame) => {
-    if (!frame || frame.dataset.mapLoaded === 'true') return
-    const mapSrc = frame.dataset.mapSrc
-    if (!mapSrc) return
-
-    const mapScript = document.createElement('script')
-    mapScript.type = 'text/javascript'
-    mapScript.charset = 'utf-8'
-    mapScript.async = true
-    mapScript.src = mapSrc
-    frame.appendChild(mapScript)
-    frame.dataset.mapLoaded = 'true'
-  }
-
-  const initialActiveFrame = Array.from(contactsMapFrames).find(frame => !frame.hidden)
-  loadMapFrame(initialActiveFrame)
-
-  contactsMapTabs.forEach(tab => {
+  const yandexMapsUrl = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU' +
+    (YANDEX_MAPS_API_KEY ? '&apikey=' + encodeURIComponent(YANDEX_MAPS_API_KEY) : '')
+  const script = document.createElement('script')
+  script.src = yandexMapsUrl
+  script.onload = () => ymaps.ready(initContactMaps)
+  document.head.appendChild(script)
+  contactsMapTabs.forEach((tab) => {
     tab.addEventListener('click', () => {
-      contactsMapTabs.forEach(t => t.classList.remove('active'))
+      contactsMapTabs.forEach((t) => t.classList.remove('active'))
       tab.classList.add('active')
       const office = tab.getAttribute('data-office')
-      contactsMapFrames.forEach(frame => {
+      contactsMapFrames.forEach((frame) => {
         frame.hidden = frame.getAttribute('data-office') !== office
-        if (!frame.hidden) {
-          loadMapFrame(frame)
-        }
       })
     })
   })

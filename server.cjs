@@ -624,7 +624,11 @@ if (isDev) {
       return res.sendFile(htmlPath);
     }
 
-    return res.sendFile(path.join(staticPath, 'index.html'));
+    const notFoundPath = path.join(staticPath, '404.html');
+    if (fs.existsSync(notFoundPath)) {
+      return res.status(404).sendFile(notFoundPath);
+    }
+    return res.status(404).sendFile(path.join(staticPath, 'index.html'));
   });
 }
 

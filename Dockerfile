@@ -6,6 +6,9 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+# VITE_* подставляются в бандл на этапе сборки; передавать через --build-arg в CI
+ARG VITE_YANDEX_MAPS_API_KEY
+ENV VITE_YANDEX_MAPS_API_KEY=${VITE_YANDEX_MAPS_API_KEY}
 RUN npm run build
 
 
