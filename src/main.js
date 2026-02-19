@@ -1744,17 +1744,48 @@ const catalogRequestTypeInput = document.getElementById('catalogRequestType')
 
 const CATALOG_MESSAGES = {
   boxspring: 'Если вы хотите получить каталог Boxspring, укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
-  accessories: 'Если вы хотите получить каталог аксессуаров, укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.'
+  accessories: 'Если вы хотите получить каталог аксессуаров, укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
+  classic: 'Если вы хотите получить каталог коллекции Classic (Классик), укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
+  flexi: 'Если вы хотите получить каталог коллекции Flexi (Флекси), укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
+  relax: 'Если вы хотите получить каталог коллекции Relax (Релакс), укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
+  trend: 'Если вы хотите получить каталог коллекции Trend (Тренд), укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
+  'viva-natura': 'Если вы хотите получить каталог коллекции Viva Natura (Вива Натура), укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
+  consultation: 'Мы можем изготовить матрасы и аксессуары по вашим индивидуальным требованиям и размерам. Свяжитесь с нами для обсуждения проекта.'
 }
+
+const CATALOG_TITLES = {
+  consultation: 'Не нашли то, что искали?'
+}
+
+const CATALOG_LABELS = {
+  boxspring: 'Boxspring',
+  accessories: 'Аксессуары',
+  classic: 'Classic (Классик)',
+  flexi: 'Flexi (Флекси)',
+  relax: 'Relax (Релакс)',
+  trend: 'Trend (Тренд)',
+  'viva-natura': 'Viva Natura (Вива Натура)',
+  consultation: 'Запрос консультации (индивидуальные требования)'
+}
+
+const catalogRequestTitleEl = document.getElementById('catalogRequestTitle')
+const defaultModalTitle = catalogRequestTitleEl?.textContent || 'Получить каталог'
 
 if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
   function openCatalogRequestModal(catalogType) {
     const message = CATALOG_MESSAGES[catalogType] || CATALOG_MESSAGES.boxspring
     catalogRequestText.textContent = message
     if (catalogRequestTypeInput) catalogRequestTypeInput.value = catalogType || 'boxspring'
+    if (catalogRequestTitleEl) {
+      catalogRequestTitleEl.textContent = CATALOG_TITLES[catalogType] || defaultModalTitle
+    }
     catalogRequestModal.classList.add('active')
     if (typeof lockScroll === 'function') lockScroll()
     document.body.classList.add('modal-open')
+  }
+
+  function getCatalogLabel(catalogType) {
+    return CATALOG_LABELS[catalogType] || catalogType || 'каталог'
   }
 
   function closeCatalogRequestModal() {
@@ -1764,10 +1795,10 @@ if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
   }
 
   document.body.addEventListener('click', (e) => {
-    const link = e.target.closest('[data-open-catalog]')
+    const link = e.target.closest('[data-open-catalog]') || e.target.closest('.catalog-collection-link')
     if (!link) return
     e.preventDefault()
-    const card = link.closest('.product-card')
+    const card = link.closest('.product-card') || link.closest('.catalog-collection-item') || link.closest('[data-catalog]')
     const catalogType = (card && card.dataset.catalog) || 'boxspring'
     openCatalogRequestModal(catalogType)
   })
@@ -1796,7 +1827,7 @@ if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
     const email = catalogRequestForm.querySelector('#cr-email')?.value.trim() || ''
     const catalogType = catalogRequestTypeInput?.value || 'boxspring'
     if (!phone) return
-    const comment = `Запрос каталога: ${catalogType === 'boxspring' ? 'Boxspring' : 'Аксессуары'}.`
+    const comment = `Запрос каталога: ${getCatalogLabel(catalogType)}.`
     const API_URL = import.meta.env.VITE_API_URL || '/api/submit'
     const submitBtn = catalogRequestForm.querySelector('button[type="submit"]')
     const originalText = submitBtn?.textContent
@@ -1841,6 +1872,144 @@ if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
       }
     } catch (err) {
       const container = catalogRequestForm.querySelector('.catalog-request-buttons')
+      if (container) {
+        const notification = document.createElement('div')
+        notification.className = 'form-notification form-notification-error'
+        notification.textContent = 'Не удалось отправить заявку. Проверьте подключение к интернету.'
+        container.parentElement.insertBefore(notification, container)
+        setTimeout(() => notification.remove(), 5000)
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false
+        submitBtn.textContent = originalText
+      }
+    }
+  })
+}
+
+// Document Request Modal (страница Документы): форма → отправка → затем скачивание файла (ссылка не в разметке)
+const documentRequestModal = document.getElementById('documentRequestModal')
+const documentRequestForm = document.getElementById('documentRequestForm')
+const documentRequestText = document.getElementById('documentRequestText')
+const documentRequestTypeInput = document.getElementById('documentRequestType')
+
+const DOCUMENT_REQUEST_MESSAGES = {
+  declaration: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
+  certificate: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
+  trademark: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.'
+}
+
+const DOCUMENT_REQUEST_FILES = {
+  declaration: 'Декларация.pdf',
+  certificate: 'СертификатСоответствия.pdf',
+  trademark: 'СвидетельствоНаТоварныйЗнак.pdf'
+}
+
+if (documentRequestModal && documentRequestForm && documentRequestText) {
+  function openDocumentRequestModal(documentType) {
+    const message = DOCUMENT_REQUEST_MESSAGES[documentType] || DOCUMENT_REQUEST_MESSAGES.declaration
+    documentRequestText.textContent = message
+    if (documentRequestTypeInput) documentRequestTypeInput.value = documentType || 'declaration'
+    documentRequestModal.classList.add('active')
+    if (typeof lockScroll === 'function') lockScroll()
+    document.body.classList.add('modal-open')
+  }
+
+  function closeDocumentRequestModal() {
+    documentRequestModal.classList.remove('active')
+    if (typeof unlockScroll === 'function') unlockScroll()
+    document.body.classList.remove('modal-open')
+  }
+
+  function triggerDocumentDownload(documentType) {
+    const filename = DOCUMENT_REQUEST_FILES[documentType]
+    if (!filename) return
+    const base = typeof import.meta.env.BASE_URL !== 'undefined' ? import.meta.env.BASE_URL : '/'
+    const url = `${base}documents/${encodeURIComponent(filename)}`
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.rel = 'noopener'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
+  document.body.addEventListener('click', (e) => {
+    const link = e.target.closest('.documents-cert-download[data-request-document]')
+    if (!link) return
+    e.preventDefault()
+    const card = link.closest('.documents-cert-card')
+    const documentType = (card && card.dataset.document) || 'declaration'
+    openDocumentRequestModal(documentType)
+  })
+
+  documentRequestModal.querySelector('.document-request-close')?.addEventListener('click', (e) => {
+    e.stopPropagation()
+    closeDocumentRequestModal()
+  })
+
+  documentRequestModal.addEventListener('click', (e) => {
+    if (e.target === documentRequestModal) closeDocumentRequestModal()
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && documentRequestModal.classList.contains('active')) {
+      closeDocumentRequestModal()
+    }
+  })
+
+  documentRequestForm.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const privacyCheck = documentRequestForm.querySelector('#dr-privacy')
+    if (privacyCheck && !privacyCheck.checked) return
+    const name = documentRequestForm.querySelector('#dr-name')?.value.trim() || 'Не указано'
+    const phone = documentRequestForm.querySelector('#dr-phone')?.value.trim()
+    const email = documentRequestForm.querySelector('#dr-email')?.value.trim() || ''
+    const documentType = documentRequestTypeInput?.value || 'declaration'
+    if (!phone) return
+    const docLabels = { declaration: 'Декларация о соответствии', certificate: 'Сертификат соответствия «ПромТехСтандарт»', trademark: 'Свидетельство на товарный знак GrassiGrosso' }
+    const comment = `Запрос документа: ${docLabels[documentType] || documentType}.`
+    const API_URL = import.meta.env.VITE_API_URL || '/api/submit'
+    const submitBtn = documentRequestForm.querySelector('button[type="submit"]')
+    const originalText = submitBtn?.textContent
+    if (submitBtn) {
+      submitBtn.disabled = true
+      submitBtn.textContent = 'Отправка...'
+    }
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, email, comment, page: 'Документы' })
+      })
+      const data = await response.json().catch(() => ({}))
+      if (response.ok) {
+        const container = documentRequestForm.querySelector('.catalog-request-buttons')
+        if (container) {
+          const notification = document.createElement('div')
+          notification.className = 'form-notification form-notification-success'
+          notification.textContent = 'Заявка отправлена! Начинается загрузка документа.'
+          container.parentElement.insertBefore(notification, container)
+          setTimeout(() => notification.classList.add('form-notification-hide'), 3000)
+        }
+        documentRequestForm.reset()
+        if (documentRequestTypeInput) documentRequestTypeInput.value = documentType
+        triggerDocumentDownload(documentType)
+        setTimeout(closeDocumentRequestModal, 2000)
+      } else {
+        const container = documentRequestForm.querySelector('.catalog-request-buttons')
+        if (container) {
+          const notification = document.createElement('div')
+          notification.className = 'form-notification form-notification-error'
+          notification.textContent = data.error || data.details || 'Ошибка отправки. Попробуйте позже.'
+          container.parentElement.insertBefore(notification, container)
+          setTimeout(() => notification.remove(), 5000)
+        }
+      }
+    } catch (err) {
+      const container = documentRequestForm.querySelector('.catalog-request-buttons')
       if (container) {
         const notification = document.createElement('div')
         notification.className = 'form-notification form-notification-error'

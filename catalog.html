@@ -138,7 +138,7 @@
         </div>
         <div class="catalog-collections-list">
           <!-- Classic Collection -->
-          <div class="catalog-collection-item">
+          <div class="catalog-collection-item" data-catalog="classic">
             <div class="catalog-collection-content">
               <div class="catalog-collection-title-group">
                 <h3 class="catalog-collection-title">Classic</h3>
@@ -149,7 +149,7 @@
                 <li>Надежность и долговечность</li>
                 <li>Базовый комфорт</li>
               </ul>
-              <a href="#" class="catalog-collection-link">
+              <a href="#" class="catalog-collection-link" data-open-catalog>
                 Подробнее
                 <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
               </a>
@@ -165,7 +165,7 @@
           </div>
 
           <!-- Flexi Collection -->
-          <div class="catalog-collection-item">
+          <div class="catalog-collection-item" data-catalog="flexi">
             <div class="catalog-collection-content">
               <div class="catalog-collection-title-group">
                 <h3 class="catalog-collection-title">Flexi</h3>
@@ -176,7 +176,7 @@
                 <li>Адаптивная поддержка</li>
                 <li>Высокая эластичность</li>
               </ul>
-              <a href="#" class="catalog-collection-link">
+              <a href="#" class="catalog-collection-link" data-open-catalog>
                 Подробнее
                 <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
               </a>
@@ -192,7 +192,7 @@
           </div>
 
           <!-- Relax Collection -->
-          <div class="catalog-collection-item">
+          <div class="catalog-collection-item" data-catalog="relax">
             <div class="catalog-collection-content">
               <div class="catalog-collection-title-group">
                 <h3 class="catalog-collection-title">Relax</h3>
@@ -203,7 +203,7 @@
                 <li>Снятие мышечного напряжения</li>
                 <li>Материалы с памятью формы</li>
               </ul>
-              <a href="#" class="catalog-collection-link">
+              <a href="#" class="catalog-collection-link" data-open-catalog>
                 Подробнее
                 <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
               </a>
@@ -219,7 +219,7 @@
           </div>
 
           <!-- Trend Collection -->
-          <div class="catalog-collection-item">
+          <div class="catalog-collection-item" data-catalog="trend">
             <div class="catalog-collection-content">
               <div class="catalog-collection-title-group">
                 <h3 class="catalog-collection-title">Trend</h3>
@@ -230,7 +230,7 @@
                 <li>Инновационные материалы</li>
                 <li>Трендовые решения</li>
               </ul>
-              <a href="#" class="catalog-collection-link">
+              <a href="#" class="catalog-collection-link" data-open-catalog>
                 Подробнее
                 <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
               </a>
@@ -246,7 +246,7 @@
           </div>
 
           <!-- Hidden: Viva Natura Collection (скрыта, не удалена) -->
-          <div class="catalog-collection-item" style="display: none;">
+          <div class="catalog-collection-item" style="display: none;" data-catalog="viva-natura">
             <div class="catalog-collection-content">
               <div class="catalog-collection-title-group">
                 <h3 class="catalog-collection-title">Viva Natura</h3>
@@ -257,7 +257,7 @@
                 <li>Экологичность</li>
                 <li>Премиальный комфорт</li>
               </ul>
-              <a href="#" class="catalog-collection-link">
+              <a href="#" class="catalog-collection-link" data-open-catalog>
                 Подробнее
                 <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
               </a>
@@ -273,14 +273,14 @@
           </div>
 
           <!-- Accessories Collection -->
-          <div class="catalog-collection-item">
+          <div class="catalog-collection-item" data-catalog="accessories">
             <div class="catalog-collection-content">
               <h3 class="catalog-collection-title">Аксессуары</h3>
               <ul class="catalog-collection-features">
                 <li>Подушки, наматрасники и постельное белье.</li>
                 <li>Финальные штрихи для идеального спального места.</li>
               </ul>
-              <a href="#" class="catalog-collection-link">
+              <a href="#" class="catalog-collection-link" data-open-catalog>
                 Подробнее
                 <img src="./public/arrow-small.svg" alt="" class="arrow-small" />
               </a>
@@ -299,7 +299,7 @@
 
       <!-- Custom Request Section -->
       <section class="catalog-custom">
-        <div class="catalog-custom-content">
+        <div class="catalog-custom-content" data-catalog="consultation">
           <div class="catalog-custom-left">
             <h2 class="section-title">Не нашли то, что искали?</h2>
           </div>
@@ -307,7 +307,7 @@
             <p class="catalog-custom-text">
               Мы можем изготовить матрасы и аксессуары по вашим индивидуальным требованиям и размерам. Свяжитесь с нами для обсуждения проекта.
             </p>
-            <a href="#contact" class="btn-primary-large">Запросить консультацию</a>
+            <a href="#" class="btn-primary-large" data-open-catalog>Запросить консультацию</a>
           </div>
         </div>
       </section>
@@ -317,18 +317,6 @@
         <h2 class="section-title">Часто задаваемые вопросы</h2>
         <div class="faq-list">
           <div class="faq-item active">
-            <div class="faq-question">
-              <h3>Какой минимальный заказ?</h3>
-              <div class="faq-toggle"></div>
-            </div>
-            <div class="faq-answer">
-              <p>
-                Минимальный заказ зависит от модели и условий. Для мини-опта — от 10 матрасов, для индивидуальных решений можем обсудить любые объемы.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-item">
             <div class="faq-question">
               <h3>Как быстро производите?</h3>
               <div class="faq-toggle"></div>
@@ -429,6 +417,51 @@
         </div>
       </div>
     </footer>
+
+    <!-- Catalog Request Modal (коллекции: Boxspring / Аксессуары) -->
+    <div class="modal-overlay" id="catalogRequestModal" aria-modal="true" role="dialog" aria-labelledby="catalogRequestTitle">
+      <div class="modal-content catalog-request-modal-content">
+        <button type="button" class="modal-close catalog-request-close" aria-label="Закрыть">
+          <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 14L34 34M34 14L14 34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <h2 class="catalog-request-title" id="catalogRequestTitle">Получить каталог</h2>
+        <p class="catalog-request-text" id="catalogRequestText"></p>
+        <form class="catalog-request-form" id="catalogRequestForm">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;" aria-hidden="true" />
+          <input type="hidden" name="catalogType" id="catalogRequestType" value="" />
+          <div class="form-group">
+            <label for="cr-name">Имя</label>
+            <input type="text" id="cr-name" name="name" placeholder="Иван Иванов" />
+          </div>
+          <div class="form-group">
+            <label for="cr-phone">Телефон</label>
+            <input type="tel" id="cr-phone" name="phone" placeholder="+7 (999) 123-45-67" required />
+          </div>
+          <div class="form-group">
+            <label for="cr-email">E-mail</label>
+            <input type="email" id="cr-email" name="email" placeholder="example@company.com" required />
+          </div>
+          <div class="form-checkbox">
+            <input type="checkbox" id="cr-privacy" name="privacy" required />
+            <label for="cr-privacy">
+              <span class="checkbox-custom">
+                <svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white"/>
+                  <path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" stroke-opacity="0.1"/>
+                  <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2"/>
+                </svg>
+              </span>
+              <span class="checkbox-text">Я согласен на обработку персональных данных в соответствии с <a href="privacy.html" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
+            </label>
+          </div>
+          <div class="catalog-request-buttons">
+            <button type="submit" class="btn-commercial-offer btn-submit">Отправить</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <script type="module" src="./src/main.js"></script>
   </body>

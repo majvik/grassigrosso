@@ -809,7 +809,8 @@ body {
 }
 
 .catalog-request-buttons .btn-commercial-offer {
-  min-width: 120px;
+  width: 100%;
+  text-transform: uppercase;
 }
 
 .catalog-request-form .form-notification {
@@ -6415,7 +6416,7 @@ a:hover .arrow-medium {
 
 .documents-certification-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 32px;
   width: 100%;
 }
