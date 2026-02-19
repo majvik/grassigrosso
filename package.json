@@ -10,13 +10,13 @@
     "start": "node server.cjs"
   },
   "dependencies": {
-    "@studio-freight/lenis": "^1.0.42",
     "axios": "^1.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "gsap": "^3.14.2",
     "http-proxy-middleware": "^3.0.5",
+    "lenis": "^1.3.17",
     "nodemailer": "^8.0.1"
   },
   "devDependencies": {

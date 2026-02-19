@@ -1,6 +1,6 @@
 import './style.css'
 import { gsap } from 'gsap'
-import Lenis from '@studio-freight/lenis'
+import Lenis from 'lenis'
 
 // Geography cities animation - start only when in viewport
 const geographySection = document.querySelector('.geography-section')
