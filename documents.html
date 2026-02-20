@@ -195,7 +195,7 @@
           </div>
           <div class="documents-commercial-right">
             <div class="documents-commercial-list">
-          <div class="documents-commercial-item">
+          <div class="documents-commercial-item" data-document="catalog">
             <div class="documents-commercial-item-icon">
               <img src="./public/catalog.svg" alt="" />
             </div>
@@ -203,12 +203,12 @@
               <h3 class="documents-commercial-item-title">Каталог продукции</h3>
               <p class="documents-commercial-item-type">PDF документ</p>
             </div>
-            <a href="#" class="documents-commercial-item-download">
+            <a href="#" class="documents-commercial-item-download" data-request-document aria-label="Запросить каталог продукции">
               <img src="./public/arrow-down.svg" alt="" />
             </a>
           </div>
 
-          <div class="documents-commercial-item">
+          <div class="documents-commercial-item" data-document="specs">
             <div class="documents-commercial-item-icon">
               <img src="./public/catalog.svg" alt="" />
             </div>
@@ -216,12 +216,12 @@
               <h3 class="documents-commercial-item-title">Технические спецификации</h3>
               <p class="documents-commercial-item-type">PDF документ</p>
             </div>
-            <a href="#" class="documents-commercial-item-download">
+            <a href="#" class="documents-commercial-item-download" data-request-document aria-label="Запросить технические спецификации">
               <img src="./public/arrow-down.svg" alt="" />
             </a>
           </div>
 
-          <div class="documents-commercial-item">
+          <div class="documents-commercial-item" data-document="contract">
             <div class="documents-commercial-item-icon">
               <img src="./public/catalog.svg" alt="" />
             </div>
@@ -229,12 +229,12 @@
               <h3 class="documents-commercial-item-title">Шаблон договора поставки</h3>
               <p class="documents-commercial-item-type">Word документ</p>
             </div>
-            <a href="#" class="documents-commercial-item-download">
+            <a href="#" class="documents-commercial-item-download" data-request-document aria-label="Запросить шаблон договора поставки">
               <img src="./public/arrow-down.svg" alt="" />
             </a>
           </div>
 
-          <div class="documents-commercial-item">
+          <div class="documents-commercial-item" data-document="presentation">
             <div class="documents-commercial-item-icon">
               <img src="./public/catalog.svg" alt="" />
             </div>
@@ -242,7 +242,7 @@
               <h3 class="documents-commercial-item-title">Презентация компании</h3>
               <p class="documents-commercial-item-type">PDF документ</p>
             </div>
-            <a href="#" class="documents-commercial-item-download">
+            <a href="#" class="documents-commercial-item-download" data-request-document aria-label="Запросить презентацию компании">
               <img src="./public/arrow-down.svg" alt="" />
             </a>
           </div>
@@ -261,7 +261,7 @@
             <p class="documents-help-text">
               Наши менеджеры готовы предоставить любые необходимые документы по запросу
             </p>
-            <a href="#contact" class="btn-primary-large">Связаться с менеджером</a>
+            <a href="#" class="btn-primary-large" data-open-help-modal>Связаться с менеджером</a>
           </div>
         </div>
       </section>
@@ -397,8 +397,52 @@
             <input type="email" id="dr-email" name="email" placeholder="example@company.com" required />
           </div>
           <div class="form-checkbox">
-            <input type="checkbox" id="dr-privacy" name="privacy" required />
+            <input type="checkbox" id="dr-privacy" name="privacy" required checked />
             <label for="dr-privacy">
+              <span class="checkbox-custom">
+                <svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white"/>
+                  <path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" stroke-opacity="0.1"/>
+                  <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2"/>
+                </svg>
+              </span>
+              <span class="checkbox-text">Я согласен на обработку персональных данных в соответствии с <a href="privacy.html" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
+            </label>
+          </div>
+          <div class="catalog-request-buttons">
+            <button type="submit" class="btn-commercial-offer btn-submit">ОТПРАВИТЬ</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Модалка: Нужна помощь с документами? -->
+    <div class="modal-overlay" id="helpDocumentsModal" aria-modal="true" role="dialog" aria-labelledby="helpDocumentsTitle">
+      <div class="modal-content catalog-request-modal-content">
+        <button type="button" class="modal-close help-documents-close" aria-label="Закрыть">
+          <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 14L34 34M34 14L14 34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <h2 class="catalog-request-title" id="helpDocumentsTitle">Нужна помощь с документами?</h2>
+        <p class="catalog-request-text">Наши менеджеры готовы предоставить любые необходимые документы по запросу. Укажите ваши данные — мы свяжемся с вами.</p>
+        <form class="catalog-request-form" id="helpDocumentsForm">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;" aria-hidden="true" />
+          <div class="form-group">
+            <label for="hd-name">Имя</label>
+            <input type="text" id="hd-name" name="name" placeholder="Иван Иванов" />
+          </div>
+          <div class="form-group">
+            <label for="hd-phone">Телефон</label>
+            <input type="tel" id="hd-phone" name="phone" placeholder="+7 (999) 123-45-67" required />
+          </div>
+          <div class="form-group">
+            <label for="hd-email">E-mail</label>
+            <input type="email" id="hd-email" name="email" placeholder="example@company.com" required />
+          </div>
+          <div class="form-checkbox">
+            <input type="checkbox" id="hd-privacy" name="privacy" required checked />
+            <label for="hd-privacy">
               <span class="checkbox-custom">
                 <svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white"/>

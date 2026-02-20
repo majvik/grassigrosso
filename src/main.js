@@ -1182,37 +1182,25 @@ if (contactForms.length > 0) {
 
   // Функция для показа уведомления рядом с кнопкой
   const showNotification = (message, type = 'success', button) => {
-    // Удаляем предыдущее уведомление, если есть
-    const existingNotification = document.querySelector('.form-notification')
-    if (existingNotification) {
-      existingNotification.remove()
+    const parentForm = button?.closest('form')
+    if (parentForm) {
+      parentForm.querySelectorAll('.form-notification').forEach(n => n.remove())
     }
 
-    // Создаем элемент уведомления
     const notification = document.createElement('div')
     notification.className = `form-notification form-notification-${type}`
     notification.textContent = message
 
-    // Вставляем после кнопки или в конец формы
     if (button && button.parentNode) {
       button.parentNode.insertBefore(notification, button.nextSibling)
-    } else {
-      const form = button?.closest('form')
-      if (form) {
-        form.appendChild(notification)
-      }
+    } else if (parentForm) {
+      parentForm.appendChild(notification)
     }
 
-    // Ждем завершения анимации появления (300ms), затем начинаем отсчет 5 секунд
     setTimeout(() => {
-      // Автоматически скрываем через 5 секунд после появления
-      setTimeout(() => {
-        notification.classList.add('form-notification-hide')
-        setTimeout(() => {
-          notification.remove()
-        }, 300)
-      }, 5000)
-    }, 300)
+      notification.classList.add('form-notification-hide')
+      setTimeout(() => notification.remove(), 300)
+    }, 6000)
   }
 
   // Функция для определения названия страницы
@@ -1414,15 +1402,19 @@ if (contactForms.length > 0) {
         return
       }
 
+      const FETCH_TIMEOUT_MS = 25000
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
       try {
         console.log('Отправка запроса на:', API_URL)
         console.log('Данные формы:', formData)
-        
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
+          body: JSON.stringify(formData),
+          signal: controller.signal
         })
+        clearTimeout(timeoutId)
 
         console.log('Ответ сервера:', response.status, response.statusText)
         console.log('Headers ответа:', [...response.headers.entries()])
@@ -1443,10 +1435,15 @@ if (contactForms.length > 0) {
           showNotification(data.error || data.details || 'Ошибка сервера. Попробуйте позже.', 'error', submitBtn)
         }
       } catch (error) {
+        clearTimeout(timeoutId)
+        const isTimeout = error.name === 'AbortError'
         console.error('Ошибка:', error)
-        showNotification('Не удалось отправить данные. Проверьте подключение к интернету и убедитесь, что сервер запущен.', 'error', submitBtn)
+        showNotification(
+          isTimeout ? 'Превышено время ожидания ответа от сервера. Попробуйте позже.' : 'Не удалось отправить данные. Проверьте подключение к интернету и убедитесь, что сервер запущен.',
+          'error',
+          submitBtn
+        )
       } finally {
-        // Восстанавливаем кнопку
         if (submitBtn) {
           submitBtn.disabled = false
           submitBtn.textContent = originalText
@@ -1570,6 +1567,7 @@ if (commercialOfferModal && commercialOfferForm) {
 
   function openCommercialOfferModal() {
     if (!commercialOfferModal) return
+    commercialOfferModal.querySelectorAll('.form-notification').forEach(n => n.remove())
     showCommercialOfferStep(1)
     commercialOfferModal.classList.add('active')
     if (typeof lockScroll === 'function') lockScroll()
@@ -1579,6 +1577,7 @@ if (commercialOfferModal && commercialOfferForm) {
   function closeCommercialOfferModal() {
     if (!commercialOfferModal) return
     commercialOfferModal.classList.remove('active')
+    commercialOfferModal.querySelectorAll('.form-notification').forEach(n => n.remove())
     if (typeof unlockScroll === 'function') unlockScroll()
     document.body.classList.remove('modal-open')
   }
@@ -1716,12 +1715,11 @@ if (commercialOfferModal && commercialOfferForm) {
           notification.className = 'form-notification form-notification-success'
           notification.textContent = 'Заявка отправлена! Мы свяжемся с вами в ближайшее время.'
           container.parentElement.insertBefore(notification, container)
-          setTimeout(() => notification.classList.add('form-notification-hide'), 3000)
         }
         commercialOfferForm.reset()
         const mattressesInput = commercialOfferForm.querySelector('#co-mattresses')
         if (mattressesInput) mattressesInput.value = 100
-        setTimeout(closeCommercialOfferModal, 1500)
+        setTimeout(closeCommercialOfferModal, 5000)
       } else {
         showCONotification(data.error || data.details || 'Ошибка отправки. Попробуйте позже.', 'error')
       }
@@ -1773,6 +1771,7 @@ const defaultModalTitle = catalogRequestTitleEl?.textContent || 'Получит�
 
 if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
   function openCatalogRequestModal(catalogType) {
+    catalogRequestModal.querySelectorAll('.form-notification').forEach(n => n.remove())
     const message = CATALOG_MESSAGES[catalogType] || CATALOG_MESSAGES.boxspring
     catalogRequestText.textContent = message
     if (catalogRequestTypeInput) catalogRequestTypeInput.value = catalogType || 'boxspring'
@@ -1790,6 +1789,7 @@ if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
 
   function closeCatalogRequestModal() {
     catalogRequestModal.classList.remove('active')
+    catalogRequestModal.querySelectorAll('.form-notification').forEach(n => n.remove())
     if (typeof unlockScroll === 'function') unlockScroll()
     document.body.classList.remove('modal-open')
   }
@@ -1835,6 +1835,9 @@ if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
       submitBtn.disabled = true
       submitBtn.textContent = 'Отправка...'
     }
+    const catalogFetchTimeoutMs = 25000
+    const catalogController = new AbortController()
+    const catalogTimeoutId = setTimeout(() => catalogController.abort(), catalogFetchTimeoutMs)
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
@@ -1845,8 +1848,10 @@ if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
           email,
           comment,
           page: 'Отелям (каталог)'
-        })
+        }),
+        signal: catalogController.signal
       })
+      clearTimeout(catalogTimeoutId)
       const data = await response.json().catch(() => ({}))
       if (response.ok) {
         const container = catalogRequestForm.querySelector('.catalog-request-buttons')
@@ -1855,11 +1860,10 @@ if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
           notification.className = 'form-notification form-notification-success'
           notification.textContent = 'Заявка отправлена! Каталог будет направлен на указанный e-mail.'
           container.parentElement.insertBefore(notification, container)
-          setTimeout(() => notification.classList.add('form-notification-hide'), 3000)
         }
         catalogRequestForm.reset()
         if (catalogRequestTypeInput) catalogRequestTypeInput.value = catalogType
-        setTimeout(closeCatalogRequestModal, 1500)
+        setTimeout(closeCatalogRequestModal, 5000)
       } else {
         const container = catalogRequestForm.querySelector('.catalog-request-buttons')
         if (container) {
@@ -1871,11 +1875,12 @@ if (catalogRequestModal && catalogRequestForm && catalogRequestText) {
         }
       }
     } catch (err) {
+      clearTimeout(catalogTimeoutId)
       const container = catalogRequestForm.querySelector('.catalog-request-buttons')
       if (container) {
         const notification = document.createElement('div')
         notification.className = 'form-notification form-notification-error'
-        notification.textContent = 'Не удалось отправить заявку. Проверьте подключение к интернету.'
+        notification.textContent = err.name === 'AbortError' ? 'Превышено время ожидания ответа от сервера. Попробуйте позже.' : 'Не удалось отправить заявку. Проверьте подключение к интернету.'
         container.parentElement.insertBefore(notification, container)
         setTimeout(() => notification.remove(), 5000)
       }
@@ -1897,17 +1902,26 @@ const documentRequestTypeInput = document.getElementById('documentRequestType')
 const DOCUMENT_REQUEST_MESSAGES = {
   declaration: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
   certificate: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
-  trademark: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.'
+  trademark: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
+  catalog: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
+  specs: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
+  contract: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
+  presentation: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.'
 }
 
 const DOCUMENT_REQUEST_FILES = {
   declaration: 'Декларация.pdf',
   certificate: 'СертификатСоответствия.pdf',
-  trademark: 'СвидетельствоНаТоварныйЗнак.pdf'
+  trademark: 'СвидетельствоНаТоварныйЗнак.pdf',
+  catalog: 'test-file.md',
+  specs: 'test-file.md',
+  contract: 'test-file.md',
+  presentation: 'test-file.md'
 }
 
 if (documentRequestModal && documentRequestForm && documentRequestText) {
   function openDocumentRequestModal(documentType) {
+    documentRequestModal.querySelectorAll('.form-notification').forEach(n => n.remove())
     const message = DOCUMENT_REQUEST_MESSAGES[documentType] || DOCUMENT_REQUEST_MESSAGES.declaration
     documentRequestText.textContent = message
     if (documentRequestTypeInput) documentRequestTypeInput.value = documentType || 'declaration'
@@ -1918,6 +1932,7 @@ if (documentRequestModal && documentRequestForm && documentRequestText) {
 
   function closeDocumentRequestModal() {
     documentRequestModal.classList.remove('active')
+    documentRequestModal.querySelectorAll('.form-notification').forEach(n => n.remove())
     if (typeof unlockScroll === 'function') unlockScroll()
     document.body.classList.remove('modal-open')
   }
@@ -1937,10 +1952,12 @@ if (documentRequestModal && documentRequestForm && documentRequestText) {
   }
 
   document.body.addEventListener('click', (e) => {
-    const link = e.target.closest('.documents-cert-download[data-request-document]')
+    const certLink = e.target.closest('.documents-cert-download[data-request-document]')
+    const commercialLink = e.target.closest('.documents-commercial-item-download[data-request-document]')
+    const link = certLink || commercialLink
     if (!link) return
     e.preventDefault()
-    const card = link.closest('.documents-cert-card')
+    const card = link.closest('.documents-cert-card') || link.closest('.documents-commercial-item')
     const documentType = (card && card.dataset.document) || 'declaration'
     openDocumentRequestModal(documentType)
   })
@@ -1978,12 +1995,17 @@ if (documentRequestModal && documentRequestForm && documentRequestText) {
       submitBtn.disabled = true
       submitBtn.textContent = 'Отправка...'
     }
+    const docFetchTimeoutMs = 25000
+    const docController = new AbortController()
+    const docTimeoutId = setTimeout(() => docController.abort(), docFetchTimeoutMs)
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, email, comment, page: 'Документы' })
+        body: JSON.stringify({ name, phone, email, comment, page: 'Документы' }),
+        signal: docController.signal
       })
+      clearTimeout(docTimeoutId)
       const data = await response.json().catch(() => ({}))
       if (response.ok) {
         const container = documentRequestForm.querySelector('.catalog-request-buttons')
@@ -1992,12 +2014,11 @@ if (documentRequestModal && documentRequestForm && documentRequestText) {
           notification.className = 'form-notification form-notification-success'
           notification.textContent = 'Заявка отправлена! Начинается загрузка документа.'
           container.parentElement.insertBefore(notification, container)
-          setTimeout(() => notification.classList.add('form-notification-hide'), 3000)
         }
         documentRequestForm.reset()
         if (documentRequestTypeInput) documentRequestTypeInput.value = documentType
         triggerDocumentDownload(documentType)
-        setTimeout(closeDocumentRequestModal, 2000)
+        setTimeout(closeDocumentRequestModal, 5000)
       } else {
         const container = documentRequestForm.querySelector('.catalog-request-buttons')
         if (container) {
@@ -2009,11 +2030,119 @@ if (documentRequestModal && documentRequestForm && documentRequestText) {
         }
       }
     } catch (err) {
+      clearTimeout(docTimeoutId)
       const container = documentRequestForm.querySelector('.catalog-request-buttons')
       if (container) {
         const notification = document.createElement('div')
         notification.className = 'form-notification form-notification-error'
-        notification.textContent = 'Не удалось отправить заявку. Проверьте подключение к интернету.'
+        notification.textContent = err.name === 'AbortError' ? 'Превышено время ожидания ответа от сервера. Попробуйте позже.' : 'Не удалось отправить заявку. Проверьте подключение к интернету.'
+        container.parentElement.insertBefore(notification, container)
+        setTimeout(() => notification.remove(), 5000)
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false
+        submitBtn.textContent = originalText
+      }
+    }
+  })
+}
+
+// Help Documents Modal (страница Документы — «Нужна помощь с документами?»)
+const helpDocumentsModal = document.getElementById('helpDocumentsModal')
+const helpDocumentsForm = document.getElementById('helpDocumentsForm')
+
+if (helpDocumentsModal && helpDocumentsForm) {
+  function openHelpDocumentsModal() {
+    helpDocumentsModal.querySelectorAll('.form-notification').forEach(n => n.remove())
+    helpDocumentsModal.classList.add('active')
+    if (typeof lockScroll === 'function') lockScroll()
+    document.body.classList.add('modal-open')
+  }
+
+  function closeHelpDocumentsModal() {
+    helpDocumentsModal.classList.remove('active')
+    helpDocumentsModal.querySelectorAll('.form-notification').forEach(n => n.remove())
+    if (typeof unlockScroll === 'function') unlockScroll()
+    document.body.classList.remove('modal-open')
+  }
+
+  document.body.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-open-help-modal]')
+    if (!link) return
+    e.preventDefault()
+    openHelpDocumentsModal()
+  })
+
+  helpDocumentsModal.querySelector('.help-documents-close')?.addEventListener('click', (e) => {
+    e.stopPropagation()
+    closeHelpDocumentsModal()
+  })
+
+  helpDocumentsModal.addEventListener('click', (e) => {
+    if (e.target === helpDocumentsModal) closeHelpDocumentsModal()
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && helpDocumentsModal.classList.contains('active')) {
+      closeHelpDocumentsModal()
+    }
+  })
+
+  helpDocumentsForm.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const privacyCheck = helpDocumentsForm.querySelector('#hd-privacy')
+    if (privacyCheck && !privacyCheck.checked) return
+    const name = helpDocumentsForm.querySelector('#hd-name')?.value.trim() || 'Не указано'
+    const phone = helpDocumentsForm.querySelector('#hd-phone')?.value.trim()
+    const email = helpDocumentsForm.querySelector('#hd-email')?.value.trim() || ''
+    if (!phone) return
+    const comment = 'Запрос помощи с документами.'
+    const API_URL = import.meta.env.VITE_API_URL || '/api/submit'
+    const submitBtn = helpDocumentsForm.querySelector('button[type="submit"]')
+    const originalText = submitBtn?.textContent
+    if (submitBtn) {
+      submitBtn.disabled = true
+      submitBtn.textContent = 'Отправка...'
+    }
+    const hdController = new AbortController()
+    const hdTimeoutId = setTimeout(() => hdController.abort(), 25000)
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, email, comment, page: 'Документы (помощь)' }),
+        signal: hdController.signal
+      })
+      clearTimeout(hdTimeoutId)
+      const data = await response.json().catch(() => ({}))
+      if (response.ok) {
+        const container = helpDocumentsForm.querySelector('.catalog-request-buttons')
+        if (container) {
+          const notification = document.createElement('div')
+          notification.className = 'form-notification form-notification-success'
+          notification.textContent = 'Заявка отправлена! Менеджер свяжется с вами в ближайшее время.'
+          container.parentElement.insertBefore(notification, container)
+        }
+        helpDocumentsForm.reset()
+        setTimeout(closeHelpDocumentsModal, 5000)
+      } else {
+        const container = helpDocumentsForm.querySelector('.catalog-request-buttons')
+        if (container) {
+          const notification = document.createElement('div')
+          notification.className = 'form-notification form-notification-error'
+          notification.textContent = data.error || data.details || 'Ошибка отправки. Попробуйте позже.'
+          container.parentElement.insertBefore(notification, container)
+          setTimeout(() => notification.remove(), 5000)
+        }
+      }
+    } catch (err) {
+      clearTimeout(hdTimeoutId)
+      const container = helpDocumentsForm.querySelector('.catalog-request-buttons')
+      if (container) {
+        const notification = document.createElement('div')
+        notification.className = 'form-notification form-notification-error'
+        notification.textContent = err.name === 'AbortError' ? 'Превышено время ожидания ответа от сервера. Попробуйте позже.' : 'Не удалось отправить заявку. Проверьте подключение к интернету.'
         container.parentElement.insertBefore(notification, container)
         setTimeout(() => notification.remove(), 5000)
       }
