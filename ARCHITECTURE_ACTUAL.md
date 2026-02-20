@@ -1,50 +1,50 @@
 # Grassi Grosso: актуальное описание архитектуры (по коду)
 
-Дата фиксации: 17.02.2026  
+Дата фиксации: 20.02.2026  
 Источник: фактический код проекта (не `*.md` документация)
 
 ## 1) Коротко для менеджмента
 
 Проект построен как быстрый маркетинговый сайт с несколькими страницами и единым backend API для обработки заявок из форм.
 
-- Витрина: статические страницы (`index`, `hotels`, `dealers`, `catalog`, `documents`, `contacts`)
-- Логика интерфейса: единый JS-модуль с UX-функциями и обработкой форм
-- Backend: Node.js + Express, который:
+- Витрина: статические страницы (`index`, `hotels`, `dealers`, `catalog`, `documents`, `contacts`) + служебные (`privacy`, `terms`, `cookies`, `404`)
+- Логика интерфейса: единый JS-модуль (`src/main.js`) с UX-функциями, анимациями (GSAP, Lenis), обработкой всех типов форм
+- Backend: Node.js + Express (`server.cjs`) + модули `lib/` (антиспам, CORS), который:
   - принимает данные форм
+  - проверяет антиспам (honeypot, лимиты по IP и длине полей)
   - валидирует и отправляет заявки в Telegram и Email
   - сохраняет недоставленные заявки в очередь с ретраями
-  - отдает собранный фронтенд в production
-- Доставка изменений: автодеплой через CI/CD
-- Деплой: Docker-контейнер, healthcheck `/health`
+  - в production раздаёт `dist`, в dev проксирует на Vite
+- Деплой: Docker-контейнер (multi-stage), healthcheck `/health`; при необходимости — CI/CD и реверс-прокси (`nginx.conf` для Timeweb Cloud)
 
 Ключевая характеристика решения: простота, быстрый запуск, минимум инфраструктуры.  
-Это подходит для текущей стадии продукта и быстрого вывода маркетинговых изменений.
+Подходит для текущей стадии продукта и быстрого вывода маркетинговых изменений.
 
 ## 2) Архитектура на уровне компонентов
 
 ### Frontend слой
 
-- Технологии: Vite + Vanilla JS + CSS + статические HTML
-- Модель: Multi Page Application (MPA), но с общим JS/CSS ядром
-- Основные страницы:
-  - `index.html`
-  - `hotels.html`
-  - `dealers.html`
-  - `catalog.html`
-  - `documents.html`
-  - `contacts.html`
-- JS-ядро:
-  - `src/main.js` подключается на всех страницах
-  - содержит анимации, поведение UI, модальные окна, работу с формами, lazy-подгрузку карт
+- Технологии: Vite 7 + Vanilla JS + CSS + статические HTML
+- Модель: Multi Page Application (MPA) с общим JS/CSS ядром
+- Страницы (входы в `vite.config.mjs`):
+  - Основные: `index.html`, `hotels.html`, `dealers.html`, `catalog.html`, `documents.html`, `contacts.html`
+  - Служебные: `privacy.html`, `terms.html`, `cookies.html`, `404.html`
+- JS-ядро (`src/main.js` на всех страницах):
+  - анимации (GSAP, Lenis smooth scroll на десктопе), география/карта, preloader (шрифты + hero-медиа)
+  - модальные окна, cookie-баннер, формы: контактные (`.contact-form`), коммерческое предложение, запрос каталога, запрос документов
+  - все формы отправляют в `POST /api/submit` (URL задаётся через `VITE_API_URL`)
+  - lazy-подгрузка карт (Yandex Maps API key через `VITE_YANDEX_MAPS_API_KEY` при сборке)
 
 ### Backend слой
 
-- Технологии: Express (`server.cjs`)
-- Функции:
-  - API endpoint для заявок: `POST /api/submit`
-  - сервисные endpoint-ы: `/health`, `/api/test`, `/api/get-chat-id`
-  - в production раздает `dist` и поддерживает fallback на `index.html`
-  - в dev проксирует не-API запросы в Vite dev server
+- Технологии: Express (`server.cjs`), вспомогательные модули в `lib/`:
+  - `lib/anti-spam.cjs` — honeypot (поля `website`/`url`/`homepage`), лимит отправок по IP за окно, минимальный интервал между отправками, блокировка с `Retry-After`, лимиты длины полей (имя, телефон, email, комментарий)
+  - `lib/cors-config.cjs` — белый список origins (`CORS_ALLOWED_ORIGINS`), методы GET/POST/OPTIONS
+- Функции сервера:
+  - API заявок: `POST /api/submit` (после антиспам-проверки и валидации name/phone)
+  - сервисные: `GET /health` (статус, размер очереди, наличие каналов), в non-production: `/api/test`, `/api/get-chat-id`, `GET /api/smtp-diag`
+  - в production раздаёт `dist` (статику + fallback по пути и `*.html`, 404 → `404.html` или `index.html`)
+  - в dev проксирует не-API запросы на Vite (localhost:5173)
 
 ### Интеграционный слой
 
@@ -55,24 +55,29 @@
 
 ### Инфраструктурный слой
 
-- `Dockerfile` с multi-stage сборкой:
-  - Stage 1: сборка фронтенда
-  - Stage 2: runtime Node.js с production-зависимостями
-- CI/CD-пайплайн с автоматическим деплоем после обновлений
-- Healthcheck на `/health`
-- Для реверс-проксирования предусмотрен `nginx.conf` (для платформы Timeweb Cloud)
+- `Dockerfile` (multi-stage):
+  - Stage 1: Node 22, `npm ci` + `npm run build`; опционально `VITE_YANDEX_MAPS_API_KEY` через build-arg
+  - Stage 2: Node 22-slim, только production-зависимости; копируются `server.cjs`, `lib/`, `dist/`
+- **Ключ Yandex Maps (`VITE_YANDEX_MAPS_API_KEY`):**
+  - В **git не попадает**: `.env` в `.gitignore`, файл не коммитится.
+  - В **контекст Docker не попадает**: `.dockerignore` исключает `.env`, при сборке образа ключ передаётся только через `--build-arg VITE_YANDEX_MAPS_API_KEY=...` на проде.
+  - **Локально**: ключ берётся из `.env` при `npm run dev` или `npm run build` (Vite читает `VITE_*` из окружения и из `.env` в корне).
+  - В **клиентском бандле** (`dist/assets/*.js`) ключ оказывается после сборки — это нормально для ключей карт (браузеру он нужен). В репозиторий не коммитится сама сборка (`dist` в `.gitignore`).
+- Healthcheck: HTTP GET `/health` (интервал 10s, timeout 3s, start-period 20s)
+- `nginx.conf`: реверс-прокси для Timeweb Cloud — статика из `/app/dist`, `/api/` проксируется на Node (переменная `${PORT}`)
+- CI/CD: в репозитории пайплайн не описан; при необходимости настраивается отдельно (автодеплой после push)
 
 ## 3) Как устроен поток данных из форм
 
-1. Пользователь заполняет форму на странице (`.contact-form`).  
-2. `src/main.js` валидирует имя, телефон, email (если указан), согласие на ПДн.  
-3. Фронтенд отправляет JSON в `POST /api/submit` (`fetch`).  
-4. `server.cjs` собирает payload лида.  
+1. Пользователь заполняет форму на странице (`.contact-form` или форма запроса каталога/документов/КП).  
+2. `src/main.js` валидирует имя, телефон, email (если нужен), согласие на ПДн.  
+3. Фронтенд отправляет JSON в `POST /api/submit` (`fetch`, URL из `VITE_API_URL`).  
+4. `server.cjs` нормализует payload лида; антиспам (`lib/anti-spam.cjs`) проверяет honeypot, лимиты по IP и длине полей — при провале возврат `429` и `Retry-After`.  
 5. Заявка отправляется в **Telegram (primary)** и дополнительно в **Email (secondary)**.  
 6. Если оба канала недоступны, заявка ставится в очередь на повторные попытки.  
 7. Клиент получает статус доставки (`200` или `202 queued_retry`).
 
-Поля заявки: `name`, `phone`, `comment`, `email`, `city`, `company`, `page`.
+Поля заявки (в `normalizeLeadPayload`): `name`, `phone`, `comment`, `email`, `city`, `page`.
 
 ## 4) Текущая схема доставки лидов (реализовано)
 
@@ -158,9 +163,9 @@
 
 ## 9) Где это подтверждено в коде
 
-- Frontend логика и формы: `src/main.js`
-- Страницы с формами: `hotels.html`, `dealers.html`, `contacts.html`
-- API и отправка заявок: `server.cjs`
-- SMTP диагностика: `GET /api/smtp-diag` в `server.cjs`
-- Сборка multi-page: `vite.config.mjs`
-- Контейнеризация и healthcheck: `Dockerfile`
+- Frontend: `src/main.js`, `src/style.css`; страницы с формами: `hotels.html`, `dealers.html`, `contacts.html`, `documents.html`, `catalog.html` (и др., где есть `.contact-form` или формы запроса каталога/документов/КП)
+- API и заявки: `server.cjs` (нормализация лида, Telegram/Email, очередь, ретраи)
+- Антиспам: `lib/anti-spam.cjs`; CORS: `lib/cors-config.cjs`
+- SMTP-диагностика: `GET /api/smtp-diag` в `server.cjs` (только при `NODE_ENV !== 'production'`)
+- Сборка multi-page: `vite.config.mjs` (все HTML-входы и proxy `/api` на :3000)
+- Контейнеризация: `Dockerfile`; реверс-прокси: `nginx.conf`

@@ -1,0 +1,16 @@
+# Не передаём в контекст сборки Docker — ключи и секреты не должны попасть в образ
+.env
+.env.*
+
+# Git и прочее
+.git
+.gitignore
+*.md
+node_modules
+dist
+
+# Локальные и временные файлы
+*.log
+.DS_Store
+.idea
+.vscode
