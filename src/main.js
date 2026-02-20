@@ -73,6 +73,7 @@ if (geographyMapContainer && geographyMapImg && geographySection) {
 }
 
 // Lenis smooth scroll - только для десктопа
+let lenisInstance = null
 if (window.innerWidth > 1024) {
   const lenis = new Lenis({
     duration: 1.2,
@@ -92,6 +93,7 @@ if (window.innerWidth > 1024) {
   }
 
   requestAnimationFrame(raf)
+  lenisInstance = lenis
 
   // Обработка якорных ссылок
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -267,9 +269,17 @@ function scalePage() {
   }
 }
 
-// Apply scale on load and resize
 scalePage()
 window.addEventListener('resize', scalePage)
+
+// Move modals out of body to <html> so body's transform doesn't break position:fixed
+document.querySelectorAll('.modal-overlay').forEach(modal => {
+  document.documentElement.appendChild(modal)
+})
+
+// Cookie banner — вне body, чтобы position:fixed не ломался из-за transform на body
+const cookieBannerEl = document.querySelector('.cookie-banner')
+if (cookieBannerEl) document.documentElement.appendChild(cookieBannerEl)
 
 // Cookie banner
 const cookieBanner = document.querySelector('.cookie-banner')
@@ -1478,6 +1488,7 @@ function isMobileView() {
 let scrollPosition = 0
 
 function lockScroll() {
+  if (lenisInstance) lenisInstance.stop()
   scrollPosition = window.pageYOffset
   document.body.style.overflow = 'hidden'
   document.body.style.position = 'fixed'
@@ -1495,6 +1506,7 @@ function unlockScroll() {
   document.body.style.right = ''
   document.documentElement.style.overflow = ''
   window.scrollTo(0, scrollPosition)
+  if (lenisInstance) lenisInstance.start()
 }
 
 function openVideoModal() {
@@ -1523,6 +1535,9 @@ videoTriggers.forEach(trigger => {
     openVideoModal()
   })
 })
+
+// Ensure quality video on page loops (in-page background video)
+document.querySelectorAll('.quality-video').forEach(v => { v.loop = true })
 
 if (videoModal) {
   if (modalClose) {
