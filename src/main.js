@@ -301,6 +301,48 @@ document.querySelectorAll('.modal-overlay').forEach(modal => {
 const cookieBannerEl = document.querySelector('.cookie-banner')
 if (cookieBannerEl) document.documentElement.appendChild(cookieBannerEl)
 
+// Welcome Modal — показ при первом визите
+const welcomeModal = document.getElementById('welcomeModal')
+const welcomeCloseBtn = document.getElementById('welcomeClose')
+const welcomeCloseX = document.getElementById('welcomeCloseX')
+
+if (welcomeModal) {
+  let welcomeAutoClose = null
+
+  function closeWelcomeModal() {
+    if (welcomeAutoClose) { clearTimeout(welcomeAutoClose); welcomeAutoClose = null }
+    welcomeModal.classList.remove('active')
+    if (typeof unlockScroll === 'function') unlockScroll()
+    document.body.classList.remove('modal-open')
+  }
+
+  requestAnimationFrame(() => {
+    welcomeModal.classList.add('active')
+    if (typeof lockScroll === 'function') lockScroll()
+    document.body.classList.add('modal-open')
+    welcomeAutoClose = setTimeout(closeWelcomeModal, 5000)
+  })
+
+  if (welcomeCloseBtn) {
+    welcomeCloseBtn.addEventListener('click', closeWelcomeModal)
+  }
+
+  if (welcomeCloseX) {
+    welcomeCloseX.addEventListener('click', (e) => {
+      e.stopPropagation()
+      closeWelcomeModal()
+    })
+  }
+
+  welcomeModal.addEventListener('click', (e) => {
+    if (e.target === welcomeModal) closeWelcomeModal()
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && welcomeModal.classList.contains('active')) closeWelcomeModal()
+  })
+}
+
 // Cookie banner
 const cookieBanner = document.querySelector('.cookie-banner')
 const cookieBtn = document.querySelector('.btn-cookie')
