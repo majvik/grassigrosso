@@ -320,7 +320,7 @@ if (welcomeModal) {
     welcomeModal.classList.add('active')
     if (typeof lockScroll === 'function') lockScroll()
     document.body.classList.add('modal-open')
-    welcomeAutoClose = setTimeout(closeWelcomeModal, 5000)
+    welcomeAutoClose = setTimeout(closeWelcomeModal, 30000)
   })
 
   if (welcomeCloseBtn) {
