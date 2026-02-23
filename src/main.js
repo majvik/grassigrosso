@@ -303,6 +303,34 @@ if (cookieBtn && cookieBanner) {
   })
 }
 
+// Nav menu: анимированная полоска подчеркивания (десктоп)
+const navMenu = document.querySelector('.nav-menu')
+if (navMenu) {
+  const slider = document.createElement('span')
+  slider.className = 'nav-menu-slider'
+  slider.setAttribute('aria-hidden', 'true')
+  navMenu.appendChild(slider)
+
+  function positionSlider(link) {
+    if (!link) {
+      slider.style.width = '0'
+      return
+    }
+    slider.style.left = `${link.offsetLeft}px`
+    slider.style.width = `${link.offsetWidth}px`
+  }
+
+  const activeLink = navMenu.querySelector('a.active')
+  positionSlider(activeLink || null)
+
+  navMenu.querySelectorAll('a').forEach((a) => {
+    a.addEventListener('mouseenter', () => positionSlider(a))
+  })
+  navMenu.addEventListener('mouseleave', () => positionSlider(activeLink || null))
+
+  window.addEventListener('resize', () => positionSlider(activeLink || null))
+}
+
 // Mobile menu
 const mobileMenuBtn = document.querySelector('.mobile-menu-btn')
 const mobileMenuClose = document.querySelector('.mobile-menu-close')
