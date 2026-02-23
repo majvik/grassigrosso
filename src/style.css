@@ -343,6 +343,8 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  display: block;
 }
 
 /* Hero Video */
@@ -2565,6 +2567,7 @@ a:hover .arrow-medium {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center center;
     display: block;
   }
 
@@ -3082,10 +3085,18 @@ a:hover .arrow-medium {
   overflow: hidden;
 }
 
+.page-hero-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .page-hero-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  display: block;
 }
 
 .page-hero-image--icon {
@@ -5834,10 +5845,18 @@ a:hover .arrow-medium {
   overflow: hidden;
 }
 
+.catalog-hero-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .catalog-hero-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  display: block;
 }
 
 /* Catalog Collections */
@@ -6320,10 +6339,18 @@ a:hover .arrow-medium {
   overflow: hidden;
 }
 
+.documents-hero-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .documents-hero-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  display: block;
 }
 
 /* Legal pages (Privacy, Terms) */
@@ -7054,10 +7081,18 @@ a:hover .arrow-medium {
   overflow: hidden;
 }
 
+.contacts-hero-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .contacts-hero-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  display: block;
 }
 
 /* Contacts Offices Section */
