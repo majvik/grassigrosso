@@ -289,6 +289,16 @@ body {
   line-height: 1.2;
 }
 
+.hero-title-tm {
+  font-family: inherit;
+  font-size: 0.52em;
+  font-weight: 600;
+  font-size: 0.45em;
+  vertical-align: super;
+  line-height: 0;
+  margin-left: 0.06em;
+}
+
 .hero-description {
   font-family: var(--font-family);
   font-size: 21px;
