@@ -9,12 +9,32 @@ const geographyMapContainer = document.getElementById('geographyMapContainer')
 const geographyMapImg = document.getElementById('geographyMapImg')
 
 if (geographySection && geographyCities) {
+  let citiesAnimating = false
+  let citiesOffset = 0
+  const citiesSpeed = 80
+
+  function animateCities(timestamp) {
+    if (!citiesAnimating) return
+    if (!animateCities._prev) animateCities._prev = timestamp
+    const delta = (timestamp - animateCities._prev) / 1000
+    animateCities._prev = timestamp
+    citiesOffset += citiesSpeed * delta
+    const halfWidth = geographyCities.scrollWidth / 2
+    if (citiesOffset >= halfWidth) citiesOffset -= halfWidth
+    geographyCities.style.transform = `translate3d(${-citiesOffset}px, 0, 0)`
+    requestAnimationFrame(animateCities)
+  }
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        geographyCities.classList.add('animate')
+        if (!citiesAnimating) {
+          citiesAnimating = true
+          animateCities._prev = null
+          requestAnimationFrame(animateCities)
+        }
       } else {
-        geographyCities.classList.remove('animate')
+        citiesAnimating = false
       }
     })
   }, {

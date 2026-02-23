@@ -3460,18 +3460,6 @@ a:hover .arrow-medium {
   will-change: transform;
 }
 
-.geography-cities.animate {
-  animation: scroll-cities 30s linear infinite;
-}
-
-@keyframes scroll-cities {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
 
 .city-item {
   font-family: var(--font-family);
