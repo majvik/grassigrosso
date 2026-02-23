@@ -613,6 +613,14 @@ if (isDev) {
       return next();
     }
 
+    const normalizedPath = (req.path === '/' || req.path === '') ? '/' : req.path;
+    if (normalizedPath === '/') {
+      const indexPath = path.join(staticPath, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        return res.sendFile(indexPath);
+      }
+    }
+
     const requestedPath = path.join(staticPath, req.path);
     const htmlPath = path.join(staticPath, req.path + '.html');
 
