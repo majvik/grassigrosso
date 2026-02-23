@@ -3461,7 +3461,7 @@ a:hover .arrow-medium {
 }
 
 .geography-cities.animate {
-  animation: scroll-cities 120s linear infinite;
+  animation: scroll-cities 30s linear infinite;
 }
 
 @keyframes scroll-cities {
@@ -4955,6 +4955,8 @@ a:hover .arrow-medium {
 .catalog-arrow {
   width: 40px;
   height: 58px;
+  flex-shrink: 0;
+  object-fit: contain;
   transform: rotate(-90deg);
   transition: transform 0.2s ease;
 }
@@ -5620,9 +5622,10 @@ a:hover .arrow-medium {
   }
 
   .catalog-link-mobile .catalog-arrow {
-    width: 32px;
-    height: 24px;
+    width: 24px;
+    height: 32px;
     flex-shrink: 0;
+    object-fit: contain;
   }
 
   .stats-note {
@@ -6113,7 +6116,7 @@ a:hover .arrow-medium {
   }
 
   .catalog-collections-list {
-    gap: 48px;
+    gap: 56px;
   }
 
   .catalog-collection-item {
@@ -6241,7 +6244,7 @@ a:hover .arrow-medium {
   }
 
   .catalog-collections-list {
-    gap: 40px;
+    gap: 64px;
   }
 
   .catalog-collection-item {
