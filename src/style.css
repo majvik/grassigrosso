@@ -662,9 +662,17 @@ body {
 .commercial-offer-modal-content .modal-close {
   top: 24px;
   right: 24px;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
   color: var(--color-primary);
+  cursor: pointer;
+}
+
+.commercial-offer-modal-content .modal-close svg {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
 }
 
 .commercial-offer-title {
@@ -935,9 +943,17 @@ body {
 .catalog-request-modal-content .modal-close {
   top: 24px;
   right: 24px;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
   color: var(--color-primary);
+  cursor: pointer;
+}
+
+.catalog-request-modal-content .modal-close svg {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
 }
 
 .catalog-request-title {
@@ -2790,10 +2806,15 @@ a:hover .arrow-medium {
   }
 
   .commercial-offer-modal-content .modal-close {
-    top: 16px;
-    right: 16px;
-    width: 36px;
-    height: 36px;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .commercial-offer-modal-content .modal-close svg {
+    width: 24px;
+    height: 24px;
   }
 
   .commercial-offer-title {
@@ -2824,10 +2845,15 @@ a:hover .arrow-medium {
   }
 
   .catalog-request-modal-content .modal-close {
-    top: 16px;
-    right: 16px;
-    width: 36px;
-    height: 36px;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .catalog-request-modal-content .modal-close svg {
+    width: 24px;
+    height: 24px;
   }
 
   .catalog-request-title {
