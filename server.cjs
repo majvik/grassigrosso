@@ -239,13 +239,14 @@ async function sendConfirmationToUser(lead) {
   if (!channelEmailConfigured() || !lead.email) return;
   try {
     const transporter = createMailTransport();
-    const { subject, html, text } = buildConfirmationEmail(lead);
+    const { subject, html, text, attachments } = buildConfirmationEmail(lead);
     await transporter.sendMail({
       from: MAIL_FROM,
       to: lead.email,
       subject,
       html,
       text,
+      attachments,
     });
     console.log(`✅ Подтверждение отправлено на ${lead.email}`);
   } catch (err) {
