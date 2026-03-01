@@ -1985,6 +1985,14 @@ a:hover .arrow-medium {
   opacity: 0.6;
 }
 
+.footer-policies-left {
+  justify-content: flex-start;
+}
+
+.footer-policies-right {
+  margin-left: auto;
+}
+
 .footer-copyright {
   font-family: var(--font-family);
   font-size: 14px;
@@ -2019,6 +2027,20 @@ a:hover .arrow-medium {
   width: 1px;
   height: 15px;
   background-color: white;
+}
+
+.footer-divider-secondary {
+  margin-top: 24px;
+}
+
+.footer-copyright-legal {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.4;
+}
+
+.footer-copyright-brand {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Mobile Menu Button - Hidden on desktop */
