@@ -62,7 +62,11 @@
 ### Интеграционный слой
 
 - Telegram Bot API (уведомления о лидах)
-- SMTP через `nodemailer` (дублирование лидов по email)
+- SMTP через `nodemailer` (дублирование лидов по email) с маршрутизацией по страницам:
+  - Отелям → hotels@grassigrosso.com + office@grassigrosso.com
+  - Дилерам → b2b@grassigrosso.com + office@grassigrosso.com
+  - Документы, Контакты → sales@grassigrosso.com + office@grassigrosso.com
+  - Остальные → MAIL_TO (из .env)
 - Retry-очередь из SQLite (фоновый воркер каждые 15 с) для гарантированной доставки
 - Диагностический endpoint SMTP: `GET /api/smtp-diag`
 

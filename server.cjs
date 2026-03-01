@@ -202,16 +202,30 @@ function createMailTransport() {
   return nodemailer.createTransport(transportOptions);
 }
 
+const PAGE_EMAIL_ROUTING = {
+  'Страница "Отелям"':  ['hotels@grassigrosso.com', 'office@grassigrosso.com'],
+  'Отелям (каталог)':   ['hotels@grassigrosso.com', 'office@grassigrosso.com'],
+  'Страница "Дилерам"': ['b2b@grassigrosso.com',    'office@grassigrosso.com'],
+  'Документы':          ['sales@grassigrosso.com',   'office@grassigrosso.com'],
+  'Документы (помощь)': ['sales@grassigrosso.com',   'office@grassigrosso.com'],
+  'Страница "Контакты"':['sales@grassigrosso.com',   'office@grassigrosso.com'],
+};
+
+function getEmailRecipients(page) {
+  return PAGE_EMAIL_ROUTING[page] || [MAIL_TO];
+}
+
 async function sendLeadToEmail(lead) {
   if (!channelEmailConfigured()) {
     throw new Error('Email channel is not configured');
   }
 
   const transporter = createMailTransport();
+  const recipients = getEmailRecipients(lead.page);
 
   await transporter.sendMail({
     from: MAIL_FROM,
-    to: MAIL_TO,
+    to: recipients.join(', '),
     subject: buildEmailSubject(lead),
     text: buildEmailText(lead),
     html: buildEmailHtml(lead),
