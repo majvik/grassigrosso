@@ -6543,9 +6543,7 @@ a:hover .arrow-medium {
   color: var(--color-primary);
   line-height: 1.2;
   max-width: 720px;
-  margin-left: auto;
-  margin-right: auto;
-  margin: 0 0 32px;
+  margin: 0 auto 32px;
 }
 
 .legal-page-content {
@@ -6572,7 +6570,8 @@ a:hover .arrow-medium {
 }
 
 .legal-page-content p {
-  margin: 0 0 16px;
+  margin-top: 0;
+  margin-bottom: 16px;
 }
 
 .legal-page-content a {
@@ -6593,7 +6592,8 @@ a:hover .arrow-medium {
 }
 
 .legal-page-content ul {
-  margin: 0 0 16px;
+  margin-top: 0;
+  margin-bottom: 16px;
   padding-left: 24px;
 }
 
