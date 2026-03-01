@@ -451,17 +451,25 @@ body {
   position: relative;
   background: var(--color-bg-white);
   border-radius: 24px;
-  padding: 72px 56px 48px;
+  padding: 0 56px 48px;
   max-width: 640px;
   width: 100%;
-  text-align: center;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 24px;
+  align-items: stretch;
+  gap: 0;
   flex-shrink: 0;
   margin: auto;
   box-sizing: border-box;
+}
+
+.welcome-modal-top {
+  position: relative;
+  background: var(--color-bg-beige);
+  border-radius: 24px 24px 0 0;
+  margin: 0 -56px 56px;
+  padding: 88px 56px 40px;
 }
 
 .welcome-modal-content .welcome-close {
@@ -486,9 +494,9 @@ body {
 .welcome-logos {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 32px;
-  margin-top: 40px;
-  margin-bottom: 40px;
+  margin: 0;
 }
 
 .welcome-logo-old {
@@ -518,7 +526,9 @@ body {
   font-weight: 400;
   color: var(--color-primary);
   line-height: 1.2;
-  margin: 8px 0 0;
+  margin: 0 0 24px;
+  width: 100%;
+  text-align: left;
 }
 
 .welcome-description {
@@ -529,6 +539,7 @@ body {
   line-height: 1.6;
   text-align: left;
   width: 100%;
+  margin: 0;
 }
 
 .btn-welcome {
@@ -544,7 +555,8 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: background-color 0.2s ease;
-  margin-top: 8px;
+  margin-top: 32px;
+  align-self: flex-start;
 }
 
 .btn-welcome:hover {
@@ -553,8 +565,14 @@ body {
 
 @media (max-width: 768px) {
   .welcome-modal-content {
-    padding: 40px 24px 32px;
+    padding: 0 24px 32px;
     border-radius: 16px;
+  }
+
+  .welcome-modal-top {
+    border-radius: 16px 16px 0 0;
+    margin: 0 -24px 32px;
+    padding: 72px 24px 32px;
   }
 
   .welcome-modal-content .welcome-close {
@@ -570,6 +588,7 @@ body {
   }
 
   .welcome-logos {
+    flex-direction: column;
     gap: 20px;
   }
 
@@ -585,6 +604,7 @@ body {
   .welcome-arrow {
     width: 24px;
     height: 17px;
+    transform: rotate(0deg);
   }
 
   .welcome-title {
