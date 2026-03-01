@@ -1,5 +1,5 @@
 /**
- * Пример: Яндекс.Карты API 2.1 — метки фирменным цветом, балун с адресом по наведению.
+ * Пример: Яндекс.Карты API 2.1 – метки фирменным цветом, балун с адресом по наведению.
  * Подключение: <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
  * Затем: ymaps.ready(initContactMaps);
  *

@@ -2,6 +2,32 @@ import './style.css'
 import { gsap } from 'gsap'
 import Lenis from 'lenis'
 
+// Типографика: привязка коротких предлогов/союзов к следующему слову неразрывным пробелом
+;(function fixWidows() {
+  const WORDS = [
+    'а','в','и','к','о','с','у','я',
+    'бы','во','да','до','же','за','из','ил','ко','ли','на','не','ни','но','об','от','по','со','то',
+    'без','бес','все','всё','для','его','еще','ещё','или','как','над','под','при','про','что','это',
+  ]
+  const re = new RegExp(`(?<=^|\\s)(${WORDS.join('|')})\\s`, 'giu')
+  const NBSP = '\u00A0'
+
+  const walk = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const replaced = node.textContent.replace(re, `$1${NBSP}`)
+      if (replaced !== node.textContent) node.textContent = replaced
+      return
+    }
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName
+      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEXTAREA' || tag === 'INPUT' || tag === 'CODE' || tag === 'PRE') return
+      for (const child of node.childNodes) walk(child)
+    }
+  }
+
+  walk(document.body)
+})()
+
 // Geography section: cities animation + map points animation
 const geographySection = document.querySelector('.geography-section')
 const geographyCities = document.querySelector('.geography-cities')
@@ -297,11 +323,11 @@ document.querySelectorAll('.modal-overlay').forEach(modal => {
   document.documentElement.appendChild(modal)
 })
 
-// Cookie banner — вне body, чтобы position:fixed не ломался из-за transform на body
+// Cookie banner – вне body, чтобы position:fixed не ломался из-за transform на body
 const cookieBannerEl = document.querySelector('.cookie-banner')
 if (cookieBannerEl) document.documentElement.appendChild(cookieBannerEl)
 
-// Welcome Modal — показ при первом визите
+// Welcome Modal – показ при первом визите
 const welcomeModal = document.getElementById('welcomeModal')
 const welcomeCloseBtn = document.getElementById('welcomeClose')
 const welcomeCloseX = document.getElementById('welcomeCloseX')
@@ -1141,8 +1167,8 @@ if (documentsCommercialTitle && documentsCommercialRight) {
   observer5.observe(documentsCommercialTitle)
 }
 
-// Contacts map — Yandex API 2.1: метки фирменным цветом, балун с адресом по наведению
-// Ключ: .env → VITE_YANDEX_MAPS_API_KEY (на проде — в переменных окружения)
+// Contacts map – Yandex API 2.1: метки фирменным цветом, балун с адресом по наведению
+// Ключ: .env → VITE_YANDEX_MAPS_API_KEY (на проде – в переменных окружения)
 const YANDEX_MAPS_API_KEY = import.meta.env.VITE_YANDEX_MAPS_API_KEY || ''
 const contactsMapTabs = document.querySelectorAll('.contacts-map-tab')
 const contactsMapFrames = document.querySelectorAll('.contacts-map-frame')
@@ -1172,7 +1198,7 @@ function initContactMaps () {
       controls: ['zoomControl']
     })
     map.behaviors.disable('scrollZoom')
-    // Обесцвечиваем слой карты (тайлы) под фирменный стиль — через DOM слоя API
+    // Обесцвечиваем слой карты (тайлы) под фирменный стиль – через DOM слоя API
     map.events.add('load', function () {
       applyMapGrayscale(container)
     })
@@ -1650,7 +1676,7 @@ if (videoModal) {
   })
 }
 
-// Commercial Offer Modal (3 steps) — только на главной
+// Commercial Offer Modal (3 steps) – только на главной
 const commercialOfferModal = document.getElementById('commercialOfferModal')
 const commercialOfferForm = document.getElementById('commercialOfferForm')
 const commercialOfferStepLabel = document.getElementById('commercialOfferStepLabel')
@@ -1789,7 +1815,7 @@ if (commercialOfferModal && commercialOfferForm) {
       mattresses ? `Количество матрасов: ${mattresses}.` : '',
       `Сегмент: ${segments}.`,
       `Сезонное обновление: ${seasonal}.`,
-      timeFrom || timeTo ? `Время для связи: ${[timeFrom, timeTo].filter(Boolean).join(' — ')}.` : '',
+      timeFrom || timeTo ? `Время для связи: ${[timeFrom, timeTo].filter(Boolean).join(' – ')}.` : '',
       message ? `Сообщение: ${message}` : ''
     ]
     const comment = commentParts.filter(Boolean).join(' ')
@@ -1839,20 +1865,20 @@ if (commercialOfferModal && commercialOfferForm) {
   })
 }
 
-// Catalog Request Modal (Boxspring / Аксессуары) — на странице Отелям
+// Catalog Request Modal (Boxspring / Аксессуары) – на странице Отелям
 const catalogRequestModal = document.getElementById('catalogRequestModal')
 const catalogRequestForm = document.getElementById('catalogRequestForm')
 const catalogRequestText = document.getElementById('catalogRequestText')
 const catalogRequestTypeInput = document.getElementById('catalogRequestType')
 
 const CATALOG_MESSAGES = {
-  boxspring: 'Если вы хотите получить каталог Boxspring, укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
-  accessories: 'Если вы хотите получить каталог аксессуаров, укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
-  classic: 'Если вы хотите получить каталог коллекции Classic (Классик), укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
-  flexi: 'Если вы хотите получить каталог коллекции Flexi (Флекси), укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
-  relax: 'Если вы хотите получить каталог коллекции Relax (Релакс), укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
-  trend: 'Если вы хотите получить каталог коллекции Trend (Тренд), укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
-  'viva-natura': 'Если вы хотите получить каталог коллекции Viva Natura (Вива Натура), укажите ваше имя, телефон и e-mail — мы направим каталог на указанный адрес.',
+  boxspring: 'Если вы хотите получить каталог Boxspring, укажите ваше имя, телефон и e-mail – мы направим каталог на указанный адрес.',
+  accessories: 'Если вы хотите получить каталог аксессуаров, укажите ваше имя, телефон и e-mail – мы направим каталог на указанный адрес.',
+  classic: 'Если вы хотите получить каталог коллекции Classic (Классик), укажите ваше имя, телефон и e-mail – мы направим каталог на указанный адрес.',
+  flexi: 'Если вы хотите получить каталог коллекции Flexi (Флекси), укажите ваше имя, телефон и e-mail – мы направим каталог на указанный адрес.',
+  relax: 'Если вы хотите получить каталог коллекции Relax (Релакс), укажите ваше имя, телефон и e-mail – мы направим каталог на указанный адрес.',
+  trend: 'Если вы хотите получить каталог коллекции Trend (Тренд), укажите ваше имя, телефон и e-mail – мы направим каталог на указанный адрес.',
+  'viva-natura': 'Если вы хотите получить каталог коллекции Viva Natura (Вива Натура), укажите ваше имя, телефон и e-mail – мы направим каталог на указанный адрес.',
   consultation: 'Мы можем изготовить матрасы и аксессуары по вашим индивидуальным требованиям и размерам. Свяжитесь с нами для обсуждения проекта.'
 }
 
@@ -2005,11 +2031,11 @@ const documentRequestText = document.getElementById('documentRequestText')
 const documentRequestTypeInput = document.getElementById('documentRequestType')
 
 const DOCUMENT_REQUEST_MESSAGES = {
-  declaration: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
-  certificate: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
-  trademark: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
-  catalog: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.',
-  presentation: 'Укажите имя, телефон и e-mail — после отправки заявки вам будет доступна ссылка для скачивания документа.'
+  declaration: 'Укажите имя, телефон и e-mail – после отправки заявки вам будет доступна ссылка для скачивания документа.',
+  certificate: 'Укажите имя, телефон и e-mail – после отправки заявки вам будет доступна ссылка для скачивания документа.',
+  trademark: 'Укажите имя, телефон и e-mail – после отправки заявки вам будет доступна ссылка для скачивания документа.',
+  catalog: 'Укажите имя, телефон и e-mail – после отправки заявки вам будет доступна ссылка для скачивания документа.',
+  presentation: 'Укажите имя, телефон и e-mail – после отправки заявки вам будет доступна ссылка для скачивания документа.'
 }
 
 const DOCUMENT_REQUEST_FILES = {
@@ -2149,7 +2175,7 @@ if (documentRequestModal && documentRequestForm && documentRequestText) {
   })
 }
 
-// Help Documents Modal (страница Документы — «Нужна помощь с документами?»)
+// Help Documents Modal (страница Документы – «Нужна помощь с документами?»)
 const helpDocumentsModal = document.getElementById('helpDocumentsModal')
 const helpDocumentsForm = document.getElementById('helpDocumentsForm')
 

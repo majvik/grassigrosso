@@ -123,13 +123,16 @@
         <div class="hero-image" id="heroVideo">
           <video
             class="hero-video"
-            src="./public/grassigrosso-silent.webm"
             poster="./public/grassigrosso-poster.avif"
             autoplay
             loop
             muted
             playsinline
-          ></video>
+          >
+            <source src="./public/grassigrosso-silent.av1.mp4" type="video/mp4; codecs=av01.0.08M.08" />
+            <source src="./public/grassigrosso-silent.webm" type="video/webm" />
+            <source src="./public/grassigrosso-silent.mp4" type="video/mp4" />
+          </video>
           <picture class="hero-poster">
             <source type="image/avif" srcset="./public/grassigrosso-poster.avif" />
             <source type="image/webp" srcset="./public/grassigrosso-poster.webp" />
@@ -199,7 +202,7 @@
       <section class="philosophy">
         <div class="philosophy-left">
           <h2 class="section-title">Наша философия</h2>
-          <p class="philosophy-description">Мы создаём условия, в которых природа делает своё для вашего естественного восстановления.<br> Каждый слой — осмысленный, каждое решение — логичное.</p>
+          <p class="philosophy-description">Мы создаём условия, в которых природа делает своё для вашего естественного восстановления.<br> Каждый слой – осмысленный, каждое решение – логичное.</p>
         </div>
         <div class="philosophy-right">
           <div class="philosophy-feature">
@@ -434,7 +437,7 @@
               <img src="./public/star.svg" alt="★" />
               <img src="./public/star.svg" alt="★" />
             </div>
-            <p class="testimonial-text">Впечатлил индивидуальный подход — погружение в ситуацию! Продуманная логистика, молодые, энергичные менеджеры!</p>
+            <p class="testimonial-text">Впечатлил индивидуальный подход – погружение в ситуацию! Продуманная логистика, молодые, энергичные менеджеры!</p>
           </div>
           <div class="testimonial-card">
             <span class="testimonial-tag">Дилер</span>
@@ -466,7 +469,7 @@
               <img src="./public/star.svg" alt="★" />
               <img src="./public/star.svg" alt="★" />
             </div>
-            <p class="testimonial-text">Радует качество продукции — нареканий нет. Быстрая доставка, широкий ассортимент.</p>
+            <p class="testimonial-text">Радует качество продукции – нареканий нет. Быстрая доставка, широкий ассортимент.</p>
           </div>
           <div class="testimonial-card">
             <span class="testimonial-tag">Дилер</span>
@@ -594,7 +597,7 @@
               <img src="./public/star.svg" alt="★" />
               <img src="./public/star.svg" alt="★" />
             </div>
-            <p class="testimonial-text">Цена, сроки, качество, логистика — всё на высоте. Ни одной рекламации не было за всё время работы. Молодцы, так держать!</p>
+            <p class="testimonial-text">Цена, сроки, качество, логистика – всё на высоте. Ни одной рекламации не было за всё время работы. Молодцы, так держать!</p>
           </div>
         </div>
       </section>
@@ -647,10 +650,10 @@
           <div class="footer-logo">
             <img src="./public/footer-logo.svg" alt="Grassigrosso" />
           </div>
-          <p class="footer-description">Продуманные решения для естественного восстановления. Каждое утро — как лучшее.</p>
+          <p class="footer-description">Продуманные решения для естественного восстановления. Каждое утро – как лучшее.</p>
           <div class="footer-legal">
-            <p>ИНН: 7701234567</p>
-            <p>ОГРН: 1157746123456</p>
+            <p>ИНН: 9102292969</p>
+            <p>ОГРН: 1239100014548</p>
           </div>
         </div>
         <div class="footer-column">
@@ -813,12 +816,15 @@
         </button>
         <video
           class="modal-video"
-          src="./public/grassigrosso-sound.webm"
           poster="./public/grassigrosso-poster.avif"
           preload="none"
           controls
           playsinline
-        ></video>
+        >
+          <source src="./public/grassigrosso-sound.av1.mp4" type="video/mp4; codecs=av01.0.08M.08" />
+          <source src="./public/grassigrosso-sound.webm" type="video/webm" />
+          <source src="./public/grassigrosso-sound.mp4" type="video/mp4" />
+        </video>
       </div>
     </div>
 
@@ -836,7 +842,7 @@
           <img src="./public/header-logo.svg" alt="Grassigrosso" class="welcome-logo-new" />
         </div>
         <h2 class="welcome-title">Наш сайт обновился!</h2>
-        <p class="welcome-description">Мы выросли и стали еще лучше: встречайте масштабное обновление бренда и долгожданное пополнение коллекции матрасов. Смена имени стала логичным шагом нашего развития, но верность традициям качества и использование премиальных материалов остаются нашими приоритетами. Оцените расширенный выбор моделей, сохранивших тот самый безупречный стандарт, к которому вы привыкли.</p>
+        <p class="welcome-description">Мы обновили бренд глубже, чем название и визуальный стиль.<br>Это результат большой работы над принципами, ценностями и миссией бренда и стремления формировать более понятные стандарты в индустрии сна.<br><br>Наш фокус — утро.<br>То, как человек восстанавливается ночью, влияет на то, с какой энергией начинается каждый день.<br><br>Все обязательства Grassiflex сохраняются.<br>В переходный период часть продукции может выпускаться в прежней айдентике. Качество и стандарты остаются неизменными.</p>
         <button class="btn-welcome" id="welcomeClose">Продолжить</button>
       </div>
     </div>

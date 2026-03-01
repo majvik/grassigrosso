@@ -236,7 +236,7 @@ async function sendLeadToTelegram(lead) {
 async function deliverLeadWithFallback(lead) {
   const errors = {};
 
-  // Telegram — primary (быстрый, надёжный)
+  // Telegram – primary (быстрый, надёжный)
   try {
     await sendLeadToTelegram(lead);
   } catch (error) {
@@ -244,7 +244,7 @@ async function deliverLeadWithFallback(lead) {
     console.error('❌ Ошибка отправки Telegram:', errors.telegram);
   }
 
-  // Email — secondary (дублирование)
+  // Email – secondary (дублирование)
   try {
     await sendLeadToEmail(lead);
   } catch (error) {

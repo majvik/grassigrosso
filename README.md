@@ -107,7 +107,7 @@ PORT=3000
 2. Команда сборки: `npm run build`
 3. Команда запуска: `npm start`
 4. Обязательно задать ENV: Telegram + SMTP + Queue параметры
-5. Для карт на контактах: **VITE_YANDEX_MAPS_API_KEY** — задать в панели хостинга в переменных окружения сборки (ключ не коммитить).
+5. Для карт на контактах: **VITE_YANDEX_MAPS_API_KEY** – задать в панели хостинга в переменных окружения сборки (ключ не коммитить).
 
 ## Структура проекта
 
@@ -127,12 +127,12 @@ PORT=3000
 
 ### Production
 
-- `GET /health` — статус сервиса, активность каналов и размер очереди
-- `POST /api/submit` — отправка заявки (с fallback и queue+retry)
+- `GET /health` – статус сервиса, активность каналов и размер очереди
+- `POST /api/submit` – отправка заявки (с fallback и queue+retry)
 
 ### Development only
 
-- `GET /api/test` — тест API
-- `POST /api/test` — тест POST
-- `GET /api/get-chat-id` — получение `chat_id` через `getUpdates`
-- `GET /api/smtp-diag` — диагностика SMTP/DNS/TCP/авторизации
+- `GET /api/test` – тест API
+- `POST /api/test` – тест POST
+- `GET /api/get-chat-id` – получение `chat_id` через `getUpdates`
+- `GET /api/smtp-diag` – диагностика SMTP/DNS/TCP/авторизации

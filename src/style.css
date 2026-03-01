@@ -226,7 +226,7 @@ body {
   color: var(--color-primary);
 }
 
-/* Полоска подчеркивания — точно под пунктом, margin-bottom: -2px (высота полоски) */
+/* Полоска подчеркивания – точно под пунктом, margin-bottom: -2px (высота полоски) */
 .nav-menu-slider {
   position: absolute;
   bottom: -2px;
@@ -639,7 +639,7 @@ body {
   display: block;
 }
 
-/* Commercial Offer Modal (3 steps) — сброс наследования от .modal-content (line-height: 0) */
+/* Commercial Offer Modal (3 steps) – сброс наследования от .modal-content (line-height: 0) */
 .commercial-offer-modal-content {
   position: relative;
   background: var(--color-bg-white);
@@ -888,7 +888,7 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Только «Назад» — вторичная (серая) кнопка */
+/* Только «Назад» – вторичная (серая) кнопка */
 .btn-commercial-offer.btn-back {
   background-color: rgba(40, 62, 55, 0.1);
   color: var(--color-primary);
@@ -898,7 +898,7 @@ body {
   background-color: rgba(40, 62, 55, 0.18);
 }
 
-/* «Далее» и «Получить КП» — активная основная кнопка */
+/* «Далее» и «Получить КП» – активная основная кнопка */
 .btn-commercial-offer.btn-next,
 .btn-commercial-offer.btn-submit {
   background-color: var(--color-primary);
@@ -3634,7 +3634,6 @@ a:hover .arrow-medium {
   width: 100%;
   height: 100%;
   display: block;
-  preserve-aspect-ratio: xMidYMid slice;
   border-radius: 24px;
 }
 
@@ -4388,7 +4387,7 @@ a:hover .arrow-medium {
   opacity: 0.8;
 }
 
-/* Active nav state — полоска позиционируется через JS (nav-menu-slider) */
+/* Active nav state – полоска позиционируется через JS (nav-menu-slider) */
 .nav-menu a.active {
   position: relative;
 }
@@ -4489,10 +4488,6 @@ a:hover .arrow-medium {
   .contact-form-wrapper {
     width: 520px;
     padding: 40px;
-  }
-
-  .contact-info {
-    /* padding-left removed */
   }
 
   .faq-section {
@@ -5601,10 +5596,6 @@ a:hover .arrow-medium {
     gap: 60px;
   }
 
-  .hotel-categories-content {
-    /* Uses justify-content: space-between with gap: 32px from base styles */
-  }
-
   .categories-list {
     width: 350px;
   }
@@ -5640,19 +5631,12 @@ a:hover .arrow-medium {
     gap: 48px;
   }
 
-  .refresh-image {
-    /* Uses flex: 1 and align-self: stretch from base styles */
-  }
 }
 
 @media (max-width: 1200px) {
   .hotel-categories-section {
     padding: 64px 32px;
     gap: 48px;
-  }
-
-  .hotel-categories-content {
-    /* Uses justify-content: space-between with gap: 32px from base styles */
   }
 
   .categories-list {
@@ -5723,9 +5707,6 @@ a:hover .arrow-medium {
     font-size: 28px;
   }
 
-  .refresh-image {
-    /* Uses flex: 1 and align-self: stretch from base styles */
-  }
 }
 
 @media (max-width: 1024px) {
@@ -6551,7 +6532,7 @@ a:hover .arrow-medium {
 }
 
 .legal-page-inner {
-  max-width: 720px;
+  max-width: 960px;
   margin: 0 auto;
 }
 
@@ -6579,6 +6560,11 @@ a:hover .arrow-medium {
   margin: 32px 0 12px;
 }
 
+.legal-page-content p,
+.legal-page-content ul {
+  max-width: 720px;
+}
+
 .legal-page-content p {
   margin: 0 0 16px;
 }
@@ -6592,12 +6578,107 @@ a:hover .arrow-medium {
   opacity: 0.85;
 }
 
+.legal-page-date {
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: #888;
+  margin: -20px 0 28px;
+}
+
+.legal-page-content ul {
+  margin: 0 0 16px;
+  padding-left: 24px;
+}
+
+.legal-page-content li {
+  margin-bottom: 6px;
+}
+
+.legal-table-wrap {
+  margin: 0 0 24px;
+}
+
+.legal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.5;
+  table-layout: auto;
+  word-break: break-word;
+}
+
+.legal-table th,
+.legal-table td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+  hyphens: auto;
+}
+
+.legal-table th {
+  background: var(--color-bg-beige, #f5f0eb);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.legal-table td {
+  font-size: 13px;
+}
+
 @media (max-width: 768px) {
   .legal-page {
     padding: 80px 24px 60px;
   }
   .legal-page-title {
     font-size: 32px;
+  }
+
+  .legal-table,
+  .legal-table thead,
+  .legal-table tbody,
+  .legal-table th,
+  .legal-table td,
+  .legal-table tr {
+    display: block;
+  }
+
+  .legal-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .legal-table tr {
+    margin-bottom: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .legal-table td {
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 8px 12px;
+    position: relative;
+    padding-left: 12px;
+  }
+
+  .legal-table td:last-child {
+    border-bottom: none;
+  }
+
+  .legal-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 600;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
   }
 }
 

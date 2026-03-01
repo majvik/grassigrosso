@@ -20,8 +20,8 @@
 
 ### 2. Метка фирменным цветом
 
-- **preset** — один из: `'islands#circleDotIcon'`, `'islands#circleIcon'`, `'islands#dotIcon'`, `'islands#icon'` (только с ними работает `iconColor`).
-- **iconColor** — цвет в любом CSS-формате (название, hex, rgb).
+- **preset** – один из: `'islands#circleDotIcon'`, `'islands#circleIcon'`, `'islands#dotIcon'`, `'islands#icon'` (только с ними работает `iconColor`).
+- **iconColor** – цвет в любом CSS-формате (название, hex, rgb).
 
 Пример (фирменный цвет из стилей сайта `#283e37`):
 
@@ -45,7 +45,7 @@ map.geoObjects.add(placemark);
 По умолчанию балун открывается по **клику** (`openBalloonOnClick: true`). Чтобы показывать балун **по наведению**:
 
 - Отключить открытие по клику: `openBalloonOnClick: false` (по желанию).
-- Подписаться на события метки: `mouseenter` — открыть балун, `mouseleave` — закрыть.
+- Подписаться на события метки: `mouseenter` – открыть балун, `mouseleave` – закрыть.
 
 ```javascript
 placemark.events.add('mouseenter', function () {
@@ -62,7 +62,7 @@ placemark.events.add('mouseleave', function () {
 
 | Опция | Описание |
 |--------|----------|
-| `preset` | Стиль иконки (для цвета — только circleDotIcon, circleIcon, dotIcon, icon) |
+| `preset` | Стиль иконки (для цвета – только circleDotIcon, circleIcon, dotIcon, icon) |
 | `iconColor` | Цвет иконки (CSS) |
 | `hasBalloon` | Есть ли балун (по умолчанию true) |
 | `hasHint` | Показывать ли hint при наведении (можно false, если используем балун) |
@@ -73,13 +73,13 @@ placemark.events.add('mouseleave', function () {
 
 - [Placemark (метка)](https://yandex.ru/dev/jsapi-v2-1/doc/ru/v2-1/ref/reference/Placemark)
 - [Balloon](https://yandex.ru/dev/jsapi-v2-1/doc/ru/v2-1/ref/reference/Balloon)
-- [События геообъектов](https://yandex.ru/dev/jsapi-v2-1/doc/ru/v2-1/ref/reference/GeoObject#events) — `mouseenter`, `mouseleave`, `click` и др.
+- [События геообъектов](https://yandex.ru/dev/jsapi-v2-1/doc/ru/v2-1/ref/reference/GeoObject#events) – `mouseenter`, `mouseleave`, `click` и др.
 
 ---
 
 ## Итог
 
-- **Конструктор** — быстрая вставка карты, но без кастомного цвета метки и балуна по наведению из кода.
-- **JS API 2.1** — полный контроль: `iconColor` для фирменного цвета, `placemark.balloon.open()/close()` в `mouseenter`/`mouseleave` для балуна с адресом по наведению.
+- **Конструктор** – быстрая вставка карты, но без кастомного цвета метки и балуна по наведению из кода.
+- **JS API 2.1** – полный контроль: `iconColor` для фирменного цвета, `placemark.balloon.open()/close()` в `mouseenter`/`mouseleave` для балуна с адресом по наведению.
 
 В `docs/yandex-maps-example.js` приведён готовый пример инициализации карт офисов с метками и балуном по наведению.

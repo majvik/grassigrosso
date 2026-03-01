@@ -402,19 +402,21 @@
             <div class="quality-text">
               <p>Собственная система распределенного производства и локализованная сборочная линия позволяет нам гарантировать максимальное качество компонентов продукции и контролировать производство на каждом этапе.</p>
               <p>Срок производства от 3 дней. Стандартные сроки поставки от 5 дней.</p>
-              <p>Современное оборудование, сертифицированные материалы и строгий контроль качества — основа нашего успеха и гарантия вашей прибыли.</p>
+              <p>Современное оборудование, сертифицированные материалы и строгий контроль качества – основа нашего успеха и гарантия вашей прибыли.</p>
             </div>
           </div>
           <div class="quality-image" id="qualityVideo">
             <video
               class="quality-video"
-              src="./public/quality-video.webm"
               poster="./public/quality-video-poster.avif"
               autoplay
               loop
               muted
               playsinline
-            ></video>
+            >
+              <source src="./public/quality-video.webm" type="video/webm" />
+              <source src="./public/quality-video.mp4" type="video/mp4" />
+            </video>
             <picture class="quality-poster">
               <source type="image/avif" srcset="./public/quality-video-poster.avif" />
               <source type="image/webp" srcset="./public/quality-video-poster.webp" />
@@ -627,9 +629,9 @@
                 <label for="dealer-package">Пакет</label>
                 <select id="dealer-package" name="package" class="form-select" aria-label="Выберите пакет">
                   <option value="">Выберите пакет</option>
-                  <option value="standard">СТАНДАРТ — От 100 000 р</option>
-                  <option value="individual">ИНДИВИДУАЛЬНЫЙ — От 300 000 р</option>
-                  <option value="exclusive">ЭКСКЛЮЗИВНЫЙ — От 800 000 р</option>
+                  <option value="standard">СТАНДАРТ – От 100 000 р</option>
+                  <option value="individual">ИНДИВИДУАЛЬНЫЙ – От 300 000 р</option>
+                  <option value="exclusive">ЭКСКЛЮЗИВНЫЙ – От 800 000 р</option>
                 </select>
               </div>
               <div class="form-group">
@@ -747,10 +749,10 @@
           <div class="footer-logo">
             <img src="./public/footer-logo.svg" alt="Grassigrosso" />
           </div>
-          <p class="footer-description">Продуманные решения для естественного восстановления. Каждое утро — как лучшее.</p>
+          <p class="footer-description">Продуманные решения для естественного восстановления. Каждое утро – как лучшее.</p>
           <div class="footer-legal">
-            <p>ИНН: 7701234567</p>
-            <p>ОГРН: 1157746123456</p>
+            <p>ИНН: 9102292969</p>
+            <p>ОГРН: 1239100014548</p>
           </div>
         </div>
         <div class="footer-column">
@@ -809,12 +811,14 @@
         </button>
         <video
           class="modal-video"
-          src="./public/quality-video-full.webm"
           poster="./public/quality-video-poster.avif"
           preload="none"
           controls
           playsinline
-        ></video>
+        >
+          <source src="./public/quality-video-full.webm" type="video/webm" />
+          <source src="./public/quality-video-full.mp4" type="video/mp4" />
+        </video>
       </div>
     </div>
 
