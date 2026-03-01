@@ -18,6 +18,7 @@ export default defineConfig({
         terms: './terms.html',
         cookies: './cookies.html',
         '404': './404.html',
+        unsubscribe: './unsubscribe.html',
       }
     }
   },

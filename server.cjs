@@ -9,6 +9,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const { createAntiSpamProtector } = require('./lib/anti-spam.cjs');
 const { normalizeOriginList, buildCorsOptions } = require('./lib/cors-config.cjs');
 const db = require('./lib/db.cjs');
+const { buildConfirmationEmail } = require('./lib/confirmation-email.cjs');
 require('dotenv').config();
 
 const app = express();
@@ -232,6 +233,24 @@ async function sendLeadToEmail(lead) {
     text: buildEmailText(lead),
     html: buildEmailHtml(lead),
   });
+}
+
+async function sendConfirmationToUser(lead) {
+  if (!channelEmailConfigured() || !lead.email) return;
+  try {
+    const transporter = createMailTransport();
+    const { subject, html, text } = buildConfirmationEmail(lead);
+    await transporter.sendMail({
+      from: MAIL_FROM,
+      to: lead.email,
+      subject,
+      html,
+      text,
+    });
+    console.log(`✅ Подтверждение отправлено на ${lead.email}`);
+  } catch (err) {
+    console.error(`⚠️ Не удалось отправить подтверждение на ${lead.email}:`, err.message);
+  }
 }
 
 async function sendLeadToTelegram(lead) {
@@ -512,6 +531,48 @@ if (!isProd) {
   });
 }
 
+const { verifyUnsubscribeToken } = require('./lib/confirmation-email.cjs');
+
+app.get('/api/unsubscribe', async (req, res) => {
+  const { email, token } = req.query;
+
+  if (!email || !token) {
+    return res.status(400).send('Неверная ссылка отписки');
+  }
+
+  try {
+    if (!verifyUnsubscribeToken(email, token)) {
+      return res.status(403).send('Неверная ссылка отписки');
+    }
+  } catch {
+    return res.status(403).send('Неверная ссылка отписки');
+  }
+
+  if (channelEmailConfigured()) {
+    try {
+      const transporter = createMailTransport();
+      const notifyRecipients = [
+        'sales@grassigrosso.com',
+        'office@grassigrosso.com',
+        'callback@grassigrosso.com',
+      ].join(', ');
+
+      await transporter.sendMail({
+        from: MAIL_FROM,
+        to: notifyRecipients,
+        subject: `Запрос на отписку: ${email}`,
+        text: `Email ${email} запрашивает исключение из рассылки.\n\nДата: ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}`,
+        html: `<p>Email <strong>${email}</strong> запрашивает исключение из рассылки.</p><p>Дата: ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}</p>`,
+      });
+      console.log(`📧 Уведомление об отписке ${email} отправлено`);
+    } catch (err) {
+      console.error(`⚠️ Не удалось отправить уведомление об отписке:`, err.message);
+    }
+  }
+
+  return res.redirect('/unsubscribe.html');
+});
+
 app.post('/api/submit', async (req, res) => {
   const lead = normalizeLeadPayload(req.body);
 
@@ -530,9 +591,9 @@ app.post('/api/submit', async (req, res) => {
     });
   }
 
-  if (!lead.name || !lead.phone) {
+  if (!lead.name || !lead.phone || !lead.email) {
     return res.status(400).json({
-      error: 'name и phone обязательны'
+      error: 'name, phone и email обязательны'
     });
   }
 
@@ -552,6 +613,10 @@ app.post('/api/submit', async (req, res) => {
 
   try {
     const deliveryResult = await deliverLeadWithFallback(lead);
+
+    // Подтверждение пользователю отправляется ПОСЛЕ доставки заявки,
+    // чтобы не конкурировать за SMTP-соединение
+    sendConfirmationToUser(lead);
 
     if (deliveryResult.ok) {
       db.markDelivered(leadId, deliveryResult.channel);
@@ -575,6 +640,7 @@ app.post('/api/submit', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Ошибка при обработке формы:', extractErrorDetails(error));
+    sendConfirmationToUser(lead);
     return res.status(500).json({
       error: 'Ошибка обработки заявки',
       details: extractErrorDetails(error)

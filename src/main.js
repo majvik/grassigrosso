@@ -1415,14 +1415,19 @@ if (contactForms.length > 0) {
       }
     }
 
-    // Валидация email (если указан)
+    // Валидация email (обязательное поле)
     const emailInput = form.querySelector('#email')
-    if (emailInput && emailInput.value.trim()) {
+    if (emailInput) {
       const email = emailInput.value.trim()
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(email)) {
-        showError(emailInput, 'Пожалуйста, укажите корректный email адрес')
+      if (!email) {
+        showError(emailInput, 'Пожалуйста, укажите email адрес')
         isValid = false
+      } else {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email)) {
+          showError(emailInput, 'Пожалуйста, укажите корректный email адрес')
+          isValid = false
+        }
       }
     }
 

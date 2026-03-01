@@ -7,14 +7,16 @@
 
 Проект построен как быстрый маркетинговый сайт с несколькими страницами и единым backend API для обработки заявок из форм.
 
-- Витрина: статические страницы (`index`, `hotels`, `dealers`, `catalog`, `documents`, `contacts`) + служебные (`privacy`, `terms`, `cookies`, `404`)
+- Витрина: статические страницы (`index`, `hotels`, `dealers`, `catalog`, `documents`, `contacts`) + служебные (`privacy`, `terms`, `cookies`, `404`, `unsubscribe`)
 - Логика интерфейса: единый JS-модуль (`src/main.js`) с UX-функциями, анимациями (GSAP, Lenis), обработкой всех типов форм
 - Backend: Node.js + Express (`server.cjs`) + модули `lib/` (антиспам, CORS, БД), который:
   - принимает данные форм
   - проверяет антиспам (honeypot, лимиты по IP и длине полей)
-  - валидирует и сохраняет каждую заявку в SQLite (`data/leads.db`) до попытки отправки
+  - валидирует (name, phone, email – обязательные) и сохраняет каждую заявку в SQLite (`data/leads.db`) до попытки отправки
   - отправляет заявки в Telegram и Email, обновляет статус в БД
+  - отправляет пользователю подтверждающее письмо (best-effort, не блокирует основной ответ)
   - при недоступности каналов – retry с экспоненциальным backoff из SQLite
+  - обрабатывает запросы на отписку (`GET /api/unsubscribe`) с HMAC-верификацией
   - в production раздаёт `dist`, в dev проксирует на Vite
 - Деплой: Docker-контейнер (multi-stage) + `docker-compose.yml` с именованным volume для `/app/data`; healthcheck `/health`; при необходимости – CI/CD и реверс-прокси (`nginx.conf` для Timeweb Cloud)
 
@@ -29,7 +31,7 @@
 - Модель: Multi Page Application (MPA) с общим JS/CSS ядром
 - Страницы (входы в `vite.config.mjs`):
   - Основные: `index.html`, `hotels.html`, `dealers.html`, `catalog.html`, `documents.html`, `contacts.html`
-  - Служебные: `privacy.html`, `terms.html`, `cookies.html`, `404.html`
+  - Служебные: `privacy.html`, `terms.html`, `cookies.html`, `404.html`, `unsubscribe.html`
 - JS-ядро (`src/main.js` на всех страницах):
   - анимации (GSAP, Lenis smooth scroll на десктопе), география/карта, preloader (шрифты + hero-медиа)
   - модальные окна, cookie-баннер, формы: контактные (`.contact-form`), коммерческое предложение, запрос каталога, запрос документов
@@ -42,8 +44,11 @@
   - `lib/db.cjs` – SQLite через `better-sqlite3` (WAL mode), таблица `leads` со статусами `pending`/`delivered`/`failed`, CRUD-функции, миграция из legacy JSON-очереди
   - `lib/anti-spam.cjs` – honeypot (поля `website`/`url`/`homepage`), лимит отправок по IP за окно, минимальный интервал между отправками, блокировка с `Retry-After`, лимиты длины полей (имя, телефон, email, комментарий)
   - `lib/cors-config.cjs` – белый список origins (`CORS_ALLOWED_ORIGINS`), методы GET/POST/OPTIONS
+  - `lib/confirmation-email.cjs` – HTML-шаблон подтверждающего письма (inline CSS, Nunito с fallback), генерация/верификация HMAC-токенов для ссылки отписки
 - Функции сервера:
-  - API заявок: `POST /api/submit` (после антиспам-проверки и валидации name/phone)
+  - API заявок: `POST /api/submit` (после антиспам-проверки и валидации name/phone/email)
+  - Подтверждение пользователю: после записи заявки отправляется HTML-письмо на `lead.email` (best-effort, ошибки логируются, не блокируют ответ)
+  - Отписка: `GET /api/unsubscribe?email=...&token=...` – проверка HMAC-подписи, уведомление на sales/office/callback, редирект на `unsubscribe.html`
   - сервисные: `GET /health` (статус, размер очереди, наличие каналов), в non-production: `/api/test`, `/api/get-chat-id`, `GET /api/smtp-diag`
   - в production раздаёт `dist` (статику + fallback по пути и `*.html`, 404 → `404.html` или `index.html`)
   - в dev проксирует не-API запросы на Vite (localhost:5173)
@@ -63,10 +68,16 @@
 
 - Telegram Bot API (уведомления о лидах)
 - SMTP через `nodemailer` (дублирование лидов по email) с маршрутизацией по страницам:
+  - Главная → sales@grassigrosso.com + office@grassigrosso.com
   - Отелям → hotels@grassigrosso.com + office@grassigrosso.com
   - Дилерам → b2b@grassigrosso.com + office@grassigrosso.com
   - Документы, Контакты → sales@grassigrosso.com + office@grassigrosso.com
   - Остальные → MAIL_TO (из .env)
+- Подтверждающее письмо пользователю (`lib/confirmation-email.cjs`):
+  - HTML-письмо с inline CSS, шрифт Nunito (Google Fonts) с fallback на Arial/Helvetica
+  - Логотип: PNG-версия (`public/email-logo.png`), hosted по URL сайта
+  - HMAC-подписанная ссылка отписки (секрет из `UNSUBSCRIBE_SECRET` или `BOT_TOKEN`)
+  - При клике на отписку: уведомление на sales/office/callback + редирект на `unsubscribe.html`
 - Retry-очередь из SQLite (фоновый воркер каждые 15 с) для гарантированной доставки
 - Диагностический endpoint SMTP: `GET /api/smtp-diag`
 
@@ -88,14 +99,15 @@
 ## 3) Как устроен поток данных из форм
 
 1. Пользователь заполняет форму на странице (`.contact-form` или форма запроса каталога/документов/КП).  
-2. `src/main.js` валидирует имя, телефон, email (если нужен), согласие на ПДн.  
+2. `src/main.js` валидирует имя, телефон, email (обязательное поле), согласие на ПДн.  
 3. Фронтенд отправляет JSON в `POST /api/submit` (`fetch`, URL из `VITE_API_URL`).  
 4. `server.cjs` нормализует payload лида; антиспам (`lib/anti-spam.cjs`) проверяет honeypot, лимиты по IP и длине полей – при провале возврат `429` и `Retry-After`.
 5. **Заявка записывается в SQLite** (`lib/db.cjs`, status=pending) до попытки отправки – ни одна заявка не может быть потеряна.
-6. Заявка отправляется в **Telegram (primary)** и дополнительно в **Email (secondary)**.  
-7. При успехе – status обновляется на `delivered` с указанием канала и времени.
-8. Если оба канала недоступны – retry schedule записывается в SQLite, фоновый воркер подхватывает через 15 с.
-9. Клиент получает статус доставки (`200` или `202 queued_retry`).
+6. **Подтверждающее письмо** отправляется пользователю на `lead.email` (best-effort, не блокирует основной ответ).
+7. Заявка отправляется в **Telegram (primary)** и дополнительно в **Email (secondary)** с маршрутизацией по страницам.  
+8. При успехе – status обновляется на `delivered` с указанием канала и времени.
+9. Если оба канала недоступны – retry schedule записывается в SQLite, фоновый воркер подхватывает через 15 с.
+10. Клиент получает статус доставки (`200` или `202 queued_retry`).
 
 Поля заявки (в `normalizeLeadPayload`): `name`, `phone`, `comment`, `email`, `city`, `page`.
 
@@ -179,8 +191,9 @@
 
 ## 8) Рекомендованная целевая схема (текущее состояние + следующие шаги)
 
-`Browser Forms -> API (Express) -> SQLite(persist) -> Telegram(primary) + Email(secondary) -> SQLite(update status)`  
+`Browser Forms -> API (Express) -> SQLite(persist) -> Confirmation Email(user) + Telegram(primary) + Email(secondary) -> SQLite(update status)`  
 `Retry: SQLite(pending) -> Worker(15s) -> Telegram/Email -> SQLite(delivered/retry)`  
+`Unsubscribe: Email Link(HMAC) -> GET /api/unsubscribe -> Notify(sales/office/callback) -> Redirect(unsubscribe.html)`  
 `Next: PocketBase / admin UI`  
 `Static/Media -> App/Proxy Cache Policy -> Browser`
 
@@ -189,9 +202,11 @@
 ## 9) Где это подтверждено в коде
 
 - Frontend: `src/main.js`, `src/style.css`; страницы с формами: `hotels.html`, `dealers.html`, `contacts.html`, `documents.html`, `catalog.html` (и др., где есть `.contact-form` или формы запроса каталога/документов/КП)
-- API и заявки: `server.cjs` (нормализация лида, SQLite запись, Telegram/Email доставка, retry из SQLite)
+- API и заявки: `server.cjs` (нормализация лида, SQLite запись, Telegram/Email доставка, retry из SQLite, подтверждение пользователю, отписка)
+- Подтверждение и отписка: `lib/confirmation-email.cjs` (HTML-шаблон, HMAC-токены), `unsubscribe.html` (страница подтверждения)
 - БД: `lib/db.cjs` (SQLite через `better-sqlite3`, таблица `leads`, WAL mode, миграция из JSON)
 - Антиспам: `lib/anti-spam.cjs`; CORS: `lib/cors-config.cjs`
 - SMTP-диагностика: `GET /api/smtp-diag` в `server.cjs` (только при `NODE_ENV !== 'production'`)
-- Сборка multi-page: `vite.config.mjs` (все HTML-входы и proxy `/api` на :3000)
+- Логотип для email: `public/email-logo.png` (PNG-версия SVG-логотипа для email-клиентов)
+- Сборка multi-page: `vite.config.mjs` (все HTML-входы включая `unsubscribe.html` и proxy `/api` на :3000)
 - Контейнеризация: `Dockerfile` + `docker-compose.yml` (volume `grassigrosso-data`); реверс-прокси: `nginx.conf`
