@@ -203,8 +203,8 @@ function createMailTransport() {
 }
 
 const PAGE_EMAIL_ROUTING = {
-  'Главная страница':   ['office@grassigrosso.com'],
-  'Главная (КП)':       ['office@grassigrosso.com'],
+  'Главная страница':   ['sales@grassigrosso.com', 'office@grassigrosso.com'],
+  'Главная (КП)':       ['sales@grassigrosso.com', 'office@grassigrosso.com'],
   'Страница "Отелям"':  ['hotels@grassigrosso.com', 'office@grassigrosso.com'],
   'Отелям (каталог)':   ['hotels@grassigrosso.com', 'office@grassigrosso.com'],
   'Страница "Дилерам"': ['b2b@grassigrosso.com',    'office@grassigrosso.com'],
