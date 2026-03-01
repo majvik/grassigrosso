@@ -661,6 +661,20 @@ if (isDev) {
   }));
 } else {
   const staticPath = path.join(__dirname, 'dist');
+
+  // Явная раздача OG-изображения с кэшированием, чтобы краулеры/соцсети стабильно получали картинку
+  app.get('/social-image.png', (req, res) => {
+    const file = path.join(staticPath, 'social-image.png');
+    if (!fs.existsSync(file)) {
+      return res.status(404).end();
+    }
+    res.set({
+      'Cache-Control': 'public, max-age=604800, immutable',
+      'Content-Type': 'image/png'
+    });
+    res.sendFile(file);
+  });
+
   app.use(express.static(staticPath, {
     extensions: ['html', 'htm'],
     index: false
