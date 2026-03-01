@@ -16,21 +16,20 @@ RUN npm run build
 FROM node:22-slim
 WORKDIR /app
 
-# (опционально, но полезно для health/debug)
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
+RUN apt-get update && apt-get install -y --no-install-recommends curl python3 make g++ \
   && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# ставим только прод-зависимости
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev && rm -rf /root/.npm
 
-# код сервера и модули lib/ + собранный фронт из build stage
 COPY --from=build /app/server.cjs ./
 COPY --from=build /app/lib ./lib
 COPY --from=build /app/dist ./dist
+
+RUN mkdir -p /app/data
 
 EXPOSE 3000
 

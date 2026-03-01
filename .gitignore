@@ -20,7 +20,7 @@ lerna-debug.log*
 .env.local
 
 # Runtime queue
-data/delivery-queue.json
+data/
 
 # Source video and data files
 *.mov

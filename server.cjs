@@ -4,11 +4,11 @@ const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
 const fsp = require('fs/promises');
-const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { createAntiSpamProtector } = require('./lib/anti-spam.cjs');
 const { normalizeOriginList, buildCorsOptions } = require('./lib/cors-config.cjs');
+const db = require('./lib/db.cjs');
 require('dotenv').config();
 
 const app = express();
@@ -27,7 +27,6 @@ const MAIL_FROM = process.env.MAIL_FROM || SMTP_USER;
 const MAIL_TO = process.env.MAIL_TO || SMTP_USER;
 const SMTP_TLS_REJECT_UNAUTHORIZED = (process.env.SMTP_TLS_REJECT_UNAUTHORIZED || 'true') === 'true';
 
-const QUEUE_FILE_PATH = process.env.QUEUE_FILE_PATH || path.join(__dirname, 'data', 'delivery-queue.json');
 const QUEUE_RETRY_INTERVAL_MS = Number(process.env.QUEUE_RETRY_INTERVAL_MS || 15000);
 const QUEUE_BASE_RETRY_DELAY_MS = Number(process.env.QUEUE_BASE_RETRY_DELAY_MS || 30000);
 const QUEUE_MAX_RETRY_DELAY_MS = Number(process.env.QUEUE_MAX_RETRY_DELAY_MS || 15 * 60 * 1000);
@@ -43,7 +42,6 @@ const CORS_ALLOWED_ORIGINS = normalizeOriginList(
   process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173'
 );
 
-let deliveryQueue = [];
 let isQueueProcessing = false;
 
 const corsOptions = buildCorsOptions({
@@ -268,57 +266,24 @@ function calculateRetryDelayMs(attemptNumber) {
   return Math.min(QUEUE_BASE_RETRY_DELAY_MS * (2 ** exponent), QUEUE_MAX_RETRY_DELAY_MS);
 }
 
-async function persistQueueToDisk() {
-  const dir = path.dirname(QUEUE_FILE_PATH);
-  await fsp.mkdir(dir, { recursive: true });
-
-  const tmpPath = `${QUEUE_FILE_PATH}.tmp`;
-  await fsp.writeFile(tmpPath, JSON.stringify(deliveryQueue, null, 2), 'utf8');
-  await fsp.rename(tmpPath, QUEUE_FILE_PATH);
-}
-
-async function loadQueueFromDisk() {
+async function migrateJsonQueueToSqlite() {
+  const legacyPath = process.env.QUEUE_FILE_PATH || path.join(__dirname, 'data', 'delivery-queue.json');
   try {
-    const raw = await fsp.readFile(QUEUE_FILE_PATH, 'utf8');
+    const raw = await fsp.readFile(legacyPath, 'utf8');
     const parsed = JSON.parse(raw);
-    deliveryQueue = Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      deliveryQueue = [];
-      await persistQueueToDisk();
-      return;
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      await fsp.rename(legacyPath, legacyPath + '.bak').catch(() => {});
+      return 0;
     }
-
-    const backupName = `${QUEUE_FILE_PATH}.corrupted.${Date.now()}.json`;
-    console.error('⚠️ Очередь повреждена, создаю резервную копию:', backupName);
-    await fsp.mkdir(path.dirname(backupName), { recursive: true });
-    await fsp.copyFile(QUEUE_FILE_PATH, backupName).catch(() => {});
-    deliveryQueue = [];
-    await persistQueueToDisk();
+    const count = db.importFromQueue(parsed);
+    await fsp.rename(legacyPath, legacyPath + '.bak');
+    console.log(`📦 Мигрировано ${count} заявок из JSON в SQLite`);
+    return count;
+  } catch (err) {
+    if (err.code === 'ENOENT') return 0;
+    console.error('⚠️ Ошибка миграции JSON-очереди:', err.message);
+    return 0;
   }
-}
-
-function buildQueueId() {
-  if (typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID();
-  }
-  return `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
-}
-
-async function enqueueLeadForRetry(lead, initialErrors = {}) {
-  const item = {
-    id: buildQueueId(),
-    lead,
-    attempts: 0,
-    createdAt: new Date().toISOString(),
-    lastAttemptAt: null,
-    nextAttemptAt: Date.now(),
-    lastErrors: initialErrors
-  };
-
-  deliveryQueue.push(item);
-  await persistQueueToDisk();
-  return item;
 }
 
 async function processQueue() {
@@ -326,35 +291,31 @@ async function processQueue() {
   isQueueProcessing = true;
 
   try {
-    const now = Date.now();
-    let changed = false;
+    const pending = db.getPendingLeads(Date.now());
 
-    for (const item of [...deliveryQueue]) {
-      if ((item.nextAttemptAt || 0) > now) {
-        continue;
-      }
+    for (const row of pending) {
+      const lead = {
+        name: row.name,
+        phone: row.phone,
+        email: row.email,
+        city: row.city,
+        comment: row.comment,
+        page: row.page,
+      };
 
-      const attemptNumber = Number(item.attempts || 0) + 1;
-      item.attempts = attemptNumber;
-      item.lastAttemptAt = new Date().toISOString();
-
-      const result = await deliverLeadWithFallback(item.lead);
-      changed = true;
+      const attemptNumber = row.attempts + 1;
+      const result = await deliverLeadWithFallback(lead);
 
       if (result.ok) {
-        deliveryQueue = deliveryQueue.filter((qItem) => qItem.id !== item.id);
-        console.log(`✅ Заявка ${item.id} доставлена из очереди через ${result.channel}`);
+        db.markDelivered(row.id, result.channel);
+        console.log(`✅ Заявка #${row.id} доставлена через ${result.channel}`);
         continue;
       }
 
-      item.lastErrors = result.errors;
       const delayMs = calculateRetryDelayMs(attemptNumber);
-      item.nextAttemptAt = Date.now() + delayMs;
-      console.error(`❌ Заявка ${item.id} не доставлена. Повтор через ${Math.round(delayMs / 1000)}s`);
-    }
-
-    if (changed) {
-      await persistQueueToDisk();
+      const errorText = JSON.stringify(result.errors);
+      db.updateRetrySchedule(row.id, attemptNumber, Date.now() + delayMs, errorText);
+      console.error(`❌ Заявка #${row.id} не доставлена (попытка ${attemptNumber}). Повтор через ${Math.round(delayMs / 1000)}s`);
     }
   } catch (error) {
     console.error('❌ Ошибка обработки очереди:', extractErrorDetails(error));
@@ -376,8 +337,11 @@ async function initializeDeliveryChannels() {
     console.warn('⚠️ SMTP не настроен (проверьте SMTP_HOST/SMTP_USER/SMTP_PASS/MAIL_TO)');
   }
 
-  await loadQueueFromDisk();
-  console.log(`📥 Очередь доставки загружена: ${deliveryQueue.length} задач`);
+  db.getDb();
+  await migrateJsonQueueToSqlite();
+
+  const pendingCount = db.getPendingCount();
+  console.log(`📥 SQLite инициализирована: ${pendingCount} заявок ожидают доставки (${db.DB_PATH})`);
 
   const timer = setInterval(() => {
     processQueue().catch((error) => {
@@ -399,12 +363,12 @@ console.log(`   SPAM_MAX_SUBMITS_PER_WINDOW: ${SPAM_MAX_SUBMITS_PER_WINDOW}`);
 console.log(`   SPAM_MIN_SUBMIT_INTERVAL_MS: ${SPAM_MIN_SUBMIT_INTERVAL_MS}`);
 console.log(`   SPAM_BLOCK_MS: ${SPAM_BLOCK_MS}`);
 console.log(`   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS.length > 0 ? CORS_ALLOWED_ORIGINS.join(', ') : '(none)'}`);
-console.log(`   QUEUE_FILE_PATH: ${QUEUE_FILE_PATH}\n`);
+console.log(`   DB_PATH: ${db.DB_PATH}\n`);
 
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
-    queueSize: deliveryQueue.length,
+    queueSize: db.getPendingCount(),
     channels: {
       email: channelEmailConfigured(),
       telegram: channelTelegramConfigured()
@@ -562,10 +526,19 @@ app.post('/api/submit', async (req, res) => {
     });
   }
 
+  let leadId;
+  try {
+    leadId = db.insertLead(lead);
+  } catch (dbErr) {
+    console.error('❌ Ошибка записи в БД:', extractErrorDetails(dbErr));
+    return res.status(500).json({ error: 'Ошибка обработки заявки' });
+  }
+
   try {
     const deliveryResult = await deliverLeadWithFallback(lead);
 
     if (deliveryResult.ok) {
+      db.markDelivered(leadId, deliveryResult.channel);
       return res.status(200).json({
         success: true,
         delivery: deliveryResult.channel,
@@ -573,14 +546,16 @@ app.post('/api/submit', async (req, res) => {
       });
     }
 
-    const queuedItem = await enqueueLeadForRetry(lead, deliveryResult.errors);
-    console.error(`⚠️ Заявка ${queuedItem.id} добавлена в очередь ретраев`);
+    const errorText = JSON.stringify(deliveryResult.errors);
+    const delayMs = calculateRetryDelayMs(1);
+    db.updateRetrySchedule(leadId, 1, Date.now() + delayMs, errorText);
+    console.error(`⚠️ Заявка #${leadId} добавлена в очередь ретраев`);
 
     return res.status(202).json({
       success: true,
       delivery: 'queued_retry',
       queued: true,
-      queueId: queuedItem.id
+      leadId
     });
   } catch (error) {
     console.error('❌ Ошибка при обработке формы:', extractErrorDetails(error));
