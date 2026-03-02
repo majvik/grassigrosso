@@ -67,12 +67,12 @@
 ### Интеграционный слой
 
 - Telegram Bot API (уведомления о лидах)
-- SMTP через `nodemailer` (отправка лидов по email) с маршрутизацией по страницам (без дубликатов; office@ собирается почтовым сервисом отдельно):
-  - Главная → sales@grassigrosso.com
-  - Отелям → hotels@grassigrosso.com
-  - Дилерам → b2b@grassigrosso.com
-  - Документы, Контакты → sales@grassigrosso.com
-  - Остальные → MAIL_TO (из .env)
+- SMTP через `nodemailer` (отправка лидов по email) с маршрутизацией по страницам (без дубликатов; office@ собирается почтовым сервисом отдельно). callback@grassigrosso.com всегда добавляется дополнительным получателем:
+  - Главная → sales@ + callback@
+  - Отелям → hotels@ + callback@
+  - Дилерам → b2b@ + callback@
+  - Документы, Контакты → sales@ + callback@
+  - Остальные → MAIL_TO + callback@
 - Подтверждающее письмо пользователю (`lib/confirmation-email.cjs`):
   - HTML-письмо с inline CSS, шрифт Nunito (Google Fonts) с fallback на Arial/Helvetica
   - Логотип: PNG-версия (`public/email-logo.png`), hosted по URL сайта

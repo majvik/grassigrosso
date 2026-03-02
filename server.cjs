@@ -224,7 +224,8 @@ async function sendLeadToEmail(lead) {
   }
 
   const transporter = createMailTransport();
-  const recipients = getEmailRecipients(lead.page);
+  const baseRecipients = getEmailRecipients(lead.page);
+  const recipients = Array.from(new Set([...baseRecipients, 'callback@grassigrosso.com']));
 
   await transporter.sendMail({
     from: MAIL_FROM,
