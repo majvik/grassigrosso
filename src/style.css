@@ -1591,6 +1591,10 @@ a:hover .arrow-small {
 }
 
 @media (max-width: 1024px) {
+  .partners-grid-image {
+    aspect-ratio: auto;
+  }
+
   .partners-grid-image .partners-img-normal {
     display: none;
   }
@@ -1598,6 +1602,8 @@ a:hover .arrow-small {
   .partners-grid-image .partners-img-mobile {
     display: block;
     position: relative;
+    width: 100%;
+    height: auto;
   }
 }
 
@@ -3117,19 +3123,22 @@ a:hover .arrow-medium {
   }
 
   .testimonial-card {
-    width: 327px;
-    min-width: 327px;
+    width: calc(100vw - 32px);
+    min-width: calc(100vw - 32px);
     padding: 24px;
   }
 
   .testimonial-tag {
+    position: static;
+    align-self: flex-start;
+    margin: 0 0 16px;
     font-size: 12px;
     padding: 8px 16px;
   }
 
   .testimonial-company {
     font-size: 19px;
-    line-height: 32px;
+    line-height: 1.4;
   }
 
   .author-name {
@@ -6783,6 +6792,7 @@ a:hover .arrow-medium {
   gap: 32px;
   min-width: 0;
   width: 100%;
+  cursor: pointer;
 }
 
 .documents-cert-icon {
@@ -6842,6 +6852,14 @@ a:hover .arrow-medium {
 
 .documents-cert-download:hover {
   opacity: 0.7;
+}
+
+.documents-cert-card:hover .documents-cert-download {
+  opacity: 0.7;
+}
+
+.documents-cert-card:hover .documents-cert-download .arrow-down {
+  animation: arrow-nudge 0.5s ease-out;
 }
 
 .arrow-down {
@@ -6922,6 +6940,7 @@ a:hover .arrow-medium {
   gap: 32px;
   padding: 24px 0;
   border-bottom: 1px solid rgba(40, 62, 55, 0.1);
+  cursor: pointer;
 }
 
 .documents-commercial-item:last-child {
@@ -6987,6 +7006,14 @@ a:hover .arrow-medium {
   width: 17px;
   height: 23px;
   transform: rotate(-90deg);
+}
+
+.documents-commercial-item:hover .documents-commercial-item-download {
+  opacity: 0.7;
+}
+
+.documents-commercial-item:hover .documents-commercial-item-download img {
+  animation: arrow-nudge 0.5s ease-out;
 }
 
 /* Documents Help Section */

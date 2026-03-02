@@ -651,12 +651,29 @@ const testimonialsSection = document.querySelector('.testimonials')
 if (testimonialsSlider && testimonialsSection) {
   let testimonialCards = testimonialsSlider.querySelectorAll('.testimonial-card')
   const originalCardCount = testimonialCards.length
+
+  const isMobileTestimonials = () => window.matchMedia('(max-width: 1024px)').matches
+  const getSliderGap = () => {
+    const styles = window.getComputedStyle(testimonialsSlider)
+    const gap = Number.parseFloat(styles.columnGap || styles.gap || '32')
+    return Number.isFinite(gap) ? gap : 32
+  }
+  const getCardSpan = () => {
+    const card = testimonialCards[0]
+    return card ? card.offsetWidth + getSliderGap() : 0
+  }
+  const getCardsPerStep = () => (isMobileTestimonials() ? 1 : 2)
+  const snapToNearestCard = () => {
+    if (!isMobileTestimonials()) return
+    const cardSpan = getCardSpan()
+    if (!cardSpan) return
+    state.targetX = Math.round(state.targetX / cardSpan) * cardSpan
+  }
   
   // Duplicate cards for infinite loop (5 copies for smoother transition)
   if (originalCardCount > 0) {
     const copies = 5
-    const cardWidth = testimonialCards[0].offsetWidth + 32 // width + gap
-    const sequenceWidth = cardWidth * originalCardCount
+    const sequenceWidth = getCardSpan() * originalCardCount
     
     // Clone cards
     for (let i = 0; i < copies; i++) {
@@ -676,8 +693,8 @@ if (testimonialsSlider && testimonialsSection) {
   
   // State for smooth scrolling
   const state = {
-    currentX: originalCardCount > 0 ? (testimonialCards[0].offsetWidth + 32) * originalCardCount * 2 : 0,
-    targetX: originalCardCount > 0 ? (testimonialCards[0].offsetWidth + 32) * originalCardCount * 2 : 0,
+    currentX: originalCardCount > 0 ? getCardSpan() * originalCardCount * 2 : 0,
+    targetX: originalCardCount > 0 ? getCardSpan() * originalCardCount * 2 : 0,
     isDragging: false,
     startX: 0,
     lastX: 0,
@@ -716,14 +733,14 @@ if (testimonialsSlider && testimonialsSection) {
   
   // Get actual card width + gap for 2 columns
   const getScrollStep = () => {
-    const card = testimonialCards[0]
-    return card ? (card.offsetWidth + 32) * 2 : 1000
+    const cardSpan = getCardSpan()
+    return cardSpan ? cardSpan * getCardsPerStep() : 1000
   }
   
   // Get sequence width (one full set of original cards)
   const getSequenceWidth = () => {
-    const card = testimonialCards[0]
-    return card ? (card.offsetWidth + 32) * originalCardCount : 0
+    const cardSpan = getCardSpan()
+    return cardSpan ? cardSpan * originalCardCount : 0
   }
   
   
@@ -823,6 +840,7 @@ if (testimonialsSlider && testimonialsSection) {
     if (state.isDragging) {
       state.isDragging = false
       testimonialsSlider.classList.remove('active')
+      snapToNearestCard()
       setTimeout(() => {
         state.isUserInteracting = false
       }, 300)
@@ -833,6 +851,7 @@ if (testimonialsSlider && testimonialsSection) {
     if (state.isDragging) {
       state.isDragging = false
       testimonialsSlider.classList.remove('active')
+      snapToNearestCard()
       setTimeout(() => {
         state.isUserInteracting = false
       }, 300)
@@ -858,6 +877,7 @@ if (testimonialsSlider && testimonialsSection) {
   testimonialsSlider.addEventListener('touchend', () => {
     state.isDragging = false
     testimonialsSlider.classList.remove('active')
+    snapToNearestCard()
     setTimeout(() => {
       state.isUserInteracting = false
     }, 300)
@@ -2048,7 +2068,7 @@ const DOCUMENT_REQUEST_FILES = {
   certificate: 'СертификатСоответствия.pdf',
   trademark: 'СвидетельствоНаТоварныйЗнак.pdf',
   catalog: 'test-file.md',
-  presentation: 'test-file.md'
+  presentation: 'Grassigrosso-company.pdf'
 }
 
 if (documentRequestModal && documentRequestForm && documentRequestText) {
@@ -2085,11 +2105,13 @@ if (documentRequestModal && documentRequestForm && documentRequestText) {
 
   document.body.addEventListener('click', (e) => {
     const certLink = e.target.closest('.documents-cert-download[data-request-document]')
+    const certCard = e.target.closest('.documents-cert-card[data-document]')
     const commercialLink = e.target.closest('.documents-commercial-item-download[data-request-document]')
-    const link = certLink || commercialLink
-    if (!link) return
-    e.preventDefault()
-    const card = link.closest('.documents-cert-card') || link.closest('.documents-commercial-item')
+    const commercialItem = e.target.closest('.documents-commercial-item[data-document]')
+    const target = certLink || certCard || commercialLink || commercialItem
+    if (!target) return
+    if (certLink || commercialLink) e.preventDefault()
+    const card = target.closest('.documents-cert-card') || target.closest('.documents-commercial-item')
     const documentType = (card && card.dataset.document) || 'declaration'
     openDocumentRequestModal(documentType)
   })
