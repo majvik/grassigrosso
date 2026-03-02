@@ -67,17 +67,17 @@
 ### Интеграционный слой
 
 - Telegram Bot API (уведомления о лидах)
-- SMTP через `nodemailer` (дублирование лидов по email) с маршрутизацией по страницам:
-  - Главная → sales@grassigrosso.com + office@grassigrosso.com
-  - Отелям → hotels@grassigrosso.com + office@grassigrosso.com
-  - Дилерам → b2b@grassigrosso.com + office@grassigrosso.com
-  - Документы, Контакты → sales@grassigrosso.com + office@grassigrosso.com
+- SMTP через `nodemailer` (отправка лидов по email) с маршрутизацией по страницам (без дубликатов; office@ собирается почтовым сервисом отдельно):
+  - Главная → sales@grassigrosso.com
+  - Отелям → hotels@grassigrosso.com
+  - Дилерам → b2b@grassigrosso.com
+  - Документы, Контакты → sales@grassigrosso.com
   - Остальные → MAIL_TO (из .env)
 - Подтверждающее письмо пользователю (`lib/confirmation-email.cjs`):
   - HTML-письмо с inline CSS, шрифт Nunito (Google Fonts) с fallback на Arial/Helvetica
   - Логотип: PNG-версия (`public/email-logo.png`), hosted по URL сайта
   - HMAC-подписанная ссылка отписки (секрет из `UNSUBSCRIBE_SECRET` или `BOT_TOKEN`)
-  - При клике на отписку: уведомление на sales/office/callback + редирект на `unsubscribe.html`
+  - При клике на отписку: уведомление на sales@ и callback@ + редирект на `unsubscribe.html`
 - Retry-очередь из SQLite (фоновый воркер каждые 15 с) для гарантированной доставки
 - Диагностический endpoint SMTP: `GET /api/smtp-diag`
 

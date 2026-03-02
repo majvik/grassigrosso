@@ -204,14 +204,14 @@ function createMailTransport() {
 }
 
 const PAGE_EMAIL_ROUTING = {
-  'Главная страница':   ['sales@grassigrosso.com', 'office@grassigrosso.com'],
-  'Главная (КП)':       ['sales@grassigrosso.com', 'office@grassigrosso.com'],
-  'Страница "Отелям"':  ['hotels@grassigrosso.com', 'office@grassigrosso.com'],
-  'Отелям (каталог)':   ['hotels@grassigrosso.com', 'office@grassigrosso.com'],
-  'Страница "Дилерам"': ['b2b@grassigrosso.com',    'office@grassigrosso.com'],
-  'Документы':          ['sales@grassigrosso.com',   'office@grassigrosso.com'],
-  'Документы (помощь)': ['sales@grassigrosso.com',   'office@grassigrosso.com'],
-  'Страница "Контакты"':['sales@grassigrosso.com',   'office@grassigrosso.com'],
+  'Главная страница':   ['sales@grassigrosso.com'],
+  'Главная (КП)':       ['sales@grassigrosso.com'],
+  'Страница "Отелям"':  ['hotels@grassigrosso.com'],
+  'Отелям (каталог)':   ['hotels@grassigrosso.com'],
+  'Страница "Дилерам"': ['b2b@grassigrosso.com'],
+  'Документы':          ['sales@grassigrosso.com'],
+  'Документы (помощь)': ['sales@grassigrosso.com'],
+  'Страница "Контакты"':['sales@grassigrosso.com'],
 };
 
 function getEmailRecipients(page) {
@@ -554,7 +554,6 @@ app.get('/api/unsubscribe', async (req, res) => {
       const transporter = createMailTransport();
       const notifyRecipients = [
         'sales@grassigrosso.com',
-        'office@grassigrosso.com',
         'callback@grassigrosso.com',
       ].join(', ');
 
