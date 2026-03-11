@@ -37,3 +37,6 @@ data/
 *.njsproj
 *.sln
 *.sw?
+
+# Local-only helper docs
+LOCAL_DOWNLOAD_LINKS.md
