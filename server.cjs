@@ -218,6 +218,22 @@ function getEmailRecipients(page) {
   return PAGE_EMAIL_ROUTING[page] || [MAIL_TO];
 }
 
+const DOWNLOAD_FILE_ROUTING = {
+  declaration: 'Декларация.pdf',
+  certificate: 'СертификатСоответствия.pdf',
+  trademark: 'СвидетельствоНаТоварныйЗнак.pdf',
+  presentation: 'Grassigrosso-company.pdf',
+  catalog: 'catalogue.pdf'
+};
+
+function resolveDownloadPath(filename) {
+  const candidates = [
+    path.join(__dirname, 'dist', 'documents', filename),
+    path.join(__dirname, 'public', 'documents', filename)
+  ];
+  return candidates.find((candidate) => fs.existsSync(candidate)) || null;
+}
+
 async function sendLeadToEmail(lead) {
   if (!channelEmailConfigured()) {
     throw new Error('Email channel is not configured');
@@ -411,6 +427,23 @@ app.get('/health', (req, res) => {
       telegram: channelTelegramConfigured()
     }
   });
+});
+
+app.get('/api/download/:docId', (req, res) => {
+  const docId = String(req.params.docId || '').trim().toLowerCase();
+  const filename = DOWNLOAD_FILE_ROUTING[docId];
+
+  if (!filename) {
+    return res.status(404).json({ error: 'Документ не найден' });
+  }
+
+  const filePath = resolveDownloadPath(filename);
+  if (!filePath) {
+    return res.status(404).json({ error: 'Файл недоступен' });
+  }
+
+  res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`);
+  return res.sendFile(filePath);
 });
 
 const isProd = process.env.NODE_ENV === 'production';
