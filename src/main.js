@@ -2067,7 +2067,7 @@ const DOCUMENT_REQUEST_FILES = {
   declaration: 'Декларация.pdf',
   certificate: 'СертификатСоответствия.pdf',
   trademark: 'СвидетельствоНаТоварныйЗнак.pdf',
-  catalog: 'test-file.md',
+  catalog: 'catalogue.pdf',
   presentation: 'Grassigrosso-company.pdf'
 }
 
