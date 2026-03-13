@@ -17,7 +17,12 @@ const app = express();
 const PORT = Number(process.env.PORT || 3000);
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
-const CHAT_ID = process.env.CHAT_ID || '';
+const RAW_CHAT_ID = process.env.CHAT_ID || '';
+const CHAT_IDS = RAW_CHAT_ID
+  .split(',')
+  .map((id) => id.trim())
+  .filter((id) => id.length > 0);
+const CHAT_ID = CHAT_IDS[0] || '';
 
 const SMTP_HOST = process.env.SMTP_HOST || '';
 const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
@@ -147,7 +152,7 @@ function channelEmailConfigured() {
 }
 
 function channelTelegramConfigured() {
-  return Boolean(BOT_TOKEN && CHAT_ID);
+  return Boolean(BOT_TOKEN && CHAT_IDS.length > 0);
 }
 
 function extractErrorDetails(error) {
@@ -277,11 +282,25 @@ async function sendLeadToTelegram(lead) {
   }
 
   const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-  await axios.post(url, {
-    chat_id: CHAT_ID,
-    text: buildTelegramMessage(lead),
-    parse_mode: 'Markdown'
-  });
+  const message = buildTelegramMessage(lead);
+  const errors = [];
+
+  for (const id of CHAT_IDS) {
+    try {
+      await axios.post(url, {
+        chat_id: id,
+        text: message,
+        parse_mode: 'Markdown'
+      });
+    } catch (err) {
+      errors.push({ chatId: id, error: extractErrorDetails(err) });
+    }
+  }
+
+  if (errors.length === CHAT_IDS.length) {
+    const summary = errors.map((e) => `${e.chatId}: ${e.error}`).join('; ');
+    throw new Error(`Telegram delivery failed for all CHAT_IDs: ${summary}`);
+  }
 }
 
 async function deliverLeadWithFallback(lead) {
@@ -407,7 +426,7 @@ async function initializeDeliveryChannels() {
 console.log('\n🚀 Starting server...');
 console.log(`   PORT: ${PORT}`);
 console.log(`   BOT_TOKEN: ${BOT_TOKEN ? '✅ Set' : '❌ Not set'}`);
-console.log(`   CHAT_ID: ${CHAT_ID ? '✅ Set' : '❌ Not set'}`);
+console.log(`   CHAT_ID: ${CHAT_IDS.length > 0 ? '✅ Set' : '❌ Not set'}`);
 console.log(`   SMTP_HOST: ${SMTP_HOST ? '✅ Set' : '❌ Not set'}`);
 console.log(`   SMTP_USER: ${SMTP_USER ? '✅ Set' : '❌ Not set'}`);
 console.log(`   MAIL_TO: ${MAIL_TO ? '✅ Set' : '❌ Not set'}`);
