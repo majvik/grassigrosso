@@ -2,6 +2,9 @@
 FROM node:22-slim AS build
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
+  && rm -rf /var/lib/apt/lists/*
+
 COPY package.json package-lock.json ./
 RUN npm ci
 
@@ -11,25 +14,26 @@ ARG VITE_YANDEX_MAPS_API_KEY
 ENV VITE_YANDEX_MAPS_API_KEY=${VITE_YANDEX_MAPS_API_KEY}
 RUN npm run build
 
+RUN npm prune --omit=dev
+
 
 # ---------- runtime stage ----------
 FROM node:22-slim
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl python3 make g++ \
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
   && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev && rm -rf /root/.npm
-
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package.json ./
 COPY --from=build /app/server.cjs ./
 COPY --from=build /app/lib ./lib
 COPY --from=build /app/dist ./dist
 
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data/documents
 
 EXPOSE 3000
 

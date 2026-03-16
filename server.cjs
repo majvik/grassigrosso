@@ -233,6 +233,7 @@ const DOWNLOAD_FILE_ROUTING = {
 
 function resolveDownloadPath(filename) {
   const candidates = [
+    path.join(__dirname, 'data', 'documents', filename),
     path.join(__dirname, 'dist', 'documents', filename),
     path.join(__dirname, 'public', 'documents', filename)
   ];
@@ -726,6 +727,11 @@ if (isDev) {
     });
     res.sendFile(file);
   });
+
+  const documentsVolumePath = path.join(__dirname, 'data', 'documents');
+  if (fs.existsSync(documentsVolumePath)) {
+    app.use('/documents', express.static(documentsVolumePath));
+  }
 
   app.use(express.static(staticPath, {
     extensions: ['html', 'htm'],
