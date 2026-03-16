@@ -228,7 +228,7 @@ const DOWNLOAD_FILE_ROUTING = {
   certificate: 'СертификатСоответствия.pdf',
   trademark: 'СвидетельствоНаТоварныйЗнак.pdf',
   presentation: 'Grassigrosso-company.pdf',
-  catalog: 'catalogue.pdf'
+  catalog: 'Catalog_v1.2.pdf'
 };
 
 function resolveDownloadPath(filename) {
