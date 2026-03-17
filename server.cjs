@@ -130,6 +130,22 @@ function buildEmailSubject(lead) {
   return `[Grassigrosso] Новая заявка (${lead.page || 'Сайт'})`;
 }
 
+function formatMoscowTime() {
+  try {
+    return new Date().toLocaleString('ru-RU', {
+      timeZone: 'Europe/Moscow',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }) + ' МСК';
+  } catch {
+    return new Date().toISOString();
+  }
+}
+
 function buildEmailText(lead) {
   return [
     'Новая заявка с сайта Grassigrosso',
@@ -141,7 +157,7 @@ function buildEmailText(lead) {
     `Телефон: ${lead.phone || 'Не указан'}`,
     `Сообщение: ${lead.comment || 'Нет'}`,
     '',
-    `Время: ${new Date().toISOString()}`
+    `Время: ${formatMoscowTime()}`
   ].join('\n');
 }
 
@@ -157,7 +173,7 @@ function buildEmailHtml(lead) {
         <tr><td style="padding: 6px 0; font-weight: bold;">Телефон:</td><td style="padding: 6px 0;">${escapeHtml(lead.phone || 'Не указан')}</td></tr>
         <tr><td style="padding: 6px 0; font-weight: bold; vertical-align: top;">Сообщение:</td><td style="padding: 6px 0;">${escapeHtml(lead.comment || 'Нет')}</td></tr>
       </table>
-      <p style="margin-top: 16px; color: #666;">Время: ${new Date().toISOString()}</p>
+      <p style="margin-top: 16px; color: #666;">Время: ${escapeHtml(formatMoscowTime())}</p>
     </div>
   `;
 }
