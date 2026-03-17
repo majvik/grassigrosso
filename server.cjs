@@ -59,6 +59,21 @@ app.set('trust proxy', true);
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// Canonical domain redirect (production only)
+const PRIMARY_HOST = 'grassigrosso.com';
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    const host = String(req.headers.host || '').replace(/:\d+$/, '').toLowerCase();
+
+    if (!host || host === PRIMARY_HOST) {
+      return next();
+    }
+
+    const targetUrl = `https://${PRIMARY_HOST}${req.originalUrl || '/'}`;
+    return res.redirect(301, targetUrl);
+  });
+}
+
 function escapeMarkdown(text) {
   if (!text) return '';
   return String(text)
