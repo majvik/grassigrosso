@@ -2004,10 +2004,19 @@ a:hover .arrow-medium {
   border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.1);
 }
 
+.mobile-menu-header .logo {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: calc(100% - 40px);
+}
+
 .mobile-menu-header .logo-img {
-  width: 116.3px;
   height: 32px;
+  width: auto;
+  max-width: 100%;
   object-fit: contain;
+  object-position: left center;
 }
 
 .mobile-menu-close {
@@ -2627,8 +2636,20 @@ a:hover .arrow-medium {
     justify-content: space-between;
   }
 
+  /* Сброс фиксированной ширины десктопа: иначе box ~174px, а SVG по высоте ~117px — «пустота» и ощущение сдвига */
+  .header-main-content .logo {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+  }
+
   .logo-img {
     height: 32px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: left center;
   }
 
   /* Hide desktop nav, show mobile menu button */
@@ -3008,9 +3029,12 @@ a:hover .arrow-medium {
     scroll-padding-left: 16px;
   }
 
+  /* Сначала vw (fallback), затем dvw — ближе к видимой области, меньше ложного overflow у html */
   .testimonial-card {
     width: calc(100vw - 32px);
     min-width: calc(100vw - 32px);
+    width: calc(100dvw - 32px);
+    min-width: calc(100dvw - 32px);
     padding: 24px;
   }
 
@@ -3574,16 +3598,17 @@ a:hover .arrow-medium {
   border-radius: 24px;
 }
 
+/* Full-bleed без 100vw: отрицательные margin = горизонтальный padding родителя (.geography-section) */
 .geography-cities-wrapper {
-  width: 100vw;
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  width: auto;
+  max-width: none;
+  margin-left: -64px;
+  margin-right: -64px;
   overflow-x: hidden;
   padding-left: 64px;
   padding-right: 64px;
+  box-sizing: border-box;
 }
 
 .geography-cities {
@@ -4377,6 +4402,8 @@ a:hover .arrow-medium {
   }
 
   .geography-cities-wrapper {
+    margin-left: -40px;
+    margin-right: -40px;
     padding-left: 40px;
     padding-right: 40px;
   }
@@ -4503,6 +4530,8 @@ a:hover .arrow-medium {
   }
 
   .geography-cities-wrapper {
+    margin-left: -32px;
+    margin-right: -32px;
     padding-left: 32px;
     padding-right: 32px;
   }
@@ -4834,6 +4863,8 @@ a:hover .arrow-medium {
   }
 
   .geography-cities-wrapper {
+    margin-left: -16px;
+    margin-right: -16px;
     padding-left: 16px;
     padding-right: 16px;
   }
@@ -4845,11 +4876,6 @@ a:hover .arrow-medium {
 
   .city-item {
     font-size: 16px;
-  }
-
-  .geography-cities-wrapper {
-    padding-left: 16px;
-    padding-right: 16px;
   }
 
   .geography-cities {

@@ -11,6 +11,7 @@ html,
 body {
   margin: 0;
   background: var(--color-bg-white);
+  overflow-x: hidden;
 }
 
 .preloader {

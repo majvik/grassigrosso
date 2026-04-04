@@ -85,6 +85,11 @@ body.fonts-loaded > *:not(.preloader):not(.modal-overlay):not(.mobile-menu-overl
   50% { transform: translateX(3px); }
 }
 
+/* Скрываем горизонтальный скролл: 100vw и full-bleed через -50vw дают вылет за край на мобильных */
+html {
+  overflow-x: hidden;
+}
+
 /* Body - fluid width */
 body {
   font-family: var(--font-family);
