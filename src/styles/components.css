@@ -2561,7 +2561,7 @@ a:hover .arrow-medium {
     min-width: auto;
   }
 
-  /* Cookie Banner - Mobile: top sticky, full width */
+  /* Cookie Banner - Mobile: top sticky, full width; кнопка на второй строке */
   .cookie-banner {
     position: fixed;
     top: 0;
@@ -2569,10 +2569,14 @@ a:hover .arrow-medium {
     right: 0;
     bottom: auto;
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     height: auto;
     border-radius: 0;
-    padding: 8px 16px;
-    gap: 16px;
+    padding: 12px 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-start;
     z-index: 999;
   }
 
@@ -2582,24 +2586,31 @@ a:hover .arrow-medium {
   }
 
   body.cookie-visible {
-    padding-top: 64px;
+    padding-top: 120px;
   }
 
   .cookie-icon {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
+    margin-top: 2px;
   }
 
   .cookie-text {
     font-size: 14px;
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0;
+    line-height: 1.35;
   }
 
   .btn-cookie {
-    font-size: 16px;
-    padding: 8px 16px;
-    width: 60px;
-    height: 48px;
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    font-size: 15px;
+    padding: 10px 16px;
+    height: auto;
+    min-height: 44px;
   }
 
   /* Header Top Bar - Hidden on mobile */
