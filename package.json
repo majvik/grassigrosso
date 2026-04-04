@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "new-page": "node scripts/new-page.mjs",
     "start": "node server.cjs"
   },
   "dependencies": {

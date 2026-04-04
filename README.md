@@ -25,6 +25,8 @@ npm run dev
 npm start
 ```
 
+**Новая HTML-страница:** см. [AGENTS.md](AGENTS.md). Кратко: `npm run new-page -- <slug> "Заголовок – Grassigrosso"` или копия [templates/marketing-page.html](templates/marketing-page.html) + запись в `vite.config.mjs`.
+
 ## Продакшен
 
 ```bash

@@ -1,7 +1,7 @@
 # Grassi Grosso: актуальное описание архитектуры (по коду)
 
-Дата фиксации: 01.03.2026  
-Источник: фактический код проекта (не `*.md` документация)
+Дата фиксации: 04.04.2026  
+Источник: фактический код проекта (не `*.md` документация). Чеклист новых страниц и краткий roadmap CMS — [AGENTS.md](AGENTS.md).
 
 ## 1) Коротко для менеджмента
 
@@ -37,6 +37,8 @@
   - модальные окна, cookie-баннер, формы: контактные (`.contact-form`), коммерческое предложение, запрос каталога, запрос документов
   - все формы отправляют в `POST /api/submit` (URL задаётся через `VITE_API_URL`)
   - lazy-подгрузка карт (Yandex Maps API key через `VITE_YANDEX_MAPS_API_KEY` при сборке)
+- Стили: точка входа `src/style.css` подключает `src/styles/tokens.css`, `src/styles/base.css`, `src/styles/components.css`. Для первого кадра прелоадера содержимое `src/critical-preloader.css` встраивается в HTML внутрь `<style id="vite-critical-css">` на этапе dev/build плагином `grassigrosso-critical-preloader` в `vite.config.mjs` (только если в странице есть этот пустой плейсхолдер).
+- Новая маркетинговая страница: шаблон [templates/marketing-page.html](templates/marketing-page.html); автоматизация `npm run new-page -- <slug> "Заголовок – Grassigrosso"` ([scripts/new-page.mjs](scripts/new-page.mjs)) создаёт `<slug>.html` в корне и добавляет ключ в `build.rollupOptions.input` в `vite.config.mjs`. Подробный чеклист — [AGENTS.md](AGENTS.md).
 
 ### Backend слой
 
@@ -178,6 +180,10 @@
 
 Ожидаемый эффект: быстрее первый экран, меньше инфраструктурных затрат, стабильнее UX на мобильных сетях.
 
+### Шаг 1b (параллельно по продукту): каталог и CMS
+
+Отдельно от шага с PocketBase возможен сценарий **headless CMS** (например Strapi) для редактируемого каталога и публичного API; витрина тогда читает API, лиды остаются на текущем `POST /api/submit`. До внедрения интеграции не менять контракт форм и не добавлять обязательные `VITE_*` под CMS без задачи. Кратко зафиксировано в [AGENTS.md](AGENTS.md).
+
 ### Шаг 2: «умная» база на PocketBase (JS SDK) с минимальным администрированием
 
 Цель: перейти от канала уведомлений к полноценной системе данных.
@@ -201,12 +207,13 @@
 
 ## 9) Где это подтверждено в коде
 
-- Frontend: `src/main.js`, `src/style.css`; страницы с формами: `hotels.html`, `dealers.html`, `contacts.html`, `documents.html`, `catalog.html` (и др., где есть `.contact-form` или формы запроса каталога/документов/КП)
+- Frontend: `src/main.js`, `src/style.css`, `src/styles/*.css`, `src/critical-preloader.css`; страницы с формами: `hotels.html`, `dealers.html`, `contacts.html`, `documents.html`, `catalog.html` (и др., где есть `.contact-form` или формы запроса каталога/документов/КП)
+- Новые страницы и единообразие оболочки: `AGENTS.md`, `templates/marketing-page.html`, `scripts/new-page.mjs`; критический CSS — плагин `criticalPreloaderPlugin` в `vite.config.mjs`
 - API и заявки: `server.cjs` (нормализация лида, SQLite запись, Telegram/Email доставка, retry из SQLite, подтверждение пользователю, отписка)
 - Подтверждение и отписка: `lib/confirmation-email.cjs` (HTML-шаблон, HMAC-токены), `unsubscribe.html` (страница подтверждения)
 - БД: `lib/db.cjs` (SQLite через `better-sqlite3`, таблица `leads`, WAL mode, миграция из JSON)
 - Антиспам: `lib/anti-spam.cjs`; CORS: `lib/cors-config.cjs`
 - SMTP-диагностика: `GET /api/smtp-diag` в `server.cjs` (только при `NODE_ENV !== 'production'`)
 - Логотип для email: `public/email-logo.png` (PNG-версия SVG-логотипа для email-клиентов)
-- Сборка multi-page: `vite.config.mjs` (все HTML-входы включая `unsubscribe.html` и proxy `/api` на :3000)
+- Сборка multi-page: `vite.config.mjs` (все HTML-входы включая `404.html`, `unsubscribe.html` и proxy `/api` на :3000)
 - Контейнеризация: `Dockerfile` + `docker-compose.yml` (volume `grassigrosso-data`); реверс-прокси: `nginx.conf`
