@@ -253,6 +253,10 @@
   display: block;
 }
 
+.hero-video--mobile {
+  display: none;
+}
+
 .hero-poster {
   display: none;
   width: 100%;
@@ -532,6 +536,10 @@
   border-radius: 16px;
   outline: none;
   display: block;
+}
+
+.modal-video--mobile {
+  display: none;
 }
 
 /* Commercial Offer Modal (3 steps) – сброс наследования от .modal-content (line-height: 0) */
@@ -2719,7 +2727,7 @@ a:hover .arrow-medium {
     aspect-ratio: 16 / 9;
     border-radius: 16px;
     overflow: hidden;
-    cursor: default;
+    cursor: pointer;
   }
 
   .hero-image img {
@@ -2730,16 +2738,28 @@ a:hover .arrow-medium {
     display: block;
   }
 
-  .hero-video {
+  .hero-video--desktop {
     display: none;
   }
 
-  .hero-poster {
+  .hero-video--mobile {
     display: block;
   }
 
-  .hero-play-btn {
+  .hero-poster {
     display: none;
+  }
+
+  .hero-play-btn {
+    display: block;
+  }
+
+  .modal-video--desktop {
+    display: none;
+  }
+
+  .modal-video--mobile {
+    display: block;
   }
 
   /* Modal mobile */

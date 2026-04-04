@@ -1613,10 +1613,27 @@ if (dealerPackageSelect) {
 // Video Modal
 const videoModal = document.getElementById('videoModal')
 const modalClose = videoModal?.querySelector('.modal-close')
-const modalVideo = videoModal?.querySelector('.modal-video')
 
 function isMobileView() {
   return window.innerWidth <= 768
+}
+
+function getActiveModalVideo() {
+  if (!videoModal) return null
+  const mobile = videoModal.querySelector('.modal-video--mobile')
+  const desktop = videoModal.querySelector('.modal-video--desktop')
+  if (mobile && desktop) {
+    return isMobileView() ? mobile : desktop
+  }
+  return videoModal.querySelector('.modal-video')
+}
+
+function pauseAllModalVideos() {
+  if (!videoModal) return
+  videoModal.querySelectorAll('.modal-video').forEach((v) => {
+    v.pause()
+    v.currentTime = 0
+  })
 }
 
 let scrollPosition = 0
@@ -1644,28 +1661,29 @@ function unlockScroll() {
 }
 
 function openVideoModal() {
-  if (!videoModal || !modalVideo || isMobileView()) return
+  if (!videoModal) return
+  const modalVideo = getActiveModalVideo()
+  if (!modalVideo) return
+  pauseAllModalVideos()
   ensureVideoSource(modalVideo)
   videoModal.classList.add('active')
   lockScroll()
   modalVideo.currentTime = 0
-  modalVideo.play()
+  modalVideo.play().catch(() => {})
 }
 
 function closeVideoModal() {
-  if (!videoModal || !modalVideo) return
+  if (!videoModal) return
   videoModal.classList.remove('active')
   unlockScroll()
-  modalVideo.pause()
-  modalVideo.currentTime = 0
+  pauseAllModalVideos()
 }
 
 // Bind all video triggers to the modal
 const videoTriggers = document.querySelectorAll('#heroVideo, #qualityVideo')
 
 videoTriggers.forEach(trigger => {
-  trigger.addEventListener('click', (e) => {
-    if (isMobileView()) return
+  trigger.addEventListener('click', () => {
     openVideoModal()
   })
 })

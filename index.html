@@ -131,7 +131,7 @@
         </div>
         <div class="hero-image" id="heroVideo">
           <video
-            class="hero-video"
+            class="hero-video hero-video--desktop"
             poster="./public/grassigrosso-poster.avif"
             autoplay
             loop
@@ -141,6 +141,17 @@
             <source src="./public/grassigrosso-silent.av1.mp4" type="video/mp4; codecs=av01.0.08M.08" />
             <source src="./public/grassigrosso-silent.webm" type="video/webm" />
             <source src="./public/grassigrosso-silent.mp4" type="video/mp4" />
+          </video>
+          <video
+            class="hero-video hero-video--mobile"
+            poster="./public/grassigrosso-poster.avif"
+            autoplay
+            loop
+            muted
+            playsinline
+          >
+            <source src="./public/grassigrosso-silent-mobile.webm" type="video/webm" />
+            <source src="./public/grassigrosso-silent-mobile.mp4" type="video/mp4" />
           </video>
           <picture class="hero-poster">
             <source type="image/avif" srcset="./public/grassigrosso-poster.avif" />
@@ -826,7 +837,7 @@
           </svg>
         </button>
         <video
-          class="modal-video"
+          class="modal-video modal-video--desktop"
           poster="./public/grassigrosso-poster.avif"
           preload="none"
           controls
@@ -835,6 +846,16 @@
           <source src="./public/grassigrosso-sound.av1.mp4" type="video/mp4; codecs=av01.0.08M.08" />
           <source src="./public/grassigrosso-sound.webm" type="video/webm" />
           <source src="./public/grassigrosso-sound.mp4" type="video/mp4" />
+        </video>
+        <video
+          class="modal-video modal-video--mobile"
+          poster="./public/grassigrosso-poster.avif"
+          preload="none"
+          controls
+          playsinline
+        >
+          <source src="./public/grassigrosso-sound-mobile.webm" type="video/webm" />
+          <source src="./public/grassigrosso-sound-mobile.mp4" type="video/mp4" />
         </video>
       </div>
     </div>
