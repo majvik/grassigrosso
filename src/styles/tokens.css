@@ -92,4 +92,6 @@
   --font-size-body: 17px;
   --font-size-ui-lg: 21px;
   --font-size-section-title: 56px;
+  /* ≤430px в components.css: clamp(min, vw, max) */
+  --font-size-section-title-xs-max: 40px;
 }
