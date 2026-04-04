@@ -24,6 +24,11 @@
  *   Form success: #2e7d32, #e8f5e9, #a5d6a7
  *
  * Typography: Nunito (--font-family) for body/UI; Bounded (--font-bounded) for display.
+ *
+ * Spacing scale (--space-*): новые отступы брать отсюда; легаси в components.css постепенно можно выравнивать.
+ * Z-index: не вводить произвольные слои — только перечисленные токены.
+ * Radius: скругления кнопок/карточек/модалок.
+ * Font-size: ориентиры для новой вёрстки (заголовки секций часто Bounded + свои размеры в CSS).
  */
 :root {
   --color-primary: #283e37;
@@ -53,5 +58,38 @@
   --font-family: 'Nunito', sans-serif;
   --font-nunito: 'Nunito', sans-serif;
   --font-bounded: 'Bounded', sans-serif;
-  --z-preloader: 10000;
+
+  /* Z-index (нижние — ближе к контенту) */
+  --z-local-1: 1;
+  --z-local-2: 2;
+  --z-banner-mobile: 999;
+  --z-floating: 1000;
+  --z-overlay: 10000;
+  --z-preloader: var(--z-overlay);
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
+  --space-10: 120px;
+  --space-page-x-desktop: 64px;
+  --space-page-x-mobile: 16px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+
+  /* Type scale (reference; крупные заголовки героя — в components) */
+  --font-size-caption: 14px;
+  --font-size-subbody: 15px;
+  --font-size-body: 17px;
+  --font-size-ui-lg: 21px;
+  --font-size-section-title: 56px;
 }

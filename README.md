@@ -115,13 +115,53 @@ PORT=3000
 ├── public/                # статические файлы
 ├── src/
 │   ├── main.js            # frontend логика + отправка форм
-│   ├── style.css
+│   ├── style.css          # точка входа стилей (@import)
+│   ├── styles/
+│   │   ├── tokens.css     # дизайн-токены (:root)
+│   │   ├── base.css       # reset, шрифты, прелоадер, body
+│   │   └── components.css # разметка страниц и блоков
+│   ├── critical-preloader.css  # первый кадр; подставляется в HTML плагином Vite
 │   └── fonts/
 ├── server.cjs             # API + доставка заявок + очередь
 ├── data/delivery-queue.json # runtime-очередь (игнорируется git)
-├── *.html                 # страницы сайта
-└── vite.config.mjs
+├── *.html                 # страницы сайта (MPA)
+└── vite.config.mjs        # плагин inject critical CSS в <style id="vite-critical-css">
 ```
+
+## Дизайн-система (стили)
+
+### Где что лежит
+
+| Файл | Назначение |
+|------|------------|
+| `src/styles/tokens.css` | Цвета, шрифты, отступы `--space-*`, радиусы `--radius-*`, z-index `--z-*`, шкала размеров текста |
+| `src/styles/base.css` | Сброс, `@font-face`, прелоадер, скрытие контента до шрифтов |
+| `src/styles/components.css` | Все компоненты и страницы (легаси-значения в px постепенно можно заменять на токены) |
+| `src/critical-preloader.css` | Минимум для первого кадра; **дублирует** часть токенов — при смене бренда синхронизировать с `tokens.css` |
+
+### Новый цвет или шаг отступа
+
+1. Добавить переменную в `:root` в **`tokens.css`** и строку в комментарий-инвентарь вверху файла (для цветов).
+2. В **`components.css`** использовать `var(--your-token)`, не произвольный hex.
+3. Если цвет нужен в inline critical CSS — обновить **`critical-preloader.css`** и пересобрать (`npm run build`).
+
+### Z-index
+
+Использовать только токены из `tokens.css`: `--z-local-1`, `--z-local-2`, `--z-banner-mobile`, `--z-floating`, `--z-overlay` (прелоадер и модалки). Новый слой — сначала договориться в токенах, иначе перекрытия случайны.
+
+### Повторяющиеся UI-паттерны (классы)
+
+- **Primary-кнопка (заливка):** фон `var(--color-primary)`, hover `var(--color-primary-hover)` — примеры: `.btn-contact`, `.btn-cookie`, основные кнопки в модалках.
+- **Шапка:** `.header-top`, `.header-main`, `.nav-menu`, `.btn-contact`, мобильное меню `.mobile-menu-*`.
+- **Cookie:** `.cookie-banner`, `.cookie-text`, `.btn-cookie` (на мобилке — перенос строки, кнопка на всю ширину).
+- **Юридические / отписка:** `.legal-page`, `.legal-page-back-link`.
+- **Заголовки секций:** `.section-title` (Bounded + `var(--font-size-section-title)`).
+
+Новые блоки по возможности копируют эти паттерны и токены, а не новые «магические» числа.
+
+### Сборка
+
+После правок CSS: `npm run build`. Скриншотные тесты в проекте не заданы — регрессию смотреть вручную на ключевых страницах и ширинах.
 
 ## API Endpoints
 

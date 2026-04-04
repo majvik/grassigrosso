@@ -93,7 +93,7 @@
   display: inline-flex;
   align-items: center;
   position: relative;
-  z-index: 1;
+  z-index: var(--z-local-1);
 }
 
 .nav-menu a:hover {
@@ -116,12 +116,12 @@
 /* Primary filled actions: bg --color-primary, hover --color-primary-hover (header CTA, cookie, modals). */
 .btn-contact {
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: var(--font-size-caption);
   font-weight: 400;
   color: white;
   background-color: var(--color-primary);
-  padding: 12px 16px;
-  border-radius: 6px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -135,10 +135,10 @@
 
 /* Hero Section */
 .hero {
-  padding: 120px 64px;
+  padding: var(--space-10) var(--space-page-x-desktop);
   display: flex;
   flex-direction: column;
-  gap: 80px;
+  gap: var(--space-9);
   position: relative;
 }
 
@@ -274,7 +274,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 2;
+  z-index: var(--z-local-2);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
@@ -297,7 +297,7 @@
   background: rgba(7, 15, 13, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  z-index: 10000;
+  z-index: var(--z-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -515,7 +515,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 1;
+  z-index: var(--z-local-1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -928,18 +928,18 @@
 /* Cookie Banner */
 .cookie-banner {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: var(--space-5);
+  right: var(--space-5);
   background: var(--color-bg-white);
-  padding: 16px;
-  border-radius: 16px;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
   box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-4);
   width: 456px;
   height: 80px;
-  z-index: 1000;
+  z-index: var(--z-floating);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
@@ -958,7 +958,7 @@
 .cookie-text {
   flex: 1;
   font-family: var(--font-family);
-  font-size: 17px;
+  font-size: var(--font-size-body);
   font-weight: 400;
   color: var(--color-text);
   line-height: 1.4;
@@ -978,12 +978,12 @@
 
 .btn-cookie {
   font-family: var(--font-family);
-  font-size: 21px;
+  font-size: var(--font-size-ui-lg);
   font-weight: 400;
   color: white;
   background-color: var(--color-primary);
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
   border: none;
   text-transform: uppercase;
   cursor: pointer;
@@ -1002,7 +1002,7 @@
 /* Section Titles */
 .section-title {
   font-family: var(--font-bounded);
-  font-size: 56px;
+  font-size: var(--font-size-section-title);
   font-weight: 400;
   color: var(--color-primary);
   line-height: 1.2;
@@ -1969,7 +1969,7 @@ a:hover .arrow-medium {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 1000;
+  z-index: var(--z-floating);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -2573,11 +2573,11 @@ a:hover .arrow-medium {
     box-sizing: border-box;
     height: auto;
     border-radius: 0;
-    padding: 12px 16px;
-    gap: 12px;
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-3);
     flex-wrap: wrap;
     align-items: flex-start;
-    z-index: 999;
+    z-index: var(--z-banner-mobile);
   }
 
   .cookie-banner.hiding {
@@ -2596,7 +2596,7 @@ a:hover .arrow-medium {
   }
 
   .cookie-text {
-    font-size: 14px;
+    font-size: var(--font-size-caption);
     flex: 1 1 0;
     min-width: 0;
     line-height: 1.35;
@@ -2607,8 +2607,8 @@ a:hover .arrow-medium {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    font-size: 15px;
-    padding: 10px 16px;
+    font-size: var(--font-size-subbody);
+    padding: 10px var(--space-4);
     height: auto;
     min-height: 44px;
   }

@@ -3,6 +3,7 @@
   --color-primary: #283e37;
   --color-bg-white: #f7f5f3;
   --color-primary-rgb: 40, 62, 55;
+  /* = --z-overlay / --z-preloader в tokens.css */
   --z-preloader: 10000;
 }
 
