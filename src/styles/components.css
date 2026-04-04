@@ -1248,16 +1248,30 @@ a:hover .arrow-small {
 
 .collections-grid {
   display: flex;
-  gap: 56px;
+  --collections-gap: 56px;
+  gap: var(--collections-gap);
   margin-bottom: 32px;
-  padding-left: 64px;
-  padding-right: 64px;
+  --collections-inline-pad: 64px;
+  padding-left: var(--collections-inline-pad);
+  /* Правый отступ через ::after: так scrollWidth учитывает хвост для JS; padding-right на flex часто не даёт доскролла */
+  padding-right: 0;
   padding-bottom: 16px;
   overflow: visible;
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
   will-change: transform;
+}
+
+/* Хвост после последней карточки; margin-left компенсирует gap между последним item и ::after (иначе двойной зазор) */
+.collections-grid::after {
+  content: '';
+  flex-shrink: 0;
+  width: var(--collections-inline-pad);
+  margin-left: calc(-1 * var(--collections-gap));
+  align-self: stretch;
+  min-height: 1px;
+  pointer-events: none;
 }
 
 .collections-grid:active {
@@ -2137,10 +2151,11 @@ a:hover .arrow-medium {
   }
 
   .collections-grid {
-    padding-left: 40px;
-    padding-right: 40px;
-    scroll-padding-left: 40px;
-    gap: 40px;
+    --collections-inline-pad: 40px;
+    --collections-gap: 40px;
+    gap: var(--collections-gap);
+    padding-left: var(--collections-inline-pad);
+    scroll-padding-left: var(--collections-inline-pad);
   }
 
   .collections-nav {
@@ -2267,10 +2282,11 @@ a:hover .arrow-medium {
   }
 
   .collections-grid {
-    padding-left: 32px;
-    padding-right: 32px;
-    scroll-padding-left: 32px;
-    gap: 32px;
+    --collections-inline-pad: 32px;
+    --collections-gap: 32px;
+    gap: var(--collections-gap);
+    padding-left: var(--collections-inline-pad);
+    scroll-padding-left: var(--collections-inline-pad);
   }
 
   .collection-card {
@@ -2519,9 +2535,11 @@ a:hover .arrow-medium {
   }
 
   .collections-grid {
-    padding-left: 24px;
-    padding-right: 24px;
-    scroll-padding-left: 24px;
+    --collections-inline-pad: 24px;
+    --collections-gap: 32px;
+    gap: var(--collections-gap);
+    padding-left: var(--collections-inline-pad);
+    scroll-padding-left: var(--collections-inline-pad);
   }
 
   .collections-nav {
@@ -2974,10 +2992,11 @@ a:hover .arrow-medium {
   }
 
   .collections-grid {
-    padding-left: 16px;
-    padding-right: 16px;
-    gap: 16px;
-    scroll-padding-left: 16px;
+    --collections-inline-pad: 16px;
+    --collections-gap: 16px;
+    gap: var(--collections-gap);
+    padding-left: var(--collections-inline-pad);
+    scroll-padding-left: var(--collections-inline-pad);
   }
 
   .collection-card {

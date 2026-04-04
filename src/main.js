@@ -453,10 +453,62 @@ const nextBtn = document.querySelector('.collections-arrows .arrow-btn.next')
 const progressFill = document.querySelector('.collections-progress-fill')
 
 if (slider && prevBtn && nextBtn && progressFill) {
-  const cardWidth = 392 + 56 // card width + gap
   const cards = slider.querySelectorAll('.collection-card')
   const cardImages = slider.querySelectorAll('.collection-image img')
-  
+
+  function getVisibleCollectionCards() {
+    return [...cards].filter((c) => c.offsetWidth > 0)
+  }
+
+  function getMaxCollectionScroll() {
+    return Math.max(0, slider.scrollWidth - slider.clientWidth)
+  }
+
+  /** Позиции с snap: выравнивание по левому краю каждой карточки + край с отступом справа (::after) */
+  function getCollectionSnapPositions() {
+    const maxScroll = getMaxCollectionScroll()
+    const visible = getVisibleCollectionCards()
+    if (!visible.length) return [0, maxScroll]
+    const firstLeft = visible[0].offsetLeft
+    const fromCards = visible.map((c) => c.offsetLeft - firstLeft)
+    const merged = [...new Set([0, ...fromCards, maxScroll])]
+    return merged
+      .map((p) => Math.max(0, Math.min(maxScroll, p)))
+      .filter((p, i, a) => a.indexOf(p) === i)
+      .sort((a, b) => a - b)
+  }
+
+  function snapCollectionToNearest() {
+    const maxScroll = getMaxCollectionScroll()
+    const positions = getCollectionSnapPositions()
+    if (!positions.length) return
+    let best = positions[0]
+    let bestDist = Infinity
+    for (const p of positions) {
+      const d = Math.abs(state.targetX - p)
+      if (d < bestDist) {
+        bestDist = d
+        best = p
+      }
+    }
+    state.targetX = Math.max(0, Math.min(maxScroll, best))
+  }
+
+  function goCollectionPrev() {
+    const positions = getCollectionSnapPositions()
+    const cur = state.targetX
+    const prev = [...positions].reverse().find((p) => p < cur - 2)
+    state.targetX = prev !== undefined ? prev : 0
+  }
+
+  function goCollectionNext() {
+    const maxScroll = getMaxCollectionScroll()
+    const positions = getCollectionSnapPositions()
+    const cur = state.targetX
+    const next = positions.find((p) => p > cur + 2)
+    state.targetX = next !== undefined ? next : maxScroll
+  }
+
   // State for smooth scrolling
   const state = {
     currentX: 0,
@@ -466,7 +518,7 @@ if (slider && prevBtn && nextBtn && progressFill) {
     lastX: 0,
     lastMouseX: 0
   }
-  
+
   // LERP factor for smooth animation
   const LERP_FACTOR = 0.08
   
@@ -502,7 +554,7 @@ if (slider && prevBtn && nextBtn && progressFill) {
   
   // Update progress bar and buttons
   function updateUI() {
-    const maxScroll = Math.max(0, slider.scrollWidth - slider.clientWidth)
+    const maxScroll = getMaxCollectionScroll()
     const scrollProgress = maxScroll > 0 ? Math.min(1, Math.max(0, state.currentX / maxScroll)) : 0
     
     const visibleRatio = slider.clientWidth / slider.scrollWidth
@@ -525,7 +577,7 @@ if (slider && prevBtn && nextBtn && progressFill) {
   // Main animation loop
   function animate() {
     // Limit targetX to valid range
-    const maxScroll = Math.max(0, slider.scrollWidth - slider.clientWidth)
+    const maxScroll = getMaxCollectionScroll()
     state.targetX = Math.max(0, Math.min(maxScroll, state.targetX))
     
     // LERP interpolation for smooth movement
@@ -541,14 +593,13 @@ if (slider && prevBtn && nextBtn && progressFill) {
     requestAnimationFrame(animate)
   }
   
-  // Arrow navigation
+  // Arrow navigation — ровно на ширину слайда (по реальной геометрии карточек)
   prevBtn.addEventListener('click', () => {
-    state.targetX = Math.max(0, state.targetX - cardWidth)
+    goCollectionPrev()
   })
-  
+
   nextBtn.addEventListener('click', () => {
-    const maxScroll = Math.max(0, slider.scrollWidth - slider.clientWidth)
-    state.targetX = Math.min(maxScroll, state.targetX + cardWidth)
+    goCollectionNext()
   })
   
   // Mouse drag
@@ -573,13 +624,15 @@ if (slider && prevBtn && nextBtn && progressFill) {
     if (state.isDragging) {
       state.isDragging = false
       slider.classList.remove('active')
+      snapCollectionToNearest()
     }
   })
-  
+
   slider.addEventListener('mouseleave', () => {
     if (state.isDragging) {
       state.isDragging = false
       slider.classList.remove('active')
+      snapCollectionToNearest()
     }
   })
   
@@ -600,8 +653,15 @@ if (slider && prevBtn && nextBtn && progressFill) {
   slider.addEventListener('touchend', () => {
     state.isDragging = false
     slider.classList.remove('active')
+    snapCollectionToNearest()
   })
-  
+
+  slider.addEventListener('touchcancel', () => {
+    state.isDragging = false
+    slider.classList.remove('active')
+    snapCollectionToNearest()
+  })
+
   // Prevent default drag behavior
   slider.addEventListener('dragstart', (e) => e.preventDefault())
   
@@ -610,14 +670,21 @@ if (slider && prevBtn && nextBtn && progressFill) {
   slider.style.transform = 'translate3d(0, 0, 0)'
   state.currentX = 0
   state.targetX = 0
-  
+
+  window.addEventListener('resize', () => {
+    const maxScroll = getMaxCollectionScroll()
+    state.targetX = Math.min(state.targetX, maxScroll)
+    snapCollectionToNearest()
+  })
+
   // Start animation loop
   animate()
-  
+
   // Animate cards on initial load
   if (cards.length > 0) {
     gsap.set(cards, { opacity: 0, y: 30 })
-    
+
+    // threshold: 0 — иначе на узких экранах «peek» соседней карточки <10% площади и она остаётся opacity:0
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry, index) => {
         if (entry.isIntersecting) {
@@ -631,9 +698,11 @@ if (slider && prevBtn && nextBtn && progressFill) {
           observer.unobserve(entry.target)
         }
       })
-    }, { threshold: 0.1 })
-    
-    cards.forEach(card => observer.observe(card))
+    }, { threshold: 0 })
+
+    requestAnimationFrame(() => {
+      cards.forEach((card) => observer.observe(card))
+    })
   }
 }
 
