@@ -162,6 +162,8 @@ if (window.innerWidth > 1024) {
 // Font loading and preloader
 const preloader = document.getElementById('preloader')
 const AUTOPLAY_VIDEO_VISIBILITY_THRESHOLD = 0.2
+/** Не держать экран из‑за шрифтов дольше этого (моб. сеть): @font-face уже font-display:swap */
+const PRELOADER_FONT_BUDGET_MS = 1800
 
 function ensureVideoSource(video) {
   const inlineSrc = video.getAttribute('src')
@@ -267,10 +269,15 @@ function waitForHeroMedia() {
 
 // Initialize page load
 async function initPageLoad() {
-  
-  await Promise.all([waitForFonts(), waitForHeroMedia()])
-  
-  await new Promise(resolve => requestAnimationFrame(resolve))
+  await Promise.all([
+    Promise.race([
+      waitForFonts(),
+      new Promise((resolve) => setTimeout(resolve, PRELOADER_FONT_BUDGET_MS)),
+    ]),
+    waitForHeroMedia(),
+  ])
+
+  await new Promise((resolve) => requestAnimationFrame(resolve))
   
   document.body.classList.add('fonts-loaded')
   
@@ -286,23 +293,9 @@ async function initPageLoad() {
   }
 }
 
-// Start initialization
-initPageLoad().catch(err => {
-  console.error('initPageLoad error:', err)
-  setTimeout(() => {
-    document.body.classList.add('fonts-loaded')
-    if (preloader) {
-      preloader.classList.add('hidden')
-      setTimeout(() => {
-        if (preloader && preloader.parentNode) {
-          preloader.remove()
-        }
-      }, 500)
-    }
-    
-  }, 2000)
-})
-
+// Весь тяжёлый init — после initPageLoad, иначе на мобильных main thread занят тысячами строк
+// и не обрабатывает таймеры/шрифты, прелоадер «висит» при том же Wi‑Fi, что и десктоп.
+function initApp() {
 // Scale page on screens 1920px and larger
 function scalePage() {
   if (window.innerWidth >= 1920) {
@@ -2308,3 +2301,21 @@ if (helpDocumentsModal && helpDocumentsForm) {
     }
   })
 }
+}
+
+initPageLoad()
+  .catch((err) => {
+    console.error('initPageLoad error:', err)
+    document.body.classList.add('fonts-loaded')
+    if (preloader) {
+      preloader.classList.add('hidden')
+      setTimeout(() => {
+        if (preloader && preloader.parentNode) {
+          preloader.remove()
+        }
+      }, 500)
+    }
+  })
+  .finally(() => {
+    initApp()
+  })

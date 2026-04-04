@@ -1,8 +1,29 @@
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+function criticalPreloaderPlugin() {
+  return {
+    name: 'grassigrosso-critical-preloader',
+    transformIndexHtml(html) {
+      if (!html.includes('id="vite-critical-css"')) return html
+      const criticalPath = path.resolve(__dirname, 'src/critical-preloader.css')
+      const critical = fs.readFileSync(criticalPath, 'utf8').trim()
+      return html.replace(
+        /<style id="vite-critical-css">\s*<\/style>/,
+        `<style id="vite-critical-css">\n${critical}\n</style>`
+      )
+    },
+  }
+}
 
 export default defineConfig({
   root: '.',
   base: './',
+  plugins: [criticalPreloaderPlugin()],
   build: {
     outDir: 'dist',
     assetsDir: 'assets',

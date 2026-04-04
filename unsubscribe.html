@@ -13,12 +13,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./public/favicon-dark-16x16.png" media="(prefers-color-scheme: dark)" />
     <link rel="apple-touch-icon" sizes="180x180" href="./public/apple-touch-icon.png" />
     <link rel="manifest" href="./public/site.webmanifest" />
-    <style>
-      html, body { margin: 0; background: #fff; }
-      .preloader { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #fff; z-index: 10000; }
-      .preloader-spinner { width: 48px; height: 48px; border: 3px solid rgba(40, 62, 55, 0.1); border-top-color: #283e37; border-radius: 50%; animation: preloader-spin 0.8s linear infinite; }
-      @keyframes preloader-spin { to { transform: rotate(360deg); } }
-    </style>
+    <style id="vite-critical-css"></style>
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
       (function(m,e,t,r,i,k,a){
@@ -106,8 +101,8 @@
           <div class="legal-page-content">
             <p>Ваш запрос на исключение из рассылки принят. Мы больше не будем отправлять вам автоматические письма.</p>
             <p>Если это произошло по ошибке или вы хотите снова получать уведомления, свяжитесь с нами по адресу <a href="mailto:sales@grassigrosso.com">sales@grassigrosso.com</a>.</p>
-            <p style="margin-top: 32px;">
-              <a href="index.html" style="color: #283e37; font-weight: 600;">← Вернуться на главную</a>
+            <p class="legal-page-back">
+              <a href="index.html" class="legal-page-back-link">← Вернуться на главную</a>
             </p>
           </div>
         </div>

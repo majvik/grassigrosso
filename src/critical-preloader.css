@@ -1,0 +1,38 @@
+/* First-paint critical CSS — subset of src/styles/tokens.css; keep values in sync. */
+:root {
+  --color-primary: #283e37;
+  --color-bg-white: #f7f5f3;
+  --color-primary-rgb: 40, 62, 55;
+  --z-preloader: 10000;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--color-bg-white);
+}
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-white);
+  z-index: var(--z-preloader);
+}
+
+.preloader-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(var(--color-primary-rgb), 0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: preloader-spin 0.8s linear infinite;
+}
+
+@keyframes preloader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

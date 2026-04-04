@@ -1,0 +1,57 @@
+/*
+ * Design tokens — Grassigrosso
+ * Single source for colors, fonts, and semantic aliases.
+ * Critical first-paint subset is duplicated in src/critical-preloader.css (keep values in sync).
+ *
+ * Color inventory (hex → token):
+ *   #283e37  --color-primary
+ *   #1e2f2a  --color-primary-hover
+ *   #1e1e1e  --color-text
+ *   #6b7280  --color-text-gray
+ *   #727271  --color-text-muted-warm
+ *   #888      --color-text-placeholder
+ *   #f1f0ea  --color-bg-beige
+ *   #f7f5f3  --color-bg-white
+ *   #f5f5f5  --color-surface-muted
+ *   #335040  --color-footer-bg
+ *   #f2e6c9  --color-tag-bg
+ *   #e1e1e1  --color-partner-cell / neutral fills
+ *   #8FAFB1  --color-accent-soft
+ *   #ddd     --color-border
+ *   #eee     --color-border-subtle
+ *   Primary RGB 40,62,55 → --color-primary-rgb (for rgba(var(--color-primary-rgb), a))
+ *   Form error: #d32f2f, #ffebee, #c62828, #ef9a9a
+ *   Form success: #2e7d32, #e8f5e9, #a5d6a7
+ *
+ * Typography: Nunito (--font-family) for body/UI; Bounded (--font-bounded) for display.
+ */
+:root {
+  --color-primary: #283e37;
+  --color-primary-hover: #1e2f2a;
+  --color-primary-rgb: 40, 62, 55;
+  --color-text: #1e1e1e;
+  --color-text-gray: #6b7280;
+  --color-secondary: #6b7280;
+  --color-text-muted-warm: #727271;
+  --color-text-placeholder: #888;
+  --color-bg-beige: #f1f0ea;
+  --color-bg-white: #f7f5f3;
+  --color-surface-muted: #f5f5f5;
+  --color-footer-bg: #335040;
+  --color-tag-bg: #f2e6c9;
+  --color-partner-cell: #e1e1e1;
+  --color-accent-soft: #8fafb1;
+  --color-border: #dddddd;
+  --color-border-subtle: #eeeeee;
+  --color-form-error: #d32f2f;
+  --color-form-error-bg: #ffebee;
+  --color-form-error-text: #c62828;
+  --color-form-error-border: #ef9a9a;
+  --color-form-success-bg: #e8f5e9;
+  --color-form-success-text: #2e7d32;
+  --color-form-success-border: #a5d6a7;
+  --font-family: 'Nunito', sans-serif;
+  --font-nunito: 'Nunito', sans-serif;
+  --font-bounded: 'Bounded', sans-serif;
+  --z-preloader: 10000;
+}
