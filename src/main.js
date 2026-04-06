@@ -1256,10 +1256,10 @@ const contactsMapTabs = document.querySelectorAll('.contacts-map-tab')
 const contactsMapFrames = document.querySelectorAll('.contacts-map-frame')
 
 const CONTACTS_OFFICES = [
-  { id: 'main', center: [44.9522, 34.1027], zoom: 16, title: 'Главный офис', address: 'Симферополь, ул. Кубанская д. 25' },
-  { id: 'voronezh', center: [51.6605, 39.2006], zoom: 16, title: 'Представительство в Центральной России', address: 'Воронеж, ул. Остужева 43 И' },
-  { id: 'lnr', center: [48.567, 39.3172], zoom: 16, title: 'Представительство в ЛНР', address: 'Луганск, ул. Фабричная д 1' },
-  { id: 'dnr', center: [48.0333, 38.2667], zoom: 16, title: 'Представительство в ДНР', address: 'Харцизск, ул. Вокзальная, д. 52' }
+  { id: 'main', center: [44.970737, 34.152577], zoom: 16, title: 'Главный офис', address: 'Симферополь, ул. Кубанская д. 25' },
+  { id: 'voronezh', center: [51.681129, 39.297287], zoom: 16, title: 'Представительство в Центральной России', address: 'Воронеж, ул. Остужева 43 И' },
+  { id: 'lnr', center: [48.541403, 39.32438], zoom: 16, title: 'Представительство в ЛНР', address: 'Луганск, ул. Фабричная д 1' },
+  { id: 'dnr', center: [48.035223, 38.147954], zoom: 16, title: 'Представительство в ДНР', address: 'Харцизск, ул. Вокзальная, д. 52' }
 ]
 const CONTACTS_MARKER_COLOR = '#283e37'
 
