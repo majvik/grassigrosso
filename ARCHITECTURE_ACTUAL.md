@@ -69,12 +69,22 @@
 ### Интеграционный слой
 
 - Telegram Bot API (уведомления о лидах)
-- SMTP через `nodemailer` (отправка лидов по email) с маршрутизацией по страницам (без дубликатов; office@ собирается почтовым сервисом отдельно). callback@grassigrosso.com всегда добавляется дополнительным получателем:
-  - Главная → sales@ + callback@
-  - Отелям → hotels@ + callback@
-  - Дилерам → b2b@ + callback@
-  - Документы, Контакты → sales@ + callback@
-  - Остальные → MAIL_TO + callback@
+- SMTP через `nodemailer` (отправка лидов по email) с маршрутизацией по страницам. `callback@grassigrosso.com` всегда в копии. Контракт клиент–сервер:
+  - **Клиент** (`src/main.js`): `getPageName()` определяет slug из `window.location.pathname` **без `.html`** (после 301-редиректа URL чистые) и маппит его на человекочитаемое название страницы, которое отправляется в `POST /api/submit` как поле `page`. Некоторые формы задают `page` хардкодом (`'Главная (КП)'`, `'Отелям (каталог)'`, `'Документы'`, `'Документы (помощь)'`).
+  - **Сервер** (`server.cjs`): `PAGE_EMAIL_ROUTING` маппит значение `page` → email-адреса получателей:
+
+  | `page` | Получатель |
+  |---|---|
+  | `Главная страница` | sales@ + callback@ |
+  | `Главная (КП)` | sales@ + callback@ |
+  | `Страница "Отелям"` | hotels@ + callback@ |
+  | `Отелям (каталог)` | hotels@ + callback@ |
+  | `Страница "Дилерам"` | b2b@ + callback@ |
+  | `Документы` / `Документы (помощь)` | sales@ + callback@ |
+  | `Страница "Контакты"` | sales@ + callback@ |
+  | *(прочее)* | MAIL_TO + callback@ |
+
+  - **Критично**: ключи в `getPageName()` и `PAGE_EMAIL_ROUTING` должны совпадать точно. При добавлении страницы с формой — обновить оба файла. Подробный чеклист — [AGENTS.md](AGENTS.md).
 - Подтверждающее письмо пользователю (`lib/confirmation-email.cjs`):
   - HTML-письмо с inline CSS, шрифт Nunito (Google Fonts) с fallback на Arial/Helvetica
   - Логотип: PNG-версия (`public/email-logo.png`), hosted по URL сайта
