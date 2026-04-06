@@ -1007,6 +1007,41 @@
   background-color: var(--color-primary-hover);
 }
 
+/* Toast «Скопировано» (стиль как cookie-banner, без кнопки) */
+.copy-toast {
+  position: fixed;
+  bottom: var(--space-5);
+  right: var(--space-5);
+  background: var(--color-bg-white);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0px 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -4px rgba(0, 0, 0, 0.1);
+  z-index: calc(var(--z-floating) + 1);
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  max-width: min(456px, calc(100vw - 2 * var(--space-5)));
+  box-sizing: border-box;
+}
+
+.copy-toast.copy-toast--show {
+  opacity: 0.8;
+  transform: translateY(0);
+}
+
+.copy-toast.copy-toast--hiding {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
 /* Section Titles */
 .section-title {
   font-family: var(--font-bounded);
@@ -1866,7 +1901,8 @@ a:hover .arrow-medium {
 .contact-info-value a[href^="tel:"],
 .contact-info-value a[href^="mailto:"],
 .contacts-office-value a[href^="tel:"],
-.contacts-office-value a[href^="mailto:"] {
+.contacts-office-value a[href^="mailto:"],
+.contacts-office-email-row a[href^="mailto:"] {
   color: inherit;
   text-decoration: none;
 }
@@ -1882,7 +1918,8 @@ a:hover .arrow-medium {
   .contact-info-value a[href^="tel:"]:hover,
   .contact-info-value a[href^="mailto:"]:hover,
   .contacts-office-value a[href^="tel:"]:hover,
-  .contacts-office-value a[href^="mailto:"]:hover {
+  .contacts-office-value a[href^="mailto:"]:hover,
+  .contacts-office-email-row a[href^="mailto:"]:hover {
     text-decoration: underline;
   }
 
@@ -2618,6 +2655,29 @@ a:hover .arrow-medium {
   }
 
   .cookie-banner.hiding {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  .copy-toast {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    padding: var(--space-3) var(--space-4);
+    transform: translateY(-100%);
+    z-index: calc(var(--z-banner-mobile) + 1);
+  }
+
+  .copy-toast.copy-toast--show {
+    opacity: 0.8;
+    transform: translateY(0);
+  }
+
+  .copy-toast.copy-toast--hiding {
     opacity: 0;
     transform: translateY(-100%);
   }
@@ -7506,6 +7566,53 @@ a:hover .arrow-medium {
   color: var(--color-primary);
   line-height: 1.4;
   word-break: break-word;
+}
+
+.contacts-office-email-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  max-width: 100%;
+}
+
+/* Иконка у верхней границы, если адрес переносится на несколько строк */
+.contacts-office-email-row.contacts-office-email-row--wrapped {
+  align-items: flex-start;
+}
+
+.contacts-office-email-row a[href^="mailto:"] {
+  color: rgba(var(--color-primary-rgb), 1);
+  min-width: 0;
+}
+
+.contacts-office-copy-email {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+  line-height: 0;
+  touch-action: manipulation;
+  transition: opacity 0.2s ease;
+}
+
+.contacts-office-copy-email:hover {
+  opacity: 0.85;
+}
+
+.contacts-office-copy-email:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.contacts-office-copy-email svg {
+  display: block;
 }
 
 /* Contacts Map Section */

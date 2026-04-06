@@ -320,6 +320,9 @@ document.querySelectorAll('.modal-overlay').forEach(modal => {
 const cookieBannerEl = document.querySelector('.cookie-banner')
 if (cookieBannerEl) document.documentElement.appendChild(cookieBannerEl)
 
+const copyToastRoot = document.getElementById('copy-toast')
+if (copyToastRoot) document.documentElement.appendChild(copyToastRoot)
+
 // Welcome Modal – показ при первом визите
 const welcomeModal = document.getElementById('welcomeModal')
 const welcomeCloseBtn = document.getElementById('welcomeClose')
@@ -382,6 +385,161 @@ if (cookieBtn && cookieBanner) {
     }, 300)
     localStorage.setItem('cookieAccepted', 'true')
   })
+}
+
+// Копирование email в карточках офисов (contacts) + тост «Скопировано»
+if (copyToastRoot) {
+  let copyToastHideTimer = null
+  let copyToastRemoveHidingTimer = null
+
+  function hideCopyToast () {
+    copyToastRoot.classList.remove('copy-toast--show')
+    copyToastRoot.classList.add('copy-toast--hiding')
+    if (copyToastRemoveHidingTimer) clearTimeout(copyToastRemoveHidingTimer)
+    copyToastRemoveHidingTimer = setTimeout(() => {
+      copyToastRoot.setAttribute('hidden', '')
+      copyToastRoot.classList.remove('copy-toast--hiding')
+    }, 300)
+  }
+
+  function showCopyToast () {
+    if (copyToastHideTimer) clearTimeout(copyToastHideTimer)
+    if (copyToastRemoveHidingTimer) clearTimeout(copyToastRemoveHidingTimer)
+    copyToastRoot.removeAttribute('hidden')
+    copyToastRoot.classList.remove('copy-toast--hiding')
+    requestAnimationFrame(() => {
+      copyToastRoot.classList.add('copy-toast--show')
+    })
+    copyToastHideTimer = setTimeout(hideCopyToast, 3000)
+  }
+
+  function copyEmailToClipboard (email) {
+    function done () {
+      showCopyToast()
+    }
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      navigator.clipboard.writeText(email).then(done).catch(fallbackCopy)
+    } else {
+      fallbackCopy()
+    }
+    function fallbackCopy () {
+      const ta = document.createElement('textarea')
+      ta.value = email
+      ta.setAttribute('readonly', '')
+      ta.style.position = 'fixed'
+      ta.style.left = '-9999px'
+      document.body.appendChild(ta)
+      ta.select()
+      try {
+        if (document.execCommand('copy')) done()
+      } catch (_) { /* ignore */ }
+      document.body.removeChild(ta)
+    }
+  }
+
+  document.body.addEventListener('click', (e) => {
+    const btn = e.target.closest('.contacts-office-copy-email')
+    if (!btn) return
+    const email = btn.getAttribute('data-copy-email')
+    if (!email) return
+    e.preventDefault()
+    copyEmailToClipboard(email)
+  })
+}
+
+// Карточки офисов: иконка по центру в одну строку, при переносе email — по верху.
+// getClientRects() на <a> внутри flex часто даёт один rect; используем высоту строки и Range.
+const contactsOfficeEmailRows = document.querySelectorAll('.contacts-office-email-row')
+if (contactsOfficeEmailRows.length > 0) {
+  function measureSingleLineHeightPx (el) {
+    const cs = getComputedStyle(el)
+    const fs = parseFloat(cs.fontSize) || 17
+    const lh = cs.lineHeight
+    if (lh && lh !== 'normal') {
+      const n = parseFloat(lh)
+      if (!Number.isNaN(n)) {
+        return lh.endsWith('%') ? (n / 100) * fs : n
+      }
+    }
+    const probe = document.createElement('span')
+    probe.textContent = 'Ay'
+    probe.style.cssText = [
+      'position:fixed',
+      'left:-9999px',
+      'top:0',
+      'visibility:hidden',
+      'pointer-events:none',
+      'white-space:nowrap',
+      `font-family:${cs.fontFamily}`,
+      `font-size:${cs.fontSize}`,
+      `font-weight:${cs.fontWeight}`,
+      `font-style:${cs.fontStyle}`,
+      `line-height:${cs.lineHeight}`,
+      `letter-spacing:${cs.letterSpacing || 'normal'}`
+    ].join(';')
+    document.body.appendChild(probe)
+    const h = probe.offsetHeight
+    probe.remove()
+    return h > 0 ? h : fs * 1.4
+  }
+
+  function rangeHasMultipleLines (link) {
+    try {
+      const range = document.createRange()
+      range.selectNodeContents(link)
+      const rects = range.getClientRects()
+      const tops = new Set()
+      for (let i = 0; i < rects.length; i++) {
+        const r = rects[i]
+        if (r.width < 1 || r.height < 1) continue
+        tops.add(Math.round(r.top * 2) / 2)
+      }
+      return tops.size > 1
+    } catch (_) {
+      return false
+    }
+  }
+
+  function isMailtoWrapped (link) {
+    if (!link) return false
+    const lineH = measureSingleLineHeightPx(link)
+    const tol = Math.max(6, Math.round(lineH * 0.08))
+    if (link.offsetHeight > lineH + tol) return true
+    return rangeHasMultipleLines(link)
+  }
+
+  function syncContactsOfficeEmailRow (row) {
+    const link = row.querySelector('a[href^="mailto:"]')
+    if (!link) return
+    row.classList.toggle('contacts-office-email-row--wrapped', isMailtoWrapped(link))
+  }
+
+  let emailRowsLayoutRaf = null
+  function scheduleSyncAllEmailRows () {
+    if (emailRowsLayoutRaf != null) return
+    emailRowsLayoutRaf = requestAnimationFrame(() => {
+      emailRowsLayoutRaf = null
+      contactsOfficeEmailRows.forEach(syncContactsOfficeEmailRow)
+    })
+  }
+
+  contactsOfficeEmailRows.forEach((row) => {
+    const link = row.querySelector('a[href^="mailto:"]')
+    syncContactsOfficeEmailRow(row)
+    const ro = new ResizeObserver(() => scheduleSyncAllEmailRows())
+    ro.observe(row)
+    if (link) ro.observe(link)
+  })
+  let resizeEmailRowsTimer = null
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeEmailRowsTimer)
+    resizeEmailRowsTimer = setTimeout(scheduleSyncAllEmailRows, 100)
+  })
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(scheduleSyncAllEmailRows)
+  }
+  scheduleSyncAllEmailRows()
+  setTimeout(scheduleSyncAllEmailRows, 0)
 }
 
 // Nav menu: анимированная полоска подчеркивания (десктоп)
