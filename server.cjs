@@ -775,12 +775,13 @@ if (isDev) {
 
   const documentsVolumePath = path.join(__dirname, 'data', 'documents');
   if (fs.existsSync(documentsVolumePath)) {
-    app.use('/documents', express.static(documentsVolumePath));
+    app.use('/documents', express.static(documentsVolumePath, { redirect: false }));
   }
 
   app.use(express.static(staticPath, {
     extensions: ['html', 'htm'],
-    index: false
+    index: false,
+    redirect: false
   }));
 
   app.get('*', (req, res, next) => {
