@@ -1571,17 +1571,16 @@ if (contactForms.length > 0) {
 
   // Функция для определения названия страницы
   const getPageName = () => {
-    const path = window.location.pathname
-    const filename = path.split('/').pop() || 'index.html'
-    
+    const slug = (window.location.pathname.split('/').pop() || 'index').replace(/\.html$/, '') || 'index'
+
     const pageNames = {
-      'index.html': 'Главная страница',
-      'hotels.html': 'Страница "Отелям"',
-      'dealers.html': 'Страница "Дилерам"',
-      'contacts.html': 'Страница "Контакты"'
+      'index': 'Главная страница',
+      'hotels': 'Страница "Отелям"',
+      'dealers': 'Страница "Дилерам"',
+      'contacts': 'Страница "Контакты"'
     }
-    
-    return pageNames[filename] || filename
+
+    return pageNames[slug] || slug
   }
 
   // Функция для очистки ошибок
