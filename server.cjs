@@ -292,13 +292,15 @@ async function sendLeadToEmail(lead) {
   const baseRecipients = getEmailRecipients(lead.page);
   const recipients = Array.from(new Set([...baseRecipients, 'callback@grassigrosso.com']));
 
+  const to = recipients.join(', ');
   await transporter.sendMail({
     from: MAIL_FROM,
-    to: recipients.join(', '),
+    to,
     subject: buildEmailSubject(lead),
     text: buildEmailText(lead),
     html: buildEmailHtml(lead),
   });
+  console.log(`📧 Lead-письмо отправлено: ${to} (страница: ${lead.page})`);
 }
 
 async function sendConfirmationToUser(lead) {
