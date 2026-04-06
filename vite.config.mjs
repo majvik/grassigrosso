@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -20,34 +20,48 @@ function criticalPreloaderPlugin() {
   }
 }
 
-export default defineConfig({
-  root: '.',
-  base: './',
-  plugins: [criticalPreloaderPlugin()],
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    rollupOptions: {
-      input: {
-        main: './index.html',
-        hotels: './hotels.html',
-        dealers: './dealers.html',
-        catalog: './catalog.html',
-        documents: './documents.html',
-        contacts: './contacts.html',
-        privacy: './privacy.html',
-        terms: './terms.html',
-        cookies: './cookies.html',
-        '404': './404.html',
-        unsubscribe: './unsubscribe.html',
+function siteOriginPlugin(origin) {
+  return {
+    name: 'grassigrosso-site-origin',
+    transformIndexHtml(html) {
+      return html.split('%%SITE_ORIGIN%%').join(origin)
+    },
+  }
+}
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  const siteOrigin = (env.SITE_URL || 'https://grassigrosso.com').replace(/\/+$/, '')
+
+  return {
+    root: '.',
+    base: './',
+    plugins: [criticalPreloaderPlugin(), siteOriginPlugin(siteOrigin)],
+    build: {
+      outDir: 'dist',
+      assetsDir: 'assets',
+      rollupOptions: {
+        input: {
+          main: './index.html',
+          hotels: './hotels.html',
+          dealers: './dealers.html',
+          catalog: './catalog.html',
+          documents: './documents.html',
+          contacts: './contacts.html',
+          privacy: './privacy.html',
+          terms: './terms.html',
+          cookies: './cookies.html',
+          '404': './404.html',
+          unsubscribe: './unsubscribe.html',
+        }
       }
-    }
-  },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
+    },
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+        }
       }
     }
   }

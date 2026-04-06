@@ -24,6 +24,12 @@
 
 8. **Логика страницы:** при необходимости JS — [src/main.js](src/main.js); можно ориентироваться на `document.body.dataset.page` (атрибут `data-page` в шаблоне).
 
+## SEO
+
+- В HTML используются плейсхолдеры `%%SITE_ORIGIN%%`; при **`npm run build`** подставляется `SITE_URL` из `.env` (см. [.env.example](.env.example), по умолчанию `https://grassigrosso.com`).
+- Новая публичная страница: уникальные `meta name="description"` и тексты Open Graph; канонический путь без `.html` (`/slug`). После выкладки добавьте URL в [public/sitemap.xml](public/sitemap.xml).
+- В production запросы к `/*.html` отдают **301** на тот же путь без суффикса — см. [server.cjs](server.cjs).
+
 ## Чего не делать
 
 - Не удалять критический слот прелоадера и не дублировать обходной путь без `vite-critical-css`.

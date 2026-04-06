@@ -35,6 +35,15 @@ if (!fs.existsSync(templatePath)) {
 
 let html = fs.readFileSync(templatePath, 'utf8')
 html = html.replace(/<title>[^<]*<\/title>/, `<title>${escapeXml(pageTitle)}</title>`)
+html = html.replace(/__CANONICAL_SLUG__/g, slug)
+html = html.replace(
+  /<meta property="og:title" content="[^"]*"/,
+  `<meta property="og:title" content="${escapeXml(pageTitle)}"`
+)
+html = html.replace(
+  /<meta name="twitter:title" content="[^"]*"/,
+  `<meta name="twitter:title" content="${escapeXml(pageTitle)}"`
+)
 html = html.replace(/data-page="PAGE_SLUG"/, `data-page="${slug}"`)
 
 const h1Text = pageTitle
