@@ -28,7 +28,7 @@
 
 - В HTML используются плейсхолдеры `%%SITE_ORIGIN%%`; при **`npm run build`** подставляется `SITE_URL` из `.env` (см. [.env.example](.env.example), по умолчанию `https://grassigrosso.com`).
 - Новая публичная страница: уникальные `meta name="description"` и тексты Open Graph; канонический путь без `.html` (`/slug`). После выкладки добавьте URL в [public/sitemap.xml](public/sitemap.xml).
-- В production запросы к `/*.html` отдают **301** на тот же путь без суффикса — см. [server.cjs](server.cjs).
+- В production запросы к `/*.html` отдают **301** на тот же путь без суффикса — реализовано в [nginx.conf](nginx.conf) (primary) и дублировано в [server.cjs](server.cjs) (fallback).
 
 ## Маршрутизация email по формам (критично!)
 
