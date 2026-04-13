@@ -105,8 +105,8 @@
   - **Локально**: ключ берётся из `.env` при `npm run dev` или `npm run build` (Vite читает `VITE_*` из окружения и из `.env` в корне).
   - В **клиентском бандле** (`dist/assets/*.js`) ключ оказывается после сборки – это нормально для ключей карт (браузеру он нужен). В репозиторий не коммитится сама сборка (`dist` в `.gitignore`).
 - Healthcheck: HTTP GET `/health` (интервал 10s, timeout 3s, start-period 20s)
-- `nginx.conf`: реверс-прокси для Timeweb Cloud (переменная `${PORT}`):
-  - Статика из `/app/dist`; `/api/` и `/health` проксируются на Node
+- `nginx.conf`: реверс-прокси для Timeweb Cloud:
+  - Статика из `/app/dist`; `/api/` и `/health` проксируются на Node по `127.0.0.1:3000` (совпадает с `Dockerfile` `PORT`/`EXPOSE`; не использовать `${PORT}` в сыром виде — без подстановки ломается `nginx -t` на деплое)
   - 301-редирект `*.html` → чистые URL (канонические, совпадают с `sitemap.xml`)
   - `try_files $uri.html $uri /index.html` — `.html` проверяется **первым**, иначе директория `documents/` перехватывает `/documents` и добавляет trailing slash
   - `/assets/` — долгий иммутабельный кеш (хешированные файлы Vite); HTML — `Cache-Control: no-cache`
