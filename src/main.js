@@ -883,6 +883,8 @@ const catalogueNewSort = document.querySelector('.catalogue-new-sort')
 const catalogueNewSortTrigger = document.querySelector('.catalogue-new-sort-trigger')
 const catalogueNewSortOptions = [...document.querySelectorAll('.catalogue-new-sort-option')]
 const catalogueNewReset = document.querySelector('.catalogue-new-reset')
+const catalogueNewFavouritesOnlySwitch = document.querySelector('#catalogue-new-favourites-only-switch')
+const catalogueNewFavouritesCountEl = document.querySelector('#catalogue-new-favourites-count')
 
 if (catalogueNewSidebar && catalogueNewCardsRoot) {
   const catalogueNewLayout = document.querySelector('.catalogue-new-layout')
@@ -904,7 +906,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     collection: 'all',
     firmness: 'all',
     type: 'all',
-    sort: 'default'
+    sort: 'default',
+    favouritesOnly: false,
   }
 
   const CATALOGUE_NEW_FAV_KEY = 'grassigrosso-catalogue-new-favourites'
@@ -923,6 +926,29 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     localStorage.setItem(CATALOGUE_NEW_FAV_KEY, JSON.stringify([...set]))
   }
 
+  function syncCatalogueFavouritesFilterSwitchState() {
+    if (!catalogueNewFavouritesOnlySwitch) return
+    const fav = readCatalogueFavourites()
+    const n = fav.size
+    const hadFavouritesFilter = state.favouritesOnly
+    if (catalogueNewFavouritesCountEl) {
+      catalogueNewFavouritesCountEl.textContent = String(n)
+      catalogueNewFavouritesCountEl.toggleAttribute('hidden', n === 0)
+    }
+    if (n === 0) {
+      state.favouritesOnly = false
+      catalogueNewFavouritesOnlySwitch.classList.remove('is-on')
+      catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', 'false')
+      catalogueNewFavouritesOnlySwitch.disabled = true
+      if (hadFavouritesFilter) {
+        visibleCardsLimit = CATALOGUE_PAGE_SIZE
+        applyFilters()
+      }
+    } else {
+      catalogueNewFavouritesOnlySwitch.disabled = false
+    }
+  }
+
   function syncCatalogueFavouritesUi() {
     const fav = readCatalogueFavourites()
     catalogueNewCardsRoot.querySelectorAll('.catalogue-new-favourite').forEach((btn) => {
@@ -932,6 +958,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       btn.setAttribute('aria-pressed', on ? 'true' : 'false')
       btn.setAttribute('aria-label', on ? 'Удалить из избранного' : 'Добавить в избранное')
     })
+    syncCatalogueFavouritesFilterSwitchState()
   }
 
   function syncCardsCache() {
@@ -1099,11 +1126,14 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   }
 
   function applyFilters() {
+    const favSet = readCatalogueFavourites()
     matchedCards = cards.filter((card) => {
       const matchCollection = state.collection === 'all' || card.dataset.collection === state.collection
       const matchFirmness = state.firmness === 'all' || card.dataset.firmness === state.firmness
       const matchType = state.type === 'all' || card.dataset.type === state.type
-      return matchCollection && matchFirmness && matchType
+      const slug = String(card.dataset.productSlug || '')
+      const matchFavourites = !state.favouritesOnly || (slug && favSet.has(slug))
+      return matchCollection && matchFirmness && matchType && matchFavourites
     })
 
     const visibleSet = new Set(matchedCards.slice(0, visibleCardsLimit))
@@ -1149,7 +1179,21 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     else fav.add(slug)
     writeCatalogueFavourites(fav)
     syncCatalogueFavouritesUi()
+    if (state.favouritesOnly) {
+      visibleCardsLimit = CATALOGUE_PAGE_SIZE
+      applyFilters()
+    }
   })
+
+  if (catalogueNewFavouritesOnlySwitch) {
+    catalogueNewFavouritesOnlySwitch.addEventListener('click', () => {
+      state.favouritesOnly = !state.favouritesOnly
+      catalogueNewFavouritesOnlySwitch.classList.toggle('is-on', state.favouritesOnly)
+      catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', state.favouritesOnly ? 'true' : 'false')
+      visibleCardsLimit = CATALOGUE_PAGE_SIZE
+      applyFilters()
+    })
+  }
 
   if (catalogueNewSort && catalogueNewSortTrigger && catalogueNewSortOptions.length > 0) {
     catalogueNewSortTrigger.addEventListener('click', () => {
@@ -1191,6 +1235,11 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       state.firmness = 'all'
       state.type = 'all'
       state.sort = 'default'
+      state.favouritesOnly = false
+      if (catalogueNewFavouritesOnlySwitch) {
+        catalogueNewFavouritesOnlySwitch.classList.remove('is-on')
+        catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', 'false')
+      }
       setActiveChip('collection', 'all')
       setActiveChip('firmness', 'all')
       setActiveChip('type', 'all')

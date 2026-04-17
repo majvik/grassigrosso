@@ -107,7 +107,7 @@
         display: flex;
         align-items: baseline;
         justify-content: space-between;
-        margin-bottom: var(--space-5);
+        margin-bottom: var(--space-3);
       }
 
       .catalogue-new-sidebar-title,
@@ -129,6 +129,89 @@
         color: var(--color-text-gray);
         font: inherit;
         cursor: pointer;
+      }
+
+      .catalogue-new-favourites-only-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-3);
+        margin-bottom: var(--space-5);
+      }
+
+      .catalogue-new-favourites-only-text {
+        flex: 1;
+        min-width: 0;
+        font-family: var(--font-family);
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.35;
+        color: var(--color-text);
+      }
+
+      .catalogue-new-favourites-only-label {
+        opacity: 0.88;
+      }
+
+      .catalogue-new-favourites-only-count.catalogue-new-tag {
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      /* .catalogue-new-tag sets display — must not override [hidden] */
+      .catalogue-new-favourites-only-count.catalogue-new-tag[hidden] {
+        display: none !important;
+      }
+
+      .catalogue-new-switch {
+        position: relative;
+        width: 44px;
+        height: 26px;
+        flex-shrink: 0;
+        padding: 0;
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        background: var(--color-bg-white);
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease;
+      }
+
+      .catalogue-new-switch.is-on {
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+      }
+
+      .catalogue-new-switch:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+      }
+
+      .catalogue-new-switch-thumb {
+        position: absolute;
+        top: 50%;
+        left: 3px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(14, 23, 20, 0.12);
+        transform: translateY(-50%);
+        transition: left 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
+      }
+
+      .catalogue-new-switch.is-on .catalogue-new-switch-thumb {
+        transform: translate(18px, -50%);
+      }
+
+      .catalogue-new-switch:disabled {
+        cursor: not-allowed;
+        opacity: 0.48;
+      }
+
+      .catalogue-new-switch:disabled .catalogue-new-switch-thumb {
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
 
       .catalogue-new-filter-group { margin-top: var(--space-5); }
@@ -866,6 +949,21 @@
           <div class="catalogue-new-sidebar-head">
             <h2 class="catalogue-new-sidebar-title">Фильтры</h2>
             <button type="button" class="catalogue-new-reset">Сбросить</button>
+          </div>
+
+          <div class="catalogue-new-favourites-only-row">
+            <div class="catalogue-new-favourites-only-text"><span class="catalogue-new-favourites-only-label" id="catalogue-new-favourites-only-label">Показывать только избранное</span><span class="catalogue-new-tag catalogue-new-favourites-only-count" id="catalogue-new-favourites-count" hidden>0</span></div>
+            <button
+              type="button"
+              class="catalogue-new-switch"
+              id="catalogue-new-favourites-only-switch"
+              role="switch"
+              aria-checked="false"
+              disabled
+              aria-labelledby="catalogue-new-favourites-only-label"
+            >
+              <span class="catalogue-new-switch-thumb" aria-hidden="true"></span>
+            </button>
           </div>
 
           <div class="catalogue-new-filter-group" data-filter-group="collection">
