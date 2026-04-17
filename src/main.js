@@ -615,6 +615,13 @@ const catalogueNewReset = document.querySelector('.catalogue-new-reset')
 
 if (catalogueNewSidebar && catalogueNewCardsRoot) {
   let cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
+  const CATALOGUE_PAGE_SIZE = 6
+  let visibleCardsLimit = CATALOGUE_PAGE_SIZE
+  let matchedCards = []
+  const infiniteSentinel = document.createElement('div')
+  infiniteSentinel.className = 'catalogue-new-infinite-sentinel'
+  infiniteSentinel.setAttribute('aria-hidden', 'true')
+  catalogueNewCardsRoot.insertAdjacentElement('afterend', infiniteSentinel)
   const state = {
     collection: 'all',
     firmness: 'all',
@@ -697,6 +704,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       catalogueNewCardsRoot.innerHTML = html
       syncCardsCache()
       applySorting()
+      visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
     } catch (err) {
       console.warn('Catalogue Strapi fetch failed, using static fallback:', err)
@@ -732,8 +740,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   function updateResultsCount() {
     if (!catalogueNewResultsValue) return
-    const visibleCount = cards.filter((card) => card.style.display !== 'none').length
-    catalogueNewResultsValue.textContent = String(visibleCount)
+    catalogueNewResultsValue.textContent = String(matchedCards.length)
   }
 
   function applySorting() {
@@ -762,12 +769,19 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   }
 
   function applyFilters() {
-    cards.forEach((card) => {
+    matchedCards = cards.filter((card) => {
       const matchCollection = state.collection === 'all' || card.dataset.collection === state.collection
       const matchFirmness = state.firmness === 'all' || card.dataset.firmness === state.firmness
       const matchType = state.type === 'all' || card.dataset.type === state.type
-      card.style.display = matchCollection && matchFirmness && matchType ? '' : 'none'
+      return matchCollection && matchFirmness && matchType
     })
+
+    const visibleSet = new Set(matchedCards.slice(0, visibleCardsLimit))
+    cards.forEach((card) => {
+      card.style.display = visibleSet.has(card) ? '' : 'none'
+    })
+
+    infiniteSentinel.hidden = matchedCards.length <= visibleCardsLimit
     updateResultsCount()
   }
 
@@ -788,6 +802,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     if (!groupName || !value) return
     state[groupName] = value
     setActiveChip(groupName, value)
+    visibleCardsLimit = CATALOGUE_PAGE_SIZE
     applyFilters()
   })
 
@@ -807,6 +822,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         setActiveSortOption(state.sort)
         closeSortMenu()
         applySorting()
+        visibleCardsLimit = CATALOGUE_PAGE_SIZE
         applyFilters()
       })
     })
@@ -836,8 +852,27 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       setActiveSortOption('default')
       closeSortMenu()
       applySorting()
+      visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
     })
+  }
+
+  if (window.IntersectionObserver) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        if (matchedCards.length <= visibleCardsLimit) return
+        visibleCardsLimit += CATALOGUE_PAGE_SIZE
+        applyFilters()
+      })
+    }, {
+      root: null,
+      rootMargin: '400px 0px',
+      threshold: 0
+    })
+    observer.observe(infiniteSentinel)
+  } else {
+    visibleCardsLimit = Number.MAX_SAFE_INTEGER
   }
 
   applySorting()

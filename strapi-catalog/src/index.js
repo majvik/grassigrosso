@@ -63,10 +63,10 @@ module.exports = {
       }
     }
 
-    const productsInput = [
+    const productTemplates = [
       {
         name: 'Classic',
-        slug: 'classic',
+        slug: 'classic-001',
         collectionSlug: 'classic',
         firmness: 'medium',
         mattress_type: 'spring',
@@ -78,7 +78,7 @@ module.exports = {
       },
       {
         name: 'Flexi',
-        slug: 'flexi',
+        slug: 'flexi-001',
         collectionSlug: 'flexi',
         firmness: 'hard',
         mattress_type: 'nospring',
@@ -90,7 +90,7 @@ module.exports = {
       },
       {
         name: 'Relax',
-        slug: 'relax',
+        slug: 'relax-001',
         collectionSlug: 'relax',
         firmness: 'soft',
         mattress_type: 'nospring',
@@ -102,7 +102,7 @@ module.exports = {
       },
       {
         name: 'Trend',
-        slug: 'trend',
+        slug: 'trend-001',
         collectionSlug: 'trend',
         firmness: 'medium',
         mattress_type: 'spring',
@@ -113,6 +113,18 @@ module.exports = {
         sort_order: 4
       }
     ];
+
+    const TARGET_PRODUCTS_COUNT = 100;
+    const productsInput = Array.from({ length: TARGET_PRODUCTS_COUNT }, (_, index) => {
+      const template = productTemplates[index % productTemplates.length];
+      const serial = String(index + 1).padStart(3, '0');
+      return {
+        ...template,
+        name: `${template.name} ${index + 1}`,
+        slug: `${template.collectionSlug}-${serial}`,
+        sort_order: index + 1
+      };
+    });
 
     async function ensureUploadedImage(imageRelativePath, altText) {
       const fileName = imageRelativePath.replace(/^\//, '');
@@ -148,32 +160,35 @@ module.exports = {
       pagination: { pageSize: 200 }
     });
 
-    if (!Array.isArray(existingProducts) || existingProducts.length === 0) {
-      for (const item of productsInput) {
-        const uploadedFile = await ensureUploadedImage(item.image_url, `Коллекция ${item.name}`);
-        await strapi.documents('api::product.product').create({
-          data: {
-            name: item.name,
-            slug: item.slug,
-            collection: collectionsBySlug[item.collectionSlug]?.documentId || null,
-            firmness: item.firmness,
-            mattress_type: item.mattress_type,
-            height_cm: item.height_cm,
-            max_load_kg: item.max_load_kg,
-            image_url: item.image_url,
-            media: uploadedFile?.id || null,
-            is_active: true,
-            sort_order: item.sort_order,
-            tags: item.tagSlugs.map((slug) => tagsBySlug[slug]?.documentId).filter(Boolean)
-          }
-        });
-      }
-      strapi.log.info('Catalog seed data created');
-      return;
+    const productSeedBySlug = Object.fromEntries(productsInput.map((item) => [item.slug, item]));
+    const existingProductsBySlug = Object.fromEntries(
+      (Array.isArray(existingProducts) ? existingProducts : []).map((item) => [item.slug, item])
+    );
+
+    let createdCount = 0;
+    for (const item of productsInput) {
+      if (existingProductsBySlug[item.slug]) continue;
+      const uploadedFile = await ensureUploadedImage(item.image_url, `Коллекция ${item.name}`);
+      await strapi.documents('api::product.product').create({
+        data: {
+          name: item.name,
+          slug: item.slug,
+          collection: collectionsBySlug[item.collectionSlug]?.documentId || null,
+          firmness: item.firmness,
+          mattress_type: item.mattress_type,
+          height_cm: item.height_cm,
+          max_load_kg: item.max_load_kg,
+          image_url: item.image_url,
+          media: uploadedFile?.id || null,
+          is_active: true,
+          sort_order: item.sort_order,
+          tags: item.tagSlugs.map((slug) => tagsBySlug[slug]?.documentId).filter(Boolean)
+        }
+      });
+      createdCount += 1;
     }
 
     // Existing DB path: attach media to already seeded products if missing.
-    const productSeedBySlug = Object.fromEntries(productsInput.map((item) => [item.slug, item]));
     for (const product of existingProducts) {
       if (product.media) continue;
       const seed = productSeedBySlug[product.slug];
@@ -185,6 +200,7 @@ module.exports = {
         data: { media: uploadedFile.id }
       });
     }
+    strapi.log.info(`Catalog seed ensured to ${TARGET_PRODUCTS_COUNT} items, created: ${createdCount}`);
     strapi.log.info('Catalog media sync completed');
   },
 };
