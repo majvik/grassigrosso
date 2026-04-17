@@ -868,6 +868,53 @@ if (catalogueNewViewButtons.length > 0) {
   })
 }
 
+const catalogueImageModal = document.getElementById('catalogueImageModal')
+const catalogueImageModalImg = document.getElementById('catalogueImageModalImg')
+const catalogueImageModalClose = document.getElementById('catalogueImageModalClose')
+const catalogueCardsRootForModal = document.querySelector('.catalogue-new-cards')
+
+if (catalogueImageModal && catalogueImageModalImg && catalogueCardsRootForModal) {
+  const closeCatalogueImageModal = () => {
+    catalogueImageModal.setAttribute('hidden', '')
+    catalogueImageModalImg.setAttribute('src', '')
+    catalogueImageModalImg.setAttribute('alt', '')
+    if (typeof unlockScroll === 'function') unlockScroll()
+    document.body.classList.remove('modal-open')
+  }
+
+  const openCatalogueImageModal = (src, alt) => {
+    if (!src) return
+    catalogueImageModalImg.setAttribute('src', src)
+    catalogueImageModalImg.setAttribute('alt', alt || '')
+    catalogueImageModal.removeAttribute('hidden')
+    if (typeof lockScroll === 'function') lockScroll()
+    document.body.classList.add('modal-open')
+  }
+
+  catalogueCardsRootForModal.addEventListener('click', (event) => {
+    const image = event.target.closest('.catalogue-new-card picture img')
+    if (!image) return
+    openCatalogueImageModal(image.getAttribute('src') || '', image.getAttribute('alt') || '')
+  })
+
+  if (catalogueImageModalClose) {
+    catalogueImageModalClose.addEventListener('click', (event) => {
+      event.stopPropagation()
+      closeCatalogueImageModal()
+    })
+  }
+
+  catalogueImageModal.addEventListener('click', (event) => {
+    if (event.target === catalogueImageModal) closeCatalogueImageModal()
+  })
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !catalogueImageModal.hasAttribute('hidden')) {
+      closeCatalogueImageModal()
+    }
+  })
+}
+
 // Collections slider with LERP and parallax
 const slider = document.querySelector('.collections-grid')
 const prevBtn = document.querySelector('.collections-arrows .arrow-btn.prev')

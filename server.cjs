@@ -557,7 +557,11 @@ app.get('/api/catalog/products', async (req, res) => {
     const feedResponse = await axios.get(feedUrl, { timeout: 15000 });
     const feedItems = Array.isArray(feedResponse.data?.items) ? feedResponse.data.items : [];
     if (feedItems.length > 0) {
-      return res.json({ items: feedItems, source: 'strapi-catalog-feed' });
+      const normalizedFeedItems = feedItems.map((item) => ({
+        ...item,
+        imageUrl: normalizeStrapiMediaUrl(item?.imageUrl || '')
+      }));
+      return res.json({ items: normalizedFeedItems, source: 'strapi-catalog-feed' });
     }
   } catch (_) {
     // Fallback to default products endpoint (if project is configured that way)
