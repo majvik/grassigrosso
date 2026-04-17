@@ -136,21 +136,77 @@
         background: rgba(var(--color-primary-rgb), 0.06);
       }
 
-      .catalogue-new-select {
+      .catalogue-new-sort {
+        position: relative;
+      }
+      .catalogue-new-sort-trigger {
         width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
         border: 1px solid var(--color-border);
         border-radius: var(--radius-sm);
         padding: 10px 44px 10px 12px;
         font: inherit;
         color: var(--color-text);
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
+        text-align: left;
+        cursor: pointer;
         background-color: #fff;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23283E37' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-image: none;
+      }
+      .catalogue-new-sort-trigger::after {
+        content: "";
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        width: 12px;
+        height: 8px;
+        transform: translateY(-50%);
+        pointer-events: none;
         background-repeat: no-repeat;
-        background-position: right 12px center;
         background-size: 12px 8px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23283E37' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      }
+      .catalogue-new-sort.is-open .catalogue-new-sort-trigger::after {
+        transform: translateY(-50%) rotate(180deg);
+      }
+      .catalogue-new-sort-trigger:focus-visible {
+        outline: 2px solid rgba(var(--color-primary-rgb), 0.2);
+        outline-offset: 2px;
+      }
+      .catalogue-new-sort-menu {
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: var(--z-local-2);
+        margin: 6px 0 0;
+        padding: 0;
+        list-style: none;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        background: #fff;
+      }
+      .catalogue-new-sort-option {
+        width: 100%;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        padding: 8px 10px;
+        text-align: left;
+        font-family: var(--font-family);
+        font-size: var(--font-size-subbody);
+        font-weight: 400;
+        color: var(--color-text);
+        cursor: pointer;
+      }
+      .catalogue-new-sort-option:hover {
+        background: rgba(var(--color-primary-rgb), 0.06);
+      }
+      .catalogue-new-sort-option.is-active {
+        color: var(--color-primary);
+        background: rgba(var(--color-primary-rgb), 0.1);
+        border-radius: 0;
       }
 
       .catalogue-new-content { padding: var(--space-5); }
@@ -181,6 +237,29 @@
         gap: var(--space-4);
         margin-bottom: var(--space-5);
       }
+      .catalogue-new-view-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .catalogue-new-view-btn {
+        width: 16px;
+        height: 16px;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        background: transparent;
+        color: var(--color-text-gray);
+        cursor: pointer;
+      }
+      .catalogue-new-view-btn.is-active {
+        color: var(--color-text);
+      }
+      .catalogue-new-view-btn svg {
+        display: block;
+        width: 16px;
+        height: 16px;
+      }
 
       .catalogue-new-results strong { color: var(--color-primary); }
 
@@ -188,6 +267,28 @@
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: var(--space-4);
+      }
+      .catalogue-new-cards.is-list-view {
+        grid-template-columns: 1fr;
+      }
+      .catalogue-new-cards.is-list-view .catalogue-new-card {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .catalogue-new-cards.is-list-view .catalogue-new-card picture {
+        height: 100%;
+      }
+      .catalogue-new-cards.is-list-view .catalogue-new-card img {
+        height: 100%;
+        object-fit: cover;
+      }
+      .catalogue-new-cards.is-list-view .catalogue-new-card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+      .catalogue-new-cards.is-list-view .catalogue-new-tags {
+        margin-top: auto;
       }
 
       .catalogue-new-card {
@@ -213,6 +314,12 @@
         margin-top: var(--space-2);
         color: var(--color-text-gray);
         font-size: var(--font-size-subbody);
+      }
+      .catalogue-new-meta-line {
+        display: block;
+      }
+      .catalogue-new-meta-value {
+        color: var(--color-text);
       }
 
       .catalogue-new-tags {
@@ -259,6 +366,9 @@
 
       @media (max-width: 720px) {
         .catalogue-new-cards { grid-template-columns: 1fr; }
+        .catalogue-new-cards.is-list-view .catalogue-new-card {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
@@ -368,13 +478,16 @@
 
           <div class="catalogue-new-filter-group">
             <h3>Сортировка</h3>
-            <select class="catalogue-new-select" aria-label="Сортировка каталога">
-              <option value="default">По умолчанию</option>
-              <option value="height-asc">Высота: по возрастанию</option>
-              <option value="height-desc">Высота: по убыванию</option>
-              <option value="load-desc">Максимальная нагрузка</option>
-              <option value="firmness-desc">По жесткости</option>
-            </select>
+            <div class="catalogue-new-sort">
+              <button type="button" class="catalogue-new-sort-trigger" aria-haspopup="listbox" aria-expanded="false">По умолчанию</button>
+              <ul class="catalogue-new-sort-menu" role="listbox" hidden>
+                <li><button type="button" class="catalogue-new-sort-option is-active" data-value="default">По умолчанию</button></li>
+                <li><button type="button" class="catalogue-new-sort-option" data-value="height-asc">Высота: по возрастанию</button></li>
+                <li><button type="button" class="catalogue-new-sort-option" data-value="height-desc">Высота: по убыванию</button></li>
+                <li><button type="button" class="catalogue-new-sort-option" data-value="load-desc">Максимальная нагрузка</button></li>
+                <li><button type="button" class="catalogue-new-sort-option" data-value="firmness-desc">По жесткости</button></li>
+              </ul>
+            </div>
           </div>
         </aside>
 
@@ -384,6 +497,25 @@
 
           <div class="catalogue-new-toolbar">
             <span class="catalogue-new-results">Найдено: <strong>6</strong> моделей</span>
+            <div class="catalogue-new-view-toggle" aria-label="Режим отображения каталога">
+              <button type="button" class="catalogue-new-view-btn" data-view="list" aria-label="Показать списком">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M2 3H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M2 8H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M2 13H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </button>
+              <button type="button" class="catalogue-new-view-btn is-active" data-view="grid" aria-label="Показать таблицей" aria-pressed="true">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <circle cx="3.5" cy="3.5" r="1.2" fill="currentColor" />
+                  <circle cx="8" cy="3.5" r="1.2" fill="currentColor" />
+                  <circle cx="12.5" cy="3.5" r="1.2" fill="currentColor" />
+                  <circle cx="3.5" cy="8" r="1.2" fill="currentColor" />
+                  <circle cx="8" cy="8" r="1.2" fill="currentColor" />
+                  <circle cx="12.5" cy="8" r="1.2" fill="currentColor" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div class="catalogue-new-cards">
@@ -395,7 +527,10 @@
               </picture>
               <div class="catalogue-new-card-body">
                 <h3>Classic</h3>
-                <p class="catalogue-new-meta">Высота: 22 см • Нагрузка: до 140 кг</p>
+                <p class="catalogue-new-meta">
+                  <span class="catalogue-new-meta-line">Высота: <span class="catalogue-new-meta-value">22см</span></span>
+                  <span class="catalogue-new-meta-line">Нагрузка: <span class="catalogue-new-meta-value">до 140 кг</span></span>
+                </p>
                 <div class="catalogue-new-tags">
                   <span class="catalogue-new-tag">Пружинный</span>
                   <span class="catalogue-new-tag">Средняя жесткость</span>
@@ -411,7 +546,10 @@
               </picture>
               <div class="catalogue-new-card-body">
                 <h3>Flexi</h3>
-                <p class="catalogue-new-meta">Высота: 24 см • Нагрузка: до 160 кг</p>
+                <p class="catalogue-new-meta">
+                  <span class="catalogue-new-meta-line">Высота: <span class="catalogue-new-meta-value">24см</span></span>
+                  <span class="catalogue-new-meta-line">Нагрузка: <span class="catalogue-new-meta-value">до 160 кг</span></span>
+                </p>
                 <div class="catalogue-new-tags">
                   <span class="catalogue-new-tag">Беспружинный</span>
                   <span class="catalogue-new-tag">Жесткий</span>
@@ -427,7 +565,10 @@
               </picture>
               <div class="catalogue-new-card-body">
                 <h3>Relax</h3>
-                <p class="catalogue-new-meta">Высота: 26 см • Нагрузка: до 170 кг</p>
+                <p class="catalogue-new-meta">
+                  <span class="catalogue-new-meta-line">Высота: <span class="catalogue-new-meta-value">26см</span></span>
+                  <span class="catalogue-new-meta-line">Нагрузка: <span class="catalogue-new-meta-value">до 170 кг</span></span>
+                </p>
                 <div class="catalogue-new-tags">
                   <span class="catalogue-new-tag">Беспружинный</span>
                   <span class="catalogue-new-tag">Мягкий</span>
@@ -443,7 +584,10 @@
               </picture>
               <div class="catalogue-new-card-body">
                 <h3>Trend</h3>
-                <p class="catalogue-new-meta">Высота: 23 см • Нагрузка: до 150 кг</p>
+                <p class="catalogue-new-meta">
+                  <span class="catalogue-new-meta-line">Высота: <span class="catalogue-new-meta-value">23см</span></span>
+                  <span class="catalogue-new-meta-line">Нагрузка: <span class="catalogue-new-meta-value">до 150 кг</span></span>
+                </p>
                 <div class="catalogue-new-tags">
                   <span class="catalogue-new-tag">Пружинный</span>
                   <span class="catalogue-new-tag">Средняя жесткость</span>

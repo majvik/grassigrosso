@@ -608,21 +608,127 @@ if (mobileMenuBtn && mobileMenuClose && mobileMenuOverlay) {
 const catalogueNewSidebar = document.querySelector('.catalogue-new-sidebar')
 const catalogueNewCardsRoot = document.querySelector('.catalogue-new-cards')
 const catalogueNewResultsValue = document.querySelector('.catalogue-new-results strong')
-const catalogueNewSort = document.querySelector('.catalogue-new-select')
+const catalogueNewSort = document.querySelector('.catalogue-new-sort')
+const catalogueNewSortTrigger = document.querySelector('.catalogue-new-sort-trigger')
+const catalogueNewSortOptions = [...document.querySelectorAll('.catalogue-new-sort-option')]
 const catalogueNewReset = document.querySelector('.catalogue-new-reset')
 
 if (catalogueNewSidebar && catalogueNewCardsRoot) {
-  const cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
+  let cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
   const state = {
     collection: 'all',
     firmness: 'all',
     type: 'all',
-    sort: catalogueNewSort?.value || 'default'
+    sort: 'default'
+  }
+  function syncCardsCache() {
+    cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
+    cards.forEach((card, index) => {
+      card.dataset.initialOrder = String(index)
+    })
   }
 
-  cards.forEach((card, index) => {
-    card.dataset.initialOrder = String(index)
-  })
+  function buildMetaLine(label, value) {
+    return `<span class="catalogue-new-meta-line">${escapeHtml(label)}: <span class="catalogue-new-meta-value">${escapeHtml(value)}</span></span>`
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+  }
+
+  function buildCatalogueCard(item) {
+    const name = escapeHtml(item.name || '')
+    const heightCm = Number(item.heightCm || 0)
+    const maxLoadKg = Number(item.maxLoadKg || 0)
+    const collectionSlug = item.collectionSlug || item.slug || ''
+    const firmness = item.firmness || 'medium'
+    const mattressType = item.mattressType || 'nospring'
+    const imageUrl = escapeHtml(item.imageUrl || '')
+    const imageAlt = escapeHtml(item.imageAlt || `Коллекция ${item.name || ''}`)
+    const tags = Array.isArray(item.tags) ? item.tags.filter(Boolean).slice(0, 3) : []
+
+    return `
+      <article class="catalogue-new-card"
+        data-collection="${escapeHtml(collectionSlug)}"
+        data-firmness="${escapeHtml(firmness)}"
+        data-type="${escapeHtml(mattressType)}"
+        data-height="${heightCm}"
+        data-load="${maxLoadKg}">
+        <picture>
+          <img src="${imageUrl}" alt="${imageAlt}" />
+        </picture>
+        <div class="catalogue-new-card-body">
+          <h3>${name}</h3>
+          <p class="catalogue-new-meta">
+            ${buildMetaLine('Высота', `${heightCm}см`)}
+            ${buildMetaLine('Нагрузка', `до ${maxLoadKg} кг`)}
+          </p>
+          <div class="catalogue-new-tags">
+            ${tags.map((tag) => `<span class="catalogue-new-tag">${escapeHtml(tag)}</span>`).join('')}
+          </div>
+        </div>
+      </article>
+    `
+  }
+
+  function normalizeApiCollectionValue(item) {
+    const raw = String(item.collectionSlug || item.slug || '').trim().toLowerCase()
+    if (raw === 'toppers' || raw === 'topers' || raw === 'topper') return 'topper'
+    return raw
+  }
+
+  async function loadCatalogueFromStrapi() {
+    try {
+      const response = await fetch('/api/catalog/products', { headers: { Accept: 'application/json' } })
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const payload = await response.json()
+      const items = Array.isArray(payload.items) ? payload.items : []
+      if (items.length === 0) return
+
+      const html = items.map((item) => buildCatalogueCard({
+        ...item,
+        collectionSlug: normalizeApiCollectionValue(item)
+      })).join('')
+      catalogueNewCardsRoot.innerHTML = html
+      syncCardsCache()
+      applySorting()
+      applyFilters()
+    } catch (err) {
+      console.warn('Catalogue Strapi fetch failed, using static fallback:', err)
+    }
+  }
+  function setActiveSortOption(value) {
+    if (catalogueNewSortTrigger) {
+      const activeOption = catalogueNewSortOptions.find((option) => option.dataset.value === value)
+      if (activeOption) catalogueNewSortTrigger.textContent = activeOption.textContent || 'По умолчанию'
+    }
+    catalogueNewSortOptions.forEach((option) => {
+      option.classList.toggle('is-active', option.dataset.value === value)
+    })
+  }
+
+  function closeSortMenu() {
+    if (!catalogueNewSort || !catalogueNewSortTrigger) return
+    catalogueNewSort.classList.remove('is-open')
+    catalogueNewSortTrigger.setAttribute('aria-expanded', 'false')
+    const menu = catalogueNewSort.querySelector('.catalogue-new-sort-menu')
+    if (menu) menu.hidden = true
+  }
+
+  function openSortMenu() {
+    if (!catalogueNewSort || !catalogueNewSortTrigger) return
+    catalogueNewSort.classList.add('is-open')
+    catalogueNewSortTrigger.setAttribute('aria-expanded', 'true')
+    const menu = catalogueNewSort.querySelector('.catalogue-new-sort-menu')
+    if (menu) menu.hidden = false
+  }
+
+  syncCardsCache()
 
   function updateResultsCount() {
     if (!catalogueNewResultsValue) return
@@ -685,12 +791,37 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     applyFilters()
   })
 
-  if (catalogueNewSort) {
-    catalogueNewSort.addEventListener('change', () => {
-      state.sort = catalogueNewSort.value || 'default'
-      applySorting()
-      applyFilters()
+  if (catalogueNewSort && catalogueNewSortTrigger && catalogueNewSortOptions.length > 0) {
+    catalogueNewSortTrigger.addEventListener('click', () => {
+      const isOpen = catalogueNewSort.classList.contains('is-open')
+      if (isOpen) {
+        closeSortMenu()
+      } else {
+        openSortMenu()
+      }
     })
+
+    catalogueNewSortOptions.forEach((option) => {
+      option.addEventListener('click', () => {
+        state.sort = option.dataset.value || 'default'
+        setActiveSortOption(state.sort)
+        closeSortMenu()
+        applySorting()
+        applyFilters()
+      })
+    })
+
+    document.addEventListener('click', (event) => {
+      if (!catalogueNewSort.contains(event.target)) {
+        closeSortMenu()
+      }
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeSortMenu()
+    })
+
+    setActiveSortOption('default')
   }
 
   if (catalogueNewReset) {
@@ -702,7 +833,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       setActiveChip('collection', 'all')
       setActiveChip('firmness', 'all')
       setActiveChip('type', 'all')
-      if (catalogueNewSort) catalogueNewSort.value = 'default'
+      setActiveSortOption('default')
+      closeSortMenu()
       applySorting()
       applyFilters()
     })
@@ -710,6 +842,30 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   applySorting()
   applyFilters()
+  loadCatalogueFromStrapi()
+}
+
+const catalogueNewViewButtons = document.querySelectorAll('.catalogue-new-view-btn')
+if (catalogueNewViewButtons.length > 0) {
+  const catalogueNewCards = document.querySelector('.catalogue-new-cards')
+
+  catalogueNewViewButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      catalogueNewViewButtons.forEach((item) => {
+        const isActive = item === button
+        item.classList.toggle('is-active', isActive)
+        if (isActive) {
+          item.setAttribute('aria-pressed', 'true')
+        } else {
+          item.setAttribute('aria-pressed', 'false')
+        }
+      })
+
+      if (catalogueNewCards) {
+        catalogueNewCards.classList.toggle('is-list-view', button.dataset.view === 'list')
+      }
+    })
+  })
 }
 
 // Collections slider with LERP and parallax

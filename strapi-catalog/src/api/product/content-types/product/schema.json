@@ -1,0 +1,70 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true,
+      "unique": true
+    },
+    "collection": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::collection.collection"
+    },
+    "firmness": {
+      "type": "enumeration",
+      "required": true,
+      "enum": ["soft", "medium", "hard"],
+      "default": "medium"
+    },
+    "mattress_type": {
+      "type": "enumeration",
+      "required": true,
+      "enum": ["spring", "nospring", "topper"],
+      "default": "nospring"
+    },
+    "height_cm": {
+      "type": "decimal",
+      "required": true
+    },
+    "max_load_kg": {
+      "type": "integer",
+      "required": true
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "media": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag"
+    }
+  }
+}

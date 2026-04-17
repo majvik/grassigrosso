@@ -15,6 +15,8 @@ require('dotenv').config();
 const app = express();
 
 const PORT = Number(process.env.PORT || 3000);
+const STRAPI_URL = String(process.env.STRAPI_URL || '').trim().replace(/\/+$/, '');
+const STRAPI_TOKEN = String(process.env.STRAPI_TOKEN || '').trim();
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const RAW_CHAT_ID = process.env.CHAT_ID || '';
@@ -63,6 +65,9 @@ app.use(express.urlencoded({ extended: true }));
 const PRIMARY_HOST = 'grassigrosso.com';
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
+    if (req.path === '/health') {
+      return next();
+    }
     const host = String(req.headers.host || '').replace(/:\d+$/, '').toLowerCase();
 
     if (!host || host === PRIMARY_HOST) {
@@ -125,6 +130,53 @@ function normalizeLeadPayload(body = {}) {
     email: String(body.email || '').trim(),
     city: String(body.city || '').trim(),
     page: String(body.page || '').trim() || 'Не указана',
+  };
+}
+
+function normalizeStrapiListPayload(payload) {
+  if (!payload) return [];
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload.data)) return payload.data;
+  return [];
+}
+
+function normalizeStrapiMediaUrl(rawUrl) {
+  if (!rawUrl) return '';
+  if (/^https?:\/\//i.test(rawUrl)) return rawUrl;
+  if (!STRAPI_URL) return rawUrl;
+  return `${STRAPI_URL}${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`;
+}
+
+function mapStrapiProduct(item) {
+  const node = item && item.attributes ? item.attributes : item;
+  if (!node) return null;
+
+  const collectionRaw = node.collection?.data?.attributes || node.collection || {};
+  const tagsRaw = Array.isArray(node.tags?.data) ? node.tags.data : (Array.isArray(node.tags) ? node.tags : []);
+  const mediaNode = Array.isArray(node.media?.data) ? node.media.data[0] : (node.media?.data || node.media || null);
+  const mediaAttrs = mediaNode?.attributes || mediaNode || {};
+
+  const collectionName = collectionRaw.name || '';
+  const collectionSlug = collectionRaw.slug || '';
+  const firmness = String(node.firmness || '').trim().toLowerCase();
+  const mattressType = String(node.mattress_type || node.mattressType || '').trim().toLowerCase();
+
+  return {
+    name: node.name || '',
+    slug: node.slug || '',
+    collectionName,
+    collectionSlug,
+    firmness,
+    mattressType,
+    heightCm: Number(node.height_cm ?? node.heightCm ?? 0),
+    maxLoadKg: Number(node.max_load_kg ?? node.maxLoadKg ?? 0),
+    imageUrl: normalizeStrapiMediaUrl(mediaAttrs.url || ''),
+    imageAlt: mediaAttrs.alternativeText || mediaAttrs.name || (node.name ? `Коллекция ${node.name}` : 'Изображение товара'),
+    tags: tagsRaw.map((tagNode) => {
+      const t = tagNode?.attributes || tagNode || {};
+      return String(t.name || '').trim();
+    }).filter(Boolean),
+    isActive: node.is_active !== false
   };
 }
 
@@ -492,6 +544,50 @@ app.get('/health', (req, res) => {
       telegram: channelTelegramConfigured()
     }
   });
+});
+
+app.get('/api/catalog/products', async (req, res) => {
+  if (!STRAPI_URL) {
+    return res.status(503).json({ error: 'STRAPI_URL is not configured' });
+  }
+
+  try {
+    // Preferred: custom public Strapi endpoint (no role permissions needed)
+    const feedUrl = `${STRAPI_URL}/api/catalog-feed`;
+    const feedResponse = await axios.get(feedUrl, { timeout: 15000 });
+    const feedItems = Array.isArray(feedResponse.data?.items) ? feedResponse.data.items : [];
+    if (feedItems.length > 0) {
+      return res.json({ items: feedItems, source: 'strapi-catalog-feed' });
+    }
+  } catch (_) {
+    // Fallback to default products endpoint (if project is configured that way)
+  }
+
+  try {
+    const fallbackUrl = `${STRAPI_URL}/api/products`;
+    const fallbackResponse = await axios.get(fallbackUrl, {
+      headers: STRAPI_TOKEN ? { Authorization: `Bearer ${STRAPI_TOKEN}` } : {},
+      params: {
+        'filters[is_active][$eq]': true,
+        'populate[collection]': '*',
+        'populate[tags]': '*',
+        'populate[media]': '*',
+        sort: ['sort_order:asc', 'id:asc'],
+        pagination: { pageSize: 100 }
+      },
+      timeout: 15000
+    });
+
+    const rows = normalizeStrapiListPayload(fallbackResponse.data);
+    const products = rows.map(mapStrapiProduct).filter((item) => item && item.name);
+    return res.json({ items: products, source: 'strapi-products' });
+  } catch (error) {
+    console.error('❌ Ошибка загрузки каталога из Strapi:', extractErrorDetails(error));
+    return res.status(502).json({
+      error: 'Failed to fetch catalog from Strapi',
+      details: extractErrorDetails(error)
+    });
+  }
 });
 
 app.get('/api/download/:docId', (req, res) => {
