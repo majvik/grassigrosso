@@ -57,7 +57,7 @@
         display: grid;
         grid-template-columns: 320px 1fr;
         gap: var(--space-6);
-        padding: var(--space-7) var(--space-page-x-desktop) var(--space-9);
+        padding: 0 var(--space-page-x-desktop) var(--space-9);
         background: var(--color-bg-white);
         position: relative;
       }
@@ -93,12 +93,14 @@
       .catalogue-new-sidebar.is-fixed {
         position: fixed;
         top: 16px;
-        z-index: var(--z-local-2);
+        z-index: var(--z-local-1);
+        box-sizing: border-box;
       }
       .catalogue-new-sidebar.is-bottom {
         position: absolute;
         top: auto;
         bottom: var(--space-9);
+        box-sizing: border-box;
       }
 
       .catalogue-new-sidebar-head {
@@ -234,23 +236,202 @@
         border-radius: 0;
       }
 
-      .catalogue-new-title {
-        margin: 0;
-        font-family: var(--font-bounded);
-        font-size: 64px;
-        font-weight: 400;
-        line-height: 1.2;
-        color: var(--color-primary);
+      .catalog-hero-slider {
+        --catalog-hero-autoplay: 6500ms;
+        position: relative;
+        width: 100%;
+        height: 100%;
       }
-
-      .catalogue-new-subtitle {
-        margin: var(--space-4) 0 var(--space-6);
-        max-width: 760px;
-        font-family: var(--font-family);
-        font-size: 18px;
-        font-weight: 400;
-        line-height: 1.4;
-        color: var(--color-text);
+      /* Левая/правая половина: при наведении на свою половину видна только своя стрелка */
+      .catalog-hero-nav-side {
+        position: absolute;
+        top: 0;
+        bottom: 52px;
+        width: 50%;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        pointer-events: auto;
+      }
+      .catalog-hero-nav-side--left {
+        left: 0;
+        justify-content: flex-start;
+        padding-left: 12px;
+      }
+      .catalog-hero-nav-side--right {
+        right: 0;
+        justify-content: flex-end;
+        padding-right: 12px;
+      }
+      .catalog-hero-nav-btn {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(14, 23, 20, 0.35);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: rgba(255, 255, 255, 0.92);
+        cursor: pointer;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s ease, background 0.2s ease, color 0.2s ease;
+      }
+      .catalog-hero-nav-side--left:hover .catalog-hero-nav-prev,
+      .catalog-hero-nav-side--left:focus-within .catalog-hero-nav-prev {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .catalog-hero-nav-side--right:hover .catalog-hero-nav-next,
+      .catalog-hero-nav-side--right:focus-within .catalog-hero-nav-next {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .catalog-hero-nav-btn:hover {
+        background: rgba(14, 23, 20, 0.5);
+        color: #fff;
+      }
+      .catalog-hero-nav-btn:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.55);
+        outline-offset: 3px;
+      }
+      @media (hover: none) {
+        .catalog-hero-nav-side--left .catalog-hero-nav-prev,
+        .catalog-hero-nav-side--right .catalog-hero-nav-next {
+          opacity: 1;
+          pointer-events: auto;
+        }
+      }
+      .catalog-hero-slides {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .catalog-hero-slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 520ms ease;
+      }
+      .catalog-hero-slide.is-active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .catalog-hero-slide picture,
+      .catalog-hero-slide img {
+        width: 100%;
+        height: 100%;
+      }
+      .catalog-hero-slide img {
+        object-fit: cover;
+        display: block;
+      }
+      .catalog-hero-slide video {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .catalog-hero-dots {
+        position: absolute;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: rgba(14, 23, 20, 0.35);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 4;
+      }
+      .catalog-hero-dot {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width: 6px;
+        height: 6px;
+        flex: 0 0 auto;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        background: transparent;
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.55);
+        transition: width 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .catalog-hero-dot.is-active {
+        width: 36px;
+      }
+      .catalog-hero-dot:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.55);
+        outline-offset: 3px;
+        border-radius: 999px;
+      }
+      /* Неактивно: круг 6×6px. Активно: та же «точка» растягивается в полоску 6px с прогрессом слева направо */
+      .catalog-hero-dot-shape {
+        display: block;
+        flex-shrink: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.42);
+        transition:
+          width 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+          height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+          border-radius 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+          background 0.32s ease;
+      }
+      .catalog-hero-dot.is-active .catalog-hero-dot-shape {
+        width: 36px;
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.22);
+        position: relative;
+        overflow: hidden;
+      }
+      .catalog-hero-dot-fill {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        border-radius: inherit;
+        background: rgba(255, 255, 255, 0.92);
+        transform: scaleX(0);
+        transform-origin: left center;
+        will-change: transform;
+      }
+      .catalog-hero-dot.is-active .catalog-hero-dot-fill {
+        display: block;
+        animation: catalogueHeroDotProgress var(--catalog-hero-autoplay) linear forwards;
+      }
+      @keyframes catalogueHeroDotProgress {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .catalog-hero-slide { transition: none; }
+        .catalog-hero-dot-shape { transition: none; }
+        .catalog-hero-dot.is-active .catalog-hero-dot-fill {
+          animation: none;
+          transform: scaleX(1);
+        }
+        .catalog-hero-nav-btn { transition: none; }
       }
 
       .catalogue-new-toolbar {
@@ -374,24 +555,23 @@
 
       @media (max-width: 1439px) {
         .catalogue-new-layout {
-          padding: var(--space-7) 40px var(--space-9);
+          padding: 0 40px var(--space-9);
         }
       }
 
       @media (max-width: 1200px) {
         .catalogue-new-layout {
-          padding: var(--space-7) 32px var(--space-9);
+          padding: 0 32px var(--space-9);
         }
       }
 
       @media (max-width: 1024px) {
         .catalogue-new-layout {
           grid-template-columns: 1fr;
-          padding: var(--space-6) var(--space-page-x-mobile) var(--space-8);
+          padding: 0 var(--space-page-x-mobile) var(--space-8);
           gap: var(--space-4);
         }
         .catalogue-new-sidebar { position: static; }
-        .catalogue-new-title { font-size: clamp(32px, 7vw, 38px); }
       }
 
       @media (max-width: 720px) {
@@ -506,6 +686,98 @@
     </div>
 
     <main>
+      <section class="catalog-hero">
+        <div class="catalog-hero-content">
+          <div class="catalog-hero-text">
+            <h1 class="catalog-hero-title">Каталог <br> продукции</h1>
+            <p class="catalog-hero-description">
+              Мы создаем продуманные системы для сна и естественного восстановления, чтобы каждое утро начиналось легко и спокойно. Подберите матрас под ваши задачи: формат использования, уровень жесткости и требуемую нагрузку.
+            </p>
+          </div>
+          <div class="catalog-hero-image">
+            <div class="catalog-hero-slider" data-autoplay-ms="6500" aria-roledescription="carousel" aria-label="Галерея интерьеров">
+              <div class="catalog-hero-slides">
+                <div class="catalog-hero-slide is-active" id="catalog-hero-slide-0" data-slide="0" aria-hidden="false">
+                  <picture>
+                    <source type="image/avif" srcset="./public/catalog-hero@2x.avif 2x, ./public/catalog-hero.avif 1x" />
+                    <source type="image/webp" srcset="./public/catalog-hero@2x.webp 2x, ./public/catalog-hero.webp 1x" />
+                    <source type="image/png" srcset="./public/catalog-hero@2x.png 2x, ./public/catalog-hero.png 1x" />
+                    <img src="./public/catalog-hero.png" alt="Интерьер спальни" loading="eager" fetchpriority="high" decoding="async" />
+                  </picture>
+                </div>
+                <div class="catalog-hero-slide" id="catalog-hero-slide-1" data-slide="1" aria-hidden="true">
+                  <picture>
+                    <source type="image/avif" srcset="./public/dealers-hero@2x.avif 2x, ./public/dealers-hero.avif 1x" />
+                    <source type="image/webp" srcset="./public/dealers-hero@2x.webp 2x, ./public/dealers-hero.webp 1x" />
+                    <source type="image/png" srcset="./public/dealers-hero@2x.png 2x, ./public/dealers-hero.png 1x" />
+                    <img src="./public/dealers-hero.png" alt="Интерьер в тёплых тонах" loading="lazy" decoding="async" />
+                  </picture>
+                </div>
+                <div class="catalog-hero-slide" id="catalog-hero-slide-2" data-slide="2" aria-hidden="true">
+                  <picture>
+                    <source type="image/avif" srcset="./public/hotels-hero@2x.avif 2x, ./public/hotels-hero.avif 1x" />
+                    <source type="image/webp" srcset="./public/hotels-hero@2x.webp 2x, ./public/hotels-hero.webp 1x" />
+                    <source type="image/png" srcset="./public/hotels-hero@2x.png 2x, ./public/hotels-hero.png 1x" />
+                    <img src="./public/hotels-hero.png" alt="Номер отеля" loading="lazy" decoding="async" />
+                  </picture>
+                </div>
+                <div class="catalog-hero-slide" id="catalog-hero-slide-3" data-slide="3" aria-hidden="true">
+                  <picture>
+                    <source type="image/avif" srcset="./public/contacts-hero@2x.avif 2x, ./public/contacts-hero.avif 1x" />
+                    <source type="image/webp" srcset="./public/contacts-hero@2x.webp 2x, ./public/contacts-hero.webp 1x" />
+                    <source type="image/png" srcset="./public/contacts-hero@2x.png 2x, ./public/contacts-hero.png 1x" />
+                    <img src="./public/contacts-hero.png" alt="Светлая спальня" loading="lazy" decoding="async" />
+                  </picture>
+                </div>
+                <div class="catalog-hero-slide" id="catalog-hero-slide-4" data-slide="4" aria-hidden="true">
+                  <video
+                    muted
+                    loop
+                    playsinline
+                    preload="metadata"
+                    poster="./public/quality-video-poster.jpg"
+                    aria-label="Производство"
+                  >
+                    <source src="./public/quality-video.webm" type="video/webm" />
+                    <source src="./public/quality-video.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </div>
+              <div class="catalog-hero-nav-side catalog-hero-nav-side--left">
+                <button type="button" class="catalog-hero-nav-btn catalog-hero-nav-prev" aria-label="Предыдущий слайд">
+                  <svg width="11" height="18" viewBox="0 0 11 18" fill="none" aria-hidden="true">
+                    <path d="M8.5 2.5L2.5 9l6 6.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+              </div>
+              <div class="catalog-hero-nav-side catalog-hero-nav-side--right">
+                <button type="button" class="catalog-hero-nav-btn catalog-hero-nav-next" aria-label="Следующий слайд">
+                  <svg width="11" height="18" viewBox="0 0 11 18" fill="none" aria-hidden="true">
+                    <path d="M2.5 2.5l6 6.5-6 6.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+              </div>
+              <div class="catalog-hero-dots" role="tablist" aria-label="Слайды">
+                <button type="button" class="catalog-hero-dot is-active" role="tab" aria-selected="true" aria-controls="catalog-hero-slide-0" id="catalog-hero-tab-0" data-target="0" aria-label="Слайд 1">
+                  <span class="catalog-hero-dot-shape" aria-hidden="true"><span class="catalog-hero-dot-fill"></span></span>
+                </button>
+                <button type="button" class="catalog-hero-dot" role="tab" aria-selected="false" aria-controls="catalog-hero-slide-1" id="catalog-hero-tab-1" data-target="1" aria-label="Слайд 2">
+                  <span class="catalog-hero-dot-shape" aria-hidden="true"><span class="catalog-hero-dot-fill"></span></span>
+                </button>
+                <button type="button" class="catalog-hero-dot" role="tab" aria-selected="false" aria-controls="catalog-hero-slide-2" id="catalog-hero-tab-2" data-target="2" aria-label="Слайд 3">
+                  <span class="catalog-hero-dot-shape" aria-hidden="true"><span class="catalog-hero-dot-fill"></span></span>
+                </button>
+                <button type="button" class="catalog-hero-dot" role="tab" aria-selected="false" aria-controls="catalog-hero-slide-3" id="catalog-hero-tab-3" data-target="3" aria-label="Слайд 4">
+                  <span class="catalog-hero-dot-shape" aria-hidden="true"><span class="catalog-hero-dot-fill"></span></span>
+                </button>
+                <button type="button" class="catalog-hero-dot" role="tab" aria-selected="false" aria-controls="catalog-hero-slide-4" id="catalog-hero-tab-4" data-target="4" aria-label="Слайд 5">
+                  <span class="catalog-hero-dot-shape" aria-hidden="true"><span class="catalog-hero-dot-fill"></span></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       <div class="catalogue-new-layout">
         <aside class="catalogue-new-sidebar">
           <div class="catalogue-new-sidebar-head">
@@ -561,9 +833,6 @@
         </aside>
 
         <section class="catalogue-new-content">
-          <h1 class="catalogue-new-title">Каталог <br> продукции</h1>
-          <p class="catalogue-new-subtitle">Мы создаем продуманные системы для сна и естественного восстановления, чтобы каждое утро начиналось легко и спокойно. Подберите матрас под ваши задачи: формат использования, уровень жесткости и требуемую нагрузку.</p>
-
           <div class="catalogue-new-toolbar">
             <span class="catalogue-new-results">Найдено: <strong>6</strong> моделей</span>
             <div class="catalogue-new-view-toggle" aria-label="Режим отображения каталога">

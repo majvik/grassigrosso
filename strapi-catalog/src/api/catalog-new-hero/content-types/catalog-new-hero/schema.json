@@ -1,0 +1,24 @@
+{
+  "kind": "singleType",
+  "collectionName": "catalog_new_heroes",
+  "info": {
+    "singularName": "catalog-new-hero",
+    "pluralName": "catalog-new-heroes",
+    "displayName": "Catalog (new) hero slider"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "autoplay_ms": {
+      "type": "integer",
+      "default": 6500,
+      "min": 2500
+    },
+    "slides": {
+      "type": "component",
+      "repeatable": true,
+      "component": "catalog.hero-slide"
+    }
+  }
+}

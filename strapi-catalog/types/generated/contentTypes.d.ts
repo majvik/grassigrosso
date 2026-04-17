@@ -430,6 +430,43 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCatalogNewHeroCatalogNewHero
+  extends Struct.SingleTypeSchema {
+  collectionName: 'catalog_new_heroes';
+  info: {
+    displayName: 'Catalog (new) hero slider';
+    pluralName: 'catalog-new-heroes';
+    singularName: 'catalog-new-hero';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    autoplay_ms: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 2500;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<6500>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::catalog-new-hero.catalog-new-hero'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    slides: Schema.Attribute.Component<'catalog.hero-slide', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCollectionCollection extends Struct.CollectionTypeSchema {
   collectionName: 'collections';
   info: {
@@ -1052,6 +1089,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::catalog-new-hero.catalog-new-hero': ApiCatalogNewHeroCatalogNewHero;
       'api::collection.collection': ApiCollectionCollection;
       'api::product.product': ApiProductProduct;
       'api::tag.tag': ApiTagTag;

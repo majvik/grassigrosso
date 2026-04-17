@@ -546,6 +546,39 @@ app.get('/health', (req, res) => {
   });
 });
 
+app.get('/api/catalog/hero-slides', async (req, res) => {
+  if (!STRAPI_URL) {
+    return res.status(503).json({ error: 'STRAPI_URL is not configured', slides: [] });
+  }
+
+  try {
+    const feedUrl = `${STRAPI_URL}/api/catalog-hero-feed`;
+    const response = await axios.get(feedUrl, { timeout: 10000 });
+    const slides = Array.isArray(response.data?.slides) ? response.data.slides : [];
+    const normalizedSlides = slides.map((slide) => ({
+      type: slide.type === 'video' ? 'video' : 'image',
+      src: normalizeStrapiMediaUrl(slide.src || ''),
+      poster: normalizeStrapiMediaUrl(slide.poster || ''),
+      alt: String(slide.alt || '').trim(),
+      mime: String(slide.mime || '').trim(),
+    })).filter((slide) => slide.src);
+    const autoplayRaw = Number(response.data?.autoplayMs ?? response.data?.autoplay_ms);
+    const autoplayMs = Number.isFinite(autoplayRaw) ? Math.max(2500, autoplayRaw) : 6500;
+    return res.json({
+      slides: normalizedSlides,
+      autoplayMs,
+      source: response.data?.source || 'strapi-catalog-hero-feed',
+    });
+  } catch (error) {
+    console.error('❌ Ошибка загрузки hero-слайдера из Strapi:', extractErrorDetails(error));
+    return res.status(502).json({
+      error: 'Failed to fetch catalog hero from Strapi',
+      details: extractErrorDetails(error),
+      slides: [],
+    });
+  }
+});
+
 app.get('/api/catalog/products', async (req, res) => {
   if (!STRAPI_URL) {
     return res.status(503).json({ error: 'STRAPI_URL is not configured' });

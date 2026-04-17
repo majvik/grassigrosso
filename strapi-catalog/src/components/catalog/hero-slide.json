@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_catalog_hero_slides",
+  "info": {
+    "displayName": "Catalog hero slide",
+    "icon": "landscape"
+  },
+  "options": {},
+  "attributes": {
+    "slide_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "slide_video": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["videos", "files"]
+    },
+    "poster": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "alt_text": {
+      "type": "string",
+      "required": false
+    }
+  }
+}

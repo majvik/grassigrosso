@@ -234,6 +234,51 @@ function waitForHeroMedia() {
     )
     if (!container) return Promise.resolve()
 
+    const catalogSlider = container.querySelector('.catalog-hero-slider')
+    if (catalogSlider) {
+      const activeSlide = catalogSlider.querySelector('.catalog-hero-slide.is-active')
+      if (activeSlide) {
+        const activeVideo = activeSlide.querySelector('video')
+        if (activeVideo) {
+          const poster = activeVideo.getAttribute('poster')
+          if (poster) {
+            return Promise.race([
+              new Promise((resolve) => {
+                const img = new Image()
+                img.onload = resolve
+                img.onerror = resolve
+                img.src = poster
+                if (img.complete) resolve()
+              }),
+              new Promise((resolve) => setTimeout(resolve, 3000))
+            ])
+          }
+          if (activeVideo.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+            return Promise.resolve()
+          }
+          return Promise.race([
+            new Promise((resolve) => {
+              activeVideo.addEventListener('canplay', resolve, { once: true })
+              activeVideo.addEventListener('error', resolve, { once: true })
+            }),
+            new Promise((resolve) => setTimeout(resolve, 5000))
+          ])
+        }
+        const img = activeSlide.querySelector('picture img, img')
+        if (img) {
+          if (img.complete && img.naturalWidth > 0) return Promise.resolve()
+          return Promise.race([
+            new Promise((resolve) => {
+              img.addEventListener('load', resolve, { once: true })
+              img.addEventListener('error', resolve, { once: true })
+            }),
+            new Promise((resolve) => setTimeout(resolve, 3000))
+          ])
+        }
+      }
+      return Promise.resolve()
+    }
+
     const video = container.querySelector('video[poster]')
     if (video) {
       const src = video.getAttribute('poster')
@@ -265,6 +310,232 @@ function waitForHeroMedia() {
   } catch (e) {
     return Promise.resolve()
   }
+}
+
+function escapeCatalogHeroAttr(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function applyCatalogHeroStrapiPayload(sliderRoot, data) {
+  const slidesRoot = sliderRoot.querySelector('.catalog-hero-slides')
+  const dotsRoot = sliderRoot.querySelector('.catalog-hero-dots')
+  if (!slidesRoot || !dotsRoot) return
+
+  const ap = Number(data.autoplayMs ?? data.autoplay_ms ?? sliderRoot.dataset.autoplayMs)
+  if (Number.isFinite(ap) && ap >= 2500) {
+    sliderRoot.dataset.autoplayMs = String(ap)
+  }
+
+  const slides = Array.isArray(data.slides) ? data.slides : []
+  const slidesHtml = slides.map((slide, i) => {
+    const active = i === 0
+    const activeClass = active ? ' is-active' : ''
+    const ariaHidden = active ? 'false' : 'true'
+    const id = `catalog-hero-slide-${i}`
+    const loading = i === 0 ? 'eager' : 'lazy'
+    const fetchPriority = i === 0 ? ' fetchpriority="high"' : ''
+    const alt = escapeCatalogHeroAttr(slide.alt || '')
+    const src = escapeCatalogHeroAttr(slide.src || '')
+    if (slide.type === 'video') {
+      const poster = escapeCatalogHeroAttr(slide.poster || '')
+      const mime = escapeCatalogHeroAttr(slide.mime || 'video/mp4')
+      return `<div class="catalog-hero-slide${activeClass}" id="${id}" data-slide="${i}" aria-hidden="${ariaHidden}"><video${poster ? ` poster="${poster}"` : ''} muted loop playsinline preload="metadata" aria-label="${alt}"><source src="${src}" type="${mime}" /></video></div>`
+    }
+    return `<div class="catalog-hero-slide${activeClass}" id="${id}" data-slide="${i}" aria-hidden="${ariaHidden}"><img src="${src}" alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} /></div>`
+  }).join('')
+
+  const dotsHtml = slides.map((_, i) => {
+    const active = i === 0
+    const activeClass = active ? ' is-active' : ''
+    const selected = active ? 'true' : 'false'
+    const tabId = `catalog-hero-tab-${i}`
+    const slideId = `catalog-hero-slide-${i}`
+    const label = `Слайд ${i + 1}`
+    return `<button type="button" class="catalog-hero-dot${activeClass}" role="tab" aria-selected="${selected}" aria-controls="${slideId}" id="${tabId}" data-target="${i}" aria-label="${escapeCatalogHeroAttr(label)}"><span class="catalog-hero-dot-shape" aria-hidden="true"><span class="catalog-hero-dot-fill"></span></span></button>`
+  }).join('')
+
+  slidesRoot.innerHTML = slidesHtml
+  dotsRoot.innerHTML = dotsHtml
+}
+
+async function setupCatalogueNewPageHero() {
+  const sliderRoot = document.querySelector('.catalog-hero-slider')
+  if (!sliderRoot) return
+  try {
+    const res = await fetch('/api/catalog/hero-slides', { headers: { Accept: 'application/json' } })
+    if (res.ok) {
+      const data = await res.json()
+      if (Array.isArray(data.slides) && data.slides.length > 0) {
+        applyCatalogHeroStrapiPayload(sliderRoot, data)
+      }
+    }
+  } catch (err) {
+    console.warn('Catalog hero Strapi fetch failed, using static slides:', err)
+  }
+  initCatalogHeroSlider(sliderRoot)
+}
+
+function initCatalogHeroSlider(sliderRoot) {
+  const slides = [...sliderRoot.querySelectorAll('.catalog-hero-slide')]
+  const dots = [...sliderRoot.querySelectorAll('.catalog-hero-dot')]
+  if (slides.length === 0) return
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const autoplayMsRaw = Number(sliderRoot.dataset.autoplayMs || '6500')
+  const autoplayMs = Number.isFinite(autoplayMsRaw) ? Math.max(2500, autoplayMsRaw) : 6500
+  sliderRoot.style.setProperty('--catalog-hero-autoplay', `${autoplayMs}ms`)
+
+  let index = Math.max(0, slides.findIndex((slide) => slide.classList.contains('is-active')))
+  if (index < 0) index = 0
+
+  let timer = null
+  let isPaused = false
+  let isVisible = true
+
+  function clearTimer() {
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
+    }
+  }
+
+  function restartActiveDotAnimation() {
+    const activeDot = dots[index]
+    if (!activeDot) return
+    const progress = activeDot.querySelector('.catalog-hero-dot-fill')
+    if (!progress) return
+    const clone = progress.cloneNode(true)
+    progress.replaceWith(clone)
+  }
+
+  function syncDots() {
+    dots.forEach((dot, dotIndex) => {
+      const isActive = dotIndex === index
+      dot.classList.toggle('is-active', isActive)
+      dot.setAttribute('aria-selected', isActive ? 'true' : 'false')
+      dot.tabIndex = isActive ? 0 : -1
+    })
+    restartActiveDotAnimation()
+  }
+
+  function applySlideMedia() {
+    slides.forEach((slide, slideIndex) => {
+      const video = slide.querySelector('video')
+      if (!video) return
+      const isActive = slideIndex === index
+      const shouldPlay = isActive && isVisible && !reducedMotion
+      if (shouldPlay) {
+        video.muted = true
+        video.setAttribute('playsinline', '')
+        void video.play().catch(() => {})
+      } else {
+        video.pause()
+      }
+    })
+  }
+
+  function syncSlides() {
+    slides.forEach((slide, slideIndex) => {
+      const isActive = slideIndex === index
+      slide.classList.toggle('is-active', isActive)
+      slide.setAttribute('aria-hidden', isActive ? 'false' : 'true')
+    })
+    applySlideMedia()
+    syncDots()
+  }
+
+  function goTo(nextIndex) {
+    if (slides.length === 0) return
+    const next = ((nextIndex % slides.length) + slides.length) % slides.length
+    index = next
+    syncSlides()
+    scheduleAutoplay()
+  }
+
+  function scheduleAutoplay() {
+    clearTimer()
+    if (reducedMotion) return
+    if (!isVisible || isPaused) return
+
+    timer = setTimeout(() => {
+      goTo(index + 1)
+    }, autoplayMs)
+  }
+
+  const prevBtn = sliderRoot.querySelector('.catalog-hero-nav-prev')
+  const nextBtn = sliderRoot.querySelector('.catalog-hero-nav-next')
+  prevBtn?.addEventListener('click', (e) => {
+    goTo(index - 1)
+    e.currentTarget.blur()
+  })
+  nextBtn?.addEventListener('click', (e) => {
+    goTo(index + 1)
+    e.currentTarget.blur()
+  })
+
+  dots.forEach((dot) => {
+    dot.addEventListener('click', () => {
+      const target = Number(dot.dataset.target || '0')
+      if (!Number.isFinite(target)) return
+      goTo(target)
+    })
+  })
+
+  sliderRoot.addEventListener('mouseenter', () => {
+    isPaused = true
+    clearTimer()
+  })
+  sliderRoot.addEventListener('mouseleave', () => {
+    isPaused = false
+    scheduleAutoplay()
+  })
+
+  sliderRoot.addEventListener('focusin', () => {
+    isPaused = true
+    clearTimer()
+  })
+  sliderRoot.addEventListener('focusout', () => {
+    window.setTimeout(() => {
+      if (sliderRoot.contains(document.activeElement)) return
+      isPaused = false
+      scheduleAutoplay()
+    }, 0)
+  })
+
+  sliderRoot.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      goTo(index + 1)
+    }
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      goTo(index - 1)
+    }
+  })
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        isVisible = entry.isIntersecting
+        if (!isVisible) {
+          clearTimer()
+          applySlideMedia()
+          return
+        }
+        applySlideMedia()
+        if (!isPaused) scheduleAutoplay()
+      })
+    }, { threshold: 0.2 })
+    observer.observe(sliderRoot)
+  }
+
+  syncSlides()
+  scheduleAutoplay()
 }
 
 // Initialize page load
@@ -620,6 +891,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   if (catalogueNewLayout) {
     catalogueNewLayout.insertBefore(stickyPlaceholder, catalogueNewSidebar)
   }
+  let scheduleStickySidebarSync = () => {}
   let cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
   const CATALOGUE_PAGE_SIZE = 6
   let visibleCardsLimit = CATALOGUE_PAGE_SIZE
@@ -789,6 +1061,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
     infiniteSentinel.hidden = matchedCards.length <= visibleCardsLimit
     updateResultsCount()
+    scheduleStickySidebarSync()
   }
 
   function setActiveChip(groupName, value) {
@@ -881,10 +1154,6 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     visibleCardsLimit = Number.MAX_SAFE_INTEGER
   }
 
-  applySorting()
-  applyFilters()
-  loadCatalogueFromStrapi()
-
   if (catalogueNewLayout) {
     const stickyTopOffset = 16
     const desktopMedia = window.matchMedia('(min-width: 1025px)')
@@ -895,11 +1164,12 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         stickyPlaceholder.style.height = ''
         catalogueNewSidebar.classList.remove('is-fixed', 'is-bottom')
         catalogueNewSidebar.style.width = ''
+        catalogueNewSidebar.style.left = ''
         return
       }
 
       const layoutRect = catalogueNewLayout.getBoundingClientRect()
-      const sidebarRect = catalogueNewSidebar.getBoundingClientRect()
+      const placeholderRect = stickyPlaceholder.getBoundingClientRect()
       const sidebarHeight = catalogueNewSidebar.offsetHeight
       const shouldFix = layoutRect.top <= stickyTopOffset && layoutRect.bottom - stickyTopOffset > sidebarHeight
       const shouldStickBottom = layoutRect.bottom - stickyTopOffset <= sidebarHeight
@@ -914,21 +1184,33 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       catalogueNewSidebar.classList.toggle('is-fixed', shouldFix)
       catalogueNewSidebar.classList.toggle('is-bottom', shouldStickBottom)
 
-      if (shouldFix) {
-        const placeholderRect = stickyPlaceholder.getBoundingClientRect()
-        catalogueNewSidebar.style.width = `${sidebarRect.width}px`
-        catalogueNewSidebar.style.left = `${placeholderRect.left}px`
+      if (shouldFix || shouldStickBottom) {
+        catalogueNewSidebar.style.width = `${Math.round(placeholderRect.width)}px`
+        catalogueNewSidebar.style.left = `${Math.round(placeholderRect.left)}px`
       } else {
         catalogueNewSidebar.style.width = ''
         catalogueNewSidebar.style.left = ''
       }
     }
 
-    syncStickySidebar()
-    window.addEventListener('scroll', syncStickySidebar, { passive: true })
-    window.addEventListener('resize', syncStickySidebar)
-    desktopMedia.addEventListener('change', syncStickySidebar)
+    let stickyRaf = 0
+    scheduleStickySidebarSync = () => {
+      if (stickyRaf) cancelAnimationFrame(stickyRaf)
+      stickyRaf = requestAnimationFrame(() => {
+        stickyRaf = 0
+        syncStickySidebar()
+      })
+    }
+
+    scheduleStickySidebarSync()
+    window.addEventListener('scroll', scheduleStickySidebarSync, { passive: true })
+    window.addEventListener('resize', scheduleStickySidebarSync)
+    desktopMedia.addEventListener('change', scheduleStickySidebarSync)
   }
+
+  applySorting()
+  applyFilters()
+  loadCatalogueFromStrapi()
 }
 
 const catalogueNewViewButtons = document.querySelectorAll('.catalogue-new-view-btn')
@@ -2942,6 +3224,10 @@ if (helpDocumentsModal && helpDocumentsForm) {
     }
   })
 }
+}
+
+if (document.body.dataset.page === 'catalogue-new') {
+  void setupCatalogueNewPageHero()
 }
 
 initPageLoad()

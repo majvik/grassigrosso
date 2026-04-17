@@ -126,8 +126,8 @@ module.exports = {
       };
     });
 
-    async function ensureUploadedImage(imageRelativePath, altText) {
-      const fileName = imageRelativePath.replace(/^\//, '');
+    async function ensurePublicUpload(relativePath, altText) {
+      const fileName = String(relativePath || '').replace(/^\//, '');
       const existing = await strapi.db.query('plugin::upload.file').findOne({
         where: { name: fileName }
       });
@@ -147,7 +147,7 @@ module.exports = {
         files: {
           filepath: sourcePath,
           originalFilename: fileName,
-          mimetype: mimeTypes.lookup(fileName) || 'image/png',
+          mimetype: mimeTypes.lookup(fileName) || 'application/octet-stream',
           size: stat.size
         }
       });
@@ -168,7 +168,7 @@ module.exports = {
     let createdCount = 0;
     for (const item of productsInput) {
       if (existingProductsBySlug[item.slug]) continue;
-      const uploadedFile = await ensureUploadedImage(item.image_url, `Коллекция ${item.name}`);
+      const uploadedFile = await ensurePublicUpload(item.image_url, `Коллекция ${item.name}`);
       await strapi.documents('api::product.product').create({
         data: {
           name: item.name,
@@ -193,7 +193,7 @@ module.exports = {
       if (product.media) continue;
       const seed = productSeedBySlug[product.slug];
       if (!seed) continue;
-      const uploadedFile = await ensureUploadedImage(seed.image_url, `Коллекция ${seed.name}`);
+      const uploadedFile = await ensurePublicUpload(seed.image_url, `Коллекция ${seed.name}`);
       if (!uploadedFile) continue;
       await strapi.documents('api::product.product').update({
         documentId: product.documentId,
@@ -202,5 +202,86 @@ module.exports = {
     }
     strapi.log.info(`Catalog seed ensured to ${TARGET_PRODUCTS_COUNT} items, created: ${createdCount}`);
     strapi.log.info('Catalog media sync completed');
+
+    const heroUid = 'api::catalog-new-hero.catalog-new-hero';
+    const heroImageSlideDefs = [
+      { file: 'catalog-hero.png', alt: 'Интерьер спальни' },
+      { file: 'dealers-hero.png', alt: 'Интерьер в тёплых тонах' },
+      { file: 'hotels-hero.png', alt: 'Номер отеля' },
+      { file: 'contacts-hero.png', alt: 'Светлая спальня' },
+    ];
+
+    async function buildCatalogHeroSlidesPayload() {
+      const slidesPayload = [];
+      for (const def of heroImageSlideDefs) {
+        const rel = `/${def.file}`;
+        const uploaded = await ensurePublicUpload(rel, def.alt);
+        if (!uploaded?.id) {
+          strapi.log.warn(`Catalog hero seed: missing file ${def.file}, skip slide`);
+          continue;
+        }
+        slidesPayload.push({
+          slide_image: uploaded.id,
+          alt_text: def.alt,
+        });
+      }
+      const videoAlt = 'Производство';
+      const videoFile = await ensurePublicUpload('/quality-video.mp4', videoAlt);
+      const poster = await ensurePublicUpload('/quality-video-poster.jpg', videoAlt);
+      if (videoFile?.id) {
+        slidesPayload.push({
+          slide_video: videoFile.id,
+          ...(poster?.id ? { poster: poster.id } : {}),
+          alt_text: videoAlt,
+        });
+      } else {
+        strapi.log.warn('Catalog hero seed: quality-video.mp4 not found, fifth slide omitted');
+      }
+      return slidesPayload;
+    }
+
+    try {
+      const existingHero = await strapi.documents(heroUid).findFirst({
+        populate: {
+          slides: { populate: ['slide_image', 'slide_video'] },
+        },
+      });
+
+      const slides = Array.isArray(existingHero?.slides) ? existingHero.slides : [];
+      const hasMediaSlides = slides.some((row) => row.slide_image || row.slide_video);
+      const hasVideoSlide = slides.some((row) => row.slide_video);
+      const legacyFourImagesOnly =
+        hasMediaSlides && !hasVideoSlide && slides.length === 4;
+
+      if (hasMediaSlides && hasVideoSlide) {
+        strapi.log.info('Catalog (new) hero slider already has slides (including video); skip seed');
+      } else if (!hasMediaSlides || legacyFourImagesOnly) {
+        const slidesPayload = await buildCatalogHeroSlidesPayload();
+        if (slidesPayload.length === 0) {
+          strapi.log.warn('Catalog hero seed: no slides built');
+        } else if (existingHero?.documentId) {
+          await strapi.documents(heroUid).update({
+            documentId: existingHero.documentId,
+            data: {
+              autoplay_ms: Number(existingHero.autoplay_ms) >= 2500 ? existingHero.autoplay_ms : 6500,
+              slides: slidesPayload,
+            },
+          });
+          strapi.log.info(
+            `Catalog (new) hero slider ${legacyFourImagesOnly ? 'migrated to' : 'updated with'} ${slidesPayload.length} slides`
+          );
+        } else {
+          await strapi.documents(heroUid).create({
+            data: {
+              autoplay_ms: 6500,
+              slides: slidesPayload,
+            },
+          });
+          strapi.log.info(`Catalog (new) hero slider created with ${slidesPayload.length} slides`);
+        }
+      }
+    } catch (err) {
+      strapi.log.error('Catalog (new) hero slider seed failed:', err);
+    }
   },
 };

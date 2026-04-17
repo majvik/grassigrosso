@@ -65,6 +65,7 @@
   --z-banner-mobile: 999;
   --z-floating: 1000;
   --z-overlay: 10000;
+  --z-modal: calc(var(--z-overlay) + 1);
   --z-preloader: var(--z-overlay);
 
   /* Spacing */
