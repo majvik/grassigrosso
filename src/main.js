@@ -614,6 +614,12 @@ const catalogueNewSortOptions = [...document.querySelectorAll('.catalogue-new-so
 const catalogueNewReset = document.querySelector('.catalogue-new-reset')
 
 if (catalogueNewSidebar && catalogueNewCardsRoot) {
+  const catalogueNewLayout = document.querySelector('.catalogue-new-layout')
+  const stickyPlaceholder = document.createElement('div')
+  stickyPlaceholder.className = 'catalogue-new-sidebar-placeholder'
+  if (catalogueNewLayout) {
+    catalogueNewLayout.insertBefore(stickyPlaceholder, catalogueNewSidebar)
+  }
   let cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
   const CATALOGUE_PAGE_SIZE = 6
   let visibleCardsLimit = CATALOGUE_PAGE_SIZE
@@ -878,6 +884,51 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   applySorting()
   applyFilters()
   loadCatalogueFromStrapi()
+
+  if (catalogueNewLayout) {
+    const stickyTopOffset = 16
+    const desktopMedia = window.matchMedia('(min-width: 1025px)')
+    const syncStickySidebar = () => {
+      const isDesktop = desktopMedia.matches
+      if (!isDesktop) {
+        stickyPlaceholder.classList.remove('is-active')
+        stickyPlaceholder.style.height = ''
+        catalogueNewSidebar.classList.remove('is-fixed', 'is-bottom')
+        catalogueNewSidebar.style.width = ''
+        return
+      }
+
+      const layoutRect = catalogueNewLayout.getBoundingClientRect()
+      const sidebarRect = catalogueNewSidebar.getBoundingClientRect()
+      const sidebarHeight = catalogueNewSidebar.offsetHeight
+      const shouldFix = layoutRect.top <= stickyTopOffset && layoutRect.bottom - stickyTopOffset > sidebarHeight
+      const shouldStickBottom = layoutRect.bottom - stickyTopOffset <= sidebarHeight
+
+      stickyPlaceholder.style.height = `${sidebarHeight}px`
+      if (shouldFix || shouldStickBottom) {
+        stickyPlaceholder.classList.add('is-active')
+      } else {
+        stickyPlaceholder.classList.remove('is-active')
+      }
+
+      catalogueNewSidebar.classList.toggle('is-fixed', shouldFix)
+      catalogueNewSidebar.classList.toggle('is-bottom', shouldStickBottom)
+
+      if (shouldFix) {
+        const placeholderRect = stickyPlaceholder.getBoundingClientRect()
+        catalogueNewSidebar.style.width = `${sidebarRect.width}px`
+        catalogueNewSidebar.style.left = `${placeholderRect.left}px`
+      } else {
+        catalogueNewSidebar.style.width = ''
+        catalogueNewSidebar.style.left = ''
+      }
+    }
+
+    syncStickySidebar()
+    window.addEventListener('scroll', syncStickySidebar, { passive: true })
+    window.addEventListener('resize', syncStickySidebar)
+    desktopMedia.addEventListener('change', syncStickySidebar)
+  }
 }
 
 const catalogueNewViewButtons = document.querySelectorAll('.catalogue-new-view-btn')
