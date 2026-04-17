@@ -1,5 +1,6 @@
 const config = {
   locales: [
+    // В проекте используется `src/admin/app.js` с ru+en.
     // 'ar',
     // 'fr',
     // 'cs',

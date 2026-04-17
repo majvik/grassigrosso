@@ -10,6 +10,12 @@
 - Source: Strapi custom route `GET /api/catalog-hero-feed` (reads Single Type **Catalog (new) hero slider**)
 - Frontend: on `catalogue-new`, after `initApp` the hero slider fetches this endpoint; if `slides` is non-empty, slides and dots are replaced from Strapi; otherwise the static HTML in `catalogue-new.html` stays
 
+## Язык админки Strapi (русский)
+
+В `strapi-catalog/src/admin/app.js` заданы локали **`ru`** и **`en`** (английский обязателен в Strapi как fallback). После `npm run build` / перезапуска `develop` в списке языков интерфейса появится русский.
+
+Первый визит по-прежнему может быть на английском: **аватар справа сверху → Profile → Experience → Interface language → Русский** (или аналогичный пункт в вашей версии админки). Дальше выбор сохраняется для пользователя.
+
 ## Environment variables
 
 Add to server `.env`:
