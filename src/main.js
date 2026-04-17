@@ -604,6 +604,114 @@ if (mobileMenuBtn && mobileMenuClose && mobileMenuOverlay) {
   })
 }
 
+// Catalogue (new): sidebar filters + sorting
+const catalogueNewSidebar = document.querySelector('.catalogue-new-sidebar')
+const catalogueNewCardsRoot = document.querySelector('.catalogue-new-cards')
+const catalogueNewResultsValue = document.querySelector('.catalogue-new-results strong')
+const catalogueNewSort = document.querySelector('.catalogue-new-select')
+const catalogueNewReset = document.querySelector('.catalogue-new-reset')
+
+if (catalogueNewSidebar && catalogueNewCardsRoot) {
+  const cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
+  const state = {
+    collection: 'all',
+    firmness: 'all',
+    type: 'all',
+    sort: catalogueNewSort?.value || 'default'
+  }
+
+  cards.forEach((card, index) => {
+    card.dataset.initialOrder = String(index)
+  })
+
+  function updateResultsCount() {
+    if (!catalogueNewResultsValue) return
+    const visibleCount = cards.filter((card) => card.style.display !== 'none').length
+    catalogueNewResultsValue.textContent = String(visibleCount)
+  }
+
+  function applySorting() {
+    const cardsToSort = [...cards]
+    const firmnessRank = { soft: 1, medium: 2, hard: 3 }
+
+    cardsToSort.sort((a, b) => {
+      if (state.sort === 'height-asc') {
+        return Number(a.dataset.height || 0) - Number(b.dataset.height || 0)
+      }
+      if (state.sort === 'height-desc') {
+        return Number(b.dataset.height || 0) - Number(a.dataset.height || 0)
+      }
+      if (state.sort === 'load-desc') {
+        return Number(b.dataset.load || 0) - Number(a.dataset.load || 0)
+      }
+      if (state.sort === 'firmness-desc') {
+        return (firmnessRank[b.dataset.firmness] || 0) - (firmnessRank[a.dataset.firmness] || 0)
+      }
+      return Number(a.dataset.initialOrder || 0) - Number(b.dataset.initialOrder || 0)
+    })
+
+    cardsToSort.forEach((card) => {
+      catalogueNewCardsRoot.appendChild(card)
+    })
+  }
+
+  function applyFilters() {
+    cards.forEach((card) => {
+      const matchCollection = state.collection === 'all' || card.dataset.collection === state.collection
+      const matchFirmness = state.firmness === 'all' || card.dataset.firmness === state.firmness
+      const matchType = state.type === 'all' || card.dataset.type === state.type
+      card.style.display = matchCollection && matchFirmness && matchType ? '' : 'none'
+    })
+    updateResultsCount()
+  }
+
+  function setActiveChip(groupName, value) {
+    const group = catalogueNewSidebar.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
+    if (!group) return
+    group.querySelectorAll('.catalogue-new-chip').forEach((chip) => {
+      chip.classList.toggle('is-active', chip.dataset.value === value)
+    })
+  }
+
+  catalogueNewSidebar.addEventListener('click', (event) => {
+    const chip = event.target.closest('.catalogue-new-chip')
+    if (!chip) return
+    const group = chip.closest('.catalogue-new-filter-group')
+    const groupName = group?.dataset.filterGroup
+    const value = chip.dataset.value
+    if (!groupName || !value) return
+    state[groupName] = value
+    setActiveChip(groupName, value)
+    applyFilters()
+  })
+
+  if (catalogueNewSort) {
+    catalogueNewSort.addEventListener('change', () => {
+      state.sort = catalogueNewSort.value || 'default'
+      applySorting()
+      applyFilters()
+    })
+  }
+
+  if (catalogueNewReset) {
+    catalogueNewReset.addEventListener('click', () => {
+      state.collection = 'all'
+      state.firmness = 'all'
+      state.type = 'all'
+      state.sort = 'default'
+      setActiveChip('collection', 'all')
+      setActiveChip('firmness', 'all')
+      setActiveChip('type', 'all')
+      if (catalogueNewSort) catalogueNewSort.value = 'default'
+      applySorting()
+      applyFilters()
+    })
+  }
+
+  applySorting()
+  applyFilters()
+}
+
 // Collections slider with LERP and parallax
 const slider = document.querySelector('.collections-grid')
 const prevBtn = document.querySelector('.collections-arrows .arrow-btn.prev')

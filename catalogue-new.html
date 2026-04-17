@@ -1,0 +1,532 @@
+<!doctype html>
+<!--
+  Шаблон маркетинговой страницы Grassigrosso.
+  Копируйте в корень как <slug>.html или запускайте: npm run new-page -- <slug> "Заголовок – Grassigrosso"
+  Не удаляйте: vite-critical-css, Метрику, прелоадер, cookie-баннер, полный футер.
+-->
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- PAGE_TITLE: замените текст в <title> -->
+    <title>Каталог (новый) - Grassigrosso</title>
+    <meta name="description" content="Кратко опишите страницу (до ~160 символов) для поисковиков — уникальный текст." />
+    <link rel="canonical" href="%%SITE_ORIGIN%%/catalogue-new" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Каталог (новый) - Grassigrosso" />
+    <meta property="og:description" content="Краткое описание для соцсетей (можно совпадать с meta description)." />
+    <meta property="og:url" content="%%SITE_ORIGIN%%/catalogue-new" />
+    <meta property="og:image" content="%%SITE_ORIGIN%%/social-image.png" />
+    <meta property="og:image:secure_url" content="%%SITE_ORIGIN%%/social-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Каталог (новый) - Grassigrosso" />
+    <meta name="twitter:description" content="Краткое описание для соцсетей (можно совпадать с meta description)." />
+    <meta name="twitter:image" content="%%SITE_ORIGIN%%/social-image.png" />
+    <link rel="icon" href="./public/favicon.ico" sizes="any" media="(prefers-color-scheme: light)" />
+    <link rel="icon" href="./public/favicon-dark.ico" sizes="any" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="./public/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./public/favicon-32x32.png" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./public/favicon-dark-32x32.png" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./public/favicon-16x16.png" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./public/favicon-dark-16x16.png" media="(prefers-color-scheme: dark)" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./public/apple-touch-icon.png" />
+    <link rel="manifest" href="./public/site.webmanifest" />
+    <style id="vite-critical-css"></style>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+      (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a);
+      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107738086', 'ym');
+
+      ym(107738086, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/107738086" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    <link rel="stylesheet" href="./src/style.css" />
+    <link rel="preload" href="./src/fonts/nunito-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="./src/fonts/bounded-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <style>
+      .catalogue-new-layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: var(--space-6);
+        padding: var(--space-7) var(--space-page-x-desktop) var(--space-9);
+        background: var(--color-bg-white);
+      }
+
+      .catalogue-new-sidebar,
+      .catalogue-new-content,
+      .catalogue-new-card {
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-md);
+        background: #fff;
+      }
+
+      .catalogue-new-sidebar {
+        padding: var(--space-5);
+        height: fit-content;
+        position: sticky;
+        top: calc(var(--space-8) + 40px);
+      }
+
+      .catalogue-new-sidebar-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: var(--space-5);
+      }
+
+      .catalogue-new-sidebar-title,
+      .catalogue-new-section-title {
+        margin: 0;
+        font-family: var(--font-bounded);
+        color: var(--color-primary);
+      }
+
+      .catalogue-new-sidebar-title {
+        font-size: 32px;
+        font-weight: 400;
+        line-height: 1.2;
+      }
+
+      .catalogue-new-reset {
+        border: 0;
+        background: transparent;
+        color: var(--color-text-gray);
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .catalogue-new-filter-group { margin-top: var(--space-5); }
+      .catalogue-new-filter-group h3 {
+        margin: 0 0 var(--space-3);
+        font-family: var(--font-family);
+        font-size: 17px;
+        font-weight: 400;
+        line-height: 1.4;
+        color: var(--color-text);
+        opacity: 0.85;
+      }
+
+      .catalogue-new-filter-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .catalogue-new-chip {
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font: inherit;
+        background: #fff;
+        color: var(--color-text);
+      }
+
+      .catalogue-new-chip.is-active {
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+        background: rgba(var(--color-primary-rgb), 0.06);
+      }
+
+      .catalogue-new-select {
+        width: 100%;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        padding: 10px 44px 10px 12px;
+        font: inherit;
+        color: var(--color-text);
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-color: #fff;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23283E37' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 12px 8px;
+      }
+
+      .catalogue-new-content { padding: var(--space-5); }
+
+      .catalogue-new-title {
+        margin: 0;
+        font-family: var(--font-bounded);
+        font-size: 64px;
+        font-weight: 400;
+        line-height: 1.2;
+        color: var(--color-primary);
+      }
+
+      .catalogue-new-subtitle {
+        margin: var(--space-4) 0 var(--space-6);
+        max-width: 760px;
+        font-family: var(--font-family);
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.4;
+        color: var(--color-text);
+      }
+
+      .catalogue-new-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4);
+        margin-bottom: var(--space-5);
+      }
+
+      .catalogue-new-results strong { color: var(--color-primary); }
+
+      .catalogue-new-cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--space-4);
+      }
+
+      .catalogue-new-card {
+        overflow: hidden;
+      }
+
+      .catalogue-new-card picture,
+      .catalogue-new-card img {
+        display: block;
+        width: 100%;
+      }
+
+      .catalogue-new-card-body { padding: var(--space-4); }
+      .catalogue-new-card-body h3 {
+        margin: 0;
+        font-family: var(--font-bounded);
+        font-size: 28px;
+        font-weight: 300;
+        line-height: 1.2;
+        color: var(--color-primary);
+      }
+      .catalogue-new-meta {
+        margin-top: var(--space-2);
+        color: var(--color-text-gray);
+        font-size: var(--font-size-subbody);
+      }
+
+      .catalogue-new-tags {
+        margin-top: var(--space-3);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .catalogue-new-tag {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--color-tag-bg);
+        font-size: 13px;
+      }
+
+      @media (max-width: 1280px) {
+        .catalogue-new-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+
+      @media (max-width: 1439px) {
+        .catalogue-new-layout {
+          padding: var(--space-7) 40px var(--space-9);
+        }
+      }
+
+      @media (max-width: 1200px) {
+        .catalogue-new-layout {
+          padding: var(--space-7) 32px var(--space-9);
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .catalogue-new-layout {
+          grid-template-columns: 1fr;
+          padding: var(--space-6) var(--space-page-x-mobile) var(--space-8);
+          gap: var(--space-4);
+        }
+        .catalogue-new-sidebar { position: static; }
+        .catalogue-new-content { padding: var(--space-4); }
+        .catalogue-new-title { font-size: clamp(32px, 7vw, 38px); }
+      }
+
+      @media (max-width: 720px) {
+        .catalogue-new-cards { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <!-- data-page: опционально для логики в main.js -->
+  <body data-page="catalogue-new">
+    <div class="preloader" id="preloader">
+      <div class="preloader-spinner"></div>
+    </div>
+    <div class="cookie-banner">
+      <img src="./public/cookie-icon.png" alt="" class="cookie-icon" />
+      <p class="cookie-text">Мы используем <a href="cookies.html" class="cookie-link">cookie</a>, чтобы улучшить работу нашего сайта</p>
+      <button class="btn-cookie">Принять</button>
+    </div>
+
+    <div class="header-top">
+      <div class="header-top-content">
+        <span class="header-top-left">Доброе утро!</span>
+        <div class="header-top-right">
+          <a href="tel:+79782484380">+ 7 (978) 248-43-80</a>
+          <span class="separator"></span>
+          <span>Пн-Пт: 9:00 - 18:00</span>
+        </div>
+      </div>
+    </div>
+
+    <header class="header-main">
+      <div class="header-main-content">
+        <a href="index.html" class="logo">
+          <img src="./public/header-logo.svg" alt="Grassigrosso" class="logo-img" />
+        </a>
+        <div class="header-nav-wrapper">
+          <nav class="nav-menu">
+            <a href="hotels.html">Отелям</a>
+            <a href="dealers.html">Дилерам</a>
+            <a href="catalog.html">Каталог</a>
+            <a href="documents.html">Документы</a>
+            <a href="contacts.html">Контакты</a>
+          </nav>
+          <a href="contacts.html#contact-form" class="btn-contact">Связаться</a>
+        </div>
+        <button class="mobile-menu-btn" aria-label="Открыть меню">
+          <img src="./public/menu.svg" alt="" />
+        </button>
+      </div>
+    </header>
+
+    <div class="mobile-menu-overlay">
+      <div class="mobile-menu">
+        <div class="mobile-menu-header">
+          <a href="index.html" class="logo">
+            <img src="./public/header-logo.svg" alt="Grassigrosso" class="logo-img" />
+          </a>
+          <button class="mobile-menu-close" aria-label="Закрыть меню">
+            <img src="./public/menu-close.svg" alt="" />
+          </button>
+        </div>
+        <nav class="mobile-nav">
+          <a href="hotels.html">Отелям</a>
+          <a href="dealers.html">Дилерам</a>
+          <a href="catalog.html">Каталог</a>
+          <a href="documents.html">Документы</a>
+          <a href="contacts.html">Контакты</a>
+        </nav>
+        <a href="contacts.html#contact-form" class="mobile-menu-cta">Связаться</a>
+      </div>
+    </div>
+
+    <main>
+      <div class="catalogue-new-layout">
+        <aside class="catalogue-new-sidebar">
+          <div class="catalogue-new-sidebar-head">
+            <h2 class="catalogue-new-sidebar-title">Фильтры</h2>
+            <button type="button" class="catalogue-new-reset">Сбросить</button>
+          </div>
+
+          <div class="catalogue-new-filter-group" data-filter-group="collection">
+            <h3>Коллекция</h3>
+            <div class="catalogue-new-filter-list">
+              <button type="button" class="catalogue-new-chip is-active" data-value="all">Все коллекции</button>
+              <button type="button" class="catalogue-new-chip" data-value="classic">Classic</button>
+              <button type="button" class="catalogue-new-chip" data-value="flexi">Flexi</button>
+              <button type="button" class="catalogue-new-chip" data-value="relax">Relax</button>
+              <button type="button" class="catalogue-new-chip" data-value="trend">Trend</button>
+              <button type="button" class="catalogue-new-chip" data-value="topper">Топеры</button>
+            </div>
+          </div>
+
+          <div class="catalogue-new-filter-group" data-filter-group="firmness">
+            <h3>Жесткость</h3>
+            <div class="catalogue-new-filter-list">
+              <button type="button" class="catalogue-new-chip is-active" data-value="all">Любая</button>
+              <button type="button" class="catalogue-new-chip" data-value="soft">Мягкий 1-4</button>
+              <button type="button" class="catalogue-new-chip" data-value="medium">Средний 4-6</button>
+              <button type="button" class="catalogue-new-chip" data-value="hard">Жесткий 7-10</button>
+            </div>
+          </div>
+
+          <div class="catalogue-new-filter-group" data-filter-group="type">
+            <h3>Тип</h3>
+            <div class="catalogue-new-filter-list">
+              <button type="button" class="catalogue-new-chip is-active" data-value="all">Все типы</button>
+              <button type="button" class="catalogue-new-chip" data-value="spring">Пружинный</button>
+              <button type="button" class="catalogue-new-chip" data-value="nospring">Беспружинный</button>
+              <button type="button" class="catalogue-new-chip" data-value="topper">Топер</button>
+            </div>
+          </div>
+
+          <div class="catalogue-new-filter-group">
+            <h3>Сортировка</h3>
+            <select class="catalogue-new-select" aria-label="Сортировка каталога">
+              <option value="default">По умолчанию</option>
+              <option value="height-asc">Высота: по возрастанию</option>
+              <option value="height-desc">Высота: по убыванию</option>
+              <option value="load-desc">Максимальная нагрузка</option>
+              <option value="firmness-desc">По жесткости</option>
+            </select>
+          </div>
+        </aside>
+
+        <section class="catalogue-new-content">
+          <h1 class="catalogue-new-title">Каталог <br> продукции</h1>
+          <p class="catalogue-new-subtitle">Мы создаем продуманные системы для сна и естественного восстановления, чтобы каждое утро начиналось легко и спокойно. Подберите матрас под ваши задачи: формат использования, уровень жесткости и требуемую нагрузку.</p>
+
+          <div class="catalogue-new-toolbar">
+            <span class="catalogue-new-results">Найдено: <strong>6</strong> моделей</span>
+          </div>
+
+          <div class="catalogue-new-cards">
+            <article class="catalogue-new-card" data-collection="classic" data-firmness="medium" data-type="spring" data-height="22" data-load="140">
+              <picture>
+                <source type="image/avif" srcset="./public/collection-Classic@2x.avif 2x, ./public/collection-Classic.avif 1x" />
+                <source type="image/webp" srcset="./public/collection-Classic@2x.webp 2x, ./public/collection-Classic.webp 1x" />
+                <img src="./public/collection-Classic.png" alt="Коллекция Classic" />
+              </picture>
+              <div class="catalogue-new-card-body">
+                <h3>Classic</h3>
+                <p class="catalogue-new-meta">Высота: 22 см • Нагрузка: до 140 кг</p>
+                <div class="catalogue-new-tags">
+                  <span class="catalogue-new-tag">Пружинный</span>
+                  <span class="catalogue-new-tag">Средняя жесткость</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="catalogue-new-card" data-collection="flexi" data-firmness="hard" data-type="nospring" data-height="24" data-load="160">
+              <picture>
+                <source type="image/avif" srcset="./public/collection-Flexi@2x.avif 2x, ./public/collection-Flexi.avif 1x" />
+                <source type="image/webp" srcset="./public/collection-Flexi@2x.webp 2x, ./public/collection-Flexi.webp 1x" />
+                <img src="./public/collection-Flexi.png" alt="Коллекция Flexi" />
+              </picture>
+              <div class="catalogue-new-card-body">
+                <h3>Flexi</h3>
+                <p class="catalogue-new-meta">Высота: 24 см • Нагрузка: до 160 кг</p>
+                <div class="catalogue-new-tags">
+                  <span class="catalogue-new-tag">Беспружинный</span>
+                  <span class="catalogue-new-tag">Жесткий</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="catalogue-new-card" data-collection="relax" data-firmness="soft" data-type="nospring" data-height="26" data-load="170">
+              <picture>
+                <source type="image/avif" srcset="./public/collection-Relax@2x.avif 2x, ./public/collection-Relax.avif 1x" />
+                <source type="image/webp" srcset="./public/collection-Relax@2x.webp 2x, ./public/collection-Relax.webp 1x" />
+                <img src="./public/collection-Relax.png" alt="Коллекция Relax" />
+              </picture>
+              <div class="catalogue-new-card-body">
+                <h3>Relax</h3>
+                <p class="catalogue-new-meta">Высота: 26 см • Нагрузка: до 170 кг</p>
+                <div class="catalogue-new-tags">
+                  <span class="catalogue-new-tag">Беспружинный</span>
+                  <span class="catalogue-new-tag">Мягкий</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="catalogue-new-card" data-collection="trend" data-firmness="medium" data-type="spring" data-height="23" data-load="150">
+              <picture>
+                <source type="image/avif" srcset="./public/collection-Trend@2x.avif 2x, ./public/collection-Trend.avif 1x" />
+                <source type="image/webp" srcset="./public/collection-Trend@2x.webp 2x, ./public/collection-Trend.webp 1x" />
+                <img src="./public/collection-Trend.png" alt="Коллекция Trend" />
+              </picture>
+              <div class="catalogue-new-card-body">
+                <h3>Trend</h3>
+                <p class="catalogue-new-meta">Высота: 23 см • Нагрузка: до 150 кг</p>
+                <div class="catalogue-new-tags">
+                  <span class="catalogue-new-tag">Пружинный</span>
+                  <span class="catalogue-new-tag">Средняя жесткость</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <section class="documents-help">
+        <div class="documents-help-content">
+          <div class="documents-help-left">
+            <h2 class="section-title">Нужна помощь с подбором?</h2>
+          </div>
+          <div class="documents-help-right">
+            <p class="documents-help-text">Наши менеджеры помогут выбрать подходящую модель и подготовят персональное предложение под ваш запрос</p>
+            <a href="contacts.html#contact-form" class="btn-primary-large">Связаться с менеджером</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-column footer-about">
+          <div class="footer-logo">
+            <img src="./public/footer-logo.svg" alt="Grassigrosso" />
+          </div>
+          <p class="footer-description">Продуманные решения для естественного восстановления. Каждое утро – как лучшее.</p>
+          <div class="footer-legal">
+            <p>ИНН: 9102292969</p>
+            <p>ОГРН: 1239100014548</p>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-heading">Решения</h4>
+          <ul class="footer-links">
+            <li><a href="hotels.html">Отелям</a></li>
+            <li><a href="dealers.html">Дилерам</a></li>
+            <li><a href="catalog.html">Каталог матрасов</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-heading">Информация</h4>
+          <ul class="footer-links">
+            <li><a href="documents.html">Документы</a></li>
+            <li><a href="contacts.html">Контакты</a></li>
+          </ul>
+        </div>
+        <div class="footer-column footer-contacts">
+          <h4 class="footer-heading">Связь</h4>
+          <div class="contact-item">
+            <span class="contact-label">Телефон:</span>
+            <span class="contact-value"><a href="tel:+79782484380">+ 7 (978) 248-43-80</a></span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">Email:</span>
+            <span class="contact-value"><a href="mailto:sales@grassigrosso.com">sales@grassigrosso.com</a></span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">Режим работы:</span>
+            <span class="contact-value">Пн-Пт: 9:00 - 18:00 МСК</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-divider"></div>
+        <div class="footer-bottom-content">
+          <div class="footer-policies footer-policies-left">
+            <a href="privacy.html">Политика конфиденциальности</a>
+            <span class="separator"></span>
+            <a href="terms.html">Пользовательское соглашение</a>
+          </div>
+          <div class="footer-policies footer-policies-right">
+            <a href="cookies.html">Использование cookie</a>
+          </div>
+        </div>
+        <div class="footer-divider footer-divider-secondary"></div>
+        <p class="footer-copyright footer-copyright-legal"><span class="footer-copyright-brand">© Grassigrosso, 2026.</span> Все материалы, размещённые на сайте grassigrosso.com, включая текстовые, графические, фото- и видеоматериалы, элементы дизайна и оформления, структуру страниц, товарные знаки, фирменное наименование и доменное имя, являются объектами авторского права и иных прав на интеллектуальную собственность. Указанные материалы охраняются законодательством Российской Федерации и международными нормами в сфере защиты авторских и смежных прав. Любое использование материалов сайта, включая воспроизведение, копирование, переработку, распространение или размещение на других ресурсах, допускается только с предварительного письменного согласия правообладателя. Запрещаются действия, способные ввести пользователей в заблуждение относительно принадлежности размещённых материалов и их связи с доменом grassigrosso.com</p>
+      </div>
+    </footer>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
