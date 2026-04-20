@@ -144,7 +144,7 @@
         align-items: center;
         justify-content: space-between;
         gap: var(--space-3);
-        margin-bottom: var(--space-5);
+        margin-bottom: var(--space-3);
       }
 
       .catalogue-new-favourites-only-text {
@@ -188,6 +188,42 @@
       /* .catalogue-new-tag sets display — must not override [hidden] */
       .catalogue-new-favourites-only-count.catalogue-new-tag[hidden] {
         display: none !important;
+      }
+
+      .catalogue-new-manager-contact-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: max-content;
+        max-width: 100%;
+        border: 1px solid var(--color-primary);
+        background: var(--color-primary);
+        color: var(--color-bg-white);
+        font: inherit;
+        font-weight: 500;
+        text-transform: uppercase;
+        line-height: 1;
+        padding: 16px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+      }
+      .catalogue-new-manager-contact-btn:hover:not(:disabled) {
+        background: var(--color-primary-hover);
+        border-color: var(--color-primary-hover);
+      }
+      .catalogue-new-manager-contact-btn:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      .catalogue-new-favourites-actions {
+        margin-top: var(--space-5);
+        width: 100%;
+        padding-top: var(--space-4);
+        border-top: 1px solid rgba(var(--color-primary-rgb), 0.12);
+      }
+      .catalogue-new-favourites-actions[hidden] {
+        display: none;
       }
 
       .catalogue-new-switch {
@@ -1037,6 +1073,53 @@
         margin: 16px 0 0;
         color: var(--color-text-gray);
       }
+      .catalogue-new-image-modal-action {
+        margin-top: 0;
+      }
+      .catalogue-new-image-modal-actions {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(var(--color-primary-rgb), 0.12);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .catalogue-new-image-modal-share {
+        margin-left: auto;
+        border: 0;
+        background: transparent;
+        color: var(--color-primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 0;
+      }
+      .catalogue-new-image-modal-share svg {
+        display: block;
+        width: 24px;
+        height: 24px;
+      }
+      .catalogue-new-image-modal-share-icon--hover {
+        display: none;
+      }
+      .catalogue-new-image-modal-share:hover .catalogue-new-image-modal-share-icon--default {
+        display: none;
+      }
+      .catalogue-new-image-modal-share:hover .catalogue-new-image-modal-share-icon--hover {
+        display: block;
+      }
+      .catalogue-new-image-modal-share-label {
+        display: none;
+        font-family: var(--font-family);
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.2;
+        color: var(--color-primary);
+      }
       .catalogue-new-image-modal-close {
         position: absolute;
         top: 10px;
@@ -1069,6 +1152,18 @@
           max-height: none;
           overflow: visible;
           padding: 20px 16px;
+        }
+        .catalogue-new-image-modal-actions {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0;
+        }
+        .catalogue-new-image-modal-share {
+          margin-left: 0;
+          margin-top: 32px;
+        }
+        .catalogue-new-image-modal-share-label {
+          display: inline;
         }
       }
     </style>
@@ -1252,7 +1347,6 @@
               <span class="catalogue-new-switch-thumb" aria-hidden="true"></span>
             </button>
           </div>
-
           <div class="catalogue-new-filter-group" data-filter-group="collection">
             <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="true">
               <h3>Коллекция</h3>
@@ -1564,6 +1658,9 @@
               </div>
             </article>
           </div>
+          <div class="catalogue-new-favourites-actions" id="catalogue-new-favourites-actions" hidden>
+            <button type="button" class="catalogue-new-manager-contact-btn" id="catalogue-new-favourites-contact" disabled>Связаться с менеджером по позициям</button>
+          </div>
         </section>
       </div>
       <div class="catalogue-new-mobile-filters-overlay" id="catalogue-new-mobile-filters-overlay" hidden></div>
@@ -1591,6 +1688,26 @@
           <h3 class="catalogue-new-image-modal-title" id="catalogueImageModalTitle"></h3>
           <div class="catalogue-new-image-modal-specs" id="catalogueImageModalSpecs"></div>
           <p class="catalogue-new-image-modal-specs-empty" id="catalogueImageModalSpecsEmpty" hidden>Характеристики не указаны</p>
+          <div class="catalogue-new-image-modal-actions">
+            <button type="button" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" id="catalogueImageModalContactBtn">Связаться с менеджером по позиции</button>
+            <button type="button" class="catalogue-new-image-modal-share" id="catalogueImageModalShareBtn" aria-label="Поделиться">
+              <svg class="catalogue-new-image-modal-share-icon--default" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M7 10.75C6.30964 10.75 5.75 11.3096 5.75 12C5.75 12.6904 6.30964 13.25 7 13.25C7.69036 13.25 8.25 12.6904 8.25 12C8.25 11.3096 7.69036 10.75 7 10.75ZM4.25 12C4.25 10.4812 5.48122 9.25 7 9.25C8.51878 9.25 9.75 10.4812 9.75 12C9.75 13.5188 8.51878 14.75 7 14.75C5.48122 14.75 4.25 13.5188 4.25 12Z" fill="#243731"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M16 15.75C15.3096 15.75 14.75 16.3096 14.75 17C14.75 17.6904 15.3096 18.25 16 18.25C16.6904 18.25 17.25 17.6904 17.25 17C17.25 16.3096 16.6904 15.75 16 15.75ZM13.25 17C13.25 15.4812 14.4812 14.25 16 14.25C17.5188 14.25 18.75 15.4812 18.75 17C18.75 18.5188 17.5188 19.75 16 19.75C14.4812 19.75 13.25 18.5188 13.25 17Z" fill="#243731"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M16 5.75C15.3096 5.75 14.75 6.30964 14.75 7C14.75 7.69036 15.3096 8.25 16 8.25C16.6904 8.25 17.25 7.69036 17.25 7C17.25 6.30964 16.6904 5.75 16 5.75ZM13.25 7C13.25 5.48122 14.4812 4.25 16 4.25C17.5188 4.25 18.75 5.48122 18.75 7C18.75 8.51878 17.5188 9.75 16 9.75C14.4812 9.75 13.25 8.51878 13.25 7Z" fill="#243731"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.386 12.3555L14.386 15.3555L13.6143 16.6417L8.61426 13.6417L9.386 12.3555Z" fill="#243731"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.61426 10.3555L13.6143 7.35547L14.386 8.64171L9.386 11.6417L8.61426 10.3555Z" fill="#243731"/>
+              </svg>
+              <svg class="catalogue-new-image-modal-share-icon--hover" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M9 12C9 13.1046 8.10457 14 7 14C5.89543 14 5 13.1046 5 12C5 10.8954 5.89543 10 7 10C8.10457 10 9 10.8954 9 12Z" fill="#243731"/>
+                <path d="M18 17C18 18.1046 17.1046 19 16 19C14.8954 19 14 18.1046 14 17C14 15.8954 14.8954 15 16 15C17.1046 15 18 15.8954 18 17Z" fill="#243731"/>
+                <path d="M18 7C18 8.10457 17.1046 9 16 9C14.8954 9 14 8.10457 14 7C14 5.89543 14.8954 5 16 5C17.1046 5 18 5.89543 18 7Z" fill="#243731"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.35568 12.3398L14.8557 15.8398L14.1445 17.1606L7.64453 13.6606L8.35568 12.3398Z" fill="#243731"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.64453 10.3398L14.1445 6.83984L14.8557 8.16055L8.35568 11.6606L7.64453 10.3398Z" fill="#243731"/>
+              </svg>
+              <span class="catalogue-new-image-modal-share-label">Поделиться</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

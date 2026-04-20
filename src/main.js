@@ -886,6 +886,8 @@ const catalogueNewReset = document.querySelector('.catalogue-new-reset')
 const catalogueNewFavouritesOnlySwitch = document.querySelector('#catalogue-new-favourites-only-switch')
 const catalogueNewFavouritesCountEl = document.querySelector('#catalogue-new-favourites-count')
 const catalogueNewFavouritesLink = document.querySelector('#catalogue-new-favourites-link')
+const catalogueNewFavouritesContactBtn = document.querySelector('#catalogue-new-favourites-contact')
+const catalogueNewFavouritesActions = document.querySelector('#catalogue-new-favourites-actions')
 const catalogueNewMobileFiltersOpen = document.querySelector('#catalogue-new-mobile-filters-open')
 const catalogueNewMobileFiltersClose = document.querySelector('#catalogue-new-mobile-filters-close')
 const catalogueNewMobileFiltersOverlay = document.querySelector('#catalogue-new-mobile-filters-overlay')
@@ -993,6 +995,12 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         catalogueNewFavouritesLink.setAttribute('aria-disabled', 'true')
         catalogueNewFavouritesLink.tabIndex = -1
       }
+      if (catalogueNewFavouritesContactBtn) {
+        catalogueNewFavouritesContactBtn.disabled = true
+      }
+      if (catalogueNewFavouritesActions) {
+        catalogueNewFavouritesActions.hidden = true
+      }
       if (hadFavouritesFilter) {
         visibleCardsLimit = CATALOGUE_PAGE_SIZE
         applyFilters()
@@ -1004,7 +1012,19 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         catalogueNewFavouritesLink.removeAttribute('aria-disabled')
         catalogueNewFavouritesLink.removeAttribute('tabindex')
       }
+      if (catalogueNewFavouritesContactBtn) {
+        catalogueNewFavouritesContactBtn.disabled = false
+      }
     }
+  }
+
+  function emitCatalogueManagerContactIntent(detail) {
+    const payload = {
+      source: detail?.source || 'unknown',
+      slugs: Array.isArray(detail?.slugs) ? detail.slugs.filter(Boolean) : [],
+      title: String(detail?.title || '').trim(),
+    }
+    window.dispatchEvent(new CustomEvent('catalogue:contact-manager', { detail: payload }))
   }
 
   function syncCatalogueFavouritesUi() {
@@ -1427,6 +1447,10 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     cards.forEach((card) => {
       card.style.display = visibleSet.has(card) ? '' : 'none'
     })
+    if (catalogueNewFavouritesActions) {
+      const shouldShowFavouritesAction = state.favouritesOnly && readCatalogueFavourites().size > 0
+      catalogueNewFavouritesActions.hidden = !shouldShowFavouritesAction
+    }
 
     infiniteSentinel.hidden = matchedCards.length <= visibleCardsLimit
     updateResultsCount()
@@ -1477,6 +1501,19 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       }
       event.preventDefault()
       showCatalogueFavouritesOnlyView()
+    })
+  }
+
+  if (catalogueNewFavouritesContactBtn) {
+    catalogueNewFavouritesContactBtn.addEventListener('click', () => {
+      if (catalogueNewFavouritesContactBtn.disabled) return
+      const fav = [...readCatalogueFavourites()]
+      if (!fav.length) return
+      emitCatalogueManagerContactIntent({
+        source: 'favourites',
+        slugs: fav,
+        title: 'Избранные позиции',
+      })
     })
   }
 
@@ -1811,6 +1848,7 @@ const catalogueImageModalImg = document.getElementById('catalogueImageModalImg')
 const catalogueImageModalTitle = document.getElementById('catalogueImageModalTitle')
 const catalogueImageModalSpecs = document.getElementById('catalogueImageModalSpecs')
 const catalogueImageModalSpecsEmpty = document.getElementById('catalogueImageModalSpecsEmpty')
+const catalogueImageModalContactBtn = document.getElementById('catalogueImageModalContactBtn')
 const catalogueImageModalClose = document.getElementById('catalogueImageModalClose')
 const catalogueCardsRootForModal = document.querySelector('.catalogue-new-cards')
 
@@ -1820,8 +1858,11 @@ if (
   catalogueImageModalTitle &&
   catalogueImageModalSpecs &&
   catalogueImageModalSpecsEmpty &&
+  catalogueImageModalContactBtn &&
   catalogueCardsRootForModal
 ) {
+  let activeModalProductSlug = ''
+  let activeModalProductTitle = ''
   const modalLabelMaps = {
     firmness: {
       soft: 'Мягкий',
@@ -1916,6 +1957,8 @@ if (
     catalogueImageModalImg.setAttribute('src', '')
     catalogueImageModalImg.setAttribute('alt', '')
     catalogueImageModalTitle.textContent = ''
+    activeModalProductSlug = ''
+    activeModalProductTitle = ''
     clearModalSpecs()
     if (typeof unlockScroll === 'function') unlockScroll()
     document.body.classList.remove('modal-open')
@@ -1930,6 +1973,8 @@ if (
     if (!src) return
 
     const dataset = card.dataset || {}
+    activeModalProductSlug = String(dataset.productSlug || '').trim()
+    activeModalProductTitle = title || 'Матрас'
     const widths = parseCsv(dataset.widths)
     const lengths = parseCsv(dataset.lengths)
     const fillings = parseCsv(dataset.fillings).map((v) => mapValue(v, modalLabelMaps.fillings)).join(', ')
@@ -1956,6 +2001,17 @@ if (
     if (typeof lockScroll === 'function') lockScroll()
     document.body.classList.add('modal-open')
   }
+
+  catalogueImageModalContactBtn.addEventListener('click', () => {
+    if (!activeModalProductSlug) return
+    window.dispatchEvent(new CustomEvent('catalogue:contact-manager', {
+      detail: {
+        source: 'modal-position',
+        slugs: [activeModalProductSlug],
+        title: activeModalProductTitle,
+      },
+    }))
+  })
 
   catalogueCardsRootForModal.addEventListener('click', (event) => {
     if (event.target.closest('.catalogue-new-favourite')) return
