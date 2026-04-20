@@ -7986,3 +7986,212 @@ a:hover .arrow-medium {
     overflow-wrap: break-word;
   }
 }
+
+/* catalogue-new: manager/share actions */
+body[data-page="catalogue-new"] .catalogue-new-manager-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: 100%;
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-bg-white);
+  font: inherit;
+  font-weight: 500;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 16px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-manager-contact-btn:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+body[data-page="catalogue-new"] .catalogue-new-manager-contact-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-favourites-actions {
+  margin-top: var(--space-5);
+  width: 100%;
+  padding-top: var(--space-4);
+  border-top: 1px solid rgba(var(--color-primary-rgb), 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-favourites-actions[hidden] {
+  display: none;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-favourites-back-row {
+  margin-bottom: var(--space-4);
+}
+
+body[data-page="catalogue-new"] .catalogue-new-favourites-back-row[hidden] {
+  display: none;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-favourites-back {
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  opacity: 0.85;
+  font-family: var(--font-family);
+  font-size: 17px;
+  line-height: 1.4;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 0;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-favourites-back img {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-favourites-back[hidden] {
+  display: none;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-image-modal-action {
+  margin-top: 0;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-image-modal-actions {
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid rgba(var(--color-primary-rgb), 0.12);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-image-modal-side-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-share-btn,
+body[data-page="catalogue-new"] .catalogue-new-image-modal-share {
+  border: 0;
+  background: transparent;
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 0;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-image-modal-favourite {
+  border: 0;
+  background: transparent;
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-share-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-share-btn img,
+body[data-page="catalogue-new"] .catalogue-new-image-modal-share img,
+body[data-page="catalogue-new"] .catalogue-new-image-modal-favourite img {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-image-modal-favourite .catalogue-new-image-modal-favourite-icon--full {
+  display: none;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-image-modal-favourite.is-active .catalogue-new-image-modal-favourite-icon--empty {
+  display: none;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-image-modal-favourite.is-active .catalogue-new-image-modal-favourite-icon--full {
+  display: block;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-share-icon--hover,
+body[data-page="catalogue-new"] .catalogue-new-image-modal-share-icon--hover {
+  display: none !important;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-share-icon--default,
+body[data-page="catalogue-new"] .catalogue-new-image-modal-share-icon--default {
+  display: block !important;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-share-btn:hover:not(:disabled) .catalogue-new-share-icon--default,
+body[data-page="catalogue-new"] .catalogue-new-image-modal-share:hover .catalogue-new-image-modal-share-icon--default {
+  display: none !important;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-share-btn:hover:not(:disabled) .catalogue-new-share-icon--hover,
+body[data-page="catalogue-new"] .catalogue-new-image-modal-share:hover .catalogue-new-image-modal-share-icon--hover {
+  display: block !important;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-share-btn:focus-visible .catalogue-new-share-icon--default,
+body[data-page="catalogue-new"] .catalogue-new-image-modal-share:focus-visible .catalogue-new-image-modal-share-icon--default {
+  display: none !important;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-share-btn:focus-visible .catalogue-new-share-icon--hover,
+body[data-page="catalogue-new"] .catalogue-new-image-modal-share:focus-visible .catalogue-new-image-modal-share-icon--hover {
+  display: block !important;
+}
+
+body[data-page="catalogue-new"] .catalogue-new-share-label,
+body[data-page="catalogue-new"] .catalogue-new-image-modal-share-label {
+  display: none;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--color-primary);
+}
+
+@media (max-width: 900px) {
+  body[data-page="catalogue-new"] .catalogue-new-image-modal-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  body[data-page="catalogue-new"] .catalogue-new-image-modal-side-actions {
+    margin-left: 0;
+  }
+
+  body[data-page="catalogue-new"] .catalogue-new-image-modal-share {
+    margin-top: 32px;
+  }
+
+  body[data-page="catalogue-new"] .catalogue-new-image-modal-share-label {
+    display: inline;
+  }
+}
