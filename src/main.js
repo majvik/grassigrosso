@@ -1808,31 +1808,160 @@ if (catalogueNewViewButtons.length > 0) {
 
 const catalogueImageModal = document.getElementById('catalogueImageModal')
 const catalogueImageModalImg = document.getElementById('catalogueImageModalImg')
+const catalogueImageModalTitle = document.getElementById('catalogueImageModalTitle')
+const catalogueImageModalSpecs = document.getElementById('catalogueImageModalSpecs')
+const catalogueImageModalSpecsEmpty = document.getElementById('catalogueImageModalSpecsEmpty')
 const catalogueImageModalClose = document.getElementById('catalogueImageModalClose')
 const catalogueCardsRootForModal = document.querySelector('.catalogue-new-cards')
 
-if (catalogueImageModal && catalogueImageModalImg && catalogueCardsRootForModal) {
+if (
+  catalogueImageModal &&
+  catalogueImageModalImg &&
+  catalogueImageModalTitle &&
+  catalogueImageModalSpecs &&
+  catalogueImageModalSpecsEmpty &&
+  catalogueCardsRootForModal
+) {
+  const modalLabelMaps = {
+    firmness: {
+      soft: 'Мягкий',
+      medium: 'Средний',
+      hard: 'Жесткий',
+    },
+    type: {
+      spring: 'Пружинный',
+      nospring: 'Беспружинный',
+      topper: 'Топпер',
+    },
+    loadRange: {
+      upTo90: 'До 90 кг',
+      upTo110: 'До 110 кг',
+      upTo120: 'До 120 кг',
+      upTo130: 'До 130 кг',
+      upTo150: 'До 150 кг',
+      over130: 'Свыше 130 кг',
+      over150: 'Свыше 150 кг',
+    },
+    heightRange: {
+      low: 'До 19 см',
+      mid: '20 - 24 см',
+      high: '25 - 29 см',
+      veryHigh: '30 см и выше',
+    },
+    fillings: {
+      foam: 'ППУ',
+      ppu: 'ППУ',
+      memory: 'Пена memory foam',
+      memoryFoam: 'Пена memory foam',
+      latex: 'Латекс',
+      coir: 'Кокосовая койра',
+      coconut: 'Кокосовая койра',
+      massageFoam: 'Массажная пена',
+      viscoFoam: 'Вязкоэластичная пена',
+      holcon: 'Холкон',
+    },
+    features: {
+      removableCover: 'Съемный чехол',
+      winterSummer: 'Эффект зима-лето',
+      dualFirmness: 'Разная жесткость сторон',
+      hypoallergenic: 'Гипоаллергенный',
+      antibacterial: 'Антибактериальный',
+      edgeSupport: 'Усиленный периметр',
+      orthopedic: 'Ортопедический эффект',
+    },
+  }
+
+  const parseCsv = (value) =>
+    String(value || '')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean)
+
+  const mapValue = (value, map) => {
+    const key = String(value || '').trim()
+    if (!key) return ''
+    return map[key] || key
+  }
+
+  const formatDimensions = (values, suffix = 'см') => {
+    if (!values.length) return ''
+    return values
+      .map((v) => String(v || '').trim())
+      .filter(Boolean)
+      .map((v) => `${v} ${suffix}`)
+      .join(', ')
+  }
+
+  const clearModalSpecs = () => {
+    catalogueImageModalSpecs.replaceChildren()
+    catalogueImageModalSpecsEmpty.hidden = true
+  }
+
+  const appendModalSpec = (label, value) => {
+    if (!value) return
+    const row = document.createElement('div')
+    row.className = 'catalogue-new-image-modal-spec'
+    const labelEl = document.createElement('span')
+    labelEl.className = 'catalogue-new-image-modal-spec-label'
+    labelEl.textContent = label
+    const valueEl = document.createElement('span')
+    valueEl.className = 'catalogue-new-image-modal-spec-value'
+    valueEl.textContent = value
+    row.append(labelEl, valueEl)
+    catalogueImageModalSpecs.appendChild(row)
+  }
+
   const closeCatalogueImageModal = () => {
     catalogueImageModal.setAttribute('hidden', '')
     catalogueImageModalImg.setAttribute('src', '')
     catalogueImageModalImg.setAttribute('alt', '')
+    catalogueImageModalTitle.textContent = ''
+    clearModalSpecs()
     if (typeof unlockScroll === 'function') unlockScroll()
     document.body.classList.remove('modal-open')
   }
 
-  const openCatalogueImageModal = (src, alt) => {
+  const openCatalogueImageModal = (card) => {
+    if (!card) return
+    const image = card.querySelector('picture img')
+    const src = image?.getAttribute('src') || ''
+    const alt = image?.getAttribute('alt') || ''
+    const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || alt
     if (!src) return
+
+    const dataset = card.dataset || {}
+    const widths = parseCsv(dataset.widths)
+    const lengths = parseCsv(dataset.lengths)
+    const fillings = parseCsv(dataset.fillings).map((v) => mapValue(v, modalLabelMaps.fillings)).join(', ')
+    const features = parseCsv(dataset.features).map((v) => mapValue(v, modalLabelMaps.features)).join(', ')
+
     catalogueImageModalImg.setAttribute('src', src)
     catalogueImageModalImg.setAttribute('alt', alt || '')
+    catalogueImageModalTitle.textContent = title || 'Матрас'
+    clearModalSpecs()
+    appendModalSpec('Жесткость', mapValue(dataset.firmness, modalLabelMaps.firmness))
+    appendModalSpec('Тип матраса', mapValue(dataset.type, modalLabelMaps.type))
+    appendModalSpec('Высота', dataset.height ? `${dataset.height} см` : '')
+    appendModalSpec('Нагрузка', dataset.load ? `До ${dataset.load} кг` : '')
+    appendModalSpec('Макс. нагрузка на спальное место', mapValue(dataset.loadRange, modalLabelMaps.loadRange))
+    appendModalSpec('Высота матраса', mapValue(dataset.heightRange, modalLabelMaps.heightRange))
+    appendModalSpec('Ширина', formatDimensions(widths))
+    appendModalSpec('Длина', formatDimensions(lengths))
+    appendModalSpec('Наполнители', fillings)
+    appendModalSpec('Особенности', features)
+    if (!catalogueImageModalSpecs.childElementCount) {
+      catalogueImageModalSpecsEmpty.hidden = false
+    }
     catalogueImageModal.removeAttribute('hidden')
     if (typeof lockScroll === 'function') lockScroll()
     document.body.classList.add('modal-open')
   }
 
   catalogueCardsRootForModal.addEventListener('click', (event) => {
-    const image = event.target.closest('.catalogue-new-card picture img')
-    if (!image) return
-    openCatalogueImageModal(image.getAttribute('src') || '', image.getAttribute('alt') || '')
+    if (event.target.closest('.catalogue-new-favourite')) return
+    const card = event.target.closest('.catalogue-new-card')
+    if (!card) return
+    openCatalogueImageModal(card)
   })
 
   if (catalogueImageModalClose) {

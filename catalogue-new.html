@@ -743,12 +743,9 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
       }
-      .catalogue-new-cards.is-list-view .catalogue-new-card picture {
-        height: 100%;
-      }
-      .catalogue-new-cards.is-list-view .catalogue-new-card img {
-        height: 100%;
-        object-fit: cover;
+      .catalogue-new-cards.is-list-view .catalogue-new-card > picture {
+        aspect-ratio: 1 / 1;
+        height: auto;
       }
       .catalogue-new-cards.is-list-view .catalogue-new-card-body {
         display: flex;
@@ -771,15 +768,18 @@
 
       .catalogue-new-card > picture {
         flex-shrink: 0;
-      }
-
-      .catalogue-new-card picture,
-      .catalogue-new-card img {
         display: block;
         width: 100%;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
       }
-      .catalogue-new-card img {
+      .catalogue-new-card > picture > img {
+        display: block;
+        width: 100%;
+        height: 100%;
         cursor: zoom-in;
+        object-fit: cover;
+        object-position: center;
       }
 
       .catalogue-new-card-body {
@@ -974,27 +974,75 @@
         justify-content: center;
         padding: 24px;
         background: rgba(14, 23, 20, 0.75);
+        overflow-y: auto;
       }
       .catalogue-new-image-modal[hidden] { display: none; }
       .catalogue-new-image-modal-dialog {
         position: relative;
-        max-width: min(1200px, 92vw);
+        width: min(1120px, 96vw);
         max-height: 92vh;
-      }
-      .catalogue-new-image-modal-dialog img {
-        display: block;
-        max-width: 100%;
-        max-height: 92vh;
-        width: auto;
-        height: auto;
+        display: grid;
+        grid-template-columns: minmax(320px, 1fr) minmax(360px, 1fr);
+        align-items: start;
+        background: #fff;
         border-radius: var(--radius-md);
+        overflow: hidden;
+      }
+      .catalogue-new-image-modal-media {
+        background: #f7f7f7;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        align-self: start;
+        overflow: hidden;
+      }
+      .catalogue-new-image-modal-media img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+      .catalogue-new-image-modal-content {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 24px;
+      }
+      .catalogue-new-image-modal-title {
+        margin: 0;
+        font-family: var(--font-bounded);
+        font-size: clamp(28px, 3vw, 44px);
+        font-weight: 300;
+        line-height: 1.12;
+        color: var(--color-primary);
+      }
+      .catalogue-new-image-modal-specs {
+        margin: 16px 0 0;
+        display: grid;
+        gap: 8px;
+      }
+      .catalogue-new-image-modal-spec {
+        display: grid;
+        grid-template-columns: minmax(130px, 40%) 1fr;
+        gap: 12px;
+      }
+      .catalogue-new-image-modal-spec-label {
+        color: var(--color-text-gray);
+      }
+      .catalogue-new-image-modal-spec-value {
+        color: var(--color-text);
+      }
+      .catalogue-new-image-modal-specs-empty {
+        margin: 16px 0 0;
+        color: var(--color-text-gray);
       }
       .catalogue-new-image-modal-close {
         position: absolute;
-        top: -12px;
-        right: -12px;
-        width: 32px;
-        height: 32px;
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
         border: 0;
         border-radius: 999px;
         background: #fff;
@@ -1002,6 +1050,26 @@
         font-size: 20px;
         line-height: 1;
         cursor: pointer;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+      }
+      @media (max-width: 900px) {
+        .catalogue-new-image-modal {
+          align-items: flex-start;
+          padding: 12px;
+        }
+        .catalogue-new-image-modal-dialog {
+          grid-template-columns: 1fr;
+          max-height: none;
+          min-height: calc(100dvh - 24px);
+        }
+        .catalogue-new-image-modal-media img {
+          max-height: none;
+        }
+        .catalogue-new-image-modal-content {
+          max-height: none;
+          overflow: visible;
+          padding: 20px 16px;
+        }
       }
     </style>
   </head>
@@ -1515,8 +1583,15 @@
 
     <div class="catalogue-new-image-modal" id="catalogueImageModal" hidden>
       <div class="catalogue-new-image-modal-dialog">
-        <button type="button" class="catalogue-new-image-modal-close" id="catalogueImageModalClose" aria-label="Закрыть изображение">×</button>
-        <img id="catalogueImageModalImg" src="" alt="" />
+        <button type="button" class="catalogue-new-image-modal-close" id="catalogueImageModalClose" aria-label="Закрыть карточку матраса">×</button>
+        <div class="catalogue-new-image-modal-media">
+          <img id="catalogueImageModalImg" src="" alt="" />
+        </div>
+        <div class="catalogue-new-image-modal-content">
+          <h3 class="catalogue-new-image-modal-title" id="catalogueImageModalTitle"></h3>
+          <div class="catalogue-new-image-modal-specs" id="catalogueImageModalSpecs"></div>
+          <p class="catalogue-new-image-modal-specs-empty" id="catalogueImageModalSpecsEmpty" hidden>Характеристики не указаны</p>
+        </div>
       </div>
     </div>
 
