@@ -1,0 +1,141 @@
+# Grassigrosso Documentation Hub
+
+Единая точка документации проекта. Все актуальные инструкции и архитектурные заметки поддерживаются здесь.
+
+## 1. Быстрый старт
+
+### Установка
+
+```bash
+npm install
+```
+
+### Локальная разработка
+
+```bash
+# Терминал 1: frontend (Vite)
+npm run dev
+
+# Терминал 2: backend API
+npm start
+```
+
+### Продакшен-режим локально
+
+```bash
+npm run build
+npm start
+```
+
+## 2. Технологический стек
+
+- Frontend: Vite, Vanilla JS, HTML/CSS (MPA).
+- Backend: Node.js + Express.
+- Доставка лидов: Telegram Bot API + SMTP (`nodemailer`).
+- Персистентность: SQLite (`better-sqlite3`) с retry-очередью.
+
+## 3. Архитектура (актуально)
+
+### Frontend
+
+- HTML-страницы: `index`, `hotels`, `dealers`, `catalog`, `catalogue-new`, `documents`, `contacts`, сервисные (`privacy`, `terms`, `cookies`, `404`, `unsubscribe`).
+- Общая логика: `src/main.js`.
+- Стили: `src/style.css` + `src/styles/*`.
+- Критический CSS прелоадера инжектится плагином из `vite.config.mjs` в `<style id="vite-critical-css"></style>`.
+
+### Backend
+
+- Основной сервер: `server.cjs`.
+- Антиспам: `lib/anti-spam.cjs`.
+- CORS allowlist: `lib/cors-config.cjs`.
+- Подтверждающее письмо + HMAC unsubscribe: `lib/confirmation-email.cjs`.
+- БД/очередь: `lib/db.cjs` и `data/leads.db`.
+
+### Ключевые API
+
+- `POST /api/submit` — приём и доставка заявок.
+- `GET /api/unsubscribe` — отписка по HMAC-ссылке.
+- `GET /health` — состояние сервиса.
+- Dev-only: `/api/test`, `/api/get-chat-id`, `/api/smtp-diag` (в non-production).
+
+### Контракт маршрутизации email (критично)
+
+- Клиент формирует `page` в `src/main.js` (`getPageName()` + хардкод для отдельных модалок).
+- Сервер маршрутизирует `page` через `PAGE_EMAIL_ROUTING` в `server.cjs`.
+- Ключи в клиенте и сервере должны совпадать 1:1, иначе уйдёт в fallback `MAIL_TO`.
+
+## 4. Доставка лидов и retry
+
+Пайплайн:
+
+1. Валидация + антиспам.
+2. Запись лида в SQLite (`pending`) до попытки доставки.
+3. Отправка в Telegram (primary) и Email (secondary).
+4. При частичном/полном успехе — обновление статуса.
+5. Если оба канала недоступны — запись retry schedule в SQLite и повтор из фонового воркера.
+
+Гарантия: лид не теряется между приёмом и доставкой, так как сначала персистится в БД.
+
+## 5. Strapi Catalog
+
+Интеграция Strapi уже внедрена через backend proxy.
+
+### Подключённые endpoint'ы
+
+- `GET /api/catalog/products`
+- `GET /api/catalog/hero-slides`
+
+### Переменные окружения
+
+- `STRAPI_URL`
+- `STRAPI_TOKEN` (рекомендуется для production)
+
+### Поведение при сбоях Strapi
+
+- Без `STRAPI_URL`: backend возвращает `503`.
+- При ошибке запроса к Strapi: backend возвращает `502`.
+- `catalogue-new` сохраняет runtime fallback на статические карточки/слайды.
+
+### Важное по данным
+
+- Авто-сид и автопривязка в Strapi отключены (`strapi-catalog/src/index.js` только логирует статус).
+- Значения опций в Strapi ведутся на русском; API маппит их в коды storefront.
+- `features` реализован как `manyToMany` relation к `feature-option`.
+
+## 6. Яндекс Карты
+
+- Используется Yandex JavaScript API 2.1 (`ymaps`) в `src/main.js`.
+- API ключ: `VITE_YANDEX_MAPS_API_KEY`.
+- Метки/поведение (цвет, hover/balloon) задаются программно.
+- Подход через Яндекс Конструктор в текущей реализации не используется.
+
+## 7. Переменные окружения (минимум)
+
+Смотрите `.env.example`. Ключевые группы:
+
+- Telegram: `BOT_TOKEN`, `CHAT_ID`
+- SMTP: `SMTP_*`, `MAIL_FROM`, `MAIL_TO`
+- Storage/Retry: `DB_PATH`, `QUEUE_*`
+- Anti-spam: `SPAM_*`
+- CORS: `CORS_ALLOWED_ORIGINS`
+- Frontend API: `VITE_API_URL`
+- Maps: `VITE_YANDEX_MAPS_API_KEY`
+- Runtime: `NODE_ENV`, `PORT`
+- Strapi: `STRAPI_URL`, `STRAPI_TOKEN`
+
+## 8. Деплой
+
+- Основной путь: `Dockerfile` (multi-stage) + `docker-compose.yml` для локального контейнерного запуска.
+- Данные сохраняются в `/app/data` (volume).
+- Реверс-прокси и clean URL правила: `nginx.conf`.
+
+## 9. Новые страницы и контент
+
+- Скрипт создания страницы: `npm run new-page -- <slug> "Заголовок – Grassigrosso"`.
+- Шаблон: `templates/marketing-page.html`.
+- Обязательные инварианты и чеклист поддержки страниц/форм: `AGENTS.md`.
+
+## 10. Статус документации
+
+- Этот файл — основной источник истины.
+- Исторические markdown-отчёты/точечные инструкции, дублирующие этот хаб, удалены или сведены к ссылкам.
