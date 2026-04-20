@@ -13,10 +13,20 @@ const { buildConfirmationEmail } = require('./lib/confirmation-email.cjs');
 require('dotenv').config();
 
 const app = express();
+const isProd = process.env.NODE_ENV === 'production';
 
 const PORT = Number(process.env.PORT || 3000);
 const STRAPI_URL = String(process.env.STRAPI_URL || '').trim().replace(/\/+$/, '');
 const STRAPI_TOKEN = String(process.env.STRAPI_TOKEN || '').trim();
+const INTERNAL_API_PREFIXES = [
+  '/api/submit',
+  '/api/catalog',
+  '/api/download',
+  '/api/unsubscribe',
+  '/api/test',
+  '/api/get-chat-id',
+  '/api/smtp-diag'
+];
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const RAW_CHAT_ID = process.env.CHAT_ID || '';
@@ -347,6 +357,50 @@ function extractErrorDetails(error) {
   return String(error);
 }
 
+function extractAxiosErrorDetails(error) {
+  if (!error) return { message: 'Unknown error' };
+  const details = {
+    message: String(error.message || 'Request failed'),
+  };
+  if (error.code) details.code = String(error.code);
+  if (error.config?.url) details.url = String(error.config.url);
+  if (Number.isFinite(error.response?.status)) details.status = Number(error.response.status);
+  if (error.response?.statusText) details.statusText = String(error.response.statusText);
+  if (error.response?.data !== undefined) {
+    if (typeof error.response.data === 'string') {
+      details.responseData = error.response.data.slice(0, 1200);
+    } else {
+      details.responseData = error.response.data;
+    }
+  }
+  return details;
+}
+
+function createStrapiProxy() {
+  return createProxyMiddleware({
+    target: STRAPI_URL,
+    changeOrigin: true,
+    xfwd: true,
+    ws: true,
+    logLevel: 'warn',
+    proxyTimeout: 15000,
+    timeout: 15000,
+    onError(err, req, res) {
+      const errorDetails = {
+        message: String(err?.message || 'Proxy error'),
+        code: err?.code ? String(err.code) : undefined
+      };
+      console.error('❌ Ошибка Strapi proxy:', { path: req.originalUrl, ...errorDetails });
+      if (res.headersSent) return;
+      res.status(502).json({
+        error: 'Failed to proxy request to Strapi',
+        path: req.originalUrl,
+        details: errorDetails
+      });
+    }
+  });
+}
+
 function getClientIp(req) {
   const forwardedFor = req.headers['x-forwarded-for'];
   if (typeof forwardedFor === 'string' && forwardedFor.length > 0) {
@@ -659,10 +713,11 @@ app.get('/api/catalog/hero-slides', async (req, res) => {
       source: response.data?.source || 'strapi-catalog-hero-feed',
     });
   } catch (error) {
-    console.error('❌ Ошибка загрузки hero-слайдера из Strapi:', extractErrorDetails(error));
+    const details = extractAxiosErrorDetails(error);
+    console.error('❌ Ошибка загрузки hero-слайдера из Strapi:', details);
     return res.status(502).json({
       error: 'Failed to fetch catalog hero from Strapi',
-      details: extractErrorDetails(error),
+      details,
       slides: [],
     });
   }
@@ -708,13 +763,33 @@ app.get('/api/catalog/products', async (req, res) => {
     const products = rows.map(mapStrapiProduct).filter((item) => item && item.name);
     return res.json({ items: products, source: 'strapi-products' });
   } catch (error) {
-    console.error('❌ Ошибка загрузки каталога из Strapi:', extractErrorDetails(error));
+    const details = extractAxiosErrorDetails(error);
+    console.error('❌ Ошибка загрузки каталога из Strapi:', details);
     return res.status(502).json({
       error: 'Failed to fetch catalog from Strapi',
-      details: extractErrorDetails(error)
+      details
     });
   }
 });
+
+if (isProd && STRAPI_URL) {
+  const strapiProxy = createStrapiProxy();
+  const strapiAdminPrefixes = [
+    '/admin',
+    '/uploads',
+    '/content-manager',
+    '/content-type-builder',
+    '/i18n',
+    '/documentation'
+  ];
+  app.use(strapiAdminPrefixes, strapiProxy);
+  app.use('/api', (req, res, next) => {
+    const originalPath = req.originalUrl || req.url || '';
+    const isInternal = INTERNAL_API_PREFIXES.some((prefix) => originalPath.startsWith(prefix));
+    if (isInternal) return next();
+    return strapiProxy(req, res, next);
+  });
+}
 
 app.get('/api/download/:docId', (req, res) => {
   const docId = String(req.params.docId || '').trim().toLowerCase();
@@ -733,7 +808,6 @@ app.get('/api/download/:docId', (req, res) => {
   return res.sendFile(filePath);
 });
 
-const isProd = process.env.NODE_ENV === 'production';
 if (!isProd) {
   app.get('/api/test', (req, res) => {
     res.json({
