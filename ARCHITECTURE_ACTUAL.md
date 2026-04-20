@@ -7,7 +7,7 @@
 
 Проект построен как быстрый маркетинговый сайт с несколькими страницами и единым backend API для обработки заявок из форм.
 
-- Витрина: статические страницы (`index`, `hotels`, `dealers`, `catalog`, `documents`, `contacts`) + служебные (`privacy`, `terms`, `cookies`, `404`, `unsubscribe`)
+- Витрина: статические страницы (`index`, `hotels`, `dealers`, `catalog`, `catalogue-new`, `documents`, `contacts`) + служебные (`privacy`, `terms`, `cookies`, `404`, `unsubscribe`)
 - Логика интерфейса: единый JS-модуль (`src/main.js`) с UX-функциями, анимациями (GSAP, Lenis), обработкой всех типов форм
 - Backend: Node.js + Express (`server.cjs`) + модули `lib/` (антиспам, CORS, БД), который:
   - принимает данные форм
@@ -17,6 +17,7 @@
   - отправляет пользователю подтверждающее письмо (best-effort, не блокирует основной ответ)
   - при недоступности каналов – retry с экспоненциальным backoff из SQLite
   - обрабатывает запросы на отписку (`GET /api/unsubscribe`) с HMAC-верификацией
+  - проксирует каталог из Strapi (`/api/catalog/products`, `/api/catalog/hero-slides`)
   - в production раздаёт `dist`, в dev проксирует на Vite
 - Деплой: Docker-контейнер (multi-stage) + `docker-compose.yml` с именованным volume для `/app/data`; healthcheck `/health`; при необходимости – CI/CD и реверс-прокси (`nginx.conf` для Timeweb Cloud)
 
@@ -50,7 +51,7 @@
 - Функции сервера:
   - API заявок: `POST /api/submit` (после антиспам-проверки и валидации name/phone/email)
   - Подтверждение пользователю: после записи заявки отправляется HTML-письмо на `lead.email` (best-effort, ошибки логируются, не блокируют ответ)
-  - Отписка: `GET /api/unsubscribe?email=...&token=...` – проверка HMAC-подписи, уведомление на sales/office/callback, редирект на `unsubscribe.html`
+  - Отписка: `GET /api/unsubscribe?email=...&token=...` – проверка HMAC-подписи, уведомление на sales/callback, редирект на `unsubscribe.html`
   - сервисные: `GET /health` (статус, размер очереди, наличие каналов), в non-production: `/api/test`, `/api/get-chat-id`, `GET /api/smtp-diag`
   - в production раздаёт `dist` (статику + fallback по пути и `*.html`, 404 → `404.html` или `index.html`)
   - в dev проксирует не-API запросы на Vite (localhost:5173)
@@ -196,7 +197,7 @@
 
 ### Шаг 1b (параллельно по продукту): каталог и CMS
 
-Отдельно от шага с PocketBase возможен сценарий **headless CMS** (например Strapi) для редактируемого каталога и публичного API; витрина тогда читает API, лиды остаются на текущем `POST /api/submit`. До внедрения интеграции не менять контракт форм и не добавлять обязательные `VITE_*` под CMS без задачи. Кратко зафиксировано в [AGENTS.md](AGENTS.md).
+Интеграция **Strapi** для каталога уже работает через backend proxy (`/api/catalog/products`, `/api/catalog/hero-slides`), а витрина остаётся на текущем фронтовом стеке. Дальнейшее развитие — расширение контент-моделей и редакторских сценариев без изменения контракта форм (`POST /api/submit`) и без прямых обязательных `VITE_*` зависимостей фронтенда от Strapi.
 
 ### Шаг 2: «умная» база на PocketBase (JS SDK) с минимальным администрированием
 
@@ -213,7 +214,7 @@
 
 `Browser Forms -> API (Express) -> SQLite(persist) -> Confirmation Email(user) + Telegram(primary) + Email(secondary) -> SQLite(update status)`  
 `Retry: SQLite(pending) -> Worker(15s) -> Telegram/Email -> SQLite(delivered/retry)`  
-`Unsubscribe: Email Link(HMAC) -> GET /api/unsubscribe -> Notify(sales/office/callback) -> Redirect(unsubscribe.html)`  
+`Unsubscribe: Email Link(HMAC) -> GET /api/unsubscribe -> Notify(sales/callback) -> Redirect(unsubscribe.html)`  
 `Next: PocketBase / admin UI`  
 `Static/Media -> App/Proxy Cache Policy -> Browser`
 

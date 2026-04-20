@@ -39,7 +39,7 @@ Component **Catalog hero slide** (`catalog.hero-slide`):
 
 Порядок слайдов — как в админке (сверху вниз). Публичный JSON отдаёт `GET /api/catalog-hero-feed` в Strapi (`auth: false`), Node проксирует в `GET /api/catalog/hero-slides` и дописывает абсолютные URL к медиа при необходимости.
 
-При **каждом старте Strapi** (`develop` / `start`) в `strapi-catalog/src/index.js` bootstrap проверяет single type: если слайдов с картинкой/видео ещё нет, создаётся или обновляется запись с **пятью** слайдами — четыре картинки из `public/` (`catalog-hero.png`, `dealers-hero.png`, `hotels-hero.png`, `contacts-hero.png`) и **видео** `quality-video.mp4` с постером `quality-video-poster.jpg` (как блок «производство» на странице дилеров). Если уже есть слайд с видео, сид не меняет hero. Если раньше остались только четыре картинки без видео, при следующем старте выполняется миграция до полного набора из пяти слайдов.
+Важно: авто-сидинг/автопривязка отключены. В `strapi-catalog/src/index.js` bootstrap только логирует, что автоматические изменения данных выключены. Hero-слайды и каталог заполняются вручную через админку Strapi.
 
 ## Expected Strapi model (minimum fields)
 
@@ -51,8 +51,14 @@ Collection type: `products`
 - `sort_order` (integer)
 - `height_cm` (number)
 - `max_load_kg` (number)
-- `firmness` (enum: `soft`, `medium`, `hard`)
-- `mattress_type` (enum: `spring`, `nospring`, `topper`)
+- `firmness` (enum в Strapi: `мягкий`, `средний`, `жесткий`; API маппит в storefront-коды)
+- `mattress_type` (enum в Strapi: `пружинный`, `беспружинный`, `топпер`)
+- `load_range` (enum: `до_110`, `до_120`, `до_130`, `свыше_130`)
+- `height_range` (enum: `до_19`, `20_24`, `25_29`, `30_и_выше`)
+- `widths` (repeatable enum: `ширина_80`, `ширина_90`, `ширина_120`, `ширина_140`, `ширина_160`, `ширина_180`, `ширина_200`)
+- `lengths` (repeatable enum: `длина_190`, `длина_195`, `длина_200`, `длина_205`, `длина_210`, `длина_220`)
+- `fillings` (repeatable enum: `ппу`, `пена_memory_foam`, `кокосовая_койра`, `массажная_пена`, `вязкоэластичная_пена`)
+- `features` (many-to-many relation to `feature-option`)
 - `collection` (relation to `collections`, fields: `name`, `slug`)
 - `tags` (relation to `tags`, field: `name`)
 - `media` (media field; first item is used as card image)

@@ -7,7 +7,7 @@
 - **Frontend:** Vite, Vanilla JavaScript, HTML/CSS (MPA)
 - **Backend:** Node.js + Express
 - **Доставка заявок:** Telegram Bot API + SMTP (Yandex) через `nodemailer`
-- **Надежность доставки:** очередь `Queue + Retry` с сохранением на диск
+- **Надежность доставки:** `SQLite Queue + Retry` (с legacy-миграцией из JSON-очереди)
 
 ## Установка
 
@@ -84,8 +84,8 @@ SMTP_PASS=your_app_password
 MAIL_FROM=callback@grassigrosso.com
 MAIL_TO=callback@grassigrosso.com
 
-# Queue + Retry
-QUEUE_FILE_PATH=./data/delivery-queue.json
+# Database + Queue
+DB_PATH=./data/leads.db
 QUEUE_RETRY_INTERVAL_MS=15000
 QUEUE_BASE_RETRY_DELAY_MS=30000
 QUEUE_MAX_RETRY_DELAY_MS=900000
@@ -101,7 +101,7 @@ SPAM_MAX_PHONE_LENGTH=40
 SPAM_MAX_EMAIL_LENGTH=160
 
 # CORS allowlist (через запятую)
-CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+CORS_ALLOWED_ORIGINS=http://localhost:5174,http://127.0.0.1:5174
 
 # Frontend API URL (локально)
 VITE_API_URL=/api/submit
@@ -169,8 +169,8 @@ PORT=3000
 │   │   └── components.css # разметка страниц и блоков
 │   ├── critical-preloader.css  # первый кадр; подставляется в HTML плагином Vite
 │   └── fonts/
-├── server.cjs             # API + доставка заявок + очередь
-├── data/delivery-queue.json # runtime-очередь (игнорируется git)
+├── server.cjs             # API + доставка заявок + retry worker
+├── data/leads.db          # основное runtime-хранилище заявок и retry (игнорируется git)
 ├── *.html                 # страницы сайта (MPA)
 └── vite.config.mjs        # плагин inject critical CSS в <style id="vite-critical-css">
 ```
@@ -211,6 +211,11 @@ PORT=3000
 После правок CSS: `npm run build`. Скриншотные тесты в проекте не заданы — регрессию смотреть вручную на ключевых страницах и ширинах.
 
 ## API Endpoints
+
+## Примечание по legacy-очереди
+
+- Основной storage очереди и статусов — SQLite (`DB_PATH`, по умолчанию `./data/leads.db`).
+- `QUEUE_FILE_PATH` используется только как legacy-источник для одноразовой миграции старых записей в SQLite (если такой JSON-файл присутствует).
 
 ### Production
 
