@@ -9,7 +9,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY strapi-catalog/package.json strapi-catalog/package-lock.json ./strapi-catalog/
-RUN npm ci --prefix strapi-catalog
+RUN npm install --prefix strapi-catalog
 
 COPY . .
 # VITE_* подставляются в бандл на этапе сборки; передавать через --build-arg в CI
