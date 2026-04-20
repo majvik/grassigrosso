@@ -885,6 +885,10 @@ const catalogueNewSortOptions = [...document.querySelectorAll('.catalogue-new-so
 const catalogueNewReset = document.querySelector('.catalogue-new-reset')
 const catalogueNewFavouritesOnlySwitch = document.querySelector('#catalogue-new-favourites-only-switch')
 const catalogueNewFavouritesCountEl = document.querySelector('#catalogue-new-favourites-count')
+const catalogueNewFavouritesLink = document.querySelector('#catalogue-new-favourites-link')
+const catalogueNewMobileFiltersOpen = document.querySelector('#catalogue-new-mobile-filters-open')
+const catalogueNewMobileFiltersClose = document.querySelector('#catalogue-new-mobile-filters-close')
+const catalogueNewMobileFiltersOverlay = document.querySelector('#catalogue-new-mobile-filters-overlay')
 
 if (catalogueNewSidebar && catalogueNewCardsRoot) {
   const catalogueNewLayout = document.querySelector('.catalogue-new-layout')
@@ -895,6 +899,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   }
   let scheduleStickySidebarSync = () => {}
   let cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
+  let cardMeta = []
   const CATALOGUE_PAGE_SIZE = 6
   let visibleCardsLimit = CATALOGUE_PAGE_SIZE
   let matchedCards = []
@@ -904,13 +909,54 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   catalogueNewCardsRoot.insertAdjacentElement('afterend', infiniteSentinel)
   const state = {
     collection: 'all',
-    firmness: 'all',
-    type: 'all',
+    firmness: new Set(),
+    type: new Set(),
+    width: new Set(),
+    length: new Set(),
+    loadRange: 'all',
+    heightRange: 'all',
+    fillings: new Set(),
+    features: new Set(),
     sort: 'default',
     favouritesOnly: false,
   }
 
   const CATALOGUE_NEW_FAV_KEY = 'grassigrosso-catalogue-new-favourites'
+  const CATALOGUE_DEFAULT_WIDTHS = ['80', '90', '120', '140', '160', '180', '200']
+  const CATALOGUE_DEFAULT_LENGTHS = ['190', '195', '200']
+
+  function parseCsvDataset(value) {
+    return String(value || '')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean)
+  }
+
+  function readCardMeta(card, index) {
+    const dataset = card.dataset || {}
+    return {
+      card,
+      initialOrder: index,
+      slug: String(dataset.productSlug || ''),
+      collection: String(dataset.collection || ''),
+      firmness: String(dataset.firmness || ''),
+      type: String(dataset.type || ''),
+      height: Number(dataset.height || 0),
+      load: Number(dataset.load || 0),
+      widths: parseCsvDataset(dataset.widths).length ? new Set(parseCsvDataset(dataset.widths)) : new Set(CATALOGUE_DEFAULT_WIDTHS),
+      lengths: parseCsvDataset(dataset.lengths).length ? new Set(parseCsvDataset(dataset.lengths)) : new Set(CATALOGUE_DEFAULT_LENGTHS),
+      fillings: new Set(parseCsvDataset(dataset.fillings)),
+      features: new Set(parseCsvDataset(dataset.features)),
+    }
+  }
+
+  function updateCardsCache() {
+    cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
+    cardMeta = cards.map((card, index) => {
+      card.dataset.initialOrder = String(index)
+      return readCardMeta(card, index)
+    })
+  }
 
   function readCatalogueFavourites() {
     try {
@@ -940,12 +986,22 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       catalogueNewFavouritesOnlySwitch.classList.remove('is-on')
       catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', 'false')
       catalogueNewFavouritesOnlySwitch.disabled = true
+      if (catalogueNewFavouritesLink) {
+        catalogueNewFavouritesLink.classList.add('is-disabled')
+        catalogueNewFavouritesLink.setAttribute('aria-disabled', 'true')
+        catalogueNewFavouritesLink.tabIndex = -1
+      }
       if (hadFavouritesFilter) {
         visibleCardsLimit = CATALOGUE_PAGE_SIZE
         applyFilters()
       }
     } else {
       catalogueNewFavouritesOnlySwitch.disabled = false
+      if (catalogueNewFavouritesLink) {
+        catalogueNewFavouritesLink.classList.remove('is-disabled')
+        catalogueNewFavouritesLink.removeAttribute('aria-disabled')
+        catalogueNewFavouritesLink.removeAttribute('tabindex')
+      }
     }
   }
 
@@ -959,14 +1015,6 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       btn.setAttribute('aria-label', on ? 'Удалить из избранного' : 'Добавить в избранное')
     })
     syncCatalogueFavouritesFilterSwitchState()
-  }
-
-  function syncCardsCache() {
-    cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
-    cards.forEach((card, index) => {
-      card.dataset.initialOrder = String(index)
-    })
-    syncCatalogueFavouritesUi()
   }
 
   function buildMetaLine(label, value) {
@@ -1011,6 +1059,10 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     const imageUrl = escapeHtml(item.imageUrl || '')
     const imageAlt = escapeHtml(item.imageAlt || `Коллекция ${item.name || ''}`)
     const tags = Array.isArray(item.tags) ? item.tags.filter(Boolean).slice(0, 3) : []
+    const widths = Array.isArray(item.widths) ? item.widths.map((v) => String(v)) : CATALOGUE_DEFAULT_WIDTHS
+    const lengths = Array.isArray(item.lengths) ? item.lengths.map((v) => String(v)) : CATALOGUE_DEFAULT_LENGTHS
+    const fillings = Array.isArray(item.fillings) ? item.fillings.map((v) => String(v)) : []
+    const features = Array.isArray(item.features) ? item.features.map((v) => String(v)) : []
 
     return `
       <article class="catalogue-new-card"
@@ -1019,7 +1071,11 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         data-firmness="${escapeHtml(firmness)}"
         data-type="${escapeHtml(mattressType)}"
         data-height="${heightCm}"
-        data-load="${maxLoadKg}">
+        data-load="${maxLoadKg}"
+        data-widths="${escapeHtml(widths.join(','))}"
+        data-lengths="${escapeHtml(lengths.join(','))}"
+        data-fillings="${escapeHtml(fillings.join(','))}"
+        data-features="${escapeHtml(features.join(','))}">
         <picture>
           <img src="${imageUrl}" alt="${imageAlt}" />
         </picture>
@@ -1059,7 +1115,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         collectionSlug: normalizeApiCollectionValue(item)
       })).join('')
       catalogueNewCardsRoot.innerHTML = html
-      syncCardsCache()
+      updateCardsCache()
+      syncCatalogueFavouritesUi()
       applySorting()
       visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
@@ -1093,7 +1150,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     if (menu) menu.hidden = false
   }
 
-  syncCardsCache()
+  updateCardsCache()
+  syncCatalogueFavouritesUi()
 
   function updateResultsCount() {
     if (!catalogueNewResultsValue) return
@@ -1102,22 +1160,25 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   function applySorting() {
     const cardsToSort = [...cards]
+    const metaByCard = new Map(cardMeta.map((meta) => [meta.card, meta]))
     const firmnessRank = { soft: 1, medium: 2, hard: 3 }
 
     cardsToSort.sort((a, b) => {
+      const metaA = metaByCard.get(a)
+      const metaB = metaByCard.get(b)
       if (state.sort === 'height-asc') {
-        return Number(a.dataset.height || 0) - Number(b.dataset.height || 0)
+        return Number(metaA?.height || 0) - Number(metaB?.height || 0)
       }
       if (state.sort === 'height-desc') {
-        return Number(b.dataset.height || 0) - Number(a.dataset.height || 0)
+        return Number(metaB?.height || 0) - Number(metaA?.height || 0)
       }
       if (state.sort === 'load-desc') {
-        return Number(b.dataset.load || 0) - Number(a.dataset.load || 0)
+        return Number(metaB?.load || 0) - Number(metaA?.load || 0)
       }
       if (state.sort === 'firmness-desc') {
-        return (firmnessRank[b.dataset.firmness] || 0) - (firmnessRank[a.dataset.firmness] || 0)
+        return (firmnessRank[metaB?.firmness] || 0) - (firmnessRank[metaA?.firmness] || 0)
       }
-      return Number(a.dataset.initialOrder || 0) - Number(b.dataset.initialOrder || 0)
+      return Number(metaA?.initialOrder || 0) - Number(metaB?.initialOrder || 0)
     })
 
     cardsToSort.forEach((card) => {
@@ -1125,15 +1186,151 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     })
   }
 
+  function intersectsSet(sourceSet, selectedSet) {
+    if (!selectedSet.size) return true
+    for (const value of selectedSet) {
+      if (sourceSet.has(value)) return true
+    }
+    return false
+  }
+
+  function containsAll(sourceSet, selectedSet) {
+    if (!selectedSet.size) return true
+    for (const value of selectedSet) {
+      if (!sourceSet.has(value)) return false
+    }
+    return true
+  }
+
+  function matchLoadRange(load, range) {
+    if (range === 'all') return true
+    if (range === 'upTo90') return load <= 90
+    if (range === 'upTo110') return load <= 110
+    if (range === 'upTo130') return load <= 130
+    if (range === 'upTo150') return load <= 150
+    if (range === 'over150') return load > 150
+    return true
+  }
+
+  function matchHeightRange(height, range) {
+    if (range === 'all') return true
+    if (range === 'low') return height <= 15
+    if (range === 'mid') return height >= 16 && height <= 25
+    if (range === 'high') return height >= 26
+    return true
+  }
+
+  function setSingleChipSelection(groupName, value) {
+    const group = catalogueNewSidebar.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
+    if (!group) return
+    group.querySelectorAll(`.catalogue-new-chip[data-filter-group="${groupName}"]`).forEach((chip) => {
+      chip.classList.toggle('is-active', chip.dataset.value === value)
+    })
+  }
+
+  function setFilterGroupDisabled(groupName, disabled) {
+    const group = catalogueNewSidebar.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
+    if (!group) return
+    group.classList.toggle('is-disabled', disabled)
+  }
+
+  function syncFilterDependencies() {
+    const topperOnly = state.type.size === 1 && state.type.has('topper')
+    if (topperOnly && state.loadRange !== 'all') {
+      state.loadRange = 'all'
+      setSingleChipSelection('loadRange', 'all')
+    }
+    setFilterGroupDisabled('loadRange', topperOnly)
+  }
+
+  function syncUiFromState() {
+    setSingleChipSelection('collection', state.collection)
+    setSingleChipSelection('loadRange', state.loadRange)
+    setSingleChipSelection('heightRange', state.heightRange)
+    const setMultiChipSelection = (groupName, targetSet) => {
+      catalogueNewSidebar.querySelectorAll(`.catalogue-new-chip[data-filter-group="${groupName}"]`).forEach((chip) => {
+        chip.classList.toggle('is-active', targetSet.has(String(chip.dataset.value || '')))
+      })
+    }
+    setMultiChipSelection('firmness', state.firmness)
+    setMultiChipSelection('type', state.type)
+    setMultiChipSelection('fillings', state.fillings)
+    setMultiChipSelection('features', state.features)
+    const sizeWidthSelect = catalogueNewSidebar.querySelector('.catalogue-new-size-select[data-size-group="width"]')
+    const sizeLengthSelect = catalogueNewSidebar.querySelector('.catalogue-new-size-select[data-size-group="length"]')
+    const setSizeSelectValue = (sizeSelectEl, targetSet) => {
+      if (!sizeSelectEl) return
+      const nextValue = [...targetSet][0] || 'all'
+      const trigger = sizeSelectEl.querySelector('.catalogue-new-size-select-trigger')
+      const options = [...sizeSelectEl.querySelectorAll('.catalogue-new-size-select-option')]
+      options.forEach((option) => {
+        option.classList.toggle('is-active', option.dataset.value === nextValue)
+      })
+      if (trigger) {
+        const active = options.find((option) => option.dataset.value === nextValue)
+        trigger.textContent = (active?.textContent || 'Любая').trim()
+      }
+    }
+    setSizeSelectValue(sizeWidthSelect, state.width)
+    setSizeSelectValue(sizeLengthSelect, state.length)
+    syncFilterDependencies()
+  }
+
+  function setAccordionGroupExpanded(groupEl, expanded) {
+    if (!groupEl) return
+    const trigger = groupEl.querySelector('.catalogue-new-filter-accordion-trigger')
+    const panel = groupEl.querySelector('.catalogue-new-filter-accordion-panel')
+    if (!trigger || !panel) return
+    trigger.setAttribute('aria-expanded', expanded ? 'true' : 'false')
+    panel.hidden = !expanded
+  }
+
+  function openAccordionGroupExclusive(groupElToOpen) {
+    const allGroups = catalogueNewSidebar.querySelectorAll('.catalogue-new-filter-group')
+    allGroups.forEach((groupEl) => {
+      const shouldExpand = groupEl === groupElToOpen
+      setAccordionGroupExpanded(groupEl, shouldExpand)
+    })
+  }
+
+  function initExclusiveAccordionState() {
+    const groups = [...catalogueNewSidebar.querySelectorAll('.catalogue-new-filter-group')]
+    const accordionGroups = groups.filter((groupEl) => groupEl.querySelector('.catalogue-new-filter-accordion-trigger'))
+    if (accordionGroups.length === 0) return
+    const firstExpanded =
+      accordionGroups.find((groupEl) => {
+        const trigger = groupEl.querySelector('.catalogue-new-filter-accordion-trigger')
+        return trigger?.getAttribute('aria-expanded') === 'true'
+      }) || accordionGroups[0]
+    openAccordionGroupExclusive(firstExpanded)
+  }
+
   function applyFilters() {
     const favSet = readCatalogueFavourites()
-    matchedCards = cards.filter((card) => {
-      const matchCollection = state.collection === 'all' || card.dataset.collection === state.collection
-      const matchFirmness = state.firmness === 'all' || card.dataset.firmness === state.firmness
-      const matchType = state.type === 'all' || card.dataset.type === state.type
-      const slug = String(card.dataset.productSlug || '')
-      const matchFavourites = !state.favouritesOnly || (slug && favSet.has(slug))
-      return matchCollection && matchFirmness && matchType && matchFavourites
+    matchedCards = []
+    cardMeta.forEach((meta) => {
+      const matchCollection = state.collection === 'all' || meta.collection === state.collection
+      const matchFirmness = !state.firmness.size || state.firmness.has(meta.firmness)
+      const matchType = !state.type.size || state.type.has(meta.type)
+      const matchWidth = intersectsSet(meta.widths, state.width)
+      const matchLength = intersectsSet(meta.lengths, state.length)
+      const matchLoad = matchLoadRange(meta.load, state.loadRange)
+      const matchHeight = matchHeightRange(meta.height, state.heightRange)
+      const matchFillings = containsAll(meta.fillings, state.fillings)
+      const matchFeatures = containsAll(meta.features, state.features)
+      const matchFavourites = !state.favouritesOnly || (meta.slug && favSet.has(meta.slug))
+      if (
+        matchCollection &&
+        matchFirmness &&
+        matchType &&
+        matchWidth &&
+        matchLength &&
+        matchLoad &&
+        matchHeight &&
+        matchFillings &&
+        matchFeatures &&
+        matchFavourites
+      ) matchedCards.push(meta.card)
     })
 
     const visibleSet = new Set(matchedCards.slice(0, visibleCardsLimit))
@@ -1146,23 +1343,128 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     scheduleStickySidebarSync()
   }
 
-  function setActiveChip(groupName, value) {
-    const group = catalogueNewSidebar.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
-    if (!group) return
-    group.querySelectorAll('.catalogue-new-chip').forEach((chip) => {
-      chip.classList.toggle('is-active', chip.dataset.value === value)
+  function resetCatalogueNewFilterChipsAndSort() {
+    state.collection = 'all'
+    state.firmness.clear()
+    state.type.clear()
+    state.width.clear()
+    state.length.clear()
+    state.loadRange = 'all'
+    state.heightRange = 'all'
+    state.fillings.clear()
+    state.features.clear()
+    state.sort = 'default'
+    syncUiFromState()
+    setActiveSortOption('default')
+    closeSortMenu()
+    applySorting()
+  }
+
+  function showCatalogueFavouritesOnlyView() {
+    const fav = readCatalogueFavourites()
+    if (fav.size === 0) return
+    resetCatalogueNewFilterChipsAndSort()
+    state.favouritesOnly = true
+    if (catalogueNewFavouritesOnlySwitch) {
+      catalogueNewFavouritesOnlySwitch.classList.add('is-on')
+      catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', 'true')
+      catalogueNewFavouritesOnlySwitch.disabled = false
+    }
+    visibleCardsLimit = CATALOGUE_PAGE_SIZE
+    applyFilters()
+    const productsSection = document.getElementById('catalogue-new-products')
+    if (productsSection) {
+      productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
+  if (catalogueNewFavouritesLink) {
+    catalogueNewFavouritesLink.addEventListener('click', (event) => {
+      const fav = readCatalogueFavourites()
+      if (fav.size === 0) {
+        event.preventDefault()
+        return
+      }
+      event.preventDefault()
+      showCatalogueFavouritesOnlyView()
     })
   }
 
   catalogueNewSidebar.addEventListener('click', (event) => {
     const chip = event.target.closest('.catalogue-new-chip')
-    if (!chip) return
-    const group = chip.closest('.catalogue-new-filter-group')
-    const groupName = group?.dataset.filterGroup
-    const value = chip.dataset.value
-    if (!groupName || !value) return
-    state[groupName] = value
-    setActiveChip(groupName, value)
+    if (chip) {
+      const groupName = chip.dataset.filterGroup
+      const value = chip.dataset.value
+      if (groupName && value) {
+        const multiGroups = new Set(['firmness', 'type', 'fillings', 'features'])
+        if (multiGroups.has(groupName)) {
+          const targetSet =
+            groupName === 'firmness' ? state.firmness :
+            groupName === 'type' ? state.type :
+            groupName === 'fillings' ? state.fillings :
+            state.features
+          if (targetSet.has(value)) targetSet.delete(value)
+          else targetSet.add(value)
+          syncUiFromState()
+        } else {
+          if (groupName === 'collection') state.collection = value
+          if (groupName === 'loadRange') state.loadRange = value
+          if (groupName === 'heightRange') state.heightRange = value
+          setSingleChipSelection(groupName, value)
+        }
+        syncFilterDependencies()
+        visibleCardsLimit = CATALOGUE_PAGE_SIZE
+        applyFilters()
+      }
+      return
+    }
+    const trigger = event.target.closest('.catalogue-new-filter-accordion-trigger')
+    if (!trigger) return
+    const groupEl = trigger.closest('.catalogue-new-filter-group')
+    if (!groupEl) return
+    const expanded = trigger.getAttribute('aria-expanded') === 'true'
+    if (expanded) return
+    openAccordionGroupExclusive(groupEl)
+  })
+
+  const closeSizeSelectMenus = () => {
+    catalogueNewSidebar.querySelectorAll('.catalogue-new-size-select').forEach((sizeSelect) => {
+      sizeSelect.classList.remove('is-open')
+      const trigger = sizeSelect.querySelector('.catalogue-new-size-select-trigger')
+      const menu = sizeSelect.querySelector('.catalogue-new-size-select-menu')
+      if (trigger) trigger.setAttribute('aria-expanded', 'false')
+      if (menu) menu.hidden = true
+    })
+  }
+
+  catalogueNewSidebar.addEventListener('click', (event) => {
+    const trigger = event.target.closest('.catalogue-new-size-select-trigger')
+    if (trigger) {
+      const sizeSelect = trigger.closest('.catalogue-new-size-select')
+      if (!sizeSelect) return
+      const isOpen = sizeSelect.classList.contains('is-open')
+      closeSizeSelectMenus()
+      if (!isOpen) {
+        sizeSelect.classList.add('is-open')
+        trigger.setAttribute('aria-expanded', 'true')
+        const menu = sizeSelect.querySelector('.catalogue-new-size-select-menu')
+        if (menu) menu.hidden = false
+      }
+      return
+    }
+
+    const option = event.target.closest('.catalogue-new-size-select-option')
+    if (!option) return
+    const sizeSelect = option.closest('.catalogue-new-size-select')
+    if (!sizeSelect) return
+    const groupName = sizeSelect.dataset.sizeGroup
+    const value = String(option.dataset.value || 'all')
+    const targetSet = groupName === 'width' ? state.width : groupName === 'length' ? state.length : null
+    if (!targetSet) return
+    targetSet.clear()
+    if (value !== 'all') targetSet.add(value)
+    syncUiFromState()
+    closeSizeSelectMenus()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
     applyFilters()
   })
@@ -1220,6 +1522,9 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       if (!catalogueNewSort.contains(event.target)) {
         closeSortMenu()
       }
+      if (!catalogueNewSidebar.contains(event.target)) {
+        closeSizeSelectMenus()
+      }
     })
 
     document.addEventListener('keydown', (event) => {
@@ -1231,25 +1536,43 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   if (catalogueNewReset) {
     catalogueNewReset.addEventListener('click', () => {
-      state.collection = 'all'
-      state.firmness = 'all'
-      state.type = 'all'
-      state.sort = 'default'
+      resetCatalogueNewFilterChipsAndSort()
       state.favouritesOnly = false
       if (catalogueNewFavouritesOnlySwitch) {
         catalogueNewFavouritesOnlySwitch.classList.remove('is-on')
         catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', 'false')
       }
-      setActiveChip('collection', 'all')
-      setActiveChip('firmness', 'all')
-      setActiveChip('type', 'all')
-      setActiveSortOption('default')
-      closeSortMenu()
-      applySorting()
+      syncCatalogueFavouritesFilterSwitchState()
       visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
     })
   }
+
+  const openMobileFiltersDrawer = () => {
+    if (!catalogueNewSidebar || !catalogueNewMobileFiltersOverlay) return
+    if (window.innerWidth > 1024) return
+    catalogueNewSidebar.classList.add('is-open')
+    catalogueNewMobileFiltersOverlay.hidden = false
+    if (typeof lockScroll === 'function') lockScroll()
+  }
+  const closeMobileFiltersDrawer = () => {
+    if (!catalogueNewSidebar || !catalogueNewMobileFiltersOverlay) return
+    catalogueNewSidebar.classList.remove('is-open')
+    catalogueNewMobileFiltersOverlay.hidden = true
+    if (typeof unlockScroll === 'function') unlockScroll()
+  }
+  if (catalogueNewMobileFiltersOpen) {
+    catalogueNewMobileFiltersOpen.addEventListener('click', openMobileFiltersDrawer)
+  }
+  if (catalogueNewMobileFiltersClose) {
+    catalogueNewMobileFiltersClose.addEventListener('click', closeMobileFiltersDrawer)
+  }
+  if (catalogueNewMobileFiltersOverlay) {
+    catalogueNewMobileFiltersOverlay.addEventListener('click', closeMobileFiltersDrawer)
+  }
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeMobileFiltersDrawer()
+  })
 
   if (window.IntersectionObserver) {
     const observer = new IntersectionObserver((entries) => {
@@ -1268,6 +1591,45 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   } else {
     visibleCardsLimit = Number.MAX_SAFE_INTEGER
   }
+
+  const lockScrollWithinSidebar = () => {
+    const sidebar = catalogueNewSidebar
+    if (!sidebar) return
+
+    const isInsideSidebar = (target) => target instanceof Element && sidebar.contains(target)
+    const canScroll = () => sidebar.scrollHeight > sidebar.clientHeight + 1
+
+    const handleWheelCapture = (event) => {
+      if (!isInsideSidebar(event.target)) return
+      if (!canScroll()) return
+      event.preventDefault()
+      event.stopPropagation()
+      sidebar.scrollTop += event.deltaY
+    }
+
+    let lastTouchY = 0
+    const handleTouchStartCapture = (event) => {
+      if (!isInsideSidebar(event.target)) return
+      if (!event.touches || event.touches.length === 0) return
+      lastTouchY = event.touches[0].clientY
+    }
+    const handleTouchMoveCapture = (event) => {
+      if (!isInsideSidebar(event.target)) return
+      if (!canScroll()) return
+      if (!event.touches || event.touches.length === 0) return
+      const currentY = event.touches[0].clientY
+      const delta = lastTouchY - currentY
+      lastTouchY = currentY
+      event.preventDefault()
+      event.stopPropagation()
+      sidebar.scrollTop += delta
+    }
+
+    document.addEventListener('wheel', handleWheelCapture, { passive: false, capture: true })
+    document.addEventListener('touchstart', handleTouchStartCapture, { passive: true, capture: true })
+    document.addEventListener('touchmove', handleTouchMoveCapture, { passive: false, capture: true })
+  }
+  lockScrollWithinSidebar()
 
   if (catalogueNewLayout) {
     const stickyTopOffset = 16
@@ -1324,6 +1686,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   }
 
   applySorting()
+  syncUiFromState()
+  initExclusiveAccordionState()
   applyFilters()
   loadCatalogueFromStrapi()
 }
