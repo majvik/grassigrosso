@@ -943,6 +943,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       type: String(dataset.type || ''),
       height: Number(dataset.height || 0),
       load: Number(dataset.load || 0),
+      loadRange: String(dataset.loadRange || '').trim(),
+      heightRange: String(dataset.heightRange || '').trim(),
       widths: parseCsvDataset(dataset.widths).length ? new Set(parseCsvDataset(dataset.widths)) : new Set(CATALOGUE_DEFAULT_WIDTHS),
       lengths: parseCsvDataset(dataset.lengths).length ? new Set(parseCsvDataset(dataset.lengths)) : new Set(CATALOGUE_DEFAULT_LENGTHS),
       fillings: new Set(parseCsvDataset(dataset.fillings)),
@@ -1059,6 +1061,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     const imageUrl = escapeHtml(item.imageUrl || '')
     const imageAlt = escapeHtml(item.imageAlt || `Коллекция ${item.name || ''}`)
     const tags = Array.isArray(item.tags) ? item.tags.filter(Boolean).slice(0, 3) : []
+    const loadRange = String(item.loadRange || '').trim()
+    const heightRange = String(item.heightRange || '').trim()
     const widths = Array.isArray(item.widths) ? item.widths.map((v) => String(v)) : CATALOGUE_DEFAULT_WIDTHS
     const lengths = Array.isArray(item.lengths) ? item.lengths.map((v) => String(v)) : CATALOGUE_DEFAULT_LENGTHS
     const fillings = Array.isArray(item.fillings) ? item.fillings.map((v) => String(v)) : []
@@ -1072,6 +1076,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         data-type="${escapeHtml(mattressType)}"
         data-height="${heightCm}"
         data-load="${maxLoadKg}"
+        data-load-range="${escapeHtml(loadRange)}"
+        data-height-range="${escapeHtml(heightRange)}"
         data-widths="${escapeHtml(widths.join(','))}"
         data-lengths="${escapeHtml(lengths.join(','))}"
         data-fillings="${escapeHtml(fillings.join(','))}"
@@ -1117,6 +1123,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       catalogueNewCardsRoot.innerHTML = html
       updateCardsCache()
       syncCatalogueFavouritesUi()
+      syncFilterOptionsFromCards()
       applySorting()
       visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
@@ -1220,6 +1227,85 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     return true
   }
 
+  function getLoadRangeBucket(load) {
+    if (load <= 90) return 'upTo90'
+    if (load <= 110) return 'upTo110'
+    if (load <= 130) return 'upTo130'
+    if (load <= 150) return 'upTo150'
+    return 'over150'
+  }
+
+  function getHeightRangeBucket(height) {
+    if (height <= 15) return 'low'
+    if (height <= 25) return 'mid'
+    return 'high'
+  }
+
+  function syncFilterOptionsFromCards() {
+    if (!cardMeta.length) return
+    const knownTypeOptions = ['spring', 'nospring', 'topper']
+    const knownFillingOptions = ['coir', 'latex', 'memory', 'ppu', 'holkon']
+    const knownFeatureOptions = ['removableCover', 'winterSummer', 'dualFirmness']
+    const available = {
+      collection: new Set(),
+      firmness: new Set(),
+      type: new Set(),
+      width: new Set(),
+      length: new Set(),
+      loadRange: new Set(),
+      heightRange: new Set(),
+      fillings: new Set(),
+      features: new Set(),
+    }
+
+    cardMeta.forEach((meta) => {
+      if (meta.collection) available.collection.add(meta.collection)
+      if (meta.firmness) available.firmness.add(meta.firmness)
+      if (meta.type) available.type.add(meta.type)
+      meta.widths.forEach((value) => available.width.add(value))
+      meta.lengths.forEach((value) => available.length.add(value))
+      meta.fillings.forEach((value) => available.fillings.add(value))
+      meta.features.forEach((value) => available.features.add(value))
+      if (meta.loadRange) available.loadRange.add(meta.loadRange)
+      else if (Number.isFinite(meta.load) && meta.load > 0) available.loadRange.add(getLoadRangeBucket(meta.load))
+      if (meta.heightRange) available.heightRange.add(meta.heightRange)
+      else if (Number.isFinite(meta.height) && meta.height > 0) available.heightRange.add(getHeightRangeBucket(meta.height))
+    })
+
+    knownTypeOptions.forEach((value) => available.type.add(value))
+    knownFillingOptions.forEach((value) => available.fillings.add(value))
+    knownFeatureOptions.forEach((value) => available.features.add(value))
+
+    const toggleBySet = (selector, allowedSet) => {
+      catalogueNewSidebar.querySelectorAll(selector).forEach((el) => {
+        const value = String(el.dataset.value || '')
+        const visible = value === 'all' || allowedSet.has(value)
+        el.hidden = !visible
+      })
+    }
+
+    toggleBySet('.catalogue-new-chip[data-filter-group="collection"]', available.collection)
+    toggleBySet('.catalogue-new-chip[data-filter-group="firmness"]', available.firmness)
+    toggleBySet('.catalogue-new-chip[data-filter-group="type"]', available.type)
+    toggleBySet('.catalogue-new-chip[data-filter-group="loadRange"]', available.loadRange)
+    toggleBySet('.catalogue-new-chip[data-filter-group="heightRange"]', available.heightRange)
+    toggleBySet('.catalogue-new-chip[data-filter-group="fillings"]', available.fillings)
+    toggleBySet('.catalogue-new-chip[data-filter-group="features"]', available.features)
+    toggleBySet('.catalogue-new-size-select[data-size-group="width"] .catalogue-new-size-select-option', available.width)
+    toggleBySet('.catalogue-new-size-select[data-size-group="length"] .catalogue-new-size-select-option', available.length)
+
+    if (state.collection !== 'all' && !available.collection.has(state.collection)) state.collection = 'all'
+    if (state.loadRange !== 'all' && !available.loadRange.has(state.loadRange)) state.loadRange = 'all'
+    if (state.heightRange !== 'all' && !available.heightRange.has(state.heightRange)) state.heightRange = 'all'
+    state.firmness.forEach((value) => { if (!available.firmness.has(value)) state.firmness.delete(value) })
+    state.type.forEach((value) => { if (!available.type.has(value)) state.type.delete(value) })
+    state.width.forEach((value) => { if (!available.width.has(value)) state.width.delete(value) })
+    state.length.forEach((value) => { if (!available.length.has(value)) state.length.delete(value) })
+    state.fillings.forEach((value) => { if (!available.fillings.has(value)) state.fillings.delete(value) })
+    state.features.forEach((value) => { if (!available.features.has(value)) state.features.delete(value) })
+    syncUiFromState()
+  }
+
   function setSingleChipSelection(groupName, value) {
     const group = catalogueNewSidebar.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
     if (!group) return
@@ -1314,8 +1400,12 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       const matchType = !state.type.size || state.type.has(meta.type)
       const matchWidth = intersectsSet(meta.widths, state.width)
       const matchLength = intersectsSet(meta.lengths, state.length)
-      const matchLoad = matchLoadRange(meta.load, state.loadRange)
-      const matchHeight = matchHeightRange(meta.height, state.heightRange)
+      const matchLoad = meta.loadRange
+        ? state.loadRange === 'all' || meta.loadRange === state.loadRange
+        : matchLoadRange(meta.load, state.loadRange)
+      const matchHeight = meta.heightRange
+        ? state.heightRange === 'all' || meta.heightRange === state.heightRange
+        : matchHeightRange(meta.height, state.heightRange)
       const matchFillings = containsAll(meta.fillings, state.fillings)
       const matchFeatures = containsAll(meta.features, state.features)
       const matchFavourites = !state.favouritesOnly || (meta.slug && favSet.has(meta.slug))
@@ -1688,6 +1778,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   applySorting()
   syncUiFromState()
   initExclusiveAccordionState()
+  syncFilterOptionsFromCards()
   applyFilters()
   loadCatalogueFromStrapi()
 }

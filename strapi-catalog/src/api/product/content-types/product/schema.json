@@ -45,6 +45,30 @@
       "type": "integer",
       "required": true
     },
+    "load_range": {
+      "type": "enumeration",
+      "enum": ["upTo90", "upTo110", "upTo130", "upTo150", "over150"]
+    },
+    "height_range": {
+      "type": "enumeration",
+      "enum": ["low", "mid", "high"]
+    },
+    "widths": {
+      "type": "enumeration",
+      "enum": ["w80", "w90", "w120", "w140", "w160", "w180", "w200"]
+    },
+    "lengths": {
+      "type": "enumeration",
+      "enum": ["l190", "l195", "l200"]
+    },
+    "fillings": {
+      "type": "enumeration",
+      "enum": ["coir", "latex", "memory", "ppu", "holkon"]
+    },
+    "features": {
+      "type": "enumeration",
+      "enum": ["removableCover", "winterSummer", "dualFirmness"]
+    },
     "image_url": {
       "type": "string"
     },

@@ -150,6 +150,12 @@ function normalizeStrapiMediaUrl(rawUrl) {
 function mapStrapiProduct(item) {
   const node = item && item.attributes ? item.attributes : item;
   if (!node) return null;
+  const normalizeStringList = (value) => {
+    if (Array.isArray(value)) return value.map((entry) => String(entry || '').trim()).filter(Boolean)
+    const single = String(value || '').trim()
+    return single ? [single] : []
+  };
+  const normalizeDimensionValue = (value) => String(value || '').trim().replace(/^w/, '').replace(/^l/, '');
 
   const collectionRaw = node.collection?.data?.attributes || node.collection || {};
   const tagsRaw = Array.isArray(node.tags?.data) ? node.tags.data : (Array.isArray(node.tags) ? node.tags : []);
@@ -170,6 +176,12 @@ function mapStrapiProduct(item) {
     mattressType,
     heightCm: Number(node.height_cm ?? node.heightCm ?? 0),
     maxLoadKg: Number(node.max_load_kg ?? node.maxLoadKg ?? 0),
+    loadRange: String(node.load_range ?? node.loadRange ?? '').trim(),
+    heightRange: String(node.height_range ?? node.heightRange ?? '').trim(),
+    widths: normalizeStringList(node.widths).map(normalizeDimensionValue),
+    lengths: normalizeStringList(node.lengths).map(normalizeDimensionValue),
+    fillings: normalizeStringList(node.fillings),
+    features: normalizeStringList(node.features),
     imageUrl: normalizeStrapiMediaUrl(mediaAttrs.url || ''),
     imageAlt: mediaAttrs.alternativeText || mediaAttrs.name || (node.name ? `Коллекция ${node.name}` : 'Изображение товара'),
     tags: tagsRaw.map((tagNode) => {

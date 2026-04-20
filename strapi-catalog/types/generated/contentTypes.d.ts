@@ -518,12 +518,23 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    features: Schema.Attribute.Enumeration<
+      ['removableCover', 'winterSummer', 'dualFirmness']
+    >;
+    fillings: Schema.Attribute.Enumeration<
+      ['coir', 'latex', 'memory', 'ppu', 'holkon']
+    >;
     firmness: Schema.Attribute.Enumeration<['soft', 'medium', 'hard']> &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'medium'>;
     height_cm: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    height_range: Schema.Attribute.Enumeration<['low', 'mid', 'high']>;
     image_url: Schema.Attribute.String;
     is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    lengths: Schema.Attribute.Enumeration<['l190', 'l195', 'l200']>;
+    load_range: Schema.Attribute.Enumeration<
+      ['upTo90', 'upTo110', 'upTo130', 'upTo150', 'over150']
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -547,6 +558,9 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    widths: Schema.Attribute.Enumeration<
+      ['w80', 'w90', 'w120', 'w140', 'w160', 'w180', 'w200']
+    >;
   };
 }
 
