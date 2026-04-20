@@ -59,3 +59,39 @@ Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/
 ---
 
 <sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+
+---
+
+## Grassigrosso catalog notes
+
+### Safety: no auto-seed / no auto-link
+
+- Project bootstrap does **not** create or mutate products automatically.
+- `src/index.js` only logs `Catalog bootstrap: auto-seed/auto-link is disabled`.
+- This guarantees that real products are not modified by startup logic.
+
+### Product filter fields (RU options in Strapi)
+
+Product content type (`api::product.product`) uses Russian option values in Strapi admin:
+
+- `firmness`: `мягкий`, `средний`, `жесткий`
+- `mattress_type`: `пружинный`, `беспружинный`, `топер`
+- `load_range`: `до_90_кг`, `до_110_кг`, `до_130_кг`, `до_150_кг`, `свыше_150_кг`
+- `height_range`: `низкий`, `средний`, `высокий`
+- `widths`: `ширина_80`, `ширина_90`, `ширина_120`, `ширина_140`, `ширина_160`, `ширина_180`, `ширина_200`
+- `lengths`: `длина_190`, `длина_195`, `длина_200`
+- `fillings`: `кокос`, `латекс`, `мемори`, `ппу`, `холкон`
+- `features`: relation `manyToMany` to `api::feature-option.feature-option` (multi-select)
+
+`feature-option` entries should be created/managed in admin (for example: `Съемный чехол`, `Эффект зима-лето`, `Разная жесткость сторон`).
+
+### API mapping for storefront compatibility
+
+Public catalog feed keeps storefront codes stable even though Strapi values are Russian:
+
+- `firmness`: `soft|medium|hard`
+- `mattressType`: `spring|nospring|topper`
+- `loadRange`: `upTo90|upTo110|upTo130|upTo150|over150`
+- `heightRange`: `low|mid|high`
+- `widths/lengths`: numeric values without prefixes (e.g. `160`, `200`)
+- `fillings/features`: frontend codes (`coir`, `memory`, `removableCover`, etc.)

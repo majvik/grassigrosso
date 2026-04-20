@@ -500,6 +500,39 @@ export interface ApiCollectionCollection extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiFeatureOptionFeatureOption
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'feature_options';
+  info: {
+    displayName: '\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F \u043E\u0441\u043E\u0431\u0435\u043D\u043D\u043E\u0441\u0442\u044C';
+    pluralName: 'feature-options';
+    singularName: 'feature-option';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::feature-option.feature-option'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
@@ -518,22 +551,53 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    features: Schema.Attribute.Enumeration<
-      ['removableCover', 'winterSummer', 'dualFirmness']
+    features: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::feature-option.feature-option'
     >;
     fillings: Schema.Attribute.Enumeration<
-      ['coir', 'latex', 'memory', 'ppu', 'holkon']
+      [
+        '\u043A\u043E\u043A\u043E\u0441',
+        '\u043B\u0430\u0442\u0435\u043A\u0441',
+        '\u043C\u0435\u043C\u043E\u0440\u0438',
+        '\u043F\u043F\u0443',
+        '\u0445\u043E\u043B\u043A\u043E\u043D',
+      ]
     >;
-    firmness: Schema.Attribute.Enumeration<['soft', 'medium', 'hard']> &
+    firmness: Schema.Attribute.Enumeration<
+      [
+        '\u043C\u044F\u0433\u043A\u0438\u0439',
+        '\u0441\u0440\u0435\u0434\u043D\u0438\u0439',
+        '\u0436\u0435\u0441\u0442\u043A\u0438\u0439',
+      ]
+    > &
       Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'medium'>;
+      Schema.Attribute.DefaultTo<'\u0441\u0440\u0435\u0434\u043D\u0438\u0439'>;
     height_cm: Schema.Attribute.Decimal & Schema.Attribute.Required;
-    height_range: Schema.Attribute.Enumeration<['low', 'mid', 'high']>;
+    height_range: Schema.Attribute.Enumeration<
+      [
+        '\u043D\u0438\u0437\u043A\u0438\u0439',
+        '\u0441\u0440\u0435\u0434\u043D\u0438\u0439',
+        '\u0432\u044B\u0441\u043E\u043A\u0438\u0439',
+      ]
+    >;
     image_url: Schema.Attribute.String;
     is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    lengths: Schema.Attribute.Enumeration<['l190', 'l195', 'l200']>;
+    lengths: Schema.Attribute.Enumeration<
+      [
+        '\u0434\u043B\u0438\u043D\u0430_190',
+        '\u0434\u043B\u0438\u043D\u0430_195',
+        '\u0434\u043B\u0438\u043D\u0430_200',
+      ]
+    >;
     load_range: Schema.Attribute.Enumeration<
-      ['upTo90', 'upTo110', 'upTo130', 'upTo150', 'over150']
+      [
+        '\u0434\u043E_90_\u043A\u0433',
+        '\u0434\u043E_110_\u043A\u0433',
+        '\u0434\u043E_130_\u043A\u0433',
+        '\u0434\u043E_150_\u043A\u0433',
+        '\u0441\u0432\u044B\u0448\u0435_150_\u043A\u0433',
+      ]
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -542,10 +606,14 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     mattress_type: Schema.Attribute.Enumeration<
-      ['spring', 'nospring', 'topper']
+      [
+        '\u043F\u0440\u0443\u0436\u0438\u043D\u043D\u044B\u0439',
+        '\u0431\u0435\u0441\u043F\u0440\u0443\u0436\u0438\u043D\u043D\u044B\u0439',
+        '\u0442\u043E\u043F\u0435\u0440',
+      ]
     > &
       Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'nospring'>;
+      Schema.Attribute.DefaultTo<'\u0431\u0435\u0441\u043F\u0440\u0443\u0436\u0438\u043D\u043D\u044B\u0439'>;
     max_load_kg: Schema.Attribute.Integer & Schema.Attribute.Required;
     media: Schema.Attribute.Media<'images'>;
     name: Schema.Attribute.String & Schema.Attribute.Required;
@@ -559,7 +627,15 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     widths: Schema.Attribute.Enumeration<
-      ['w80', 'w90', 'w120', 'w140', 'w160', 'w180', 'w200']
+      [
+        '\u0448\u0438\u0440\u0438\u043D\u0430_80',
+        '\u0448\u0438\u0440\u0438\u043D\u0430_90',
+        '\u0448\u0438\u0440\u0438\u043D\u0430_120',
+        '\u0448\u0438\u0440\u0438\u043D\u0430_140',
+        '\u0448\u0438\u0440\u0438\u043D\u0430_160',
+        '\u0448\u0438\u0440\u0438\u043D\u0430_180',
+        '\u0448\u0438\u0440\u0438\u043D\u0430_200',
+      ]
     >;
   };
 }
@@ -1105,6 +1181,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::catalog-new-hero.catalog-new-hero': ApiCatalogNewHeroCatalogNewHero;
       'api::collection.collection': ApiCollectionCollection;
+      'api::feature-option.feature-option': ApiFeatureOptionFeatureOption;
       'api::product.product': ApiProductProduct;
       'api::tag.tag': ApiTagTag;
       'plugin::content-releases.release': PluginContentReleasesRelease;

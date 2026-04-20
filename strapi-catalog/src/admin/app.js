@@ -10,5 +10,17 @@ export default {
   config: {
     locales: ['ru', 'en'],
   },
+  async registerTrads({ locales }) {
+    return Promise.all(
+      locales.map(async (locale) => {
+        try {
+          const { default: data } = await import(`./translations/${locale}.json`)
+          return { data, locale }
+        } catch {
+          return { data: {}, locale }
+        }
+      })
+    )
+  },
   bootstrap() {},
 };

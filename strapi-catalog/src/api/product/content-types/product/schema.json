@@ -26,16 +26,18 @@
       "target": "api::collection.collection"
     },
     "firmness": {
+      "displayName": "Жесткость",
       "type": "enumeration",
       "required": true,
-      "enum": ["soft", "medium", "hard"],
-      "default": "medium"
+      "enum": ["мягкий", "средний", "жесткий"],
+      "default": "средний"
     },
     "mattress_type": {
+      "displayName": "Тип конструкции",
       "type": "enumeration",
       "required": true,
-      "enum": ["spring", "nospring", "topper"],
-      "default": "nospring"
+      "enum": ["пружинный", "беспружинный", "топер"],
+      "default": "беспружинный"
     },
     "height_cm": {
       "type": "decimal",
@@ -46,28 +48,35 @@
       "required": true
     },
     "load_range": {
+      "displayName": "Макс. нагрузка на спальное место",
       "type": "enumeration",
-      "enum": ["upTo90", "upTo110", "upTo130", "upTo150", "over150"]
+      "enum": ["до_90_кг", "до_110_кг", "до_130_кг", "до_150_кг", "свыше_150_кг"]
     },
     "height_range": {
+      "displayName": "Высота матраса",
       "type": "enumeration",
-      "enum": ["low", "mid", "high"]
+      "enum": ["низкий", "средний", "высокий"]
     },
     "widths": {
+      "displayName": "Ширина",
       "type": "enumeration",
-      "enum": ["w80", "w90", "w120", "w140", "w160", "w180", "w200"]
+      "enum": ["ширина_80", "ширина_90", "ширина_120", "ширина_140", "ширина_160", "ширина_180", "ширина_200"]
     },
     "lengths": {
+      "displayName": "Длина",
       "type": "enumeration",
-      "enum": ["l190", "l195", "l200"]
+      "enum": ["длина_190", "длина_195", "длина_200"]
     },
     "fillings": {
+      "displayName": "Состав / Наполнитель",
       "type": "enumeration",
-      "enum": ["coir", "latex", "memory", "ppu", "holkon"]
+      "enum": ["кокос", "латекс", "мемори", "ппу", "холкон"]
     },
     "features": {
-      "type": "enumeration",
-      "enum": ["removableCover", "winterSummer", "dualFirmness"]
+      "displayName": "Дополнительные особенности",
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::feature-option.feature-option"
     },
     "image_url": {
       "type": "string"

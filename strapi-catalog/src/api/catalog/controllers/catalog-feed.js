@@ -8,29 +8,94 @@ module.exports = {
       return single ? [single] : []
     };
 
-    const normalizeDimensionValue = (value) => String(value || '').trim().replace(/^w/, '').replace(/^l/, '');
+    const normalizeDimensionValue = (value) => {
+      const raw = String(value || '').trim()
+      const match = raw.match(/\d+/)
+      return match ? match[0] : raw
+    };
+    const mapFirmness = (value) => {
+      const raw = String(value || '').trim().toLowerCase()
+      if (raw === 'мягкий') return 'soft'
+      if (raw === 'средний') return 'medium'
+      if (raw === 'жесткий') return 'hard'
+      return raw
+    }
+    const mapMattressType = (value) => {
+      const raw = String(value || '').trim().toLowerCase()
+      if (raw === 'пружинный') return 'spring'
+      if (raw === 'беспружинный') return 'nospring'
+      if (raw === 'топер') return 'topper'
+      return raw
+    }
+    const mapLoadRange = (value) => {
+      const raw = String(value || '').trim()
+      const dict = {
+        'до_90_кг': 'upTo90',
+        'до_110_кг': 'upTo110',
+        'до_130_кг': 'upTo130',
+        'до_150_кг': 'upTo150',
+        'свыше_150_кг': 'over150',
+      }
+      return dict[raw] || raw
+    }
+    const mapHeightRange = (value) => {
+      const raw = String(value || '').trim()
+      const dict = { 'низкий': 'low', 'средний': 'mid', 'высокий': 'high' }
+      return dict[raw] || raw
+    }
+    const mapFilling = (value) => {
+      const raw = String(value || '').trim()
+      const dict = { 'кокос': 'coir', 'латекс': 'latex', 'мемори': 'memory', 'ппу': 'ppu', 'холкон': 'holkon' }
+      return dict[raw] || raw
+    }
+    const mapFeature = (value) => {
+      const raw = String(value || '').trim()
+      const dict = {
+        'съемный_чехол': 'removableCover',
+        'зима_лето': 'winterSummer',
+        'разная_жесткость': 'dualFirmness',
+      }
+      return dict[raw] || raw
+    }
 
     const rows = await strapi.db.query('api::product.product').findMany({
       where: { is_active: true },
-      populate: { collection: true, tags: true, media: true },
+      populate: { collection: true, tags: true, media: true, features: true },
       orderBy: [{ sort_order: 'asc' }, { id: 'asc' }]
     });
+
+    const normalizeFeatures = (value) => {
+      const rows = Array.isArray(value) ? value : []
+      return rows
+        .map((row) => {
+          const slug = String(row?.slug || '').trim()
+          if (slug) return slug
+          const name = String(row?.name || '').trim()
+          const mapByName = {
+            'Съемный чехол': 'removableCover',
+            'Эффект зима-лето': 'winterSummer',
+            'Разная жесткость сторон': 'dualFirmness',
+          }
+          return mapByName[name] || ''
+        })
+        .filter(Boolean)
+    }
 
     const items = rows.map((row) => ({
       name: row.name || '',
       slug: row.slug || '',
       collectionName: row.collection?.name || '',
       collectionSlug: row.collection?.slug || '',
-      firmness: row.firmness || '',
-      mattressType: row.mattress_type || '',
+      firmness: mapFirmness(row.firmness || ''),
+      mattressType: mapMattressType(row.mattress_type || ''),
       heightCm: Number(row.height_cm || 0),
       maxLoadKg: Number(row.max_load_kg || 0),
-      loadRange: String(row.load_range || '').trim(),
-      heightRange: String(row.height_range || '').trim(),
+      loadRange: mapLoadRange(row.load_range || ''),
+      heightRange: mapHeightRange(row.height_range || ''),
       widths: normalizeStringList(row.widths).map(normalizeDimensionValue),
       lengths: normalizeStringList(row.lengths).map(normalizeDimensionValue),
-      fillings: normalizeStringList(row.fillings),
-      features: normalizeStringList(row.features),
+      fillings: normalizeStringList(row.fillings).map(mapFilling),
+      features: Array.isArray(row.features) ? normalizeFeatures(row.features) : normalizeStringList(row.features).map(mapFeature),
       imageUrl: row.media?.url || row.image_url || '',
       imageAlt: row.media?.alternativeText || (row.name ? `Коллекция ${row.name}` : 'Изображение товара'),
       tags: Array.isArray(row.tags) ? row.tags.map((tag) => tag.name).filter(Boolean) : [],

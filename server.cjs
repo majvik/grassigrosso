@@ -155,7 +155,72 @@ function mapStrapiProduct(item) {
     const single = String(value || '').trim()
     return single ? [single] : []
   };
-  const normalizeDimensionValue = (value) => String(value || '').trim().replace(/^w/, '').replace(/^l/, '');
+  const normalizeFeatureRelations = (value) => {
+    const rows = Array.isArray(value?.data) ? value.data : (Array.isArray(value) ? value : []);
+    return rows
+      .map((row) => {
+        const attrs = row?.attributes || row || {};
+        const slug = String(attrs.slug || '').trim();
+        if (slug) return slug;
+        const name = String(attrs.name || '').trim();
+        const mapByName = {
+          'Съемный чехол': 'removableCover',
+          'Эффект зима-лето': 'winterSummer',
+          'Разная жесткость сторон': 'dualFirmness',
+        };
+        return mapByName[name] || '';
+      })
+      .filter(Boolean);
+  };
+  const normalizeDimensionValue = (value) => {
+    const raw = String(value || '').trim()
+    const match = raw.match(/\d+/)
+    return match ? match[0] : raw
+  };
+  const mapFirmness = (value) => {
+    const raw = String(value || '').trim().toLowerCase()
+    if (raw === 'мягкий') return 'soft'
+    if (raw === 'средний') return 'medium'
+    if (raw === 'жесткий') return 'hard'
+    return raw
+  };
+  const mapMattressType = (value) => {
+    const raw = String(value || '').trim().toLowerCase()
+    if (raw === 'пружинный') return 'spring'
+    if (raw === 'беспружинный') return 'nospring'
+    if (raw === 'топер') return 'topper'
+    return raw
+  };
+  const mapLoadRange = (value) => {
+    const raw = String(value || '').trim()
+    const dict = {
+      'до_90_кг': 'upTo90',
+      'до_110_кг': 'upTo110',
+      'до_130_кг': 'upTo130',
+      'до_150_кг': 'upTo150',
+      'свыше_150_кг': 'over150',
+    }
+    return dict[raw] || raw
+  };
+  const mapHeightRange = (value) => {
+    const raw = String(value || '').trim()
+    const dict = { 'низкий': 'low', 'средний': 'mid', 'высокий': 'high' }
+    return dict[raw] || raw
+  };
+  const mapFilling = (value) => {
+    const raw = String(value || '').trim()
+    const dict = { 'кокос': 'coir', 'латекс': 'latex', 'мемори': 'memory', 'ппу': 'ppu', 'холкон': 'holkon' }
+    return dict[raw] || raw
+  };
+  const mapFeature = (value) => {
+    const raw = String(value || '').trim()
+    const dict = {
+      'съемный_чехол': 'removableCover',
+      'зима_лето': 'winterSummer',
+      'разная_жесткость': 'dualFirmness',
+    }
+    return dict[raw] || raw
+  };
 
   const collectionRaw = node.collection?.data?.attributes || node.collection || {};
   const tagsRaw = Array.isArray(node.tags?.data) ? node.tags.data : (Array.isArray(node.tags) ? node.tags : []);
@@ -164,8 +229,8 @@ function mapStrapiProduct(item) {
 
   const collectionName = collectionRaw.name || '';
   const collectionSlug = collectionRaw.slug || '';
-  const firmness = String(node.firmness || '').trim().toLowerCase();
-  const mattressType = String(node.mattress_type || node.mattressType || '').trim().toLowerCase();
+  const firmness = mapFirmness(node.firmness || '');
+  const mattressType = mapMattressType(node.mattress_type || node.mattressType || '');
 
   return {
     name: node.name || '',
@@ -176,12 +241,16 @@ function mapStrapiProduct(item) {
     mattressType,
     heightCm: Number(node.height_cm ?? node.heightCm ?? 0),
     maxLoadKg: Number(node.max_load_kg ?? node.maxLoadKg ?? 0),
-    loadRange: String(node.load_range ?? node.loadRange ?? '').trim(),
-    heightRange: String(node.height_range ?? node.heightRange ?? '').trim(),
+    loadRange: mapLoadRange(node.load_range ?? node.loadRange ?? ''),
+    heightRange: mapHeightRange(node.height_range ?? node.heightRange ?? ''),
     widths: normalizeStringList(node.widths).map(normalizeDimensionValue),
     lengths: normalizeStringList(node.lengths).map(normalizeDimensionValue),
-    fillings: normalizeStringList(node.fillings),
-    features: normalizeStringList(node.features),
+    fillings: normalizeStringList(node.fillings).map(mapFilling),
+    features: (() => {
+      const fromRelation = normalizeFeatureRelations(node.features);
+      if (fromRelation.length > 0) return fromRelation;
+      return normalizeStringList(node.features).map(mapFeature);
+    })(),
     imageUrl: normalizeStrapiMediaUrl(mediaAttrs.url || ''),
     imageAlt: mediaAttrs.alternativeText || mediaAttrs.name || (node.name ? `Коллекция ${node.name}` : 'Изображение товара'),
     tags: tagsRaw.map((tagNode) => {
