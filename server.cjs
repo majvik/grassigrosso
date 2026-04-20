@@ -62,7 +62,15 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Canonical domain redirect (production only)
-const PRIMARY_HOST = 'grassigrosso.com';
+const SITE_URL = String(process.env.SITE_URL || '').trim();
+let PRIMARY_HOST = 'grassigrosso.com';
+if (SITE_URL) {
+  try {
+    PRIMARY_HOST = new URL(SITE_URL).host.toLowerCase();
+  } catch {
+    // Keep default if SITE_URL is malformed
+  }
+}
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
     if (req.path === '/health') {
