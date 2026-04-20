@@ -29,5 +29,26 @@ HOST="$STRAPI_HOST" PORT="$STRAPI_PORT" DATABASE_FILENAME="$STRAPI_DB_FILE" \
   npm run start --prefix strapi-catalog &
 STRAPI_PID=$!
 
+echo "[boot] Waiting for Strapi TCP port ${STRAPI_PORT}"
+for i in $(seq 1 60); do
+  if ! kill -0 "$STRAPI_PID" 2>/dev/null; then
+    echo "[boot] ERROR: Strapi process exited before becoming ready"
+    wait "$STRAPI_PID" || true
+    exit 1
+  fi
+
+  if node -e "const n=require('net');const s=n.createConnection({host:'127.0.0.1',port:${STRAPI_PORT}});s.on('connect',()=>{s.end();process.exit(0)});s.on('error',()=>process.exit(1));setTimeout(()=>process.exit(1),500);" >/dev/null 2>&1; then
+    echo "[boot] Strapi is ready"
+    break
+  fi
+
+  if [ "$i" -eq 60 ]; then
+    echo "[boot] ERROR: Strapi did not open port ${STRAPI_PORT} within timeout"
+    exit 1
+  fi
+
+  sleep 1
+done
+
 echo "[boot] Starting API/web server on :${PORT:-3000}"
 node server.cjs
