@@ -38,5 +38,10 @@
   "content-type-builder.content-types.api::product.product.attributes.widths": "Ширина",
   "content-type-builder.content-types.api::product.product.attributes.lengths": "Длина",
   "content-type-builder.content-types.api::product.product.attributes.fillings": "Состав / Наполнитель",
-  "content-type-builder.content-types.api::product.product.attributes.features": "Дополнительные особенности"
+  "content-type-builder.content-types.api::product.product.attributes.features": "Дополнительные особенности",
+  "Product": "Продукт",
+  "Collection": "Коллекция",
+  "Tag": "Тег",
+  "Дополнительная особенность": "Дополнительная особенность",
+  "Catalog (new) hero slider": "Hero-слайдер каталога"
 }
