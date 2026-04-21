@@ -139,6 +139,12 @@ if (process.env.NODE_ENV === 'production') {
     const dest = req.path === '/index.html' ? `/${qs}` : `${req.path.slice(0, -5)}${qs}`;
     return res.redirect(301, dest);
   });
+
+  app.get(['/catalogue-new', '/catalogue-new.html'], (req, res) => {
+    const q = req.originalUrl.indexOf('?');
+    const qs = q >= 0 ? req.originalUrl.slice(q) : '';
+    res.redirect(301, `/catalog${qs}`);
+  });
 }
 
 function escapeMarkdown(text) {
@@ -218,7 +224,7 @@ function normalizeStrapiMediaUrl(rawUrl) {
     return s.startsWith('/') ? s : `/${s.replace(/^\/+/, '')}`;
   };
 
-  // Strapi часто отдаёт «uploads/…» без ведущего / — на странице /catalogue-new это даёт 404 (относительно пути страницы).
+  // Strapi часто отдаёт «uploads/…» без ведущего / — на вложенных путях это даёт 404 (относительно URL страницы).
   if (/^uploads\//i.test(trimmed)) {
     return ensureRootPath(trimmed);
   }
@@ -548,6 +554,7 @@ const PAGE_EMAIL_ROUTING = {
   'Страница "Отелям"':  ['hotels@grassigrosso.com'],
   'Отелям (каталог)':   ['hotels@grassigrosso.com'],
   'Страница "Дилерам"': ['b2b@grassigrosso.com'],
+  'Страница "Каталог"': ['sales@grassigrosso.com'],
   'Документы':          ['sales@grassigrosso.com'],
   'Документы (помощь)': ['sales@grassigrosso.com'],
   'Страница "Контакты"':['sales@grassigrosso.com'],

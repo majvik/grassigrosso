@@ -38,7 +38,7 @@ npm start
 
 ### Frontend
 
-- HTML-страницы: `index`, `hotels`, `dealers`, `catalog`, `catalogue-new`, `documents`, `contacts`, сервисные (`privacy`, `terms`, `cookies`, `404`, `unsubscribe`).
+- HTML-страницы: `index`, `hotels`, `dealers`, `catalog`, `documents`, `contacts`, сервисные (`privacy`, `terms`, `cookies`, `404`, `unsubscribe`).
 - Общая логика: `src/main.js`.
 - Стили: `src/style.css` + `src/styles/*`.
 - Критический CSS прелоадера инжектится плагином из `vite.config.mjs` в `<style id="vite-critical-css"></style>`.
@@ -94,7 +94,7 @@ npm start
 
 - Без `STRAPI_URL`: backend возвращает `503`.
 - При ошибке запроса к Strapi: backend возвращает `502`.
-- `catalogue-new` сохраняет runtime fallback на статические карточки/слайды.
+- Страница `catalog` при сбое Strapi использует статические карточки и слайды в разметке (runtime fallback).
 
 ### Важное по данным
 

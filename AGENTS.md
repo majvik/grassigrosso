@@ -39,11 +39,12 @@
 Определяет значение поля `page`, которое отправляется в `POST /api/submit`. Использует **slug без `.html`** из `window.location.pathname` (после 301-редиректа URL не содержат `.html`).
 
 ```js
-// slug: 'index' | 'hotels' | 'dealers' | 'contacts' | ...
+// slug: 'index' | 'hotels' | 'dealers' | 'catalog' | 'contacts' | ...
 const pageNames = {
   'index':    'Главная страница',
   'hotels':   'Страница "Отелям"',
   'dealers':  'Страница "Дилерам"',
+  'catalog':  'Страница "Каталог"',
   'contacts': 'Страница "Контакты"'
 }
 ```
@@ -65,6 +66,7 @@ const pageNames = {
 | `Страница "Отелям"` | hotels@ |
 | `Отелям (каталог)` | hotels@ |
 | `Страница "Дилерам"` | b2b@ |
+| `Страница "Каталог"` | sales@ |
 | `Документы` | sales@ |
 | `Документы (помощь)` | sales@ |
 | `Страница "Контакты"` | sales@ |

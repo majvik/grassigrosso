@@ -875,7 +875,24 @@ if (mobileMenuBtn && mobileMenuClose && mobileMenuOverlay) {
   })
 }
 
-// Catalogue (new): sidebar filters + sorting
+/** localStorage: избранное в каталоге (миграция с прежнего ключа catalogue-new). */
+const CATALOG_FAV_STORAGE_KEY = 'grassigrosso-catalog-favourites'
+const CATALOG_FAV_STORAGE_KEY_LEGACY = 'grassigrosso-catalogue-new-favourites'
+
+function migrateCatalogFavouritesStorageOnce() {
+  try {
+    if (localStorage.getItem(CATALOG_FAV_STORAGE_KEY)) return
+    const leg = localStorage.getItem(CATALOG_FAV_STORAGE_KEY_LEGACY)
+    if (leg != null) {
+      localStorage.setItem(CATALOG_FAV_STORAGE_KEY, leg)
+      localStorage.removeItem(CATALOG_FAV_STORAGE_KEY_LEGACY)
+    }
+  } catch {
+    // ignore
+  }
+}
+
+// Catalogue: sidebar filters + sorting
 const catalogueNewSidebar = document.querySelector('.catalogue-new-sidebar')
 const catalogueNewCardsRoot = document.querySelector('.catalogue-new-cards')
 const catalogueNewResultsValue = document.querySelector('.catalogue-new-results strong')
@@ -927,7 +944,6 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     favouritesOnly: false,
   }
 
-  const CATALOGUE_NEW_FAV_KEY = 'grassigrosso-catalogue-new-favourites'
   const CATALOGUE_DEFAULT_WIDTHS = ['80', '90', '120', '140', '160', '180', '200']
   const CATALOGUE_DEFAULT_LENGTHS = ['190', '195', '200']
 
@@ -968,7 +984,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   function readCatalogueFavourites() {
     try {
-      const raw = localStorage.getItem(CATALOGUE_NEW_FAV_KEY)
+      migrateCatalogFavouritesStorageOnce()
+      const raw = localStorage.getItem(CATALOG_FAV_STORAGE_KEY)
       const list = raw ? JSON.parse(raw) : []
       return Array.isArray(list) ? new Set(list.map(String)) : new Set()
     } catch {
@@ -977,7 +994,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   }
 
   function writeCatalogueFavourites(set) {
-    localStorage.setItem(CATALOGUE_NEW_FAV_KEY, JSON.stringify([...set]))
+    localStorage.setItem(CATALOG_FAV_STORAGE_KEY, JSON.stringify([...set]))
   }
 
   function syncCatalogueFavouritesFilterSwitchState() {
@@ -1915,7 +1932,6 @@ if (
   catalogueImageModalFavouriteBtn &&
   catalogueCardsRootForModal
 ) {
-  const CATALOGUE_NEW_FAV_KEY = 'grassigrosso-catalogue-new-favourites'
   let activeModalProductSlug = ''
   let activeModalProductTitle = ''
   const modalLabelMaps = {
@@ -1975,7 +1991,8 @@ if (
 
   const readModalFavourites = () => {
     try {
-      const raw = localStorage.getItem(CATALOGUE_NEW_FAV_KEY)
+      migrateCatalogFavouritesStorageOnce()
+      const raw = localStorage.getItem(CATALOG_FAV_STORAGE_KEY)
       const list = raw ? JSON.parse(raw) : []
       return Array.isArray(list) ? new Set(list.map(String)) : new Set()
     } catch {
@@ -1984,7 +2001,7 @@ if (
   }
 
   const writeModalFavourites = (set) => {
-    localStorage.setItem(CATALOGUE_NEW_FAV_KEY, JSON.stringify([...set]))
+    localStorage.setItem(CATALOG_FAV_STORAGE_KEY, JSON.stringify([...set]))
   }
 
   const mapValue = (value, map) => {
@@ -2793,41 +2810,6 @@ if (refreshContent && refreshImage) {
   observer.observe(refreshContent)
 }
 
-// Catalog collections header - sync padding-top with title height
-const catalogCollectionsHeaderLeft = document.querySelector('.catalog-collections-header-left')
-const catalogCollectionsHeaderRight = document.querySelector('.catalog-collections-header-right')
-const catalogCollectionsTitle = document.querySelector('.catalog-collections-header-left .section-title')
-
-if (catalogCollectionsHeaderLeft && catalogCollectionsHeaderRight && catalogCollectionsTitle) {
-  function syncCatalogCollectionsPadding() {
-    // Only sync on desktop (width > 1024px)
-    if (window.innerWidth <= 1024) {
-      catalogCollectionsHeaderRight.style.paddingTop = '0'
-      return
-    }
-    
-    // Get the actual height of the title
-    const titleHeight = catalogCollectionsTitle.offsetHeight
-    catalogCollectionsHeaderRight.style.paddingTop = `${titleHeight}px`
-  }
-  
-  // Sync on load
-  setTimeout(syncCatalogCollectionsPadding, 0)
-  
-  // Sync on resize
-  let resizeTimeout1
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout1)
-    resizeTimeout1 = setTimeout(syncCatalogCollectionsPadding, 100)
-  })
-  
-  // Sync when content changes (e.g., font loading)
-  const observer1 = new ResizeObserver(() => {
-    syncCatalogCollectionsPadding()
-  })
-  observer1.observe(catalogCollectionsTitle)
-}
-
 // Documents certification header - sync padding-top with title height
 const documentsCertificationHeaderLeft = document.querySelector('.documents-certification-header-left')
 const documentsCertificationHeaderRight = document.querySelector('.documents-certification-header-right')
@@ -3102,7 +3084,8 @@ if (contactForms.length > 0) {
       'index': 'Главная страница',
       'hotels': 'Страница "Отелям"',
       'dealers': 'Страница "Дилерам"',
-      'contacts': 'Страница "Контакты"'
+      'contacts': 'Страница "Контакты"',
+      'catalog': 'Страница "Каталог"'
     }
 
     return pageNames[slug] || slug
@@ -4060,7 +4043,7 @@ if (helpDocumentsModal && helpDocumentsForm) {
 }
 }
 
-if (document.body.dataset.page === 'catalogue-new') {
+if (document.body.dataset.page === 'catalog') {
   void setupCatalogueNewPageHero()
 }
 
