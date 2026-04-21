@@ -18,6 +18,7 @@ const isProd = process.env.NODE_ENV === 'production';
 const PORT = Number(process.env.PORT || 3000);
 const STRAPI_URL = String(process.env.STRAPI_URL || '').trim().replace(/\/+$/, '');
 const STRAPI_TOKEN = String(process.env.STRAPI_TOKEN || '').trim();
+const APP_VERSION = String(process.env.APP_VERSION || process.env.GIT_SHA || 'dev').trim();
 const INTERNAL_API_PREFIXES = [
   '/api/submit',
   '/api/catalog',
@@ -666,6 +667,7 @@ async function initializeDeliveryChannels() {
 
 console.log('\n🚀 Starting server...');
 console.log(`   PORT: ${PORT}`);
+console.log(`   APP_VERSION: ${APP_VERSION}`);
 console.log(`   BOT_TOKEN: ${BOT_TOKEN ? '✅ Set' : '❌ Not set'}`);
 console.log(`   CHAT_ID: ${CHAT_IDS.length > 0 ? '✅ Set' : '❌ Not set'}`);
 console.log(`   SMTP_HOST: ${SMTP_HOST ? '✅ Set' : '❌ Not set'}`);
@@ -681,6 +683,7 @@ console.log(`   DB_PATH: ${db.DB_PATH}\n`);
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
+    version: APP_VERSION,
     queueSize: db.getPendingCount(),
     channels: {
       email: channelEmailConfigured(),

@@ -29,10 +29,12 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
   && rm -rf /var/lib/apt/lists/*
 
+ARG GIT_SHA=dev
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV STRAPI_PORT=1337
 ENV STRAPI_URL=http://127.0.0.1:1337
+ENV APP_VERSION=${GIT_SHA}
 
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./
