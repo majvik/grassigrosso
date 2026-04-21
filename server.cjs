@@ -159,40 +159,71 @@ function normalizeStrapiListPayload(payload) {
   return [];
 }
 
+function isStrapiDevOrPrivateOrigin(u) {
+  const host = u.hostname.toLowerCase();
+  const isLoopback = host === 'localhost' || host === '127.0.0.1';
+  const isPrivate =
+    /^10\./.test(host) ||
+    /^192\.168\./.test(host) ||
+    /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host);
+  const isStrapiDevPort = u.port === '1337';
+  const insecureHttpToIp = u.protocol === 'http:' && /^\d+\.\d+\.\d+\.\d+$/.test(host);
+  return isLoopback || isPrivate || isStrapiDevPort || insecureHttpToIp;
+}
+
+/** Публичные URL для браузера: всегда путь от корня сайта /uploads/… (прокси Node → Strapi). */
 function normalizeStrapiMediaUrl(rawUrl) {
   if (!rawUrl) return '';
-  const trimmed = String(rawUrl).trim();
+  let trimmed = String(rawUrl).trim();
+  if (!trimmed) return '';
 
-  const shouldRewriteToSameOriginPath = (u) => {
-    const host = u.hostname.toLowerCase();
-    const isLoopback = host === 'localhost' || host === '127.0.0.1';
-    const isPrivate =
-      /^10\./.test(host) ||
-      /^192\.168\./.test(host) ||
-      /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host);
-    const isStrapiDevPort = u.port === '1337';
-    const insecureHttpToIp = u.protocol === 'http:' && /^\d+\.\d+\.\d+\.\d+$/.test(host);
-    return isLoopback || isPrivate || isStrapiDevPort || insecureHttpToIp;
+  if (trimmed.startsWith('//')) {
+    trimmed = `http:${trimmed}`;
+  }
+
+  const ensureRootPath = (p) => {
+    const s = String(p || '');
+    if (!s) return '';
+    return s.startsWith('/') ? s : `/${s.replace(/^\/+/, '')}`;
   };
+
+  // Strapi часто отдаёт «uploads/…» без ведущего / — на странице /catalogue-new это даёт 404 (относительно пути страницы).
+  if (/^uploads\//i.test(trimmed)) {
+    return ensureRootPath(trimmed);
+  }
+
+  const baseTrim = (STRAPI_URL || '').replace(/\/+$/, '');
 
   try {
     if (/^https?:\/\//i.test(trimmed)) {
       const u = new URL(trimmed);
-      if (shouldRewriteToSameOriginPath(u)) {
-        return `${u.pathname}${u.search}${u.hash}`;
+      if (isStrapiDevOrPrivateOrigin(u)) {
+        return ensureRootPath(`${u.pathname}${u.search}${u.hash}`);
       }
       return trimmed;
     }
     if (trimmed.startsWith('/')) {
       return trimmed;
     }
-    const base = STRAPI_URL.replace(/\/+$/, '');
-    if (!base) return trimmed;
-    return `${base}/${trimmed.replace(/^\/+/, '')}`;
+    if (!baseTrim) {
+      return ensureRootPath(trimmed);
+    }
+    const baseUrl = new URL(baseTrim);
+    if (isStrapiDevOrPrivateOrigin(baseUrl)) {
+      return ensureRootPath(trimmed);
+    }
+    return `${baseTrim}/${trimmed.replace(/^\/+/, '')}`;
   } catch {
     if (trimmed.startsWith('/')) return trimmed;
-    const base = STRAPI_URL.replace(/\/+$/, '');
-    return base ? `${base}/${trimmed.replace(/^\/+/, '')}` : trimmed;
+    if (!baseTrim) return ensureRootPath(trimmed);
+    try {
+      if (isStrapiDevOrPrivateOrigin(new URL(baseTrim))) {
+        return ensureRootPath(trimmed);
+      }
+    } catch {
+      // ignore
+    }
+    return `${baseTrim}/${trimmed.replace(/^\/+/, '')}`;
   }
 }
 
@@ -414,8 +445,8 @@ function createStrapiProxy() {
     xfwd: true,
     ws: true,
     logLevel: 'warn',
-    proxyTimeout: 15000,
-    timeout: 15000,
+    proxyTimeout: 60000,
+    timeout: 60000,
     // Express strips the mount prefix from req.url for app.use('/admin', ...).
     // Forward the original URL so Strapi receives /admin/* instead of /init, /login, etc.
     pathRewrite: (path, req) => req.originalUrl || path,
