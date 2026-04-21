@@ -64,7 +64,12 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: 'http://localhost:3000',
           changeOrigin: true,
-        }
+        },
+        // Strapi media: hero и карточки каталога ссылаются на /uploads/… — без прокси Vite отдаёт HTML-фолбэк.
+        '/uploads': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+        },
       }
     }
   }

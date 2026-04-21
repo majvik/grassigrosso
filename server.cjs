@@ -877,15 +877,18 @@ app.get('/api/catalog/products', async (req, res) => {
   }
 });
 
-if (isProd && STRAPI_URL) {
+// Прокси медиа и админки Strapi: в dev тоже (иначе /uploads уходит в Vite и ломает каталог).
+if (STRAPI_URL) {
   const strapiProxy = createStrapiProxy();
   app.use(STRAPI_PROXY_PATH_PREFIXES, strapiProxy);
-  app.use('/api', (req, res, next) => {
-    const originalPath = req.originalUrl || req.url || '';
-    const isInternal = INTERNAL_API_PREFIXES.some((prefix) => originalPath.startsWith(prefix));
-    if (isInternal) return next();
-    return strapiProxy(req, res, next);
-  });
+  if (isProd) {
+    app.use('/api', (req, res, next) => {
+      const originalPath = req.originalUrl || req.url || '';
+      const isInternal = INTERNAL_API_PREFIXES.some((prefix) => originalPath.startsWith(prefix));
+      if (isInternal) return next();
+      return strapiProxy(req, res, next);
+    });
+  }
 }
 
 app.get('/api/download/:docId', (req, res) => {
@@ -1144,7 +1147,7 @@ const isDev = !isProd;
 
 if (isDev) {
   app.use(createProxyMiddleware({
-    target: 'http://localhost:5173',
+    target: 'http://127.0.0.1:5174',
     changeOrigin: true,
     ws: true,
     logLevel: 'silent',

@@ -6036,6 +6036,160 @@ a:hover .arrow-medium {
   }
 }
 
+/* ==================== CATALOG PAGE — HERO ==================== */
+/* Типографика и сетка как у .page-hero (дилеры); слайдер — в catalog.html. */
+
+.catalog-hero {
+  padding: 120px 64px 80px;
+}
+
+.catalog-hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 64px;
+}
+
+.catalog-hero-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-right: 48px;
+}
+
+.catalog-hero-title {
+  font-family: var(--font-bounded);
+  font-size: 56px;
+  font-weight: 400;
+  color: var(--color-primary);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.catalog-hero-description {
+  font-family: var(--font-family);
+  font-size: 21px;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.4;
+  margin: 0;
+  max-width: 40em;
+}
+
+.catalog-hero-image {
+  flex: 1;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.catalog-hero-image .catalog-hero-slider {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.catalog-hero-image picture,
+.catalog-hero-image img,
+.catalog-hero-image video {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 1439px) {
+  .catalog-hero {
+    padding: 80px 40px 60px;
+  }
+
+  .catalog-hero-content {
+    gap: 60px;
+  }
+
+  .catalog-hero-text {
+    flex: 0 1 520px;
+    max-width: 520px;
+    padding-right: 32px;
+  }
+
+  .catalog-hero-image {
+    flex: 0 0 auto;
+    width: 520px;
+    height: 520px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .catalog-hero {
+    padding: 64px 32px 48px;
+  }
+
+  .catalog-hero-title {
+    font-size: 48px;
+  }
+
+  .catalog-hero-text {
+    flex: 0 1 450px;
+    max-width: 450px;
+    padding-right: 24px;
+  }
+
+  .catalog-hero-image {
+    width: 450px;
+    height: 450px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .catalog-hero-content {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .catalog-hero-text {
+    flex: 1 1 auto;
+    max-width: none;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .catalog-hero-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .catalog-hero {
+    padding: 64px 16px 40px;
+  }
+
+  .catalog-hero-title {
+    font-size: 40px;
+  }
+
+  .catalog-hero-description {
+    font-size: 16px;
+  }
+
+  .catalog-hero-content {
+    gap: 24px;
+  }
+
+  .catalog-hero-text {
+    gap: 24px;
+  }
+
+  .catalog-hero-image {
+    border-radius: 16px;
+  }
+}
+
 /* ==================== DOCUMENTS PAGE STYLES ==================== */
 
 /* Documents Hero */
