@@ -587,6 +587,16 @@ document.querySelectorAll('.modal-overlay').forEach(modal => {
   document.documentElement.appendChild(modal)
 })
 
+const catalogueImageModalRoot = document.getElementById('catalogueImageModal')
+if (catalogueImageModalRoot) {
+  document.documentElement.appendChild(catalogueImageModalRoot)
+}
+
+const catalogueMobileFiltersOverlayRoot = document.getElementById('catalogue-new-mobile-filters-overlay')
+if (catalogueMobileFiltersOverlayRoot) {
+  document.documentElement.appendChild(catalogueMobileFiltersOverlayRoot)
+}
+
 // Cookie banner – вне body, чтобы position:fixed не ломался из-за transform на body
 const cookieBannerEl = document.querySelector('.cookie-banner')
 if (cookieBannerEl) document.documentElement.appendChild(cookieBannerEl)

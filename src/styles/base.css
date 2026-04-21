@@ -86,8 +86,11 @@ body.fonts-loaded > *:not(.preloader):not(.modal-overlay):not(.mobile-menu-overl
 }
 
 /* Скрываем горизонтальный скролл: 100vw и full-bleed через -50vw дают вылет за край на мобильных */
+/* Шрифт и цвет на html: узлы вне body (модалки на documentElement) иначе получают системный UI font */
 html {
   overflow-x: hidden;
+  font-family: var(--font-family);
+  color: var(--color-text);
 }
 
 /* Body - fluid width */
