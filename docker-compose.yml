@@ -1,3 +1,4 @@
+# Опциональный bind-mount медиа: docker-compose.override.example.yml
 services:
   web:
     build:

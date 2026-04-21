@@ -1,0 +1,6 @@
+# Скопируйте в docker-compose.override.yml (файл в .gitignore), чтобы Docker видел локальные загрузки Strapi.
+# Папка strapi-catalog/public/uploads не в репозитории — без файлов на хосте 404 на /uploads/… сохранится.
+services:
+  web:
+    volumes:
+      - ./strapi-catalog/public/uploads:/app/strapi-catalog/public/uploads

@@ -18,6 +18,7 @@ lerna-debug.log*
 *.local
 .env
 .env.local
+docker-compose.override.yml
 
 # Runtime queue
 data/

@@ -84,6 +84,31 @@ const pageNames = {
 - Не использовать `.html` в ключах `getPageName()` — в production URL чистые (301-редирект убирает суффикс).
 - Не внедрять в этот репозиторий отдельную CMS-админку как второй фронтовый бандл — см. roadmap ниже.
 
+## Strapi (каталог): медиа, Docker и админка
+
+### Деплой из git (Timeweb и т.п.)
+
+- Медиа каталога лежат в **`strapi-catalog/public/uploads/`** и **входят в репозиторий**: после `git push` образ собирается из clone, `COPY . .` в [Dockerfile](Dockerfile) кладёт те же файлы в контейнер — **`/uploads/…`** начинает отдаваться без ручного rsync.
+- Добавили файл в админке локально — **`git add strapi-catalog/public/uploads/`** и коммит вместе с при необходимости обновлённым `database/seed/data.db` (если сидом пользуетесь для первого старта).
+- Очень большие ролики при нехватке лимитов git — **Git LFS** или внешнее хранилище (отдельная задача).
+
+### Публичный путь и 404
+
+- Ожидаемый URL: **`https://<хост>/uploads/<имя>`** — [nginx.conf](nginx.conf) и [server.cjs](server.cjs) проксируют на Strapi (`127.0.0.1:1337`). **404** при таком URL = файла нет в `strapi-catalog/public/uploads/` внутри образа (забыли закоммитить или БД ссылается на старое имя).
+
+Опционально для локального Docker без пересборки: bind-mount — [docker-compose.override.example.yml](docker-compose.override.example.yml).
+
+### 502 на `POST …/admin/login` и «Unexpected end of JSON input»
+
+- Админка шлёт запросы на тот же хост; в production Node проксирует `/admin` на `STRAPI_URL` (по умолчанию в контейнере `http://127.0.0.1:1337`, см. [scripts/start-services.sh](scripts/start-services.sh)).
+- **502** значит, что до Strapi не достучались (процесс не слушает порт, упал при старте, обрыв соединения) или ответ оборвал **внешний** прокси с пустым телом — тогда клиент и падает на `response.json()`.
+- Логи Strapi в контейнере: **`/tmp/strapi.log`** (скрипт старта перенаправляет stdout Strapi туда). Если в логе bootstrap виден `[boot] WARNING: Strapi is unavailable…`, поднялся только `server.cjs` — логин в админку будет недоступен.
+- Для корректных ссылок в админке за прокси задайте в `.env` **`STRAPI_PUBLIC_URL`** = публичный URL сайта (как у посетителя, без `/admin`). См. [.env.example](.env.example).
+
+### Прочее
+
+- `mc.yandex.ru/... ERR_BLOCKED_BY_CLIENT` — блокировка расширением / браузером, к Strapi и медиа не относится.
+
 ## Roadmap (статус на текущий момент)
 
 Интеграция **Strapi** для каталога уже внедрена через backend proxy:
