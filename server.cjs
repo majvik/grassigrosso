@@ -29,6 +29,25 @@ const INTERNAL_API_PREFIXES = [
   '/api/smtp-diag'
 ];
 
+/** Пути, которые проксируются на Strapi — тело не трогаем express.json (иначе upstream получает пустой POST). */
+const STRAPI_PROXY_PATH_PREFIXES = [
+  '/admin',
+  '/uploads',
+  '/content-manager',
+  '/content-type-builder',
+  '/i18n',
+  '/documentation'
+];
+
+function isStrapiProxiedPath(req) {
+  const p = String(req.path || '');
+  for (const prefix of STRAPI_PROXY_PATH_PREFIXES) {
+    if (p === prefix || p.startsWith(`${prefix}/`)) return true;
+  }
+  if (!p.startsWith('/api')) return false;
+  return !INTERNAL_API_PREFIXES.some((prefix) => p.startsWith(prefix));
+}
+
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const RAW_CHAT_ID = process.env.CHAT_ID || '';
 const CHAT_IDS = RAW_CHAT_ID
@@ -69,8 +88,16 @@ const corsOptions = buildCorsOptions({
 app.use(cors(corsOptions));
 
 app.set('trust proxy', true);
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true }));
+const jsonBodyParser = express.json({ limit: '1mb' });
+const urlencodedBodyParser = express.urlencoded({ extended: true });
+app.use((req, res, next) => {
+  if (isStrapiProxiedPath(req)) return next();
+  return jsonBodyParser(req, res, next);
+});
+app.use((req, res, next) => {
+  if (isStrapiProxiedPath(req)) return next();
+  return urlencodedBodyParser(req, res, next);
+});
 
 // Canonical domain redirect (production only)
 const SITE_URL = String(process.env.SITE_URL || '').trim();
@@ -85,6 +112,10 @@ if (SITE_URL) {
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
     if (req.path === '/health') {
+      return next();
+    }
+    // Не редиректим Strapi/админку на другой хост — иначе POST /admin/login даёт пустой ответ и ломает JSON в SPA.
+    if (isStrapiProxiedPath(req)) {
       return next();
     }
     const host = String(req.headers.host || '').replace(/:\d+$/, '').toLowerCase();
@@ -841,15 +872,7 @@ app.get('/api/catalog/products', async (req, res) => {
 
 if (isProd && STRAPI_URL) {
   const strapiProxy = createStrapiProxy();
-  const strapiAdminPrefixes = [
-    '/admin',
-    '/uploads',
-    '/content-manager',
-    '/content-type-builder',
-    '/i18n',
-    '/documentation'
-  ];
-  app.use(strapiAdminPrefixes, strapiProxy);
+  app.use(STRAPI_PROXY_PATH_PREFIXES, strapiProxy);
   app.use('/api', (req, res, next) => {
     const originalPath = req.originalUrl || req.url || '';
     const isInternal = INTERNAL_API_PREFIXES.some((prefix) => originalPath.startsWith(prefix));
