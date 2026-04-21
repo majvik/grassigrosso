@@ -161,9 +161,39 @@ function normalizeStrapiListPayload(payload) {
 
 function normalizeStrapiMediaUrl(rawUrl) {
   if (!rawUrl) return '';
-  if (/^https?:\/\//i.test(rawUrl)) return rawUrl;
-  if (!STRAPI_URL) return rawUrl;
-  return `${STRAPI_URL}${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`;
+  const trimmed = String(rawUrl).trim();
+
+  const shouldRewriteToSameOriginPath = (u) => {
+    const host = u.hostname.toLowerCase();
+    const isLoopback = host === 'localhost' || host === '127.0.0.1';
+    const isPrivate =
+      /^10\./.test(host) ||
+      /^192\.168\./.test(host) ||
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host);
+    const isStrapiDevPort = u.port === '1337';
+    const insecureHttpToIp = u.protocol === 'http:' && /^\d+\.\d+\.\d+\.\d+$/.test(host);
+    return isLoopback || isPrivate || isStrapiDevPort || insecureHttpToIp;
+  };
+
+  try {
+    if (/^https?:\/\//i.test(trimmed)) {
+      const u = new URL(trimmed);
+      if (shouldRewriteToSameOriginPath(u)) {
+        return `${u.pathname}${u.search}${u.hash}`;
+      }
+      return trimmed;
+    }
+    if (trimmed.startsWith('/')) {
+      return trimmed;
+    }
+    const base = STRAPI_URL.replace(/\/+$/, '');
+    if (!base) return trimmed;
+    return `${base}/${trimmed.replace(/^\/+/, '')}`;
+  } catch {
+    if (trimmed.startsWith('/')) return trimmed;
+    const base = STRAPI_URL.replace(/\/+$/, '');
+    return base ? `${base}/${trimmed.replace(/^\/+/, '')}` : trimmed;
+  }
 }
 
 function mapStrapiProduct(item) {

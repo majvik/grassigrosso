@@ -1047,7 +1047,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       btn.setAttribute('aria-label', on ? 'Удалить из избранного' : 'Добавить в избранное')
     })
     syncCatalogueFavouritesFilterSwitchState()
-    window.dispatchEvent(new CustomEvent('catalogue:favourites-updated'))
+    // Не диспатчить catalogue:favourites-updated отсюда — слушатель вызывает syncCatalogueFavouritesUi() и получится бесконечная рекурсия.
   }
 
   window.addEventListener('catalogue:favourites-updated', () => {
@@ -1660,11 +1660,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     if (fav.has(slug)) fav.delete(slug)
     else fav.add(slug)
     writeCatalogueFavourites(fav)
-    syncCatalogueFavouritesUi()
-    if (state.favouritesOnly) {
-      visibleCardsLimit = CATALOGUE_PAGE_SIZE
-      applyFilters()
-    }
+    window.dispatchEvent(new CustomEvent('catalogue:favourites-updated'))
   })
 
   if (catalogueNewFavouritesOnlySwitch) {
