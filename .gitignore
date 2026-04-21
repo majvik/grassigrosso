@@ -21,6 +21,10 @@ lerna-debug.log*
 
 # Runtime queue
 data/
+strapi-catalog/tmp/
+strapi-catalog/.tmp/
+strapi-catalog/build/
+strapi-catalog/.cache/
 
 # Source video and data files
 *.mov

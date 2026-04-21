@@ -386,6 +386,9 @@ function createStrapiProxy() {
     logLevel: 'warn',
     proxyTimeout: 15000,
     timeout: 15000,
+    // Express strips the mount prefix from req.url for app.use('/admin', ...).
+    // Forward the original URL so Strapi receives /admin/* instead of /init, /login, etc.
+    pathRewrite: (path, req) => req.originalUrl || path,
     onError(err, req, res) {
       const errorDetails = {
         message: String(err?.message || 'Proxy error'),

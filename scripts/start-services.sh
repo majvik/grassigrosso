@@ -4,6 +4,7 @@ set -euo pipefail
 STRAPI_PORT="${STRAPI_PORT:-1337}"
 STRAPI_HOST="${STRAPI_HOST:-0.0.0.0}"
 STRAPI_DB_FILE="${STRAPI_DATABASE_FILENAME:-/app/data/strapi/data.db}"
+STRAPI_SEED_DB_FILE="${STRAPI_SEED_DB_FILE:-/app/strapi-catalog/database/seed/data.db}"
 STRAPI_START_TIMEOUT_SEC="${STRAPI_START_TIMEOUT_SEC:-180}"
 STRAPI_START_MAX_ATTEMPTS="${STRAPI_START_MAX_ATTEMPTS:-3}"
 APP_KEYS_VALUE="${APP_KEYS:-dev-app-key-1,dev-app-key-2}"
@@ -15,6 +16,11 @@ ENCRYPTION_KEY_VALUE="${ENCRYPTION_KEY:-dev-encryption-key-32chars-min}"
 STRAPI_LOG_FILE="/tmp/strapi.log"
 
 mkdir -p "$(dirname "$STRAPI_DB_FILE")"
+
+if [[ ! -s "$STRAPI_DB_FILE" && -f "$STRAPI_SEED_DB_FILE" ]]; then
+  echo "[boot] Seeding Strapi database from ${STRAPI_SEED_DB_FILE}"
+  cp "$STRAPI_SEED_DB_FILE" "$STRAPI_DB_FILE"
+fi
 
 cleanup() {
   if [[ -n "${APP_PID:-}" ]] && kill -0 "$APP_PID" 2>/dev/null; then

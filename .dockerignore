@@ -1,13 +1,18 @@
 # Не передаём в контекст сборки Docker – ключи и секреты не должны попасть в образ
 .env
 .env.*
+strapi-catalog/.env
+strapi-catalog/.env.*
 
 # Git и прочее
 .git
 .gitignore
 *.md
 node_modules
+strapi-catalog/node_modules
 dist
+strapi-catalog/build
+strapi-catalog/.cache
 
 # Локальные и временные файлы
 *.log
@@ -15,3 +20,5 @@ dist
 .idea
 .vscode
 data
+strapi-catalog/tmp
+strapi-catalog/.tmp

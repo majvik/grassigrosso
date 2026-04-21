@@ -1,6 +1,9 @@
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        YANDEX_MAPS_BROWSER_ARG: ${VITE_YANDEX_MAPS_API_KEY:-}
     ports:
       - "${PORT:-3000}:3000"
     env_file: .env
