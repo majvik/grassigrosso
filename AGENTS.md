@@ -98,6 +98,8 @@ const pageNames = {
 
 Опционально для локального Docker без пересборки: bind-mount — [docker-compose.override.example.yml](docker-compose.override.example.yml).
 
+**Переменные на Timeweb:** по смыслу дублируется **корневой** `.env` (см. [.env.example](.env.example)). Файл `strapi-catalog/.env` в образ не попадает ([.dockerignore](.dockerignore)); секреты Strapi для контейнера должны быть **в панели Timeweb с теми же именами**, что в примере в конце `.env.example` (`APP_KEYS`, `JWT_SECRET`, …), иначе `start-services.sh` подставит dev-значения.
+
 ### 502 на `POST …/admin/login` и «Unexpected end of JSON input»
 
 - Админка шлёт запросы на тот же хост; в production Node проксирует `/admin` на `STRAPI_URL` (по умолчанию в контейнере `http://127.0.0.1:1337`, см. [scripts/start-services.sh](scripts/start-services.sh)).
