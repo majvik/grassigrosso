@@ -1200,7 +1200,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   function setActiveSortOption(value) {
     if (catalogueNewSortTrigger) {
       const activeOption = catalogueNewSortOptions.find((option) => option.dataset.value === value)
-      if (activeOption) catalogueNewSortTrigger.textContent = activeOption.textContent || 'По умолчанию'
+      if (activeOption) catalogueNewSortTrigger.textContent = activeOption.textContent || 'Сортировка по умолчанию'
     }
     catalogueNewSortOptions.forEach((option) => {
       option.classList.toggle('is-active', option.dataset.value === value)
@@ -1252,6 +1252,9 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       }
       if (state.sort === 'load-desc') {
         return Number(metaB?.load || 0) - Number(metaA?.load || 0)
+      }
+      if (state.sort === 'firmness-asc') {
+        return (firmnessRank[metaA?.firmness] || 0) - (firmnessRank[metaB?.firmness] || 0)
       }
       if (state.sort === 'firmness-desc') {
         return (firmnessRank[metaB?.firmness] || 0) - (firmnessRank[metaA?.firmness] || 0)

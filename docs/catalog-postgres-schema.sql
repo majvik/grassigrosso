@@ -93,6 +93,9 @@ COMMIT;
 --   CASE WHEN :sort = 'height-asc' THEN p.height_cm END ASC,
 --   CASE WHEN :sort = 'height-desc' THEN p.height_cm END DESC,
 --   CASE WHEN :sort = 'load-desc' THEN p.max_load_kg END DESC,
+--   CASE WHEN :sort = 'firmness-asc' THEN
+--     CASE p.firmness WHEN 'hard' THEN 3 WHEN 'medium' THEN 2 ELSE 1 END
+--   END ASC,
 --   CASE WHEN :sort = 'firmness-desc' THEN
 --     CASE p.firmness WHEN 'hard' THEN 3 WHEN 'medium' THEN 2 ELSE 1 END
 --   END DESC,
