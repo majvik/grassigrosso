@@ -692,6 +692,8 @@
   border-radius: var(--radius-md);
   background: #fff;
   box-sizing: border-box;
+  /* Отступ от верха вьюпорта при scrollIntoView / якоре (избранное и т.п.) */
+  scroll-margin-top: 24px;
 }
 .catalogue-new-results {
   grid-column: 1;
