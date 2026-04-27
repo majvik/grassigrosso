@@ -40,6 +40,27 @@ module.exports = {
         });
       }
     }
-    strapi.log.info('Catalog bootstrap: ensured standardized mattress sizes list (auto-link disabled)');
+
+    const standardFeatures = [
+      { name: 'Съемный чехол', slug: 'removableCover' },
+      { name: 'Эффект зима-лето', slug: 'winterSummer' },
+      { name: 'Усиленный периметр', slug: 'edgeSupport' },
+    ];
+    const featureRepo = strapi.db.query('api::feature-option.feature-option');
+    for (let i = 0; i < standardFeatures.length; i += 1) {
+      const feature = standardFeatures[i];
+      const existing = await featureRepo.findOne({ where: { slug: feature.slug } });
+      if (existing) {
+        await featureRepo.update({
+          where: { id: existing.id },
+          data: { name: feature.name, sort_order: i },
+        });
+      } else {
+        await featureRepo.create({
+          data: { name: feature.name, slug: feature.slug, sort_order: i },
+        });
+      }
+    }
+    strapi.log.info('Catalog bootstrap: ensured standardized sizes and feature options (auto-link disabled)');
   },
 };

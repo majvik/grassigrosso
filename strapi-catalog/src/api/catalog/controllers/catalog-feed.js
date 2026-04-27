@@ -25,6 +25,7 @@ module.exports = {
       if (raw === 'мягкий') return 'soft'
       if (raw === 'средний') return 'medium'
       if (raw === 'жесткий') return 'hard'
+      if (raw === 'разная жесткость сторон' || raw === 'разная_жесткость_сторон') return 'dualFirmness'
       return raw
     }
     const mapMattressType = (value) => {
@@ -32,27 +33,46 @@ module.exports = {
       if (raw === 'пружинный') return 'spring'
       if (raw === 'беспружинный') return 'nospring'
       if (raw === 'топер') return 'topper'
+      if (raw === 'двухсторонние') return 'doubleSided'
+      if (raw === 'односторонние') return 'singleSided'
       return raw
     }
     const mapLoadRange = (value) => {
       const raw = String(value || '').trim()
       const dict = {
-        'до_90_кг': 'upTo90',
-        'до_110_кг': 'upTo110',
-        'до_130_кг': 'upTo130',
-        'до_150_кг': 'upTo150',
-        'свыше_150_кг': 'over150',
+        'до_90_кг': 'upTo120',
+        'до_110_кг': 'upTo120',
+        'до_130_кг': 'upTo160',
+        'до_150_кг': 'upTo160',
+        'свыше_150_кг': 'over160',
+        'до_120_кг': 'upTo120',
+        'до_160_кг': 'upTo160',
+        'свыше_160_кг': 'over160',
       }
       return dict[raw] || raw
     }
     const mapHeightRange = (value) => {
       const raw = String(value || '').trim()
-      const dict = { 'низкий': 'low', 'средний': 'mid', 'высокий': 'high' }
+      const dict = {
+        'низкий': 'low',
+        'средний': 'mid',
+        'высокий': 'high',
+        'компактные_до_16_см': 'low',
+        'средние_16_20_см': 'mid',
+        'высокие_свыше_20_см': 'high'
+      }
       return dict[raw] || raw
     }
     const mapFilling = (value) => {
       const raw = String(value || '').trim()
-      const dict = { 'кокос': 'coir', 'латекс': 'latex', 'мемори': 'memory', 'ппу': 'ppu', 'холкон': 'holkon' }
+      const dict = {
+        'кокос': 'coir',
+        'латекс': 'latex',
+        'орто_пена': 'orthoFoam',
+        'с_эффектом_памяти': 'memoryEffect',
+        'нано_пена': 'nanoFoam',
+        'форплит': 'forplit',
+      }
       return dict[raw] || raw
     }
     const mapFeature = (value) => {
@@ -60,7 +80,7 @@ module.exports = {
       const dict = {
         'съемный_чехол': 'removableCover',
         'зима_лето': 'winterSummer',
-        'разная_жесткость': 'dualFirmness',
+        'усиленный_периметр': 'edgeSupport',
       }
       return dict[raw] || raw
     }
@@ -81,7 +101,7 @@ module.exports = {
           const mapByName = {
             'Съемный чехол': 'removableCover',
             'Эффект зима-лето': 'winterSummer',
-            'Разная жесткость сторон': 'dualFirmness',
+            'Усиленный периметр': 'edgeSupport',
           }
           return mapByName[name] || ''
         })

@@ -290,9 +290,11 @@
             </button>
             <div class="catalogue-new-filter-accordion-panel">
               <div class="catalogue-new-filter-list">
-                <button type="button" class="catalogue-new-chip" data-filter-group="firmness" data-value="soft">Мягкий (1-4)</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="firmness" data-value="medium">Средний (4-6)</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="firmness" data-value="hard">Жесткий (7-10)</button>
+                <button type="button" class="catalogue-new-chip is-active" data-filter-group="firmness" data-value="all">Любая</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="firmness" data-value="soft">Мягкий</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="firmness" data-value="medium">Средний</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="firmness" data-value="hard">Жесткий</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="firmness" data-value="dualFirmness">Разная жесткость сторон</button>
               </div>
             </div>
           </div>
@@ -303,9 +305,12 @@
             </button>
             <div class="catalogue-new-filter-accordion-panel">
               <div class="catalogue-new-filter-list">
+                <button type="button" class="catalogue-new-chip is-active" data-filter-group="type" data-value="all">Любая</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="type" data-value="spring">Пружинный</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="type" data-value="nospring">Беспружинный</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="type" data-value="topper">Топер</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="type" data-value="doubleSided">Двухсторонние</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="type" data-value="singleSided">Односторонние</button>
               </div>
             </div>
           </div>
@@ -317,11 +322,9 @@
             <div class="catalogue-new-filter-accordion-panel" hidden>
               <div class="catalogue-new-filter-list">
                 <button type="button" class="catalogue-new-chip is-active" data-filter-group="loadRange" data-value="all">Любая</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="upTo90">До 90 кг</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="upTo110">До 110 кг</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="upTo130">До 130 кг</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="upTo150">До 150 кг</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="over150">Свыше 150 кг</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="upTo120">до 120кг</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="upTo160">до 160кг</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="over160">без ограничений (свыше 160кг)</button>
               </div>
             </div>
           </div>
@@ -333,9 +336,9 @@
             <div class="catalogue-new-filter-accordion-panel" hidden>
               <div class="catalogue-new-filter-list">
                 <button type="button" class="catalogue-new-chip is-active" data-filter-group="heightRange" data-value="all">Любая</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="heightRange" data-value="low">Низкие (до 15 см)</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="heightRange" data-value="mid">Средние (16-25 см)</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="heightRange" data-value="high">Высокие (от 26 см)</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="heightRange" data-value="low">Компактные до 16 см</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="heightRange" data-value="mid">Средние 16-20 см</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="heightRange" data-value="high">Высокие свыше 20 см</button>
               </div>
             </div>
           </div>
@@ -346,11 +349,13 @@
             </button>
             <div class="catalogue-new-filter-accordion-panel" hidden>
               <div class="catalogue-new-filter-list">
+                <button type="button" class="catalogue-new-chip is-active" data-filter-group="fillings" data-value="all">Любая</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="fillings" data-value="coir">Кокосовая койра</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="fillings" data-value="latex">Натуральный латекс</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="fillings" data-value="memory">Memory Foam</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="fillings" data-value="ppu">ППУ</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="fillings" data-value="holkon">Холкон</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="fillings" data-value="orthoFoam">Орто-пена</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="fillings" data-value="memoryEffect">С эффектом памяти</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="fillings" data-value="nanoFoam">Нано-пена</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="fillings" data-value="forplit">Форплит</button>
               </div>
             </div>
           </div>
@@ -361,9 +366,10 @@
             </button>
             <div class="catalogue-new-filter-accordion-panel" hidden>
               <div class="catalogue-new-filter-list">
+                <button type="button" class="catalogue-new-chip is-active" data-filter-group="features" data-value="all">Любые</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="features" data-value="removableCover">Съемный чехол</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="features" data-value="winterSummer">Эффект зима-лето</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="features" data-value="dualFirmness">Разная жесткость сторон</button>
+                <button type="button" class="catalogue-new-chip" data-filter-group="features" data-value="edgeSupport">Усиленный периметр</button>
               </div>
             </div>
           </div>

@@ -595,9 +595,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       [
         '\u043A\u043E\u043A\u043E\u0441',
         '\u043B\u0430\u0442\u0435\u043A\u0441',
-        '\u043C\u0435\u043C\u043E\u0440\u0438',
-        '\u043F\u043F\u0443',
-        '\u0445\u043E\u043B\u043A\u043E\u043D',
+        '\u043E\u0440\u0442\u043E_\u043F\u0435\u043D\u0430',
+        '\u0441_\u044D\u0444\u0444\u0435\u043A\u0442\u043E\u043C_\u043F\u0430\u043C\u044F\u0442\u0438',
+        '\u043D\u0430\u043D\u043E_\u043F\u0435\u043D\u0430',
+        '\u0444\u043E\u0440\u043F\u043B\u0438\u0442',
       ]
     >;
     firmness: Schema.Attribute.Enumeration<
@@ -605,6 +606,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
         '\u043C\u044F\u0433\u043A\u0438\u0439',
         '\u0441\u0440\u0435\u0434\u043D\u0438\u0439',
         '\u0436\u0435\u0441\u0442\u043A\u0438\u0439',
+        '\u0440\u0430\u0437\u043D\u0430\u044F_\u0436\u0435\u0441\u0442\u043A\u043E\u0441\u0442\u044C_\u0441\u0442\u043E\u0440\u043E\u043D',
       ]
     > &
       Schema.Attribute.Required &
@@ -612,20 +614,18 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     height_cm: Schema.Attribute.Decimal & Schema.Attribute.Required;
     height_range: Schema.Attribute.Enumeration<
       [
-        '\u043D\u0438\u0437\u043A\u0438\u0439',
-        '\u0441\u0440\u0435\u0434\u043D\u0438\u0439',
-        '\u0432\u044B\u0441\u043E\u043A\u0438\u0439',
+        '\u043A\u043E\u043C\u043F\u0430\u043A\u0442\u043D\u044B\u0435_\u0434\u043E_16_\u0441\u043C',
+        '\u0441\u0440\u0435\u0434\u043D\u0438\u0435_16_20_\u0441\u043C',
+        '\u0432\u044B\u0441\u043E\u043A\u0438\u0435_\u0441\u0432\u044B\u0448\u0435_20_\u0441\u043C',
       ]
     >;
     image_url: Schema.Attribute.String;
     is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     load_range: Schema.Attribute.Enumeration<
       [
-        '\u0434\u043E_90_\u043A\u0433',
-        '\u0434\u043E_110_\u043A\u0433',
-        '\u0434\u043E_130_\u043A\u0433',
-        '\u0434\u043E_150_\u043A\u0433',
-        '\u0441\u0432\u044B\u0448\u0435_150_\u043A\u0433',
+        '\u0434\u043E_120_\u043A\u0433',
+        '\u0434\u043E_160_\u043A\u0433',
+        '\u0441\u0432\u044B\u0448\u0435_160_\u043A\u0433',
       ]
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -639,6 +639,8 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
         '\u043F\u0440\u0443\u0436\u0438\u043D\u043D\u044B\u0439',
         '\u0431\u0435\u0441\u043F\u0440\u0443\u0436\u0438\u043D\u043D\u044B\u0439',
         '\u0442\u043E\u043F\u0435\u0440',
+        '\u0434\u0432\u0443\u0445\u0441\u0442\u043E\u0440\u043E\u043D\u043D\u0438\u0435',
+        '\u043E\u0434\u043D\u043E\u0441\u0442\u043E\u0440\u043E\u043D\u043D\u0438\u0435',
       ]
     > &
       Schema.Attribute.Required &

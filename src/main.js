@@ -966,8 +966,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     firmness: new Set(),
     type: new Set(),
     size: new Set(),
-    loadRange: 'all',
-    heightRange: 'all',
+    loadRange: new Set(),
+    heightRange: new Set(),
     fillings: new Set(),
     features: new Set(),
     sort: 'default',
@@ -1294,7 +1294,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   function applySorting() {
     const cardsToSort = [...cards]
     const metaByCard = new Map(cardMeta.map((meta) => [meta.card, meta]))
-    const firmnessRank = { soft: 1, medium: 2, hard: 3 }
+    const firmnessRank = { soft: 1, medium: 2, hard: 3, dualFirmness: 4 }
 
     cardsToSort.sort((a, b) => {
       const metaA = metaByCard.get(a)
@@ -1340,41 +1340,39 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   function matchLoadRange(load, range) {
     if (range === 'all') return true
-    if (range === 'upTo90') return load <= 90
-    if (range === 'upTo110') return load <= 110
-    if (range === 'upTo130') return load <= 130
-    if (range === 'upTo150') return load <= 150
-    if (range === 'over150') return load > 150
+    if (range === 'upTo120') return load <= 120
+    if (range === 'upTo160') return load <= 160
+    if (range === 'over160') return load > 160
     return true
   }
 
   function matchHeightRange(height, range) {
     if (range === 'all') return true
-    if (range === 'low') return height <= 15
-    if (range === 'mid') return height >= 16 && height <= 25
-    if (range === 'high') return height >= 26
+    if (range === 'low') return height <= 16
+    if (range === 'mid') return height >= 16 && height <= 20
+    if (range === 'high') return height > 20
     return true
   }
 
   function getLoadRangeBucket(load) {
-    if (load <= 90) return 'upTo90'
-    if (load <= 110) return 'upTo110'
-    if (load <= 130) return 'upTo130'
-    if (load <= 150) return 'upTo150'
-    return 'over150'
+    if (load <= 120) return 'upTo120'
+    if (load <= 160) return 'upTo160'
+    return 'over160'
   }
 
   function getHeightRangeBucket(height) {
-    if (height <= 15) return 'low'
-    if (height <= 25) return 'mid'
+    if (height <= 16) return 'low'
+    if (height <= 20) return 'mid'
     return 'high'
   }
 
   function syncFilterOptionsFromCards() {
     if (!cardMeta.length) return
-    const knownTypeOptions = ['spring', 'nospring', 'topper']
-    const knownFillingOptions = ['coir', 'latex', 'memory', 'ppu', 'holkon']
-    const knownFeatureOptions = ['removableCover', 'winterSummer', 'dualFirmness']
+    const knownTypeOptions = ['spring', 'nospring', 'topper', 'doubleSided', 'singleSided']
+    const knownLoadRangeOptions = ['upTo120', 'upTo160', 'over160']
+    const knownHeightRangeOptions = ['low', 'mid', 'high']
+    const knownFillingOptions = ['coir', 'latex', 'orthoFoam', 'memoryEffect', 'nanoFoam', 'forplit']
+    const knownFeatureOptions = ['removableCover', 'winterSummer', 'edgeSupport']
     const available = {
       collection: new Set(),
       firmness: new Set(),
@@ -1400,6 +1398,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     })
 
     knownTypeOptions.forEach((value) => available.type.add(value))
+    knownLoadRangeOptions.forEach((value) => available.loadRange.add(value))
+    knownHeightRangeOptions.forEach((value) => available.heightRange.add(value))
     knownFillingOptions.forEach((value) => available.fillings.add(value))
     knownFeatureOptions.forEach((value) => available.features.add(value))
 
@@ -1421,8 +1421,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     toggleBySet('.catalogue-new-size-select[data-size-group="size"] .catalogue-new-size-select-option', available.size)
 
     if (state.collection !== 'all' && !available.collection.has(state.collection)) state.collection = 'all'
-    if (state.loadRange !== 'all' && !available.loadRange.has(state.loadRange)) state.loadRange = 'all'
-    if (state.heightRange !== 'all' && !available.heightRange.has(state.heightRange)) state.heightRange = 'all'
+    state.loadRange.forEach((value) => { if (!available.loadRange.has(value)) state.loadRange.delete(value) })
+    state.heightRange.forEach((value) => { if (!available.heightRange.has(value)) state.heightRange.delete(value) })
     state.firmness.forEach((value) => { if (!available.firmness.has(value)) state.firmness.delete(value) })
     state.type.forEach((value) => { if (!available.type.has(value)) state.type.delete(value) })
     state.size.forEach((value) => { if (!available.size.has(value)) state.size.delete(value) })
@@ -1447,24 +1447,23 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   function syncFilterDependencies() {
     const topperOnly = state.type.size === 1 && state.type.has('topper')
-    if (topperOnly && state.loadRange !== 'all') {
-      state.loadRange = 'all'
-      setSingleChipSelection('loadRange', 'all')
-    }
+    if (topperOnly) state.loadRange.clear()
     setFilterGroupDisabled('loadRange', topperOnly)
   }
 
   function syncUiFromState() {
     setSingleChipSelection('collection', state.collection)
-    setSingleChipSelection('loadRange', state.loadRange)
-    setSingleChipSelection('heightRange', state.heightRange)
     const setMultiChipSelection = (groupName, targetSet) => {
       catalogueNewSidebar.querySelectorAll(`.catalogue-new-chip[data-filter-group="${groupName}"]`).forEach((chip) => {
-        chip.classList.toggle('is-active', targetSet.has(String(chip.dataset.value || '')))
+        const chipValue = String(chip.dataset.value || '')
+        const isAll = chipValue === 'all'
+        chip.classList.toggle('is-active', isAll ? targetSet.size === 0 : targetSet.has(chipValue))
       })
     }
     setMultiChipSelection('firmness', state.firmness)
     setMultiChipSelection('type', state.type)
+    setMultiChipSelection('loadRange', state.loadRange)
+    setMultiChipSelection('heightRange', state.heightRange)
     setMultiChipSelection('fillings', state.fillings)
     setMultiChipSelection('features', state.features)
     const sizeSelect = catalogueNewSidebar.querySelector('.catalogue-new-size-select[data-size-group="size"]')
@@ -1523,11 +1522,11 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       const matchType = !state.type.size || state.type.has(meta.type)
       const matchSize = intersectsSet(meta.sizes, state.size)
       const matchLoad = meta.loadRange
-        ? state.loadRange === 'all' || meta.loadRange === state.loadRange
-        : matchLoadRange(meta.load, state.loadRange)
+        ? !state.loadRange.size || state.loadRange.has(meta.loadRange)
+        : !state.loadRange.size || [...state.loadRange].some((range) => matchLoadRange(meta.load, range))
       const matchHeight = meta.heightRange
-        ? state.heightRange === 'all' || meta.heightRange === state.heightRange
-        : matchHeightRange(meta.height, state.heightRange)
+        ? !state.heightRange.size || state.heightRange.has(meta.heightRange)
+        : !state.heightRange.size || [...state.heightRange].some((range) => matchHeightRange(meta.height, range))
       const matchFillings = containsAll(meta.fillings, state.fillings)
       const matchFeatures = containsAll(meta.features, state.features)
       const matchFavourites = !state.favouritesOnly || (meta.slug && favSet.has(meta.slug))
@@ -1566,8 +1565,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     state.firmness.clear()
     state.type.clear()
     state.size.clear()
-    state.loadRange = 'all'
-    state.heightRange = 'all'
+    state.loadRange.clear()
+    state.heightRange.clear()
     state.fillings.clear()
     state.features.clear()
     state.sort = 'default'
@@ -1655,20 +1654,25 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       const groupName = chip.dataset.filterGroup
       const value = chip.dataset.value
       if (groupName && value) {
-        const multiGroups = new Set(['firmness', 'type', 'fillings', 'features'])
+        const multiGroups = new Set(['firmness', 'type', 'loadRange', 'heightRange', 'fillings', 'features'])
         if (multiGroups.has(groupName)) {
           const targetSet =
             groupName === 'firmness' ? state.firmness :
             groupName === 'type' ? state.type :
+            groupName === 'loadRange' ? state.loadRange :
+            groupName === 'heightRange' ? state.heightRange :
             groupName === 'fillings' ? state.fillings :
             state.features
-          if (targetSet.has(value)) targetSet.delete(value)
-          else targetSet.add(value)
+          if (value === 'all') {
+            targetSet.clear()
+          } else if (targetSet.has(value)) {
+            targetSet.delete(value)
+          } else {
+            targetSet.add(value)
+          }
           syncUiFromState()
         } else {
           if (groupName === 'collection') state.collection = value
-          if (groupName === 'loadRange') state.loadRange = value
-          if (groupName === 'heightRange') state.heightRange = value
           setSingleChipSelection(groupName, value)
         }
         syncFilterDependencies()
@@ -2073,47 +2077,37 @@ if (
       soft: 'Мягкий',
       medium: 'Средний',
       hard: 'Жесткий',
+      dualFirmness: 'Разная жесткость сторон',
     },
     type: {
       spring: 'Пружинный',
       nospring: 'Беспружинный',
-      topper: 'Топпер',
+      topper: 'Топер',
+      doubleSided: 'Двухсторонние',
+      singleSided: 'Односторонние',
     },
     loadRange: {
-      upTo90: 'До 90 кг',
-      upTo110: 'До 110 кг',
-      upTo120: 'До 120 кг',
-      upTo130: 'До 130 кг',
-      upTo150: 'До 150 кг',
-      over130: 'Свыше 130 кг',
-      over150: 'Свыше 150 кг',
+      upTo120: 'до 120кг',
+      upTo160: 'до 160кг',
+      over160: 'без ограничений (свыше 160кг)',
     },
     heightRange: {
-      low: 'До 19 см',
-      mid: '20 - 24 см',
-      high: '25 - 29 см',
-      veryHigh: '30 см и выше',
+      low: 'Компактные до 16 см',
+      mid: 'Средние 16-20 см',
+      high: 'Высокие свыше 20 см',
     },
     fillings: {
-      foam: 'ППУ',
-      ppu: 'ППУ',
-      memory: 'Пена memory foam',
-      memoryFoam: 'Пена memory foam',
+      orthoFoam: 'Орто-пена',
+      memoryEffect: 'С эффектом памяти',
       latex: 'Латекс',
       coir: 'Кокосовая койра',
-      coconut: 'Кокосовая койра',
-      massageFoam: 'Массажная пена',
-      viscoFoam: 'Вязкоэластичная пена',
-      holcon: 'Холкон',
+      nanoFoam: 'Нано-пена',
+      forplit: 'Форплит',
     },
     features: {
       removableCover: 'Съемный чехол',
       winterSummer: 'Эффект зима-лето',
-      dualFirmness: 'Разная жесткость сторон',
-      hypoallergenic: 'Гипоаллергенный',
-      antibacterial: 'Антибактериальный',
       edgeSupport: 'Усиленный периметр',
-      orthopedic: 'Ортопедический эффект',
     },
   }
 
