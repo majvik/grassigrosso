@@ -1407,7 +1407,12 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       catalogueNewSidebar.querySelectorAll(selector).forEach((el) => {
         const value = String(el.dataset.value || '')
         const visible = value === 'all' || allowedSet.has(value)
-        el.hidden = !visible
+        el.dataset.available = visible ? '1' : '0'
+        const filteredOut = el.dataset.autocompleteHidden === '1'
+        const shouldHide = !visible || filteredOut
+        el.hidden = shouldHide
+        const optionRow = el.closest('li')
+        if (optionRow) optionRow.hidden = shouldHide
       })
     }
 
@@ -1467,17 +1472,42 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     setMultiChipSelection('fillings', state.fillings)
     setMultiChipSelection('features', state.features)
     const sizeSelect = catalogueNewSidebar.querySelector('.catalogue-new-size-select[data-size-group="size"]')
+    const resolveSizeSelectMenu = (sizeSelectEl) => {
+      if (!sizeSelectEl) return null
+      const localMenu = sizeSelectEl.querySelector('.catalogue-new-size-select-menu')
+      if (localMenu) return localMenu
+      if (activeSizeSelectHost === sizeSelectEl && activeSizeSelectMenu) return activeSizeSelectMenu
+      return null
+    }
     const setSizeSelectValue = (sizeSelectEl, targetSet) => {
       if (!sizeSelectEl) return
-      const nextValue = [...targetSet][0] || 'all'
+      const menu = resolveSizeSelectMenu(sizeSelectEl)
       const trigger = sizeSelectEl.querySelector('.catalogue-new-size-select-trigger')
-      const options = [...sizeSelectEl.querySelectorAll('.catalogue-new-size-select-option')]
+      const options = menu ? [...menu.querySelectorAll('.catalogue-new-size-select-option')] : []
       options.forEach((option) => {
-        option.classList.toggle('is-active', option.dataset.value === nextValue)
+        const value = String(option.dataset.value || '')
+        const isAll = value === 'all'
+        option.classList.toggle('is-active', isAll ? targetSet.size === 0 : targetSet.has(value))
       })
       if (trigger) {
-        const active = options.find((option) => option.dataset.value === nextValue)
-        trigger.textContent = (active?.textContent || 'Любой').trim()
+        if (!targetSet.size) {
+          trigger.textContent = 'Любой'
+        } else {
+          const labels = options
+            .filter((option) => {
+              const value = String(option.dataset.value || '')
+              return value !== 'all' && targetSet.has(value)
+            })
+            .map((option) => option.textContent.trim())
+            .filter(Boolean)
+          if (labels.length === 1) {
+            trigger.textContent = labels[0]
+          } else if (labels.length > 1) {
+            trigger.textContent = `${labels[0]} +${labels.length - 1}`
+          } else {
+            trigger.textContent = 'Любой'
+          }
+        }
       }
     }
     setSizeSelectValue(sizeSelect, state.size)
@@ -1692,8 +1722,13 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   })
 
   const closeSizeSelectMenus = () => {
+    if (sizeSelectScrollIndicatorTimer) {
+      clearTimeout(sizeSelectScrollIndicatorTimer)
+      sizeSelectScrollIndicatorTimer = null
+    }
     if (activeSizeSelectMenu) {
       activeSizeSelectMenu.removeEventListener('wheel', handleActiveSizeMenuWheel)
+      activeSizeSelectMenu.classList.remove('is-scrolling')
     }
     document.removeEventListener('wheel', handleGlobalWheelWhileSizeMenuOpen, true)
     if (activeSizeSelectMenu && activeSizeSelectHost && activeSizeSelectMenu.parentElement !== activeSizeSelectHost) {
@@ -1708,6 +1743,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     }
     catalogueNewSidebar.querySelectorAll('.catalogue-new-size-select').forEach((sizeSelect) => {
       sizeSelect.classList.remove('is-open')
+      resetSizeSelectAutocomplete(sizeSelect)
       const trigger = sizeSelect.querySelector('.catalogue-new-size-select-trigger')
       const menu = sizeSelect.querySelector('.catalogue-new-size-select-menu')
       if (trigger) trigger.setAttribute('aria-expanded', 'false')
@@ -1722,11 +1758,71 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   let activeSizeSelectHost = null
   let activeSizeSelectTrigger = null
   let activeSizeSelectMenu = null
+  let sizeSelectScrollIndicatorTimer = null
+
+  const markSizeMenuAsScrolling = () => {
+    if (!activeSizeSelectMenu) return
+    activeSizeSelectMenu.classList.add('is-scrolling')
+    if (sizeSelectScrollIndicatorTimer) clearTimeout(sizeSelectScrollIndicatorTimer)
+    sizeSelectScrollIndicatorTimer = setTimeout(() => {
+      if (activeSizeSelectMenu) activeSizeSelectMenu.classList.remove('is-scrolling')
+    }, 650)
+  }
+
+  const applySizeSelectAutocomplete = (sizeSelect) => {
+    if (!sizeSelect) return
+    const menu = sizeSelect.querySelector('.catalogue-new-size-select-menu')
+      || (activeSizeSelectHost === sizeSelect ? activeSizeSelectMenu : null)
+    if (!menu) return
+    const input = menu.querySelector('.catalogue-new-size-select-search')
+    if (!input) return
+    const query = String(input.value || '').trim().toLowerCase()
+    menu.querySelectorAll('.catalogue-new-size-select-option').forEach((option) => {
+      const value = String(option.dataset.value || '')
+      if (value === 'all') {
+        option.classList.remove('is-filtered-out')
+        option.dataset.autocompleteHidden = '0'
+        const available = option.dataset.available !== '0'
+        option.hidden = !available
+        const optionRow = option.closest('li')
+        if (optionRow) optionRow.hidden = !available
+        return
+      }
+      const text = option.textContent.trim().toLowerCase()
+      const matched = !query || text.includes(query)
+      option.classList.toggle('is-filtered-out', !matched)
+      option.dataset.autocompleteHidden = matched ? '0' : '1'
+      const available = option.dataset.available !== '0'
+      const shouldHide = !available || !matched
+      option.hidden = shouldHide
+      const optionRow = option.closest('li')
+      if (optionRow) optionRow.hidden = shouldHide
+    })
+  }
+
+  const resetSizeSelectAutocomplete = (sizeSelect) => {
+    if (!sizeSelect) return
+    const menu = sizeSelect.querySelector('.catalogue-new-size-select-menu')
+      || (activeSizeSelectHost === sizeSelect ? activeSizeSelectMenu : null)
+    if (!menu) return
+    const input = menu.querySelector('.catalogue-new-size-select-search')
+    if (input) input.value = ''
+    menu.querySelectorAll('.catalogue-new-size-select-option').forEach((option) => {
+      option.classList.remove('is-filtered-out')
+      option.dataset.autocompleteHidden = '0'
+      const available = option.dataset.available !== '0'
+      option.hidden = !available
+      const optionRow = option.closest('li')
+      if (optionRow) optionRow.hidden = !available
+    })
+  }
+
   const handleActiveSizeMenuWheel = (event) => {
     if (!activeSizeSelectMenu || !activeSizeSelectMenu.contains(event.target)) return
     event.preventDefault()
     event.stopPropagation()
     activeSizeSelectMenu.scrollTop += event.deltaY
+    markSizeMenuAsScrolling()
   }
 
   const handleGlobalWheelWhileSizeMenuOpen = (event) => {
@@ -1734,6 +1830,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     event.preventDefault()
     event.stopPropagation()
     activeSizeSelectMenu.scrollTop += event.deltaY
+    markSizeMenuAsScrolling()
   }
 
   const placeActiveSizeSelectMenu = () => {
@@ -1742,7 +1839,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     activeSizeSelectMenu.style.left = `${Math.round(rect.left)}px`
     activeSizeSelectMenu.style.top = `${Math.round(rect.bottom + 6)}px`
     activeSizeSelectMenu.style.setProperty('--catalogue-new-size-menu-width', `${Math.round(rect.width)}px`)
-    activeSizeSelectMenu.style.setProperty('--catalogue-new-size-menu-max-height', 'calc(var(--catalogue-new-size-option-height) * 7)')
+    activeSizeSelectMenu.style.setProperty('--catalogue-new-size-menu-max-height', 'calc(var(--catalogue-new-size-option-height) * 8)')
   }
 
   const applySizeSelectOption = (option) => {
@@ -1753,10 +1850,16 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     const value = String(option.dataset.value || 'all')
     const targetSet = groupName === 'size' ? state.size : null
     if (!targetSet) return false
-    targetSet.clear()
-    if (value !== 'all') targetSet.add(value)
+    const shouldCloseAfterSelect = value === 'all'
+    if (value === 'all') {
+      targetSet.clear()
+    } else if (targetSet.has(value)) {
+      targetSet.delete(value)
+    } else {
+      targetSet.add(value)
+    }
     syncUiFromState()
-    closeSizeSelectMenus()
+    if (shouldCloseAfterSelect) closeSizeSelectMenus()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
     applyFilters()
     scrollToCatalogueToolbar()
@@ -1784,6 +1887,9 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
           menu.addEventListener('wheel', handleActiveSizeMenuWheel, { passive: false })
           document.addEventListener('wheel', handleGlobalWheelWhileSizeMenuOpen, { passive: false, capture: true })
           placeActiveSizeSelectMenu()
+          resetSizeSelectAutocomplete(sizeSelect)
+          const autocompleteInput = menu.querySelector('.catalogue-new-size-select-search')
+          if (autocompleteInput) autocompleteInput.focus()
         }
         catalogueNewSidebar.classList.add('is-size-select-open')
       }
@@ -1792,6 +1898,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
     const option = event.target.closest('.catalogue-new-size-select-option')
     if (!option) return
+    event.preventDefault()
+    event.stopPropagation()
     applySizeSelectOption(option)
   })
 
@@ -1845,6 +1953,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     document.addEventListener('click', (event) => {
       const sizeOption = event.target.closest('.catalogue-new-size-select-option')
       if (sizeOption && activeSizeSelectMenu && activeSizeSelectMenu.contains(sizeOption)) {
+        event.preventDefault()
+        event.stopPropagation()
         applySizeSelectOption(sizeOption)
         return
       }
@@ -1861,11 +1971,23 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     document.addEventListener('scroll', placeActiveSizeSelectMenu, true)
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeSortMenu()
+      if (event.key === 'Escape') {
+        closeSortMenu()
+        closeSizeSelectMenus()
+      }
     })
 
     setActiveSortOption('default')
   }
+
+  const onSizeSelectSearchInput = (event) => {
+    const searchInput = event.target.closest('.catalogue-new-size-select-search')
+    if (!searchInput) return
+    const sizeSelect = searchInput.closest('.catalogue-new-size-select') || activeSizeSelectHost
+    applySizeSelectAutocomplete(sizeSelect)
+  }
+  catalogueNewSidebar.addEventListener('input', onSizeSelectSearchInput)
+  document.addEventListener('input', onSizeSelectSearchInput)
 
   if (catalogueNewReset) {
     catalogueNewReset.addEventListener('click', () => {

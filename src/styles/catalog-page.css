@@ -313,6 +313,7 @@
 }
 .catalogue-new-size-select-menu {
   --catalogue-new-size-option-height: 44px;
+  --catalogue-new-size-scrollbar-size: 0px;
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
@@ -324,10 +325,12 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: #fff;
-  max-height: calc(var(--catalogue-new-size-option-height) * 7);
+  max-height: calc(var(--catalogue-new-size-option-height) * 8);
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  scrollbar-color: rgba(61, 78, 72, 0.55) transparent;
 }
 .catalogue-new-size-select-menu.is-portal-open {
   position: fixed;
@@ -335,10 +338,55 @@
   left: 0;
   right: auto;
   width: var(--catalogue-new-size-menu-width, 240px);
-  max-height: var(--catalogue-new-size-menu-max-height, calc(var(--catalogue-new-size-option-height) * 7));
+  max-height: var(--catalogue-new-size-menu-max-height, calc(var(--catalogue-new-size-option-height) * 8));
   z-index: calc(var(--z-modal) + 2);
   border-radius: 12px;
   box-shadow: 0 16px 42px rgba(14, 23, 20, 0.2);
+}
+.catalogue-new-size-select-menu.is-scrolling {
+  --catalogue-new-size-scrollbar-size: 8px;
+  scrollbar-width: thin;
+}
+.catalogue-new-size-select-menu::-webkit-scrollbar {
+  width: var(--catalogue-new-size-scrollbar-size);
+}
+.catalogue-new-size-select-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+.catalogue-new-size-select-menu::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(61, 78, 72, 0.55);
+}
+.catalogue-new-size-select-menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(40, 62, 55, 0.72);
+}
+.catalogue-new-size-select-search-row {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px 8px 10px;
+  background: #fff;
+  border-bottom: 1px solid rgba(40, 62, 55, 0.12);
+}
+.catalogue-new-size-select-search {
+  width: 100%;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0 12px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-text);
+  background: #fff;
+}
+.catalogue-new-size-select-search:focus-visible {
+  outline: none;
+  border-color: rgba(var(--color-primary-rgb), 0.5);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15);
+}
+.catalogue-new-size-select-option.is-filtered-out {
+  display: none;
 }
 .catalogue-new-filter-group[data-filter-group="size"] {
   position: relative;
