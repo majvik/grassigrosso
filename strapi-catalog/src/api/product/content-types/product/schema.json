@@ -57,15 +57,12 @@
       "type": "enumeration",
       "enum": ["низкий", "средний", "высокий"]
     },
-    "widths": {
-      "displayName": "Ширина",
-      "type": "enumeration",
-      "enum": ["ширина_80", "ширина_90", "ширина_120", "ширина_140", "ширина_160", "ширина_180", "ширина_200"]
-    },
-    "lengths": {
-      "displayName": "Длина",
-      "type": "enumeration",
-      "enum": ["длина_190", "длина_195", "длина_200"]
+    "sizes": {
+      "displayName": "Стандартизированные размеры",
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::mattress-size.mattress-size",
+      "inversedBy": "products"
     },
     "fillings": {
       "displayName": "Состав / Наполнитель",

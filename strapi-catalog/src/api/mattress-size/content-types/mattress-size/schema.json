@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mattress_sizes",
+  "info": {
+    "singularName": "mattress-size",
+    "pluralName": "mattress-sizes",
+    "displayName": "Стандартизированный размер"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true,
+      "unique": true
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0
+    },
+    "products": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product.product",
+      "mappedBy": "sizes"
+    }
+  }
+}

@@ -533,6 +533,42 @@ export interface ApiFeatureOptionFeatureOption
   };
 }
 
+export interface ApiMattressSizeMattressSize
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'mattress_sizes';
+  info: {
+    displayName: '\u0421\u0442\u0430\u043D\u0434\u0430\u0440\u0442\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0439 \u0440\u0430\u0437\u043C\u0435\u0440';
+    pluralName: 'mattress-sizes';
+    singularName: 'mattress-size';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::mattress-size.mattress-size'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    products: Schema.Attribute.Relation<'manyToMany', 'api::product.product'>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
@@ -583,13 +619,6 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     >;
     image_url: Schema.Attribute.String;
     is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    lengths: Schema.Attribute.Enumeration<
-      [
-        '\u0434\u043B\u0438\u043D\u0430_190',
-        '\u0434\u043B\u0438\u043D\u0430_195',
-        '\u0434\u043B\u0438\u043D\u0430_200',
-      ]
-    >;
     load_range: Schema.Attribute.Enumeration<
       [
         '\u0434\u043E_90_\u043A\u0433',
@@ -618,6 +647,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     media: Schema.Attribute.Media<'images'>;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    sizes: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::mattress-size.mattress-size'
+    >;
     slug: Schema.Attribute.UID<'name'> &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
@@ -626,17 +659,6 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    widths: Schema.Attribute.Enumeration<
-      [
-        '\u0448\u0438\u0440\u0438\u043D\u0430_80',
-        '\u0448\u0438\u0440\u0438\u043D\u0430_90',
-        '\u0448\u0438\u0440\u0438\u043D\u0430_120',
-        '\u0448\u0438\u0440\u0438\u043D\u0430_140',
-        '\u0448\u0438\u0440\u0438\u043D\u0430_160',
-        '\u0448\u0438\u0440\u0438\u043D\u0430_180',
-        '\u0448\u0438\u0440\u0438\u043D\u0430_200',
-      ]
-    >;
   };
 }
 
@@ -1182,6 +1204,7 @@ declare module '@strapi/strapi' {
       'api::catalog-new-hero.catalog-new-hero': ApiCatalogNewHeroCatalogNewHero;
       'api::collection.collection': ApiCollectionCollection;
       'api::feature-option.feature-option': ApiFeatureOptionFeatureOption;
+      'api::mattress-size.mattress-size': ApiMattressSizeMattressSize;
       'api::product.product': ApiProductProduct;
       'api::tag.tag': ApiTagTag;
       'plugin::content-releases.release': PluginContentReleasesRelease;

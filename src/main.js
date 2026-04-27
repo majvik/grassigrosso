@@ -940,12 +940,32 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   infiniteSentinel.className = 'catalogue-new-infinite-sentinel'
   infiniteSentinel.setAttribute('aria-hidden', 'true')
   catalogueNewCardsRoot.insertAdjacentElement('afterend', infiniteSentinel)
+  const STANDARD_MATTRESS_SIZES = [
+    '80x190',
+    '80x200',
+    '90x190',
+    '90x200',
+    '120x190',
+    '120x200',
+    '140x190',
+    '140x200',
+    '160x190',
+    '160x200',
+    '180x200',
+    '200x200',
+    '140x220',
+    '160x220',
+    '180x220',
+    '200x220',
+    '220x220',
+  ]
+  const STANDARD_MATTRESS_SIZE_SET = new Set(STANDARD_MATTRESS_SIZES)
+
   const state = {
     collection: 'all',
     firmness: new Set(),
     type: new Set(),
-    width: new Set(),
-    length: new Set(),
+    size: new Set(),
     loadRange: 'all',
     heightRange: 'all',
     fillings: new Set(),
@@ -954,14 +974,39 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     favouritesOnly: false,
   }
 
-  const CATALOGUE_DEFAULT_WIDTHS = ['80', '90', '120', '140', '160', '180', '200']
-  const CATALOGUE_DEFAULT_LENGTHS = ['190', '195', '200']
-
   function parseCsvDataset(value) {
     return String(value || '')
       .split(',')
       .map((item) => item.trim())
       .filter(Boolean)
+  }
+
+  function normalizeSizeValue(value) {
+    const raw = String(value || '').trim().toLowerCase()
+    if (!raw) return ''
+    const match = raw.match(/(\d+)\D+(\d+)/)
+    if (!match) return ''
+    return `${match[1]}x${match[2]}`
+  }
+
+  function parseSizesToSet(value) {
+    return new Set(
+      parseCsvDataset(value)
+        .map(normalizeSizeValue)
+        .filter((size) => STANDARD_MATTRESS_SIZE_SET.has(size))
+    )
+  }
+
+  function buildStandardSizesFromLegacy(widthsValue, lengthsValue) {
+    const widths = parseCsvDataset(widthsValue).map((v) => String(v || '').replace(/\D+/g, '')).filter(Boolean)
+    const lengths = parseCsvDataset(lengthsValue).map((v) => String(v || '').replace(/\D+/g, '')).filter(Boolean)
+    const combos = []
+    widths.forEach((width) => {
+      lengths.forEach((length) => {
+        combos.push(`${width}x${length}`)
+      })
+    })
+    return new Set(combos.filter((size) => STANDARD_MATTRESS_SIZE_SET.has(size)))
   }
 
   function readCardMeta(card, index) {
@@ -977,8 +1022,12 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       load: Number(dataset.load || 0),
       loadRange: String(dataset.loadRange || '').trim(),
       heightRange: String(dataset.heightRange || '').trim(),
-      widths: parseCsvDataset(dataset.widths).length ? new Set(parseCsvDataset(dataset.widths)) : new Set(CATALOGUE_DEFAULT_WIDTHS),
-      lengths: parseCsvDataset(dataset.lengths).length ? new Set(parseCsvDataset(dataset.lengths)) : new Set(CATALOGUE_DEFAULT_LENGTHS),
+      sizes: (() => {
+        const sizes = parseSizesToSet(dataset.sizes)
+        if (sizes.size) return sizes
+        const legacySizes = buildStandardSizesFromLegacy(dataset.widths, dataset.lengths)
+        return legacySizes.size ? legacySizes : new Set(STANDARD_MATTRESS_SIZES)
+      })(),
       fillings: new Set(parseCsvDataset(dataset.fillings)),
       features: new Set(parseCsvDataset(dataset.features)),
     }
@@ -1129,8 +1178,15 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     const tags = Array.isArray(item.tags) ? item.tags.filter(Boolean).slice(0, 3) : []
     const loadRange = String(item.loadRange || '').trim()
     const heightRange = String(item.heightRange || '').trim()
-    const widths = Array.isArray(item.widths) ? item.widths.map((v) => String(v)) : CATALOGUE_DEFAULT_WIDTHS
-    const lengths = Array.isArray(item.lengths) ? item.lengths.map((v) => String(v)) : CATALOGUE_DEFAULT_LENGTHS
+    const sizesFromItem = Array.isArray(item.sizes) ? item.sizes.map(normalizeSizeValue).filter(Boolean) : []
+    const sizesFromLegacy = (() => {
+      const widths = Array.isArray(item.widths) ? item.widths.map((v) => String(v)) : []
+      const lengths = Array.isArray(item.lengths) ? item.lengths.map((v) => String(v)) : []
+      return [...buildStandardSizesFromLegacy(widths.join(','), lengths.join(','))]
+    })()
+    const sizes = sizesFromItem.length
+      ? sizesFromItem.filter((size) => STANDARD_MATTRESS_SIZE_SET.has(size))
+      : (sizesFromLegacy.length ? sizesFromLegacy : [...STANDARD_MATTRESS_SIZES])
     const fillings = Array.isArray(item.fillings) ? item.fillings.map((v) => String(v)) : []
     const features = Array.isArray(item.features) ? item.features.map((v) => String(v)) : []
 
@@ -1144,8 +1200,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         data-load="${maxLoadKg}"
         data-load-range="${escapeHtml(loadRange)}"
         data-height-range="${escapeHtml(heightRange)}"
-        data-widths="${escapeHtml(widths.join(','))}"
-        data-lengths="${escapeHtml(lengths.join(','))}"
+        data-sizes="${escapeHtml(sizes.join(','))}"
         data-fillings="${escapeHtml(fillings.join(','))}"
         data-features="${escapeHtml(features.join(','))}">
         <picture>
@@ -1324,8 +1379,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       collection: new Set(),
       firmness: new Set(),
       type: new Set(),
-      width: new Set(),
-      length: new Set(),
+      size: new Set(),
       loadRange: new Set(),
       heightRange: new Set(),
       fillings: new Set(),
@@ -1336,8 +1390,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       if (meta.collection) available.collection.add(meta.collection)
       if (meta.firmness) available.firmness.add(meta.firmness)
       if (meta.type) available.type.add(meta.type)
-      meta.widths.forEach((value) => available.width.add(value))
-      meta.lengths.forEach((value) => available.length.add(value))
+      meta.sizes.forEach((value) => available.size.add(value))
       meta.fillings.forEach((value) => available.fillings.add(value))
       meta.features.forEach((value) => available.features.add(value))
       if (meta.loadRange) available.loadRange.add(meta.loadRange)
@@ -1365,16 +1418,14 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     toggleBySet('.catalogue-new-chip[data-filter-group="heightRange"]', available.heightRange)
     toggleBySet('.catalogue-new-chip[data-filter-group="fillings"]', available.fillings)
     toggleBySet('.catalogue-new-chip[data-filter-group="features"]', available.features)
-    toggleBySet('.catalogue-new-size-select[data-size-group="width"] .catalogue-new-size-select-option', available.width)
-    toggleBySet('.catalogue-new-size-select[data-size-group="length"] .catalogue-new-size-select-option', available.length)
+    toggleBySet('.catalogue-new-size-select[data-size-group="size"] .catalogue-new-size-select-option', available.size)
 
     if (state.collection !== 'all' && !available.collection.has(state.collection)) state.collection = 'all'
     if (state.loadRange !== 'all' && !available.loadRange.has(state.loadRange)) state.loadRange = 'all'
     if (state.heightRange !== 'all' && !available.heightRange.has(state.heightRange)) state.heightRange = 'all'
     state.firmness.forEach((value) => { if (!available.firmness.has(value)) state.firmness.delete(value) })
     state.type.forEach((value) => { if (!available.type.has(value)) state.type.delete(value) })
-    state.width.forEach((value) => { if (!available.width.has(value)) state.width.delete(value) })
-    state.length.forEach((value) => { if (!available.length.has(value)) state.length.delete(value) })
+    state.size.forEach((value) => { if (!available.size.has(value)) state.size.delete(value) })
     state.fillings.forEach((value) => { if (!available.fillings.has(value)) state.fillings.delete(value) })
     state.features.forEach((value) => { if (!available.features.has(value)) state.features.delete(value) })
     syncUiFromState()
@@ -1416,8 +1467,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     setMultiChipSelection('type', state.type)
     setMultiChipSelection('fillings', state.fillings)
     setMultiChipSelection('features', state.features)
-    const sizeWidthSelect = catalogueNewSidebar.querySelector('.catalogue-new-size-select[data-size-group="width"]')
-    const sizeLengthSelect = catalogueNewSidebar.querySelector('.catalogue-new-size-select[data-size-group="length"]')
+    const sizeSelect = catalogueNewSidebar.querySelector('.catalogue-new-size-select[data-size-group="size"]')
     const setSizeSelectValue = (sizeSelectEl, targetSet) => {
       if (!sizeSelectEl) return
       const nextValue = [...targetSet][0] || 'all'
@@ -1428,11 +1478,10 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       })
       if (trigger) {
         const active = options.find((option) => option.dataset.value === nextValue)
-        trigger.textContent = (active?.textContent || 'Любая').trim()
+        trigger.textContent = (active?.textContent || 'Любой').trim()
       }
     }
-    setSizeSelectValue(sizeWidthSelect, state.width)
-    setSizeSelectValue(sizeLengthSelect, state.length)
+    setSizeSelectValue(sizeSelect, state.size)
     syncFilterDependencies()
   }
 
@@ -1472,8 +1521,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       const matchCollection = state.collection === 'all' || meta.collection === state.collection
       const matchFirmness = !state.firmness.size || state.firmness.has(meta.firmness)
       const matchType = !state.type.size || state.type.has(meta.type)
-      const matchWidth = intersectsSet(meta.widths, state.width)
-      const matchLength = intersectsSet(meta.lengths, state.length)
+      const matchSize = intersectsSet(meta.sizes, state.size)
       const matchLoad = meta.loadRange
         ? state.loadRange === 'all' || meta.loadRange === state.loadRange
         : matchLoadRange(meta.load, state.loadRange)
@@ -1487,8 +1535,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         matchCollection &&
         matchFirmness &&
         matchType &&
-        matchWidth &&
-        matchLength &&
+        matchSize &&
         matchLoad &&
         matchHeight &&
         matchFillings &&
@@ -1518,8 +1565,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     state.collection = 'all'
     state.firmness.clear()
     state.type.clear()
-    state.width.clear()
-    state.length.clear()
+    state.size.clear()
     state.loadRange = 'all'
     state.heightRange = 'all'
     state.fillings.clear()
@@ -1668,7 +1714,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     if (!sizeSelect) return
     const groupName = sizeSelect.dataset.sizeGroup
     const value = String(option.dataset.value || 'all')
-    const targetSet = groupName === 'width' ? state.width : groupName === 'length' ? state.length : null
+    const targetSet = groupName === 'size' ? state.size : null
     if (!targetSet) return
     targetSet.clear()
     if (value !== 'all') targetSet.add(value)
@@ -2023,12 +2069,12 @@ if (
     return map[key] || key
   }
 
-  const formatDimensions = (values, suffix = 'см') => {
+  const formatSizeList = (values) => {
     if (!values.length) return ''
     return values
-      .map((v) => String(v || '').trim())
-      .filter(Boolean)
-      .map((v) => `${v} ${suffix}`)
+      .map((value) => normalizeSizeValue(value))
+      .filter((value) => STANDARD_MATTRESS_SIZE_SET.has(value))
+      .map((value) => value.replace('x', ' × '))
       .join(', ')
   }
 
@@ -2084,8 +2130,12 @@ if (
     activeModalProductSlug = String(dataset.productSlug || '').trim()
     activeModalProductTitle = title || 'Матрас'
     syncModalFavouriteState()
-    const widths = parseCsv(dataset.widths)
-    const lengths = parseCsv(dataset.lengths)
+    const sizes = (() => {
+      const parsed = parseCsv(dataset.sizes)
+      if (parsed.length) return parsed
+      const legacy = [...buildStandardSizesFromLegacy(dataset.widths, dataset.lengths)]
+      return legacy.length ? legacy : [...STANDARD_MATTRESS_SIZES]
+    })()
     const fillings = parseCsv(dataset.fillings).map((v) => mapValue(v, modalLabelMaps.fillings)).join(', ')
     const features = parseCsv(dataset.features).map((v) => mapValue(v, modalLabelMaps.features)).join(', ')
 
@@ -2099,8 +2149,7 @@ if (
     appendModalSpec('Нагрузка', dataset.load ? `До ${dataset.load} кг` : '')
     appendModalSpec('Макс. нагрузка на спальное место', mapValue(dataset.loadRange, modalLabelMaps.loadRange))
     appendModalSpec('Высота матраса', mapValue(dataset.heightRange, modalLabelMaps.heightRange))
-    appendModalSpec('Ширина', formatDimensions(widths))
-    appendModalSpec('Длина', formatDimensions(lengths))
+    appendModalSpec('Размер', formatSizeList(sizes))
     appendModalSpec('Наполнители', fillings)
     appendModalSpec('Особенности', features)
     if (!catalogueImageModalSpecs.childElementCount) {

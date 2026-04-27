@@ -13,6 +13,13 @@ module.exports = {
       const match = raw.match(/\d+/)
       return match ? match[0] : raw
     };
+    const normalizeSizeValue = (value) => {
+      const raw = String(value || '').trim().toLowerCase()
+      if (!raw) return ''
+      const match = raw.match(/(\d+)\D+(\d+)/)
+      if (!match) return ''
+      return `${match[1]}x${match[2]}`
+    }
     const mapFirmness = (value) => {
       const raw = String(value || '').trim().toLowerCase()
       if (raw === 'мягкий') return 'soft'
@@ -60,7 +67,7 @@ module.exports = {
 
     const rows = await strapi.db.query('api::product.product').findMany({
       where: { is_active: true },
-      populate: { collection: true, tags: true, media: true, features: true },
+      populate: { collection: true, tags: true, media: true, features: true, sizes: true },
       orderBy: [{ sort_order: 'asc' }, { id: 'asc' }]
     });
 
@@ -81,6 +88,19 @@ module.exports = {
         .filter(Boolean)
     }
 
+    const buildSizesFromLegacy = (row) => {
+      const widths = normalizeStringList(row.widths).map(normalizeDimensionValue)
+      const lengths = normalizeStringList(row.lengths).map(normalizeDimensionValue)
+      const result = []
+      widths.forEach((width) => {
+        lengths.forEach((length) => {
+          const size = normalizeSizeValue(`${width}x${length}`)
+          if (size) result.push(size)
+        })
+      })
+      return result
+    }
+
     const items = rows.map((row) => ({
       name: row.name || '',
       slug: row.slug || '',
@@ -92,8 +112,14 @@ module.exports = {
       maxLoadKg: Number(row.max_load_kg || 0),
       loadRange: mapLoadRange(row.load_range || ''),
       heightRange: mapHeightRange(row.height_range || ''),
-      widths: normalizeStringList(row.widths).map(normalizeDimensionValue),
-      lengths: normalizeStringList(row.lengths).map(normalizeDimensionValue),
+      sizes: (() => {
+        const relationSizes = Array.isArray(row.sizes)
+          ? row.sizes
+            .map((sizeRow) => normalizeSizeValue(sizeRow?.name || sizeRow?.slug || ''))
+            .filter(Boolean)
+          : []
+        return relationSizes.length ? relationSizes : buildSizesFromLegacy(row)
+      })(),
       fillings: normalizeStringList(row.fillings).map(mapFilling),
       features: Array.isArray(row.features) ? normalizeFeatures(row.features) : normalizeStringList(row.features).map(mapFeature),
       imageUrl: row.media?.url || row.image_url || '',
