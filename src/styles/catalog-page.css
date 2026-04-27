@@ -255,6 +255,27 @@
   font-size: 13px;
   color: var(--color-text-gray);
 }
+.catalogue-new-filter-field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.catalogue-new-filter-field-head label {
+  margin-bottom: 0;
+}
+.catalogue-new-size-help-link {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-primary);
+  text-decoration: none;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+.catalogue-new-size-help-link:hover {
+  text-decoration: underline;
+}
 .catalogue-new-size-select {
   position: relative;
 }
@@ -291,21 +312,50 @@
   transform: translateY(-50%) rotate(180deg);
 }
 .catalogue-new-size-select-menu {
+  --catalogue-new-size-option-height: 44px;
   position: absolute;
+  top: calc(100% + 6px);
   left: 0;
   right: 0;
   z-index: var(--z-local-2);
-  margin: 6px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: #fff;
+  max-height: calc(var(--catalogue-new-size-option-height) * 7);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.catalogue-new-size-select-menu.is-portal-open {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  width: var(--catalogue-new-size-menu-width, 240px);
+  max-height: var(--catalogue-new-size-menu-max-height, calc(var(--catalogue-new-size-option-height) * 7));
+  z-index: calc(var(--z-modal) + 2);
+  border-radius: 12px;
+  box-shadow: 0 16px 42px rgba(14, 23, 20, 0.2);
+}
+.catalogue-new-filter-group[data-filter-group="size"] {
+  position: relative;
+}
+.catalogue-new-filter-group[data-filter-group="size"] .catalogue-new-size-select {
+  z-index: var(--z-local-2);
+}
+.catalogue-new-sidebar.is-size-select-open {
+  overflow: visible !important;
+  max-height: none !important;
+  z-index: calc(var(--z-local-2) + 1);
 }
 .catalogue-new-size-select-option {
   width: 100%;
   border: 0;
   background: transparent;
+  min-height: var(--catalogue-new-size-option-height);
   padding: 8px 10px;
   text-align: left;
   font-family: var(--font-family);

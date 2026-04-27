@@ -1645,6 +1645,11 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   }
 
   catalogueNewSidebar.addEventListener('click', (event) => {
+    const sizeHelpLink = event.target.closest('.catalogue-new-size-help-link[data-action="size-help"]')
+    if (sizeHelpLink) {
+      event.preventDefault()
+      return
+    }
     const chip = event.target.closest('.catalogue-new-chip')
     if (chip) {
       const groupName = chip.dataset.filterGroup
@@ -1683,6 +1688,20 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   })
 
   const closeSizeSelectMenus = () => {
+    if (activeSizeSelectMenu) {
+      activeSizeSelectMenu.removeEventListener('wheel', handleActiveSizeMenuWheel)
+    }
+    document.removeEventListener('wheel', handleGlobalWheelWhileSizeMenuOpen, true)
+    if (activeSizeSelectMenu && activeSizeSelectHost && activeSizeSelectMenu.parentElement !== activeSizeSelectHost) {
+      activeSizeSelectHost.appendChild(activeSizeSelectMenu)
+    }
+    if (activeSizeSelectMenu) {
+      activeSizeSelectMenu.classList.remove('is-portal-open')
+      activeSizeSelectMenu.style.removeProperty('--catalogue-new-size-menu-width')
+      activeSizeSelectMenu.style.removeProperty('--catalogue-new-size-menu-max-height')
+      activeSizeSelectMenu.style.removeProperty('top')
+      activeSizeSelectMenu.style.removeProperty('left')
+    }
     catalogueNewSidebar.querySelectorAll('.catalogue-new-size-select').forEach((sizeSelect) => {
       sizeSelect.classList.remove('is-open')
       const trigger = sizeSelect.querySelector('.catalogue-new-size-select-trigger')
@@ -1690,6 +1709,54 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       if (trigger) trigger.setAttribute('aria-expanded', 'false')
       if (menu) menu.hidden = true
     })
+    catalogueNewSidebar.classList.remove('is-size-select-open')
+    activeSizeSelectHost = null
+    activeSizeSelectTrigger = null
+    activeSizeSelectMenu = null
+  }
+
+  let activeSizeSelectHost = null
+  let activeSizeSelectTrigger = null
+  let activeSizeSelectMenu = null
+  const handleActiveSizeMenuWheel = (event) => {
+    if (!activeSizeSelectMenu || !activeSizeSelectMenu.contains(event.target)) return
+    event.preventDefault()
+    event.stopPropagation()
+    activeSizeSelectMenu.scrollTop += event.deltaY
+  }
+
+  const handleGlobalWheelWhileSizeMenuOpen = (event) => {
+    if (!activeSizeSelectMenu || !activeSizeSelectMenu.contains(event.target)) return
+    event.preventDefault()
+    event.stopPropagation()
+    activeSizeSelectMenu.scrollTop += event.deltaY
+  }
+
+  const placeActiveSizeSelectMenu = () => {
+    if (!activeSizeSelectMenu || !activeSizeSelectTrigger) return
+    const rect = activeSizeSelectTrigger.getBoundingClientRect()
+    activeSizeSelectMenu.style.left = `${Math.round(rect.left)}px`
+    activeSizeSelectMenu.style.top = `${Math.round(rect.bottom + 6)}px`
+    activeSizeSelectMenu.style.setProperty('--catalogue-new-size-menu-width', `${Math.round(rect.width)}px`)
+    activeSizeSelectMenu.style.setProperty('--catalogue-new-size-menu-max-height', 'calc(var(--catalogue-new-size-option-height) * 7)')
+  }
+
+  const applySizeSelectOption = (option) => {
+    if (!option) return false
+    const sizeSelect = option.closest('.catalogue-new-size-select') || activeSizeSelectHost
+    if (!sizeSelect) return false
+    const groupName = sizeSelect.dataset.sizeGroup
+    const value = String(option.dataset.value || 'all')
+    const targetSet = groupName === 'size' ? state.size : null
+    if (!targetSet) return false
+    targetSet.clear()
+    if (value !== 'all') targetSet.add(value)
+    syncUiFromState()
+    closeSizeSelectMenus()
+    visibleCardsLimit = CATALOGUE_PAGE_SIZE
+    applyFilters()
+    scrollToCatalogueToolbar()
+    return true
   }
 
   catalogueNewSidebar.addEventListener('click', (event) => {
@@ -1703,26 +1770,25 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         sizeSelect.classList.add('is-open')
         trigger.setAttribute('aria-expanded', 'true')
         const menu = sizeSelect.querySelector('.catalogue-new-size-select-menu')
-        if (menu) menu.hidden = false
+        if (menu) {
+          activeSizeSelectHost = sizeSelect
+          activeSizeSelectTrigger = trigger
+          activeSizeSelectMenu = menu
+          document.body.appendChild(menu)
+          menu.classList.add('is-portal-open')
+          menu.hidden = false
+          menu.addEventListener('wheel', handleActiveSizeMenuWheel, { passive: false })
+          document.addEventListener('wheel', handleGlobalWheelWhileSizeMenuOpen, { passive: false, capture: true })
+          placeActiveSizeSelectMenu()
+        }
+        catalogueNewSidebar.classList.add('is-size-select-open')
       }
       return
     }
 
     const option = event.target.closest('.catalogue-new-size-select-option')
     if (!option) return
-    const sizeSelect = option.closest('.catalogue-new-size-select')
-    if (!sizeSelect) return
-    const groupName = sizeSelect.dataset.sizeGroup
-    const value = String(option.dataset.value || 'all')
-    const targetSet = groupName === 'size' ? state.size : null
-    if (!targetSet) return
-    targetSet.clear()
-    if (value !== 'all') targetSet.add(value)
-    syncUiFromState()
-    closeSizeSelectMenus()
-    visibleCardsLimit = CATALOGUE_PAGE_SIZE
-    applyFilters()
-    scrollToCatalogueToolbar()
+    applySizeSelectOption(option)
   })
 
   catalogueNewCardsRoot.addEventListener('click', (event) => {
@@ -1773,13 +1839,22 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     })
 
     document.addEventListener('click', (event) => {
+      const sizeOption = event.target.closest('.catalogue-new-size-select-option')
+      if (sizeOption && activeSizeSelectMenu && activeSizeSelectMenu.contains(sizeOption)) {
+        applySizeSelectOption(sizeOption)
+        return
+      }
       if (!catalogueNewSort.contains(event.target)) {
         closeSortMenu()
       }
-      if (!catalogueNewSidebar.contains(event.target)) {
+      const clickedInsidePortalSizeMenu = Boolean(activeSizeSelectMenu && activeSizeSelectMenu.contains(event.target))
+      if (!catalogueNewSidebar.contains(event.target) && !clickedInsidePortalSizeMenu) {
         closeSizeSelectMenus()
       }
     })
+
+    window.addEventListener('resize', placeActiveSizeSelectMenu)
+    document.addEventListener('scroll', placeActiveSizeSelectMenu, true)
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') closeSortMenu()
