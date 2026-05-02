@@ -46,6 +46,15 @@ export type CatalogAvailableFilterSets = {
   features: Set<string>
 }
 
+export const CATALOG_MULTI_FILTER_GROUPS = new Set([
+  'firmness',
+  'type',
+  'loadRange',
+  'heightRange',
+  'fillings',
+  'features',
+])
+
 const firmnessRank: Record<string, number> = {
   soft: 1,
   medium: 2,
@@ -190,4 +199,68 @@ export function collectAvailableCatalogFilters<TCard>(cardMeta: CatalogCardMeta<
   knownFeatureOptions.forEach((value) => available.features.add(value))
 
   return available
+}
+
+export function resetCatalogFilterState(state: CatalogFilterState): void {
+  state.collection = 'all'
+  state.firmness.clear()
+  state.type.clear()
+  state.size.clear()
+  state.loadRange.clear()
+  state.heightRange.clear()
+  state.fillings.clear()
+  state.features.clear()
+  state.sort = 'default'
+}
+
+export function setCatalogSort(state: CatalogFilterState, value: unknown): string {
+  state.sort = String(value || 'default')
+  return state.sort
+}
+
+export function toggleCatalogFavouritesOnly(state: CatalogFilterState): boolean {
+  state.favouritesOnly = !state.favouritesOnly
+  return state.favouritesOnly
+}
+
+export function applyCatalogChipFilter(state: CatalogFilterState, groupName: string, value: string): boolean {
+  if (CATALOG_MULTI_FILTER_GROUPS.has(groupName)) {
+    const targetSet =
+      groupName === 'firmness' ? state.firmness :
+      groupName === 'type' ? state.type :
+      groupName === 'loadRange' ? state.loadRange :
+      groupName === 'heightRange' ? state.heightRange :
+      groupName === 'fillings' ? state.fillings :
+      state.features
+
+    if (value === 'all') {
+      targetSet.clear()
+    } else if (targetSet.has(value)) {
+      targetSet.delete(value)
+    } else {
+      targetSet.add(value)
+    }
+    return true
+  }
+
+  if (groupName === 'collection') {
+    state.collection = value
+    return true
+  }
+
+  return false
+}
+
+export function applyCatalogSizeFilter(state: CatalogFilterState, value: string): boolean {
+  if (value === 'all') {
+    state.size.clear()
+    return true
+  }
+
+  if (state.size.has(value)) {
+    state.size.delete(value)
+  } else {
+    state.size.add(value)
+  }
+  return false
 }

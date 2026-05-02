@@ -6,9 +6,15 @@ import { buildCatalogueCardHtml } from './catalog/catalog-card'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog/catalog-favourites'
 import { normalizeCatalogFilterOptions } from './catalog/catalog-filter-options'
 import {
+  CATALOG_MULTI_FILTER_GROUPS,
+  applyCatalogChipFilter,
+  applyCatalogSizeFilter,
   collectAvailableCatalogFilters,
   compareCatalogCardMeta,
   matchesCatalogCardMeta,
+  resetCatalogFilterState,
+  setCatalogSort,
+  toggleCatalogFavouritesOnly,
 } from './catalog/catalog-filtering'
 import { applyCatalogHeroFeed } from './catalog/catalog-hero'
 import { buildCatalogModalSpecs } from './catalog/catalog-modal'
@@ -1374,15 +1380,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   }
 
   function resetCatalogueNewFilterChipsAndSort() {
-    state.collection = 'all'
-    state.firmness.clear()
-    state.type.clear()
-    state.size.clear()
-    state.loadRange.clear()
-    state.heightRange.clear()
-    state.fillings.clear()
-    state.features.clear()
-    state.sort = 'default'
+    resetCatalogFilterState(state)
     syncUiFromState()
     setActiveSortOption('default')
     closeSortMenu()
@@ -1467,25 +1465,10 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       const groupName = chip.dataset.filterGroup
       const value = chip.dataset.value
       if (groupName && value) {
-        const multiGroups = new Set(['firmness', 'type', 'loadRange', 'heightRange', 'fillings', 'features'])
-        if (multiGroups.has(groupName)) {
-          const targetSet =
-            groupName === 'firmness' ? state.firmness :
-            groupName === 'type' ? state.type :
-            groupName === 'loadRange' ? state.loadRange :
-            groupName === 'heightRange' ? state.heightRange :
-            groupName === 'fillings' ? state.fillings :
-            state.features
-          if (value === 'all') {
-            targetSet.clear()
-          } else if (targetSet.has(value)) {
-            targetSet.delete(value)
-          } else {
-            targetSet.add(value)
-          }
+        const isMultiGroup = CATALOG_MULTI_FILTER_GROUPS.has(groupName)
+        if (applyCatalogChipFilter(state, groupName, value) && isMultiGroup) {
           syncUiFromState()
-        } else {
-          if (groupName === 'collection') state.collection = value
+        } else if (groupName === 'collection') {
           setSingleChipSelection(groupName, value)
         }
         syncFilterDependencies()
@@ -1636,16 +1619,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     if (!sizeSelect) return false
     const groupName = sizeSelect.dataset.sizeGroup
     const value = String(option.dataset.value || 'all')
-    const targetSet = groupName === 'size' ? state.size : null
-    if (!targetSet) return false
-    const shouldCloseAfterSelect = value === 'all'
-    if (value === 'all') {
-      targetSet.clear()
-    } else if (targetSet.has(value)) {
-      targetSet.delete(value)
-    } else {
-      targetSet.add(value)
-    }
+    if (groupName !== 'size') return false
+    const shouldCloseAfterSelect = applyCatalogSizeFilter(state, value)
     syncUiFromState()
     if (shouldCloseAfterSelect) closeSizeSelectMenus()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
@@ -1705,7 +1680,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   if (catalogueNewFavouritesOnlySwitch) {
     catalogueNewFavouritesOnlySwitch.addEventListener('click', () => {
-      state.favouritesOnly = !state.favouritesOnly
+      toggleCatalogFavouritesOnly(state)
       catalogueNewFavouritesOnlySwitch.classList.toggle('is-on', state.favouritesOnly)
       catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', state.favouritesOnly ? 'true' : 'false')
       visibleCardsLimit = CATALOGUE_PAGE_SIZE
@@ -1726,7 +1701,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
     catalogueNewSortOptions.forEach((option) => {
       option.addEventListener('click', () => {
-        state.sort = option.dataset.value || 'default'
+        setCatalogSort(state, option.dataset.value)
         setActiveSortOption(state.sort)
         closeSortMenu()
         applySorting()
