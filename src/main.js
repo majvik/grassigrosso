@@ -45,7 +45,9 @@ import {
   closeCatalogMobileFiltersDrawer,
   openCatalogMobileFiltersDrawer,
 } from './catalog/catalog-mobile-filters'
+import { lockCatalogSidebarScroll } from './catalog/catalog-sidebar-scroll'
 import { initCatalogViewToggle } from './catalog/catalog-view-toggle'
+import { initCatalogStickySidebar } from './catalog/catalog-sticky-sidebar'
 
 if (document.querySelector('[data-react-root]')) {
   await import('./react-entry')
@@ -1520,130 +1522,16 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     visibleCardsLimit = Number.MAX_SAFE_INTEGER
   }
 
-  const lockScrollWithinSidebar = () => {
-    const sidebar = catalogueNewSidebar
-    if (!sidebar) return
-
-    const isInsideSidebar = (target) => target instanceof Element && sidebar.contains(target)
-    const canScroll = () => sidebar.scrollHeight > sidebar.clientHeight + 1
-
-    const handleWheelCapture = (event) => {
-      if (activeSizeSelectMenu && !activeSizeSelectMenu.hidden) return
-      if (!isInsideSidebar(event.target)) return
-      if (!canScroll()) return
-      event.preventDefault()
-      event.stopPropagation()
-      sidebar.scrollTop += event.deltaY
-    }
-
-    let lastTouchY = 0
-    const handleTouchStartCapture = (event) => {
-      if (!isInsideSidebar(event.target)) return
-      if (!event.touches || event.touches.length === 0) return
-      lastTouchY = event.touches[0].clientY
-    }
-    const handleTouchMoveCapture = (event) => {
-      if (!isInsideSidebar(event.target)) return
-      if (!canScroll()) return
-      if (!event.touches || event.touches.length === 0) return
-      const currentY = event.touches[0].clientY
-      const delta = lastTouchY - currentY
-      lastTouchY = currentY
-      event.preventDefault()
-      event.stopPropagation()
-      sidebar.scrollTop += delta
-    }
-
-    document.addEventListener('wheel', handleWheelCapture, { passive: false, capture: true })
-    document.addEventListener('touchstart', handleTouchStartCapture, { passive: true, capture: true })
-    document.addEventListener('touchmove', handleTouchMoveCapture, { passive: false, capture: true })
-  }
-  lockScrollWithinSidebar()
+  lockCatalogSidebarScroll(catalogueNewSidebar, {
+    shouldSkipWheel: () => Boolean(activeSizeSelectMenu && !activeSizeSelectMenu.hidden),
+  })
 
   if (catalogueNewLayout) {
-    const stickyTopOffset = 16
-    const desktopMedia = window.matchMedia('(min-width: 1025px)')
-    const readFirstGridTrackWidthPx = (layoutEl) => {
-      const tpl = window.getComputedStyle(layoutEl).gridTemplateColumns || ''
-      const first = tpl.trim().split(/\s+/)[0] || ''
-      const m = /^([\d.]+)px$/i.exec(first)
-      if (m) {
-        const n = parseFloat(m[1])
-        return Number.isFinite(n) && n > 0 ? Math.round(n) : 320
-      }
-      return 320
-    }
-    const readBodyScale = () => {
-      const computed = window.getComputedStyle(document.body).transform
-      if (!computed || computed === 'none') return 1
-      const match2d = computed.match(/^matrix\(([^)]+)\)$/)
-      if (match2d) {
-        const parts = match2d[1].split(',').map((v) => Number(v.trim()))
-        return Number.isFinite(parts[0]) && parts[0] > 0 ? parts[0] : 1
-      }
-      const match3d = computed.match(/^matrix3d\(([^)]+)\)$/)
-      if (match3d) {
-        const parts = match3d[1].split(',').map((v) => Number(v.trim()))
-        return Number.isFinite(parts[0]) && parts[0] > 0 ? parts[0] : 1
-      }
-      return 1
-    }
-    const syncStickySidebar = () => {
-      const isDesktop = desktopMedia.matches
-      if (!isDesktop) {
-        stickyPlaceholder.classList.remove('is-active')
-        stickyPlaceholder.style.height = ''
-        catalogueNewSidebar.classList.remove('is-fixed', 'is-bottom')
-        catalogueNewSidebar.style.width = ''
-        catalogueNewSidebar.style.left = ''
-        catalogueNewSidebar.style.top = ''
-        return
-      }
-      const layoutRect = catalogueNewLayout.getBoundingClientRect()
-      const sidebarHeight = catalogueNewSidebar.offsetHeight
-      const sidebarVisualHeight = catalogueNewSidebar.getBoundingClientRect().height || sidebarHeight
-      const bodyScale = readBodyScale()
-      const reachedStickyArea = layoutRect.top <= stickyTopOffset
-      const hasRoomInLayout = layoutRect.bottom - stickyTopOffset > 120
-      const shouldFix = reachedStickyArea && hasRoomInLayout && (layoutRect.bottom - stickyTopOffset > sidebarVisualHeight)
-
-      stickyPlaceholder.style.height = shouldFix ? `${sidebarHeight}px` : ''
-      stickyPlaceholder.classList.toggle('is-active', shouldFix)
-      catalogueNewSidebar.classList.toggle('is-fixed', shouldFix)
-      catalogueNewSidebar.classList.remove('is-bottom')
-      if (shouldFix) {
-        // Измерять плейсхолдер только после is-active: до toggle он display:none → rect.width === 0 и сайдбар «схлопывается».
-        // Не брать catalogueNewSidebar.offsetWidth: у только что ставшего fixed он часто = ширине вьюпорта.
-        // Ширину не больше 1-й колонки грида (см. catalog-page.css): иначе rect/zoom дают >320px и сайдбар залезает на контент.
-        const phRect = stickyPlaceholder.getBoundingClientRect()
-        const scaleSafe = bodyScale > 0 ? bodyScale : 1
-        const colW = readFirstGridTrackWidthPx(catalogueNewLayout)
-        const measured = Math.max(phRect.width, stickyPlaceholder.offsetWidth, 1)
-        const rawW = measured >= 8 ? Math.min(colW, measured) : colW
-        const widthPx = Math.max(1, Math.round(rawW / scaleSafe))
-        catalogueNewSidebar.style.width = `${widthPx}px`
-        catalogueNewSidebar.style.left = `${Math.round(phRect.left / scaleSafe)}px`
-        catalogueNewSidebar.style.top = `${(stickyTopOffset / scaleSafe).toFixed(2)}px`
-      } else {
-        catalogueNewSidebar.style.width = ''
-        catalogueNewSidebar.style.left = ''
-        catalogueNewSidebar.style.top = ''
-      }
-    }
-
-    let stickyRaf = 0
-    scheduleStickySidebarSync = () => {
-      if (stickyRaf) cancelAnimationFrame(stickyRaf)
-      stickyRaf = requestAnimationFrame(() => {
-        stickyRaf = 0
-        syncStickySidebar()
-      })
-    }
-
-    scheduleStickySidebarSync()
-    window.addEventListener('scroll', scheduleStickySidebarSync, { passive: true })
-    window.addEventListener('resize', scheduleStickySidebarSync)
-    desktopMedia.addEventListener('change', scheduleStickySidebarSync)
+    scheduleStickySidebarSync = initCatalogStickySidebar(
+      catalogueNewLayout,
+      catalogueNewSidebar,
+      stickyPlaceholder,
+    ).scheduleSync
   }
 
   applySorting()
