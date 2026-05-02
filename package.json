@@ -12,6 +12,7 @@
     "dev:stop": "kill-port 1337 3000 3200 5174",
     "build": "vite build",
     "typecheck": "tsc --noEmit",
+    "check": "npm run check:routes && npm run check:catalog-api && npm run typecheck",
     "check:routes": "node scripts/check-routing-contracts.mjs",
     "preview": "vite preview",
     "new-page": "node scripts/new-page.mjs",
