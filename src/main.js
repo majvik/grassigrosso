@@ -1,6 +1,7 @@
 import './style.css'
 import { gsap } from 'gsap'
 import Lenis from 'lenis'
+import { normalizeCatalogFilterOptions } from './catalog/catalog-filter-options'
 
 if (document.querySelector('[data-react-root]')) {
   await import('./react-entry')
@@ -1001,23 +1002,6 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     const match = raw.match(/(\d+)\D+(\d+)/)
     if (!match) return ''
     return `${match[1]}x${match[2]}`
-  }
-
-  function normalizeCatalogFilterOptions(value) {
-    if (!Array.isArray(value)) return []
-    const seen = new Set()
-    return value
-      .map((item) => ({
-        value: String(item?.slug || '').trim(),
-        label: String(item?.name || '').trim(),
-        sortOrder: Number(item?.sortOrder || 0),
-      }))
-      .filter((item) => {
-        if (!item.value || !item.label || seen.has(item.value)) return false
-        seen.add(item.value)
-        return true
-      })
-      .sort((a, b) => a.sortOrder - b.sortOrder || a.label.localeCompare(b.label, 'ru'))
   }
 
   function createCatalogueFilterButton(className, attrs, label) {
