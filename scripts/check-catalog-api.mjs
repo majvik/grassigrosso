@@ -2,6 +2,7 @@
 
 const baseUrl = String(process.env.CATALOG_API_BASE_URL || 'http://127.0.0.1:3000').replace(/\/+$/, '')
 const failures = []
+let catalogFilterSlugSets = null
 
 const requiredFilterGroups = [
   'collection',
@@ -87,6 +88,13 @@ if (filters) {
         }
       }
     }
+
+    catalogFilterSlugSets = Object.fromEntries(
+      requiredFilterGroups.map((groupName) => [
+        groupName,
+        new Set((groups[groupName] || []).map((option) => option.slug)),
+      ]),
+    )
   }
 }
 
@@ -104,6 +112,38 @@ if (products) {
     }
     if (!Array.isArray(product.fillings)) {
       failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} fillings must be an array`)
+    }
+    if (catalogFilterSlugSets) {
+      if (!catalogFilterSlugSets.collection.has(product.collectionSlug)) {
+        failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has unknown collectionSlug ${product.collectionSlug}`)
+      }
+      if (!catalogFilterSlugSets.firmness.has(product.firmness)) {
+        failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has unknown firmness ${product.firmness}`)
+      }
+      if (!catalogFilterSlugSets.type.has(product.mattressType)) {
+        failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has unknown mattressType ${product.mattressType}`)
+      }
+      if (!catalogFilterSlugSets.loadRange.has(product.loadRange)) {
+        failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has unknown loadRange ${product.loadRange}`)
+      }
+      if (!catalogFilterSlugSets.heightRange.has(product.heightRange)) {
+        failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has unknown heightRange ${product.heightRange}`)
+      }
+      for (const size of product.sizes || []) {
+        if (!catalogFilterSlugSets.size.has(size)) {
+          failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has unknown size ${size}`)
+        }
+      }
+      for (const filling of product.fillings || []) {
+        if (!catalogFilterSlugSets.fillings.has(filling)) {
+          failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has unknown filling ${filling}`)
+        }
+      }
+      for (const feature of product.features || []) {
+        if (!catalogFilterSlugSets.features.has(feature)) {
+          failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has unknown feature ${feature}`)
+        }
+      }
     }
   }
 }
