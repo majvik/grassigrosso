@@ -35,7 +35,7 @@ import {
   toggleCatalogFavouritesOnly,
 } from './catalog/catalog-filtering'
 import { applyCatalogHeroFeed } from './catalog/catalog-hero'
-import { buildCatalogModalSpecs } from './catalog/catalog-modal'
+import { initCatalogImageModal } from './catalog/catalog-image-modal'
 import {
   closeCatalogSortMenu,
   setCatalogActiveSortOption,
@@ -1568,130 +1568,19 @@ if (
   catalogueImageModalFavouriteBtn &&
   catalogueCardsRootForModal
 ) {
-  let activeModalProductSlug = ''
-  let activeModalProductTitle = ''
-
-  const readModalFavourites = () => {
-    return readCatalogFavourites()
-  }
-
-  const writeModalFavourites = (set) => {
-    writeCatalogFavourites(set)
-  }
-
-  const clearModalSpecs = () => {
-    catalogueImageModalSpecs.replaceChildren()
-    catalogueImageModalSpecsEmpty.hidden = true
-  }
-
-  const syncModalFavouriteState = () => {
-    const favSet = readModalFavourites()
-    const isActive = Boolean(activeModalProductSlug && favSet.has(activeModalProductSlug))
-    catalogueImageModalFavouriteBtn.classList.toggle('is-active', isActive)
-    catalogueImageModalFavouriteBtn.setAttribute('aria-pressed', isActive ? 'true' : 'false')
-    catalogueImageModalFavouriteBtn.setAttribute('aria-label', isActive ? 'Удалить из избранного' : 'Добавить в избранное')
-  }
-
-  const appendModalSpec = (label, value) => {
-    if (!value) return
-    const row = document.createElement('div')
-    row.className = 'catalogue-new-image-modal-spec'
-    const labelEl = document.createElement('span')
-    labelEl.className = 'catalogue-new-image-modal-spec-label'
-    labelEl.textContent = label
-    const valueEl = document.createElement('span')
-    valueEl.className = 'catalogue-new-image-modal-spec-value'
-    valueEl.textContent = value
-    row.append(labelEl, valueEl)
-    catalogueImageModalSpecs.appendChild(row)
-  }
-
-  const closeCatalogueImageModal = () => {
-    catalogueImageModal.setAttribute('hidden', '')
-    catalogueImageModalImg.setAttribute('src', '')
-    catalogueImageModalImg.setAttribute('alt', '')
-    catalogueImageModalTitle.textContent = ''
-    activeModalProductSlug = ''
-    activeModalProductTitle = ''
-    syncModalFavouriteState()
-    clearModalSpecs()
-    if (typeof unlockScroll === 'function') unlockScroll()
-    document.body.classList.remove('modal-open')
-  }
-
-  const openCatalogueImageModal = (card) => {
-    if (!card) return
-    const image = card.querySelector('picture img')
-    const src = image?.getAttribute('src') || ''
-    const alt = image?.getAttribute('alt') || ''
-    const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || alt
-    if (!src) return
-
-    const dataset = card.dataset || {}
-    activeModalProductSlug = String(dataset.productSlug || '').trim()
-    activeModalProductTitle = title || 'Матрас'
-    syncModalFavouriteState()
-
-    catalogueImageModalImg.setAttribute('src', src)
-    catalogueImageModalImg.setAttribute('alt', alt || '')
-    catalogueImageModalTitle.textContent = title || 'Матрас'
-    clearModalSpecs()
-    buildCatalogModalSpecs(dataset).forEach((spec) => {
-      appendModalSpec(spec.label, spec.value)
-    })
-    if (!catalogueImageModalSpecs.childElementCount) {
-      catalogueImageModalSpecsEmpty.hidden = false
-    }
-    catalogueImageModal.removeAttribute('hidden')
-    if (typeof lockScroll === 'function') lockScroll()
-    document.body.classList.add('modal-open')
-  }
-
-  catalogueImageModalContactBtn.addEventListener('click', () => {
-    if (!activeModalProductSlug) return
-    window.dispatchEvent(new CustomEvent('catalogue:contact-manager', {
-      detail: {
-        source: 'modal-position',
-        slugs: [activeModalProductSlug],
-        title: activeModalProductTitle,
-      },
-    }))
-  })
-
-  catalogueImageModalFavouriteBtn.addEventListener('click', () => {
-    if (!activeModalProductSlug) return
-    const favSet = readModalFavourites()
-    if (favSet.has(activeModalProductSlug)) favSet.delete(activeModalProductSlug)
-    else favSet.add(activeModalProductSlug)
-    writeModalFavourites(favSet)
-    window.dispatchEvent(new CustomEvent('catalogue:favourites-updated'))
-    syncModalFavouriteState()
-  })
-
-  window.addEventListener('catalogue:favourites-updated', syncModalFavouriteState)
-
-  catalogueCardsRootForModal.addEventListener('click', (event) => {
-    if (event.target.closest('.catalogue-new-favourite')) return
-    const card = event.target.closest('.catalogue-new-card')
-    if (!card) return
-    openCatalogueImageModal(card)
-  })
-
-  if (catalogueImageModalClose) {
-    catalogueImageModalClose.addEventListener('click', (event) => {
-      event.stopPropagation()
-      closeCatalogueImageModal()
-    })
-  }
-
-  catalogueImageModal.addEventListener('click', (event) => {
-    if (event.target === catalogueImageModal) closeCatalogueImageModal()
-  })
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !catalogueImageModal.hasAttribute('hidden')) {
-      closeCatalogueImageModal()
-    }
+  initCatalogImageModal({
+    modal: catalogueImageModal,
+    image: catalogueImageModalImg,
+    title: catalogueImageModalTitle,
+    specs: catalogueImageModalSpecs,
+    specsEmpty: catalogueImageModalSpecsEmpty,
+    contactBtn: catalogueImageModalContactBtn,
+    favouriteBtn: catalogueImageModalFavouriteBtn,
+    closeBtn: catalogueImageModalClose,
+    cardsRoot: catalogueCardsRootForModal,
+  }, {
+    lockScroll: typeof lockScroll === 'function' ? lockScroll : undefined,
+    unlockScroll: typeof unlockScroll === 'function' ? unlockScroll : undefined,
   })
 }
 
