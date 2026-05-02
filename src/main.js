@@ -569,13 +569,23 @@ async function initPageLoad() {
 function initApp() {
 // Scale page on screens 1920px and larger
 function scalePage() {
+  const htmlEl = document.documentElement
+  const bodyEl = document.body
+  if (!htmlEl || !bodyEl) return
+  const clearLegacyTransform = () => {
+    bodyEl.style.transform = ''
+    bodyEl.style.transformOrigin = ''
+  }
+
   if (window.innerWidth >= 1920) {
     const scale = window.innerWidth / 1920
-    document.body.style.transform = `scale(${scale})`
-    document.body.style.transformOrigin = 'top center'
+    // zoom не создаёт новый containing block для position: fixed,
+    // в отличие от transform: scale(...) на body.
+    htmlEl.style.zoom = String(scale)
+    clearLegacyTransform()
   } else {
-    document.body.style.transform = ''
-    document.body.style.transformOrigin = ''
+    htmlEl.style.zoom = ''
+    clearLegacyTransform()
   }
 }
 
@@ -1740,6 +1750,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       activeSizeSelectMenu.style.removeProperty('--catalogue-new-size-menu-max-height')
       activeSizeSelectMenu.style.removeProperty('top')
       activeSizeSelectMenu.style.removeProperty('left')
+      activeSizeSelectMenu.style.removeProperty('display')
     }
     catalogueNewSidebar.querySelectorAll('.catalogue-new-size-select').forEach((sizeSelect) => {
       sizeSelect.classList.remove('is-open')
@@ -1835,9 +1846,13 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   const placeActiveSizeSelectMenu = () => {
     if (!activeSizeSelectMenu || !activeSizeSelectTrigger) return
+    if (activeSizeSelectMenu.hidden) return
     const rect = activeSizeSelectTrigger.getBoundingClientRect()
-    activeSizeSelectMenu.style.left = `${Math.round(rect.left)}px`
-    activeSizeSelectMenu.style.top = `${Math.round(rect.bottom + 6)}px`
+    const viewportPadding = 8
+    const nextLeft = Math.max(viewportPadding, Math.round(rect.left))
+    const nextTop = Math.max(viewportPadding, Math.round(rect.bottom + 6))
+    activeSizeSelectMenu.style.left = `${nextLeft}px`
+    activeSizeSelectMenu.style.top = `${nextTop}px`
     activeSizeSelectMenu.style.setProperty('--catalogue-new-size-menu-width', `${Math.round(rect.width)}px`)
     activeSizeSelectMenu.style.setProperty('--catalogue-new-size-menu-max-height', 'calc(var(--catalogue-new-size-option-height) * 8)')
   }
@@ -1862,7 +1877,6 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     if (shouldCloseAfterSelect) closeSizeSelectMenus()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
     applyFilters()
-    scrollToCatalogueToolbar()
     return true
   }
 
@@ -1881,15 +1895,14 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
           activeSizeSelectHost = sizeSelect
           activeSizeSelectTrigger = trigger
           activeSizeSelectMenu = menu
-          document.body.appendChild(menu)
+          document.documentElement.appendChild(menu)
           menu.classList.add('is-portal-open')
           menu.hidden = false
+          menu.style.display = 'block'
           menu.addEventListener('wheel', handleActiveSizeMenuWheel, { passive: false })
           document.addEventListener('wheel', handleGlobalWheelWhileSizeMenuOpen, { passive: false, capture: true })
           placeActiveSizeSelectMenu()
           resetSizeSelectAutocomplete(sizeSelect)
-          const autocompleteInput = menu.querySelector('.catalogue-new-size-select-search')
-          if (autocompleteInput) autocompleteInput.focus()
         }
         catalogueNewSidebar.classList.add('is-size-select-open')
       }
@@ -2056,6 +2069,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     const canScroll = () => sidebar.scrollHeight > sidebar.clientHeight + 1
 
     const handleWheelCapture = (event) => {
+      if (activeSizeSelectMenu && !activeSizeSelectMenu.hidden) return
       if (!isInsideSidebar(event.target)) return
       if (!canScroll()) return
       event.preventDefault()
@@ -2090,6 +2104,31 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   if (catalogueNewLayout) {
     const stickyTopOffset = 16
     const desktopMedia = window.matchMedia('(min-width: 1025px)')
+    const readFirstGridTrackWidthPx = (layoutEl) => {
+      const tpl = window.getComputedStyle(layoutEl).gridTemplateColumns || ''
+      const first = tpl.trim().split(/\s+/)[0] || ''
+      const m = /^([\d.]+)px$/i.exec(first)
+      if (m) {
+        const n = parseFloat(m[1])
+        return Number.isFinite(n) && n > 0 ? Math.round(n) : 320
+      }
+      return 320
+    }
+    const readBodyScale = () => {
+      const computed = window.getComputedStyle(document.body).transform
+      if (!computed || computed === 'none') return 1
+      const match2d = computed.match(/^matrix\(([^)]+)\)$/)
+      if (match2d) {
+        const parts = match2d[1].split(',').map((v) => Number(v.trim()))
+        return Number.isFinite(parts[0]) && parts[0] > 0 ? parts[0] : 1
+      }
+      const match3d = computed.match(/^matrix3d\(([^)]+)\)$/)
+      if (match3d) {
+        const parts = match3d[1].split(',').map((v) => Number(v.trim()))
+        return Number.isFinite(parts[0]) && parts[0] > 0 ? parts[0] : 1
+      }
+      return 1
+    }
     const syncStickySidebar = () => {
       const isDesktop = desktopMedia.matches
       if (!isDesktop) {
@@ -2098,31 +2137,38 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         catalogueNewSidebar.classList.remove('is-fixed', 'is-bottom')
         catalogueNewSidebar.style.width = ''
         catalogueNewSidebar.style.left = ''
+        catalogueNewSidebar.style.top = ''
         return
       }
-
       const layoutRect = catalogueNewLayout.getBoundingClientRect()
-      const placeholderRect = stickyPlaceholder.getBoundingClientRect()
       const sidebarHeight = catalogueNewSidebar.offsetHeight
-      const shouldFix = layoutRect.top <= stickyTopOffset && layoutRect.bottom - stickyTopOffset > sidebarHeight
-      const shouldStickBottom = layoutRect.bottom - stickyTopOffset <= sidebarHeight
+      const sidebarVisualHeight = catalogueNewSidebar.getBoundingClientRect().height || sidebarHeight
+      const bodyScale = readBodyScale()
+      const reachedStickyArea = layoutRect.top <= stickyTopOffset
+      const hasRoomInLayout = layoutRect.bottom - stickyTopOffset > 120
+      const shouldFix = reachedStickyArea && hasRoomInLayout && (layoutRect.bottom - stickyTopOffset > sidebarVisualHeight)
 
-      stickyPlaceholder.style.height = `${sidebarHeight}px`
-      if (shouldFix || shouldStickBottom) {
-        stickyPlaceholder.classList.add('is-active')
-      } else {
-        stickyPlaceholder.classList.remove('is-active')
-      }
-
+      stickyPlaceholder.style.height = shouldFix ? `${sidebarHeight}px` : ''
+      stickyPlaceholder.classList.toggle('is-active', shouldFix)
       catalogueNewSidebar.classList.toggle('is-fixed', shouldFix)
-      catalogueNewSidebar.classList.toggle('is-bottom', shouldStickBottom)
-
-      if (shouldFix || shouldStickBottom) {
-        catalogueNewSidebar.style.width = `${Math.round(placeholderRect.width)}px`
-        catalogueNewSidebar.style.left = `${Math.round(placeholderRect.left)}px`
+      catalogueNewSidebar.classList.remove('is-bottom')
+      if (shouldFix) {
+        // Измерять плейсхолдер только после is-active: до toggle он display:none → rect.width === 0 и сайдбар «схлопывается».
+        // Не брать catalogueNewSidebar.offsetWidth: у только что ставшего fixed он часто = ширине вьюпорта.
+        // Ширину не больше 1-й колонки грида (см. catalog-page.css): иначе rect/zoom дают >320px и сайдбар залезает на контент.
+        const phRect = stickyPlaceholder.getBoundingClientRect()
+        const scaleSafe = bodyScale > 0 ? bodyScale : 1
+        const colW = readFirstGridTrackWidthPx(catalogueNewLayout)
+        const measured = Math.max(phRect.width, stickyPlaceholder.offsetWidth, 1)
+        const rawW = measured >= 8 ? Math.min(colW, measured) : colW
+        const widthPx = Math.max(1, Math.round(rawW / scaleSafe))
+        catalogueNewSidebar.style.width = `${widthPx}px`
+        catalogueNewSidebar.style.left = `${Math.round(phRect.left / scaleSafe)}px`
+        catalogueNewSidebar.style.top = `${(stickyTopOffset / scaleSafe).toFixed(2)}px`
       } else {
         catalogueNewSidebar.style.width = ''
         catalogueNewSidebar.style.left = ''
+        catalogueNewSidebar.style.top = ''
       }
     }
 
@@ -2192,6 +2238,30 @@ if (
   catalogueImageModalFavouriteBtn &&
   catalogueCardsRootForModal
 ) {
+  const MODAL_STANDARD_MATTRESS_SIZES = [
+    '80x190', '80x200', '90x190', '90x200',
+    '120x190', '120x200', '140x190', '140x200',
+    '160x190', '160x200', '180x200', '200x200',
+    '140x220', '160x220', '180x220', '200x220', '220x220',
+  ]
+  const MODAL_STANDARD_MATTRESS_SIZE_SET = new Set(MODAL_STANDARD_MATTRESS_SIZES)
+  const normalizeModalSizeValue = (value) => String(value || '').replace(/\s+/g, '').replace(/[×xхХ]/g, 'x').toLowerCase()
+  const buildModalStandardSizesFromLegacy = (widthsValue, lengthsValue) => {
+    const parseDimensionList = (raw) =>
+      String(raw || '')
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean)
+        .map((item) => item.replace(/[^\d]/g, ''))
+        .filter(Boolean)
+    const widths = parseDimensionList(widthsValue)
+    const lengths = parseDimensionList(lengthsValue)
+    if (!widths.length || !lengths.length) return new Set()
+    const combos = []
+    widths.forEach((w) => lengths.forEach((l) => combos.push(normalizeModalSizeValue(`${w}x${l}`))))
+    return new Set(combos.filter((size) => MODAL_STANDARD_MATTRESS_SIZE_SET.has(size)))
+  }
+
   let activeModalProductSlug = ''
   let activeModalProductTitle = ''
   const modalLabelMaps = {
@@ -2263,8 +2333,8 @@ if (
   const formatSizeList = (values) => {
     if (!values.length) return ''
     return values
-      .map((value) => normalizeSizeValue(value))
-      .filter((value) => STANDARD_MATTRESS_SIZE_SET.has(value))
+      .map((value) => normalizeModalSizeValue(value))
+      .filter((value) => MODAL_STANDARD_MATTRESS_SIZE_SET.has(value))
       .map((value) => value.replace('x', ' × '))
       .join(', ')
   }
@@ -2324,8 +2394,8 @@ if (
     const sizes = (() => {
       const parsed = parseCsv(dataset.sizes)
       if (parsed.length) return parsed
-      const legacy = [...buildStandardSizesFromLegacy(dataset.widths, dataset.lengths)]
-      return legacy.length ? legacy : [...STANDARD_MATTRESS_SIZES]
+      const legacy = [...buildModalStandardSizesFromLegacy(dataset.widths, dataset.lengths)]
+      return legacy.length ? legacy : [...MODAL_STANDARD_MATTRESS_SIZES]
     })()
     const fillings = parseCsv(dataset.fillings).map((v) => mapValue(v, modalLabelMaps.fillings)).join(', ')
     const features = parseCsv(dataset.features).map((v) => mapValue(v, modalLabelMaps.features)).join(', ')

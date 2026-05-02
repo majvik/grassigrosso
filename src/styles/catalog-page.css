@@ -1,10 +1,34 @@
 .catalogue-new-layout {
+  --catalogue-sidebar-track: 320px;
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: var(--catalogue-sidebar-track) 1fr;
   gap: var(--space-6);
   padding: 0 var(--space-page-x-desktop) var(--space-9);
   background: var(--color-bg-white);
   position: relative;
+}
+
+/* Явные колонки: иначе при display:block у плейсхолдера автоплейсмент кладёт сайдбар во 2-ю колонку (1fr),
+   и ширина прыгает при scroll + position:fixed. */
+@media (min-width: 1025px) {
+  .catalogue-new-sidebar-placeholder {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .catalogue-new-sidebar {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .catalogue-new-content {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+  }
 }
 
 .catalogue-new-sidebar,
@@ -48,6 +72,7 @@
   top: 16px;
   z-index: var(--z-local-1);
   box-sizing: border-box;
+  max-width: var(--catalogue-sidebar-track, 320px);
 }
 .catalogue-new-sidebar.is-bottom {
   position: absolute;
