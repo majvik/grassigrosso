@@ -25,6 +25,15 @@ import {
 } from './catalog/catalog-filtering'
 import { applyCatalogHeroFeed } from './catalog/catalog-hero'
 import { buildCatalogModalSpecs } from './catalog/catalog-modal'
+import {
+  closeCatalogSortMenu,
+  setCatalogActiveSortOption,
+  toggleCatalogSortMenu,
+} from './catalog/catalog-sort-menu'
+import {
+  closeCatalogMobileFiltersDrawer,
+  openCatalogMobileFiltersDrawer,
+} from './catalog/catalog-mobile-filters'
 
 if (document.querySelector('[data-react-root]')) {
   await import('./react-entry')
@@ -1049,30 +1058,18 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       console.warn('Catalogue Strapi fetch failed, using static fallback:', err)
     }
   }
-  function setActiveSortOption(value) {
-    if (catalogueNewSortTrigger) {
-      const activeOption = catalogueNewSortOptions.find((option) => option.dataset.value === value)
-      if (activeOption) catalogueNewSortTrigger.textContent = activeOption.textContent || 'Сортировка по умолчанию'
-    }
-    catalogueNewSortOptions.forEach((option) => {
-      option.classList.toggle('is-active', option.dataset.value === value)
-    })
+  const sortMenuElements = {
+    root: catalogueNewSort,
+    trigger: catalogueNewSortTrigger,
+    options: catalogueNewSortOptions,
   }
-
-  function closeSortMenu() {
-    if (!catalogueNewSort || !catalogueNewSortTrigger) return
-    catalogueNewSort.classList.remove('is-open')
-    catalogueNewSortTrigger.setAttribute('aria-expanded', 'false')
-    const menu = catalogueNewSort.querySelector('.catalogue-new-sort-menu')
-    if (menu) menu.hidden = true
+  const mobileFiltersElements = {
+    sidebar: catalogueNewSidebar,
+    overlay: catalogueNewMobileFiltersOverlay,
   }
-
-  function openSortMenu() {
-    if (!catalogueNewSort || !catalogueNewSortTrigger) return
-    catalogueNewSort.classList.add('is-open')
-    catalogueNewSortTrigger.setAttribute('aria-expanded', 'true')
-    const menu = catalogueNewSort.querySelector('.catalogue-new-sort-menu')
-    if (menu) menu.hidden = false
+  const mobileFiltersOptions = {
+    lockScroll: typeof lockScroll === 'function' ? lockScroll : undefined,
+    unlockScroll: typeof unlockScroll === 'function' ? unlockScroll : undefined,
   }
 
   updateCardsCache()
@@ -1181,8 +1178,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   function resetCatalogueNewFilterChipsAndSort() {
     resetCatalogFilterState(state)
     syncUiFromState()
-    setActiveSortOption('default')
-    closeSortMenu()
+    setCatalogActiveSortOption(sortMenuElements, 'default')
+    closeCatalogSortMenu(sortMenuElements)
     applySorting()
   }
 
@@ -1490,19 +1487,14 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   if (catalogueNewSort && catalogueNewSortTrigger && catalogueNewSortOptions.length > 0) {
     catalogueNewSortTrigger.addEventListener('click', () => {
-      const isOpen = catalogueNewSort.classList.contains('is-open')
-      if (isOpen) {
-        closeSortMenu()
-      } else {
-        openSortMenu()
-      }
+      toggleCatalogSortMenu(sortMenuElements)
     })
 
     catalogueNewSortOptions.forEach((option) => {
       option.addEventListener('click', () => {
         setCatalogSort(state, option.dataset.value)
-        setActiveSortOption(state.sort)
-        closeSortMenu()
+        setCatalogActiveSortOption(sortMenuElements, state.sort)
+        closeCatalogSortMenu(sortMenuElements)
         applySorting()
         visibleCardsLimit = CATALOGUE_PAGE_SIZE
         applyFilters()
@@ -1519,7 +1511,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         return
       }
       if (!catalogueNewSort.contains(event.target)) {
-        closeSortMenu()
+        closeCatalogSortMenu(sortMenuElements)
       }
       const clickedInsidePortalSizeMenu = Boolean(activeSizeSelectMenu && activeSizeSelectMenu.contains(event.target))
       if (!catalogueNewSidebar.contains(event.target) && !clickedInsidePortalSizeMenu) {
@@ -1532,12 +1524,12 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
-        closeSortMenu()
+        closeCatalogSortMenu(sortMenuElements)
         closeSizeSelectMenus()
       }
     })
 
-    setActiveSortOption('default')
+    setCatalogActiveSortOption(sortMenuElements, 'default')
   }
 
   const onSizeSelectSearchInput = (event) => {
@@ -1564,30 +1556,23 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     })
   }
 
-  const openMobileFiltersDrawer = () => {
-    if (!catalogueNewSidebar || !catalogueNewMobileFiltersOverlay) return
-    if (window.innerWidth > 1024) return
-    catalogueNewSidebar.classList.add('is-open')
-    catalogueNewMobileFiltersOverlay.hidden = false
-    if (typeof lockScroll === 'function') lockScroll()
-  }
-  const closeMobileFiltersDrawer = () => {
-    if (!catalogueNewSidebar || !catalogueNewMobileFiltersOverlay) return
-    catalogueNewSidebar.classList.remove('is-open')
-    catalogueNewMobileFiltersOverlay.hidden = true
-    if (typeof unlockScroll === 'function') unlockScroll()
-  }
   if (catalogueNewMobileFiltersOpen) {
-    catalogueNewMobileFiltersOpen.addEventListener('click', openMobileFiltersDrawer)
+    catalogueNewMobileFiltersOpen.addEventListener('click', () => {
+      openCatalogMobileFiltersDrawer(mobileFiltersElements, mobileFiltersOptions)
+    })
   }
   if (catalogueNewMobileFiltersClose) {
-    catalogueNewMobileFiltersClose.addEventListener('click', closeMobileFiltersDrawer)
+    catalogueNewMobileFiltersClose.addEventListener('click', () => {
+      closeCatalogMobileFiltersDrawer(mobileFiltersElements, mobileFiltersOptions)
+    })
   }
   if (catalogueNewMobileFiltersOverlay) {
-    catalogueNewMobileFiltersOverlay.addEventListener('click', closeMobileFiltersDrawer)
+    catalogueNewMobileFiltersOverlay.addEventListener('click', () => {
+      closeCatalogMobileFiltersDrawer(mobileFiltersElements, mobileFiltersOptions)
+    })
   }
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeMobileFiltersDrawer()
+    if (event.key === 'Escape') closeCatalogMobileFiltersDrawer(mobileFiltersElements, mobileFiltersOptions)
   })
 
   if (window.IntersectionObserver) {
