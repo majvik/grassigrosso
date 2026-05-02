@@ -1,6 +1,10 @@
 import './style.css'
 import { gsap } from 'gsap'
 import Lenis from 'lenis'
+import {
+  initCatalogExclusiveAccordionState,
+  openCatalogAccordionGroupExclusive,
+} from './catalog/catalog-accordion'
 import { fetchCatalogFilterGroups, fetchCatalogHeroFeed, fetchCatalogProducts } from './catalog/catalog-api'
 import { buildCatalogueCardHtml } from './catalog/catalog-card'
 import { readCatalogueCardMeta } from './catalog/catalog-card-meta'
@@ -41,6 +45,7 @@ import {
   closeCatalogMobileFiltersDrawer,
   openCatalogMobileFiltersDrawer,
 } from './catalog/catalog-mobile-filters'
+import { initCatalogViewToggle } from './catalog/catalog-view-toggle'
 
 if (document.querySelector('[data-react-root]')) {
   await import('./react-entry')
@@ -1085,35 +1090,6 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     syncCatalogueFilterUi(catalogueNewSidebar, state, resolveSizeSelectMenu)
   }
 
-  function setAccordionGroupExpanded(groupEl, expanded) {
-    if (!groupEl) return
-    const trigger = groupEl.querySelector('.catalogue-new-filter-accordion-trigger')
-    const panel = groupEl.querySelector('.catalogue-new-filter-accordion-panel')
-    if (!trigger || !panel) return
-    trigger.setAttribute('aria-expanded', expanded ? 'true' : 'false')
-    panel.hidden = !expanded
-  }
-
-  function openAccordionGroupExclusive(groupElToOpen) {
-    const allGroups = catalogueNewSidebar.querySelectorAll('.catalogue-new-filter-group')
-    allGroups.forEach((groupEl) => {
-      const shouldExpand = groupEl === groupElToOpen
-      setAccordionGroupExpanded(groupEl, shouldExpand)
-    })
-  }
-
-  function initExclusiveAccordionState() {
-    const groups = [...catalogueNewSidebar.querySelectorAll('.catalogue-new-filter-group')]
-    const accordionGroups = groups.filter((groupEl) => groupEl.querySelector('.catalogue-new-filter-accordion-trigger'))
-    if (accordionGroups.length === 0) return
-    const firstExpanded =
-      accordionGroups.find((groupEl) => {
-        const trigger = groupEl.querySelector('.catalogue-new-filter-accordion-trigger')
-        return trigger?.getAttribute('aria-expanded') === 'true'
-      }) || accordionGroups[0]
-    openAccordionGroupExclusive(firstExpanded)
-  }
-
   function applyFilters() {
     const favSet = readCatalogueFavourites()
     matchedCards = []
@@ -1235,7 +1211,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     if (!groupEl) return
     const expanded = trigger.getAttribute('aria-expanded') === 'true'
     if (expanded) return
-    openAccordionGroupExclusive(groupEl)
+    openCatalogAccordionGroupExclusive(catalogueNewSidebar, groupEl)
   })
 
   const closeSizeSelectMenus = () => {
@@ -1672,7 +1648,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   applySorting()
   syncUiFromState()
-  initExclusiveAccordionState()
+  initCatalogExclusiveAccordionState(catalogueNewSidebar)
   syncFilterOptionsFromCards()
   applyFilters()
   loadCatalogueFiltersFromStrapi()
@@ -1681,25 +1657,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
 const catalogueNewViewButtons = document.querySelectorAll('.catalogue-new-view-btn')
 if (catalogueNewViewButtons.length > 0) {
-  const catalogueNewCards = document.querySelector('.catalogue-new-cards')
-
-  catalogueNewViewButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      catalogueNewViewButtons.forEach((item) => {
-        const isActive = item === button
-        item.classList.toggle('is-active', isActive)
-        if (isActive) {
-          item.setAttribute('aria-pressed', 'true')
-        } else {
-          item.setAttribute('aria-pressed', 'false')
-        }
-      })
-
-      if (catalogueNewCards) {
-        catalogueNewCards.classList.toggle('is-list-view', button.dataset.view === 'list')
-      }
-    })
-  })
+  initCatalogViewToggle([...catalogueNewViewButtons], document.querySelector('.catalogue-new-cards'))
 }
 
 const catalogueImageModal = document.getElementById('catalogueImageModal')
