@@ -4,7 +4,13 @@ import Lenis from 'lenis'
 import { fetchCatalogFilterGroups, fetchCatalogHeroFeed, fetchCatalogProducts } from './catalog/catalog-api'
 import { buildCatalogueCardHtml } from './catalog/catalog-card'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog/catalog-favourites'
-import { normalizeCatalogFilterOptions } from './catalog/catalog-filter-options'
+import {
+  applyAvailableFilterOptions,
+  renderCatalogueFilterGroups as renderCatalogueFilterGroupsInto,
+  setSingleChipSelection as setSingleChipSelectionInto,
+  syncCatalogFilterDependencies,
+  syncCatalogueFilterUi,
+} from './catalog/catalog-filter-dom'
 import {
   CATALOG_MULTI_FILTER_GROUPS,
   applyCatalogChipFilter,
@@ -926,78 +932,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       .filter(Boolean)
   }
 
-  function createCatalogueFilterButton(className, attrs, label) {
-    const button = document.createElement('button')
-    button.type = 'button'
-    button.className = className
-    Object.entries(attrs).forEach(([name, value]) => {
-      button.setAttribute(name, String(value))
-    })
-    button.textContent = label
-    return button
-  }
-
-  function renderCatalogueChipOptions(groupName, options, allLabel) {
-    const normalized = normalizeCatalogFilterOptions(options)
-    if (!normalized.length) return false
-    const group = catalogueNewSidebar.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
-    const list = group?.querySelector('.catalogue-new-filter-list')
-    if (!list) return false
-    list.replaceChildren(
-      createCatalogueFilterButton(
-        'catalogue-new-chip is-active',
-        { 'data-filter-group': groupName, 'data-value': 'all' },
-        allLabel
-      ),
-      ...normalized.map((option) => createCatalogueFilterButton(
-        'catalogue-new-chip',
-        { 'data-filter-group': groupName, 'data-value': option.value },
-        option.label
-      ))
-    )
-    return true
-  }
-
-  function renderCatalogueSizeOptions(options) {
-    const normalized = normalizeCatalogFilterOptions(options)
-    if (!normalized.length) return false
-    const sizeSelect = catalogueNewSidebar.querySelector('.catalogue-new-size-select[data-size-group="size"]')
-    const menu = sizeSelect?.querySelector('.catalogue-new-size-select-menu')
-    if (!menu) return false
-    const searchRow = menu.querySelector('.catalogue-new-size-select-search-row')
-    const allRow = document.createElement('li')
-    allRow.appendChild(createCatalogueFilterButton(
-      'catalogue-new-size-select-option is-active',
-      { 'data-value': 'all' },
-      'Любой'
-    ))
-    const rows = [allRow]
-    if (searchRow) rows.push(searchRow)
-    normalized.forEach((option) => {
-      const row = document.createElement('li')
-      row.appendChild(createCatalogueFilterButton(
-        'catalogue-new-size-select-option',
-        { 'data-value': normalizeCatalogSizeValue(option.value) || option.value },
-        option.label
-      ))
-      rows.push(row)
-    })
-    menu.replaceChildren(...rows)
-    return true
-  }
-
   function renderCatalogueFilterGroups(groups) {
-    if (!groups || typeof groups !== 'object') return false
-    const rendered = [
-      renderCatalogueChipOptions('collection', groups.collection, 'Все коллекции'),
-      renderCatalogueSizeOptions(groups.size),
-      renderCatalogueChipOptions('firmness', groups.firmness, 'Любая'),
-      renderCatalogueChipOptions('type', groups.type, 'Любая'),
-      renderCatalogueChipOptions('loadRange', groups.loadRange, 'Любая'),
-      renderCatalogueChipOptions('heightRange', groups.heightRange, 'Любая'),
-      renderCatalogueChipOptions('fillings', groups.fillings, 'Любая'),
-      renderCatalogueChipOptions('features', groups.features, 'Любые'),
-    ].some(Boolean)
+    const rendered = renderCatalogueFilterGroupsInto(catalogueNewSidebar, groups)
     if (!rendered) return false
     syncUiFromState()
     syncFilterOptionsFromCards()
@@ -1214,76 +1150,15 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   function syncFilterOptionsFromCards() {
     if (!cardMeta.length) return
     const available = collectAvailableCatalogFilters(cardMeta)
-
-    const toggleBySet = (selector, allowedSet) => {
-      catalogueNewSidebar.querySelectorAll(selector).forEach((el) => {
-        const value = String(el.dataset.value || '')
-        const visible = value === 'all' || allowedSet.has(value)
-        el.dataset.available = visible ? '1' : '0'
-        const filteredOut = el.dataset.autocompleteHidden === '1'
-        const shouldHide = !visible || filteredOut
-        el.hidden = shouldHide
-        const optionRow = el.closest('li')
-        if (optionRow) optionRow.hidden = shouldHide
-      })
-    }
-
-    toggleBySet('.catalogue-new-chip[data-filter-group="collection"]', available.collection)
-    toggleBySet('.catalogue-new-chip[data-filter-group="firmness"]', available.firmness)
-    toggleBySet('.catalogue-new-chip[data-filter-group="type"]', available.type)
-    toggleBySet('.catalogue-new-chip[data-filter-group="loadRange"]', available.loadRange)
-    toggleBySet('.catalogue-new-chip[data-filter-group="heightRange"]', available.heightRange)
-    toggleBySet('.catalogue-new-chip[data-filter-group="fillings"]', available.fillings)
-    toggleBySet('.catalogue-new-chip[data-filter-group="features"]', available.features)
-    toggleBySet('.catalogue-new-size-select[data-size-group="size"] .catalogue-new-size-select-option', available.size)
-
-    if (state.collection !== 'all' && !available.collection.has(state.collection)) state.collection = 'all'
-    state.loadRange.forEach((value) => { if (!available.loadRange.has(value)) state.loadRange.delete(value) })
-    state.heightRange.forEach((value) => { if (!available.heightRange.has(value)) state.heightRange.delete(value) })
-    state.firmness.forEach((value) => { if (!available.firmness.has(value)) state.firmness.delete(value) })
-    state.type.forEach((value) => { if (!available.type.has(value)) state.type.delete(value) })
-    state.size.forEach((value) => { if (!available.size.has(value)) state.size.delete(value) })
-    state.fillings.forEach((value) => { if (!available.fillings.has(value)) state.fillings.delete(value) })
-    state.features.forEach((value) => { if (!available.features.has(value)) state.features.delete(value) })
+    applyAvailableFilterOptions(catalogueNewSidebar, state, available)
     syncUiFromState()
   }
 
-  function setSingleChipSelection(groupName, value) {
-    const group = catalogueNewSidebar.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
-    if (!group) return
-    group.querySelectorAll(`.catalogue-new-chip[data-filter-group="${groupName}"]`).forEach((chip) => {
-      chip.classList.toggle('is-active', chip.dataset.value === value)
-    })
-  }
-
-  function setFilterGroupDisabled(groupName, disabled) {
-    const group = catalogueNewSidebar.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
-    if (!group) return
-    group.classList.toggle('is-disabled', disabled)
-  }
-
   function syncFilterDependencies() {
-    const topperOnly = state.type.size === 1 && state.type.has('topper')
-    if (topperOnly) state.loadRange.clear()
-    setFilterGroupDisabled('loadRange', topperOnly)
+    syncCatalogFilterDependencies(catalogueNewSidebar, state)
   }
 
   function syncUiFromState() {
-    setSingleChipSelection('collection', state.collection)
-    const setMultiChipSelection = (groupName, targetSet) => {
-      catalogueNewSidebar.querySelectorAll(`.catalogue-new-chip[data-filter-group="${groupName}"]`).forEach((chip) => {
-        const chipValue = String(chip.dataset.value || '')
-        const isAll = chipValue === 'all'
-        chip.classList.toggle('is-active', isAll ? targetSet.size === 0 : targetSet.has(chipValue))
-      })
-    }
-    setMultiChipSelection('firmness', state.firmness)
-    setMultiChipSelection('type', state.type)
-    setMultiChipSelection('loadRange', state.loadRange)
-    setMultiChipSelection('heightRange', state.heightRange)
-    setMultiChipSelection('fillings', state.fillings)
-    setMultiChipSelection('features', state.features)
-    const sizeSelect = catalogueNewSidebar.querySelector('.catalogue-new-size-select[data-size-group="size"]')
     const resolveSizeSelectMenu = (sizeSelectEl) => {
       if (!sizeSelectEl) return null
       const localMenu = sizeSelectEl.querySelector('.catalogue-new-size-select-menu')
@@ -1291,39 +1166,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       if (activeSizeSelectHost === sizeSelectEl && activeSizeSelectMenu) return activeSizeSelectMenu
       return null
     }
-    const setSizeSelectValue = (sizeSelectEl, targetSet) => {
-      if (!sizeSelectEl) return
-      const menu = resolveSizeSelectMenu(sizeSelectEl)
-      const trigger = sizeSelectEl.querySelector('.catalogue-new-size-select-trigger')
-      const options = menu ? [...menu.querySelectorAll('.catalogue-new-size-select-option')] : []
-      options.forEach((option) => {
-        const value = String(option.dataset.value || '')
-        const isAll = value === 'all'
-        option.classList.toggle('is-active', isAll ? targetSet.size === 0 : targetSet.has(value))
-      })
-      if (trigger) {
-        if (!targetSet.size) {
-          trigger.textContent = 'Любой'
-        } else {
-          const labels = options
-            .filter((option) => {
-              const value = String(option.dataset.value || '')
-              return value !== 'all' && targetSet.has(value)
-            })
-            .map((option) => option.textContent.trim())
-            .filter(Boolean)
-          if (labels.length === 1) {
-            trigger.textContent = labels[0]
-          } else if (labels.length > 1) {
-            trigger.textContent = `${labels[0]} +${labels.length - 1}`
-          } else {
-            trigger.textContent = 'Любой'
-          }
-        }
-      }
-    }
-    setSizeSelectValue(sizeSelect, state.size)
-    syncFilterDependencies()
+    syncCatalogueFilterUi(catalogueNewSidebar, state, resolveSizeSelectMenu)
   }
 
   function setAccordionGroupExpanded(groupEl, expanded) {
@@ -1469,7 +1312,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
         if (applyCatalogChipFilter(state, groupName, value) && isMultiGroup) {
           syncUiFromState()
         } else if (groupName === 'collection') {
-          setSingleChipSelection(groupName, value)
+          setSingleChipSelectionInto(catalogueNewSidebar, groupName, value)
         }
         syncFilterDependencies()
         visibleCardsLimit = CATALOGUE_PAGE_SIZE
