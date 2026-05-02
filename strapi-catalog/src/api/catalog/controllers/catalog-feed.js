@@ -87,7 +87,18 @@ module.exports = {
 
     const rows = await strapi.db.query('api::product.product').findMany({
       where: { is_active: true },
-      populate: { collection: true, tags: true, media: true, features: true, sizes: true },
+      populate: {
+        collection: true,
+        tags: true,
+        media: true,
+        features: true,
+        sizes: true,
+        firmness_option: true,
+        mattress_type_option: true,
+        load_range_option: true,
+        height_range_option: true,
+        filling_options: true,
+      },
       orderBy: [{ sort_order: 'asc' }, { id: 'asc' }]
     });
 
@@ -126,12 +137,12 @@ module.exports = {
       slug: row.slug || '',
       collectionName: row.collection?.name || '',
       collectionSlug: row.collection?.slug || '',
-      firmness: mapFirmness(row.firmness || ''),
-      mattressType: mapMattressType(row.mattress_type || ''),
+      firmness: row.firmness_option?.slug || mapFirmness(row.firmness || ''),
+      mattressType: row.mattress_type_option?.slug || mapMattressType(row.mattress_type || ''),
       heightCm: Number(row.height_cm || 0),
       maxLoadKg: Number(row.max_load_kg || 0),
-      loadRange: mapLoadRange(row.load_range || ''),
-      heightRange: mapHeightRange(row.height_range || ''),
+      loadRange: row.load_range_option?.slug || mapLoadRange(row.load_range || ''),
+      heightRange: row.height_range_option?.slug || mapHeightRange(row.height_range || ''),
       sizes: (() => {
         const relationSizes = Array.isArray(row.sizes)
           ? row.sizes
@@ -140,7 +151,9 @@ module.exports = {
           : []
         return relationSizes.length ? relationSizes : buildSizesFromLegacy(row)
       })(),
-      fillings: normalizeStringList(row.fillings).map(mapFilling),
+      fillings: Array.isArray(row.filling_options) && row.filling_options.length
+        ? row.filling_options.map((item) => item.slug).filter(Boolean)
+        : normalizeStringList(row.fillings).map(mapFilling),
       features: Array.isArray(row.features) ? normalizeFeatures(row.features) : normalizeStringList(row.features).map(mapFeature),
       imageUrl: row.media?.url || row.image_url || '',
       imageAlt: row.media?.alternativeText || (row.name ? `Коллекция ${row.name}` : 'Изображение товара'),

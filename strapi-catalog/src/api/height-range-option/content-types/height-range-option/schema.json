@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "height_range_options",
+  "info": {
+    "singularName": "height-range-option",
+    "pluralName": "height-range-options",
+    "displayName": "Диапазон высоты"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true,
+      "unique": true
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

@@ -32,12 +32,24 @@
       "enum": ["мягкий", "средний", "жесткий", "разная_жесткость_сторон"],
       "default": "средний"
     },
+    "firmness_option": {
+      "displayName": "Жесткость (справочник)",
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::firmness-option.firmness-option"
+    },
     "mattress_type": {
       "displayName": "Тип конструкции",
       "type": "enumeration",
       "required": true,
       "enum": ["пружинный", "беспружинный", "топер", "двухсторонние", "односторонние"],
       "default": "беспружинный"
+    },
+    "mattress_type_option": {
+      "displayName": "Тип конструкции (справочник)",
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::mattress-type-option.mattress-type-option"
     },
     "height_cm": {
       "type": "decimal",
@@ -52,10 +64,22 @@
       "type": "enumeration",
       "enum": ["до_120_кг", "до_160_кг", "свыше_160_кг"]
     },
+    "load_range_option": {
+      "displayName": "Макс. нагрузка на спальное место (справочник)",
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::load-range-option.load-range-option"
+    },
     "height_range": {
       "displayName": "Высота матраса",
       "type": "enumeration",
       "enum": ["компактные_до_16_см", "средние_16_20_см", "высокие_свыше_20_см"]
+    },
+    "height_range_option": {
+      "displayName": "Высота матраса (справочник)",
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::height-range-option.height-range-option"
     },
     "sizes": {
       "displayName": "Стандартизированные размеры",
@@ -68,6 +92,12 @@
       "displayName": "Состав / Наполнитель",
       "type": "enumeration",
       "enum": ["кокос", "латекс", "орто_пена", "с_эффектом_памяти", "нано_пена", "форплит"]
+    },
+    "filling_options": {
+      "displayName": "Состав / Наполнитель (справочник)",
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::filling-option.filling-option"
     },
     "features": {
       "displayName": "Дополнительные особенности",

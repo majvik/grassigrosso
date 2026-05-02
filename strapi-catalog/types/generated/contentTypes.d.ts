@@ -533,6 +533,142 @@ export interface ApiFeatureOptionFeatureOption
   };
 }
 
+export interface ApiFillingOptionFillingOption
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'filling_options';
+  info: {
+    displayName: '\u041D\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C';
+    pluralName: 'filling-options';
+    singularName: 'filling-option';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::filling-option.filling-option'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFirmnessOptionFirmnessOption
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'firmness_options';
+  info: {
+    displayName: '\u0416\u0435\u0441\u0442\u043A\u043E\u0441\u0442\u044C';
+    pluralName: 'firmness-options';
+    singularName: 'firmness-option';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::firmness-option.firmness-option'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiHeightRangeOptionHeightRangeOption
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'height_range_options';
+  info: {
+    displayName: '\u0414\u0438\u0430\u043F\u0430\u0437\u043E\u043D \u0432\u044B\u0441\u043E\u0442\u044B';
+    pluralName: 'height-range-options';
+    singularName: 'height-range-option';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::height-range-option.height-range-option'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiLoadRangeOptionLoadRangeOption
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'load_range_options';
+  info: {
+    displayName: '\u0414\u0438\u0430\u043F\u0430\u0437\u043E\u043D \u043D\u0430\u0433\u0440\u0443\u0437\u043A\u0438';
+    pluralName: 'load-range-options';
+    singularName: 'load-range-option';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::load-range-option.load-range-option'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiMattressSizeMattressSize
   extends Struct.CollectionTypeSchema {
   collectionName: 'mattress_sizes';
@@ -569,6 +705,40 @@ export interface ApiMattressSizeMattressSize
   };
 }
 
+export interface ApiMattressTypeOptionMattressTypeOption
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'mattress_type_options';
+  info: {
+    displayName: '\u0422\u0438\u043F \u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u0438';
+    pluralName: 'mattress-type-options';
+    singularName: 'mattress-type-option';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::mattress-type-option.mattress-type-option'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
@@ -591,6 +761,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::feature-option.feature-option'
     >;
+    filling_options: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::filling-option.filling-option'
+    >;
     fillings: Schema.Attribute.Enumeration<
       [
         '\u043A\u043E\u043A\u043E\u0441',
@@ -611,6 +785,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'\u0441\u0440\u0435\u0434\u043D\u0438\u0439'>;
+    firmness_option: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::firmness-option.firmness-option'
+    >;
     height_cm: Schema.Attribute.Decimal & Schema.Attribute.Required;
     height_range: Schema.Attribute.Enumeration<
       [
@@ -618,6 +796,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
         '\u0441\u0440\u0435\u0434\u043D\u0438\u0435_16_20_\u0441\u043C',
         '\u0432\u044B\u0441\u043E\u043A\u0438\u0435_\u0441\u0432\u044B\u0448\u0435_20_\u0441\u043C',
       ]
+    >;
+    height_range_option: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::height-range-option.height-range-option'
     >;
     image_url: Schema.Attribute.String;
     is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
@@ -627,6 +809,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
         '\u0434\u043E_160_\u043A\u0433',
         '\u0441\u0432\u044B\u0448\u0435_160_\u043A\u0433',
       ]
+    >;
+    load_range_option: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::load-range-option.load-range-option'
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -645,6 +831,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'\u0431\u0435\u0441\u043F\u0440\u0443\u0436\u0438\u043D\u043D\u044B\u0439'>;
+    mattress_type_option: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::mattress-type-option.mattress-type-option'
+    >;
     max_load_kg: Schema.Attribute.Integer & Schema.Attribute.Required;
     media: Schema.Attribute.Media<'images'>;
     name: Schema.Attribute.String & Schema.Attribute.Required;
@@ -1206,7 +1396,12 @@ declare module '@strapi/strapi' {
       'api::catalog-new-hero.catalog-new-hero': ApiCatalogNewHeroCatalogNewHero;
       'api::collection.collection': ApiCollectionCollection;
       'api::feature-option.feature-option': ApiFeatureOptionFeatureOption;
+      'api::filling-option.filling-option': ApiFillingOptionFillingOption;
+      'api::firmness-option.firmness-option': ApiFirmnessOptionFirmnessOption;
+      'api::height-range-option.height-range-option': ApiHeightRangeOptionHeightRangeOption;
+      'api::load-range-option.load-range-option': ApiLoadRangeOptionLoadRangeOption;
       'api::mattress-size.mattress-size': ApiMattressSizeMattressSize;
+      'api::mattress-type-option.mattress-type-option': ApiMattressTypeOptionMattressTypeOption;
       'api::product.product': ApiProductProduct;
       'api::tag.tag': ApiTagTag;
       'plugin::content-releases.release': PluginContentReleasesRelease;
