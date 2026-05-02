@@ -4,6 +4,14 @@ import Lenis from 'lenis'
 import { fetchCatalogFilterGroups, fetchCatalogHeroFeed, fetchCatalogProducts } from './catalog/catalog-api'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog/catalog-favourites'
 import { normalizeCatalogFilterOptions } from './catalog/catalog-filter-options'
+import {
+  STANDARD_MATTRESS_SIZES,
+  STANDARD_MATTRESS_SIZE_SET,
+  buildStandardMattressSizesFromLegacy,
+  filterStandardMattressSizes,
+  formatCatalogSizeList,
+  normalizeCatalogSizeValue,
+} from './catalog/catalog-sizes'
 
 if (document.querySelector('[data-react-root]')) {
   await import('./react-entry')
@@ -937,27 +945,6 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   infiniteSentinel.className = 'catalogue-new-infinite-sentinel'
   infiniteSentinel.setAttribute('aria-hidden', 'true')
   catalogueNewCardsRoot.insertAdjacentElement('afterend', infiniteSentinel)
-  const STANDARD_MATTRESS_SIZES = [
-    '80x190',
-    '80x200',
-    '90x190',
-    '90x200',
-    '120x190',
-    '120x200',
-    '140x190',
-    '140x200',
-    '160x190',
-    '160x200',
-    '180x200',
-    '200x200',
-    '140x220',
-    '160x220',
-    '180x220',
-    '200x220',
-    '220x220',
-  ]
-  const STANDARD_MATTRESS_SIZE_SET = new Set(STANDARD_MATTRESS_SIZES)
-
   const state = {
     collection: 'all',
     firmness: new Set(),
@@ -976,14 +963,6 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       .split(',')
       .map((item) => item.trim())
       .filter(Boolean)
-  }
-
-  function normalizeSizeValue(value) {
-    const raw = String(value || '').trim().toLowerCase()
-    if (!raw) return ''
-    const match = raw.match(/(\d+)\D+(\d+)/)
-    if (!match) return ''
-    return `${match[1]}x${match[2]}`
   }
 
   function createCatalogueFilterButton(className, attrs, label) {
@@ -1037,7 +1016,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       const row = document.createElement('li')
       row.appendChild(createCatalogueFilterButton(
         'catalogue-new-size-select-option',
-        { 'data-value': normalizeSizeValue(option.value) || option.value },
+        { 'data-value': normalizeCatalogSizeValue(option.value) || option.value },
         option.label
       ))
       rows.push(row)
@@ -1068,21 +1047,9 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   function parseSizesToSet(value) {
     return new Set(
       parseCsvDataset(value)
-        .map(normalizeSizeValue)
+        .map(normalizeCatalogSizeValue)
         .filter((size) => STANDARD_MATTRESS_SIZE_SET.has(size))
     )
-  }
-
-  function buildStandardSizesFromLegacy(widthsValue, lengthsValue) {
-    const widths = parseCsvDataset(widthsValue).map((v) => String(v || '').replace(/\D+/g, '')).filter(Boolean)
-    const lengths = parseCsvDataset(lengthsValue).map((v) => String(v || '').replace(/\D+/g, '')).filter(Boolean)
-    const combos = []
-    widths.forEach((width) => {
-      lengths.forEach((length) => {
-        combos.push(`${width}x${length}`)
-      })
-    })
-    return new Set(combos.filter((size) => STANDARD_MATTRESS_SIZE_SET.has(size)))
   }
 
   function readCardMeta(card, index) {
@@ -1101,7 +1068,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       sizes: (() => {
         const sizes = parseSizesToSet(dataset.sizes)
         if (sizes.size) return sizes
-        const legacySizes = buildStandardSizesFromLegacy(dataset.widths, dataset.lengths)
+        const legacySizes = buildStandardMattressSizesFromLegacy(dataset.widths, dataset.lengths)
         return legacySizes.size ? legacySizes : new Set(STANDARD_MATTRESS_SIZES)
       })(),
       fillings: new Set(parseCsvDataset(dataset.fillings)),
@@ -1247,14 +1214,14 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     const tags = Array.isArray(item.tags) ? item.tags.filter(Boolean).slice(0, 3) : []
     const loadRange = String(item.loadRange || '').trim()
     const heightRange = String(item.heightRange || '').trim()
-    const sizesFromItem = Array.isArray(item.sizes) ? item.sizes.map(normalizeSizeValue).filter(Boolean) : []
+    const sizesFromItem = Array.isArray(item.sizes) ? filterStandardMattressSizes(item.sizes) : []
     const sizesFromLegacy = (() => {
       const widths = Array.isArray(item.widths) ? item.widths.map((v) => String(v)) : []
       const lengths = Array.isArray(item.lengths) ? item.lengths.map((v) => String(v)) : []
-      return [...buildStandardSizesFromLegacy(widths.join(','), lengths.join(','))]
+      return [...buildStandardMattressSizesFromLegacy(widths.join(','), lengths.join(','))]
     })()
     const sizes = sizesFromItem.length
-      ? sizesFromItem.filter((size) => STANDARD_MATTRESS_SIZE_SET.has(size))
+      ? sizesFromItem
       : (sizesFromLegacy.length ? sizesFromLegacy : [...STANDARD_MATTRESS_SIZES])
     const fillings = Array.isArray(item.fillings) ? item.fillings.map((v) => String(v)) : []
     const features = Array.isArray(item.features) ? item.features.map((v) => String(v)) : []
@@ -2295,30 +2262,6 @@ if (
   catalogueImageModalFavouriteBtn &&
   catalogueCardsRootForModal
 ) {
-  const MODAL_STANDARD_MATTRESS_SIZES = [
-    '80x190', '80x200', '90x190', '90x200',
-    '120x190', '120x200', '140x190', '140x200',
-    '160x190', '160x200', '180x200', '200x200',
-    '140x220', '160x220', '180x220', '200x220', '220x220',
-  ]
-  const MODAL_STANDARD_MATTRESS_SIZE_SET = new Set(MODAL_STANDARD_MATTRESS_SIZES)
-  const normalizeModalSizeValue = (value) => String(value || '').replace(/\s+/g, '').replace(/[×xхХ]/g, 'x').toLowerCase()
-  const buildModalStandardSizesFromLegacy = (widthsValue, lengthsValue) => {
-    const parseDimensionList = (raw) =>
-      String(raw || '')
-        .split(',')
-        .map((item) => item.trim())
-        .filter(Boolean)
-        .map((item) => item.replace(/[^\d]/g, ''))
-        .filter(Boolean)
-    const widths = parseDimensionList(widthsValue)
-    const lengths = parseDimensionList(lengthsValue)
-    if (!widths.length || !lengths.length) return new Set()
-    const combos = []
-    widths.forEach((w) => lengths.forEach((l) => combos.push(normalizeModalSizeValue(`${w}x${l}`))))
-    return new Set(combos.filter((size) => MODAL_STANDARD_MATTRESS_SIZE_SET.has(size)))
-  }
-
   let activeModalProductSlug = ''
   let activeModalProductTitle = ''
   const modalLabelMaps = {
@@ -2382,11 +2325,7 @@ if (
 
   const formatSizeList = (values) => {
     if (!values.length) return ''
-    return values
-      .map((value) => normalizeModalSizeValue(value))
-      .filter((value) => MODAL_STANDARD_MATTRESS_SIZE_SET.has(value))
-      .map((value) => value.replace('x', ' × '))
-      .join(', ')
+    return formatCatalogSizeList(values)
   }
 
   const clearModalSpecs = () => {
@@ -2444,8 +2383,8 @@ if (
     const sizes = (() => {
       const parsed = parseCsv(dataset.sizes)
       if (parsed.length) return parsed
-      const legacy = [...buildModalStandardSizesFromLegacy(dataset.widths, dataset.lengths)]
-      return legacy.length ? legacy : [...MODAL_STANDARD_MATTRESS_SIZES]
+      const legacy = [...buildStandardMattressSizesFromLegacy(dataset.widths, dataset.lengths)]
+      return legacy.length ? legacy : [...STANDARD_MATTRESS_SIZES]
     })()
     const fillings = parseCsv(dataset.fillings).map((v) => mapValue(v, modalLabelMaps.fillings)).join(', ')
     const features = parseCsv(dataset.features).map((v) => mapValue(v, modalLabelMaps.features)).join(', ')
