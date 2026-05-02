@@ -15,7 +15,8 @@
     "check:routes": "node scripts/check-routing-contracts.mjs",
     "preview": "vite preview",
     "new-page": "node scripts/new-page.mjs",
-    "start": "node server.cjs"
+    "start": "node server.cjs",
+    "check:catalog-api": "node scripts/check-catalog-api.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
