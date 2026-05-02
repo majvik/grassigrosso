@@ -88,6 +88,26 @@ const pageNames = {
 
 ## Strapi (каталог): медиа, Docker и админка
 
+### Товары и фильтры каталога
+
+- Товары каталога хранятся в Strapi `Product`, а не во фронтовом JS. Статические карточки в [catalog.html](catalog.html) остаются только fallback на случай недоступности Strapi.
+- Фронт не обращается к Strapi напрямую. Публичные backend endpoint'ы:
+  - `GET /api/catalog/products` → товары из Strapi `GET /api/catalog-feed`
+  - `GET /api/catalog/hero-slides` → hero-слайды из Strapi `GET /api/catalog-hero-feed`
+  - `GET /api/catalog/filters` → справочники фильтров из Strapi `GET /api/catalog-filter-feed`
+- Фильтры должны редактироваться через Strapi-справочники, а не хардкодиться в HTML/JS:
+  - `Collection`
+  - `Mattress Size`
+  - `Firmness Option`
+  - `Mattress Type Option`
+  - `Load Range Option`
+  - `Height Range Option`
+  - `Filling Option`
+  - `Feature Option`
+- В `Product` старые enum-поля оставлены как fallback, но новые изменения должны заполнять relation-поля на справочники. `strapi-catalog/src/index.js` при старте создаёт базовые справочники и backfill'ит существующие товары идемпотентно.
+- Slug справочника — это публичный контракт фильтра для фронта (`memoryEffect`, `upTo160`, `classic` и т.п.). Название можно менять в админке, slug менять только осознанно: это влияет на фильтрацию, избранное/шары и совместимость старых данных.
+- После изменения схемы/справочников: перезапустить Strapi, проверить `GET /api/catalog/filters`, `GET /api/catalog/products`, затем smoke `/catalog`.
+
 ### Деплой из git (Timeweb и т.п.)
 
 - Медиа каталога лежат в **`strapi-catalog/public/uploads/`** и **входят в репозиторий**: после `git push` образ собирается из clone, `COPY . .` в [Dockerfile](Dockerfile) кладёт те же файлы в контейнер — **`/uploads/…`** начинает отдаваться без ручного rsync.
@@ -118,6 +138,7 @@ const pageNames = {
 Интеграция **Strapi** для каталога уже внедрена через backend proxy:
 - `GET /api/catalog/products`
 - `GET /api/catalog/hero-slides`
+- `GET /api/catalog/filters`
 
 Ключевые инварианты:
 - фронтенд не ходит в Strapi напрямую (используем backend endpoint'ы);
