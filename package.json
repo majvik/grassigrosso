@@ -17,7 +17,8 @@
     "preview": "vite preview",
     "new-page": "node scripts/new-page.mjs",
     "start": "node server.cjs",
-    "check:catalog-api": "node scripts/check-catalog-api.mjs"
+    "check:catalog-api": "node scripts/check-catalog-api.mjs",
+    "check:catalog-ui": "node scripts/check-catalog-ui.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

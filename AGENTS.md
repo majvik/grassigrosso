@@ -108,6 +108,7 @@ const pageNames = {
 - Slug справочника — это публичный контракт фильтра для фронта (`memoryEffect`, `upTo160`, `classic` и т.п.). Название можно менять в админке, slug менять только осознанно: это влияет на фильтрацию, избранное/шары и совместимость старых данных.
 - После изменения схемы/справочников: перезапустить Strapi, проверить `GET /api/catalog/filters`, `GET /api/catalog/products`, затем smoke `/catalog`.
 - Автоматическая проверка локального backend proxy: `npm run check:catalog-api` (по умолчанию `http://127.0.0.1:3000`, можно переопределить `CATALOG_API_BASE_URL`).
+- Браузерный smoke каталога при запущенных Vite/API/Strapi: `npm run check:catalog-ui` (по умолчанию `http://127.0.0.1:5177`, можно переопределить `CATALOG_UI_BASE_URL`; использует локальный Google Chrome headless).
 
 ### Деплой из git (Timeweb и т.п.)
 
