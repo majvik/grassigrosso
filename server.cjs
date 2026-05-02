@@ -877,6 +877,31 @@ app.get('/api/catalog/products', async (req, res) => {
   }
 });
 
+app.get('/api/catalog/filters', async (req, res) => {
+  if (!STRAPI_URL) {
+    return res.status(503).json({ error: 'STRAPI_URL is not configured' });
+  }
+
+  try {
+    const feedUrl = `${STRAPI_URL}/api/catalog-filter-feed`;
+    const response = await axios.get(feedUrl, { timeout: 10000 });
+    const groups = response.data?.groups && typeof response.data.groups === 'object'
+      ? response.data.groups
+      : {};
+    return res.json({
+      groups,
+      source: response.data?.source || 'strapi-catalog-filter-feed',
+    });
+  } catch (error) {
+    const details = extractAxiosErrorDetails(error);
+    console.error('❌ Ошибка загрузки фильтров каталога из Strapi:', details);
+    return res.status(502).json({
+      error: 'Failed to fetch catalog filters from Strapi',
+      details,
+    });
+  }
+});
+
 // Прокси медиа и админки Strapi: в dev тоже (иначе /uploads уходит в Vite и ломает каталог).
 if (STRAPI_URL) {
   const strapiProxy = createStrapiProxy();

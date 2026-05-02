@@ -1003,6 +1003,102 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     return `${match[1]}x${match[2]}`
   }
 
+  function normalizeCatalogFilterOptions(value) {
+    if (!Array.isArray(value)) return []
+    const seen = new Set()
+    return value
+      .map((item) => ({
+        value: String(item?.slug || '').trim(),
+        label: String(item?.name || '').trim(),
+        sortOrder: Number(item?.sortOrder || 0),
+      }))
+      .filter((item) => {
+        if (!item.value || !item.label || seen.has(item.value)) return false
+        seen.add(item.value)
+        return true
+      })
+      .sort((a, b) => a.sortOrder - b.sortOrder || a.label.localeCompare(b.label, 'ru'))
+  }
+
+  function createCatalogueFilterButton(className, attrs, label) {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.className = className
+    Object.entries(attrs).forEach(([name, value]) => {
+      button.setAttribute(name, String(value))
+    })
+    button.textContent = label
+    return button
+  }
+
+  function renderCatalogueChipOptions(groupName, options, allLabel) {
+    const normalized = normalizeCatalogFilterOptions(options)
+    if (!normalized.length) return false
+    const group = catalogueNewSidebar.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
+    const list = group?.querySelector('.catalogue-new-filter-list')
+    if (!list) return false
+    list.replaceChildren(
+      createCatalogueFilterButton(
+        'catalogue-new-chip is-active',
+        { 'data-filter-group': groupName, 'data-value': 'all' },
+        allLabel
+      ),
+      ...normalized.map((option) => createCatalogueFilterButton(
+        'catalogue-new-chip',
+        { 'data-filter-group': groupName, 'data-value': option.value },
+        option.label
+      ))
+    )
+    return true
+  }
+
+  function renderCatalogueSizeOptions(options) {
+    const normalized = normalizeCatalogFilterOptions(options)
+    if (!normalized.length) return false
+    const sizeSelect = catalogueNewSidebar.querySelector('.catalogue-new-size-select[data-size-group="size"]')
+    const menu = sizeSelect?.querySelector('.catalogue-new-size-select-menu')
+    if (!menu) return false
+    const searchRow = menu.querySelector('.catalogue-new-size-select-search-row')
+    const allRow = document.createElement('li')
+    allRow.appendChild(createCatalogueFilterButton(
+      'catalogue-new-size-select-option is-active',
+      { 'data-value': 'all' },
+      'Любой'
+    ))
+    const rows = [allRow]
+    if (searchRow) rows.push(searchRow)
+    normalized.forEach((option) => {
+      const row = document.createElement('li')
+      row.appendChild(createCatalogueFilterButton(
+        'catalogue-new-size-select-option',
+        { 'data-value': normalizeSizeValue(option.value) || option.value },
+        option.label
+      ))
+      rows.push(row)
+    })
+    menu.replaceChildren(...rows)
+    return true
+  }
+
+  function renderCatalogueFilterGroups(groups) {
+    if (!groups || typeof groups !== 'object') return false
+    const rendered = [
+      renderCatalogueChipOptions('collection', groups.collection, 'Все коллекции'),
+      renderCatalogueSizeOptions(groups.size),
+      renderCatalogueChipOptions('firmness', groups.firmness, 'Любая'),
+      renderCatalogueChipOptions('type', groups.type, 'Любая'),
+      renderCatalogueChipOptions('loadRange', groups.loadRange, 'Любая'),
+      renderCatalogueChipOptions('heightRange', groups.heightRange, 'Любая'),
+      renderCatalogueChipOptions('fillings', groups.fillings, 'Любая'),
+      renderCatalogueChipOptions('features', groups.features, 'Любые'),
+    ].some(Boolean)
+    if (!rendered) return false
+    syncUiFromState()
+    syncFilterOptionsFromCards()
+    applyFilters()
+    return true
+  }
+
   function parseSizesToSet(value) {
     return new Set(
       parseCsvDataset(value)
@@ -1241,6 +1337,17 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     const raw = String(item.collectionSlug || item.slug || '').trim().toLowerCase()
     if (raw === 'toppers' || raw === 'topers' || raw === 'topper') return 'topper'
     return raw
+  }
+
+  async function loadCatalogueFiltersFromStrapi() {
+    try {
+      const response = await fetch('/api/catalog/filters', { headers: { Accept: 'application/json' } })
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const payload = await response.json()
+      renderCatalogueFilterGroups(payload.groups)
+    } catch (err) {
+      console.warn('Catalogue filter feed failed, using static filter controls:', err)
+    }
   }
 
   async function loadCatalogueFromStrapi() {
@@ -2196,6 +2303,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   initExclusiveAccordionState()
   syncFilterOptionsFromCards()
   applyFilters()
+  loadCatalogueFiltersFromStrapi()
   loadCatalogueFromStrapi()
 }
 
