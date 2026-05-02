@@ -6,11 +6,11 @@ import { buildCatalogueCardHtml } from './catalog/catalog-card'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog/catalog-favourites'
 import { normalizeCatalogFilterOptions } from './catalog/catalog-filter-options'
 import { applyCatalogHeroFeed } from './catalog/catalog-hero'
+import { buildCatalogModalSpecs } from './catalog/catalog-modal'
 import {
   STANDARD_MATTRESS_SIZES,
   STANDARD_MATTRESS_SIZE_SET,
   buildStandardMattressSizesFromLegacy,
-  formatCatalogSizeList,
   normalizeCatalogSizeValue,
 } from './catalog/catalog-sizes'
 
@@ -2125,50 +2125,6 @@ if (
 ) {
   let activeModalProductSlug = ''
   let activeModalProductTitle = ''
-  const modalLabelMaps = {
-    firmness: {
-      soft: 'Мягкий',
-      medium: 'Средний',
-      hard: 'Жесткий',
-      dualFirmness: 'Разная жесткость сторон',
-    },
-    type: {
-      spring: 'Пружинный',
-      nospring: 'Беспружинный',
-      topper: 'Топер',
-      doubleSided: 'Двухсторонние',
-      singleSided: 'Односторонние',
-    },
-    loadRange: {
-      upTo120: 'до 120кг',
-      upTo160: 'до 160кг',
-      over160: 'без ограничений (свыше 160кг)',
-    },
-    heightRange: {
-      low: 'Компактные до 16 см',
-      mid: 'Средние 16-20 см',
-      high: 'Высокие свыше 20 см',
-    },
-    fillings: {
-      orthoFoam: 'Орто-пена',
-      memoryEffect: 'С эффектом памяти',
-      latex: 'Латекс',
-      coir: 'Кокосовая койра',
-      nanoFoam: 'Нано-пена',
-      forplit: 'Форплит',
-    },
-    features: {
-      removableCover: 'Съемный чехол',
-      winterSummer: 'Эффект зима-лето',
-      edgeSupport: 'Усиленный периметр',
-    },
-  }
-
-  const parseCsv = (value) =>
-    String(value || '')
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean)
 
   const readModalFavourites = () => {
     return readCatalogFavourites()
@@ -2176,17 +2132,6 @@ if (
 
   const writeModalFavourites = (set) => {
     writeCatalogFavourites(set)
-  }
-
-  const mapValue = (value, map) => {
-    const key = String(value || '').trim()
-    if (!key) return ''
-    return map[key] || key
-  }
-
-  const formatSizeList = (values) => {
-    if (!values.length) return ''
-    return formatCatalogSizeList(values)
   }
 
   const clearModalSpecs = () => {
@@ -2241,28 +2186,14 @@ if (
     activeModalProductSlug = String(dataset.productSlug || '').trim()
     activeModalProductTitle = title || 'Матрас'
     syncModalFavouriteState()
-    const sizes = (() => {
-      const parsed = parseCsv(dataset.sizes)
-      if (parsed.length) return parsed
-      const legacy = [...buildStandardMattressSizesFromLegacy(dataset.widths, dataset.lengths)]
-      return legacy.length ? legacy : [...STANDARD_MATTRESS_SIZES]
-    })()
-    const fillings = parseCsv(dataset.fillings).map((v) => mapValue(v, modalLabelMaps.fillings)).join(', ')
-    const features = parseCsv(dataset.features).map((v) => mapValue(v, modalLabelMaps.features)).join(', ')
 
     catalogueImageModalImg.setAttribute('src', src)
     catalogueImageModalImg.setAttribute('alt', alt || '')
     catalogueImageModalTitle.textContent = title || 'Матрас'
     clearModalSpecs()
-    appendModalSpec('Жесткость', mapValue(dataset.firmness, modalLabelMaps.firmness))
-    appendModalSpec('Тип матраса', mapValue(dataset.type, modalLabelMaps.type))
-    appendModalSpec('Высота', dataset.height ? `${dataset.height} см` : '')
-    appendModalSpec('Нагрузка', dataset.load ? `До ${dataset.load} кг` : '')
-    appendModalSpec('Макс. нагрузка на спальное место', mapValue(dataset.loadRange, modalLabelMaps.loadRange))
-    appendModalSpec('Высота матраса', mapValue(dataset.heightRange, modalLabelMaps.heightRange))
-    appendModalSpec('Размер', formatSizeList(sizes))
-    appendModalSpec('Наполнители', fillings)
-    appendModalSpec('Особенности', features)
+    buildCatalogModalSpecs(dataset).forEach((spec) => {
+      appendModalSpec(spec.label, spec.value)
+    })
     if (!catalogueImageModalSpecs.childElementCount) {
       catalogueImageModalSpecsEmpty.hidden = false
     }
