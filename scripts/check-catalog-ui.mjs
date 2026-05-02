@@ -155,6 +155,22 @@ try {
   if (!classic) failures.push('classic filter did not produce 26 results')
 
   await evaluate(`(() => {
+    const trigger = document.querySelector('.catalogue-new-size-select-trigger')
+    if (!trigger) return false
+    trigger.click()
+    const option = [...document.querySelectorAll('.catalogue-new-size-select-option')]
+      .find((item) => item.dataset.value === '90x200')
+    if (!option) return false
+    option.click()
+    return true
+  })()`)
+  const size = await waitFor('size filter applied', `(() => {
+    const result = document.querySelector('.catalogue-new-results strong')?.textContent?.trim()
+    return result === '8' ? { result } : false
+  })()`)
+  if (!size) failures.push('90x200 size filter did not produce 8 Classic results')
+
+  await evaluate(`(() => {
     const option = document.querySelector('.catalogue-new-sort-option[data-value="height-desc"]')
     if (!option) return false
     option.click()
