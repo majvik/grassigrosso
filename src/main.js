@@ -5,6 +5,11 @@ import { fetchCatalogFilterGroups, fetchCatalogHeroFeed, fetchCatalogProducts } 
 import { buildCatalogueCardHtml } from './catalog/catalog-card'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog/catalog-favourites'
 import { normalizeCatalogFilterOptions } from './catalog/catalog-filter-options'
+import {
+  collectAvailableCatalogFilters,
+  compareCatalogCardMeta,
+  matchesCatalogCardMeta,
+} from './catalog/catalog-filtering'
 import { applyCatalogHeroFeed } from './catalog/catalog-hero'
 import { buildCatalogModalSpecs } from './catalog/catalog-modal'
 import {
@@ -1188,27 +1193,11 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   function applySorting() {
     const cardsToSort = [...cards]
     const metaByCard = new Map(cardMeta.map((meta) => [meta.card, meta]))
-    const firmnessRank = { soft: 1, medium: 2, hard: 3, dualFirmness: 4 }
 
     cardsToSort.sort((a, b) => {
       const metaA = metaByCard.get(a)
       const metaB = metaByCard.get(b)
-      if (state.sort === 'height-asc') {
-        return Number(metaA?.height || 0) - Number(metaB?.height || 0)
-      }
-      if (state.sort === 'height-desc') {
-        return Number(metaB?.height || 0) - Number(metaA?.height || 0)
-      }
-      if (state.sort === 'load-desc') {
-        return Number(metaB?.load || 0) - Number(metaA?.load || 0)
-      }
-      if (state.sort === 'firmness-asc') {
-        return (firmnessRank[metaA?.firmness] || 0) - (firmnessRank[metaB?.firmness] || 0)
-      }
-      if (state.sort === 'firmness-desc') {
-        return (firmnessRank[metaB?.firmness] || 0) - (firmnessRank[metaA?.firmness] || 0)
-      }
-      return Number(metaA?.initialOrder || 0) - Number(metaB?.initialOrder || 0)
+      return compareCatalogCardMeta(metaA, metaB, state.sort)
     })
 
     cardsToSort.forEach((card) => {
@@ -1216,86 +1205,9 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     })
   }
 
-  function intersectsSet(sourceSet, selectedSet) {
-    if (!selectedSet.size) return true
-    for (const value of selectedSet) {
-      if (sourceSet.has(value)) return true
-    }
-    return false
-  }
-
-  function containsAll(sourceSet, selectedSet) {
-    if (!selectedSet.size) return true
-    for (const value of selectedSet) {
-      if (!sourceSet.has(value)) return false
-    }
-    return true
-  }
-
-  function matchLoadRange(load, range) {
-    if (range === 'all') return true
-    if (range === 'upTo120') return load <= 120
-    if (range === 'upTo160') return load <= 160
-    if (range === 'over160') return load > 160
-    return true
-  }
-
-  function matchHeightRange(height, range) {
-    if (range === 'all') return true
-    if (range === 'low') return height <= 16
-    if (range === 'mid') return height >= 16 && height <= 20
-    if (range === 'high') return height > 20
-    return true
-  }
-
-  function getLoadRangeBucket(load) {
-    if (load <= 120) return 'upTo120'
-    if (load <= 160) return 'upTo160'
-    return 'over160'
-  }
-
-  function getHeightRangeBucket(height) {
-    if (height <= 16) return 'low'
-    if (height <= 20) return 'mid'
-    return 'high'
-  }
-
   function syncFilterOptionsFromCards() {
     if (!cardMeta.length) return
-    const knownTypeOptions = ['spring', 'nospring', 'topper', 'doubleSided', 'singleSided']
-    const knownLoadRangeOptions = ['upTo120', 'upTo160', 'over160']
-    const knownHeightRangeOptions = ['low', 'mid', 'high']
-    const knownFillingOptions = ['coir', 'latex', 'orthoFoam', 'memoryEffect', 'nanoFoam', 'forplit']
-    const knownFeatureOptions = ['removableCover', 'winterSummer', 'edgeSupport']
-    const available = {
-      collection: new Set(),
-      firmness: new Set(),
-      type: new Set(),
-      size: new Set(),
-      loadRange: new Set(),
-      heightRange: new Set(),
-      fillings: new Set(),
-      features: new Set(),
-    }
-
-    cardMeta.forEach((meta) => {
-      if (meta.collection) available.collection.add(meta.collection)
-      if (meta.firmness) available.firmness.add(meta.firmness)
-      if (meta.type) available.type.add(meta.type)
-      meta.sizes.forEach((value) => available.size.add(value))
-      meta.fillings.forEach((value) => available.fillings.add(value))
-      meta.features.forEach((value) => available.features.add(value))
-      if (meta.loadRange) available.loadRange.add(meta.loadRange)
-      else if (Number.isFinite(meta.load) && meta.load > 0) available.loadRange.add(getLoadRangeBucket(meta.load))
-      if (meta.heightRange) available.heightRange.add(meta.heightRange)
-      else if (Number.isFinite(meta.height) && meta.height > 0) available.heightRange.add(getHeightRangeBucket(meta.height))
-    })
-
-    knownTypeOptions.forEach((value) => available.type.add(value))
-    knownLoadRangeOptions.forEach((value) => available.loadRange.add(value))
-    knownHeightRangeOptions.forEach((value) => available.heightRange.add(value))
-    knownFillingOptions.forEach((value) => available.fillings.add(value))
-    knownFeatureOptions.forEach((value) => available.features.add(value))
+    const available = collectAvailableCatalogFilters(cardMeta)
 
     const toggleBySet = (selector, allowedSet) => {
       catalogueNewSidebar.querySelectorAll(selector).forEach((el) => {
@@ -1441,30 +1353,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     const favSet = readCatalogueFavourites()
     matchedCards = []
     cardMeta.forEach((meta) => {
-      const matchCollection = state.collection === 'all' || meta.collection === state.collection
-      const matchFirmness = !state.firmness.size || state.firmness.has(meta.firmness)
-      const matchType = !state.type.size || state.type.has(meta.type)
-      const matchSize = intersectsSet(meta.sizes, state.size)
-      const matchLoad = meta.loadRange
-        ? !state.loadRange.size || state.loadRange.has(meta.loadRange)
-        : !state.loadRange.size || [...state.loadRange].some((range) => matchLoadRange(meta.load, range))
-      const matchHeight = meta.heightRange
-        ? !state.heightRange.size || state.heightRange.has(meta.heightRange)
-        : !state.heightRange.size || [...state.heightRange].some((range) => matchHeightRange(meta.height, range))
-      const matchFillings = containsAll(meta.fillings, state.fillings)
-      const matchFeatures = containsAll(meta.features, state.features)
-      const matchFavourites = !state.favouritesOnly || (meta.slug && favSet.has(meta.slug))
-      if (
-        matchCollection &&
-        matchFirmness &&
-        matchType &&
-        matchSize &&
-        matchLoad &&
-        matchHeight &&
-        matchFillings &&
-        matchFeatures &&
-        matchFavourites
-      ) matchedCards.push(meta.card)
+      if (matchesCatalogCardMeta(meta, state, favSet)) matchedCards.push(meta.card)
     })
 
     const visibleSet = new Set(matchedCards.slice(0, visibleCardsLimit))
