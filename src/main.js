@@ -6,6 +6,13 @@ import { buildCatalogueCardHtml } from './catalog/catalog-card'
 import { readCatalogueCardMeta } from './catalog/catalog-card-meta'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog/catalog-favourites'
 import {
+  emitCatalogManagerContactIntent,
+  emitCatalogShareIntent,
+  setCatalogFavouritesSwitchState,
+  syncCatalogFavouriteButtons,
+  syncCatalogFavouritesControls,
+} from './catalog/catalog-favourites-ui'
+import {
   applyAvailableFilterOptions,
   renderCatalogueFilterGroups as renderCatalogueFilterGroupsInto,
   setSingleChipSelection as setSingleChipSelectionInto,
@@ -955,71 +962,18 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   }
 
   function syncCatalogueFavouritesFilterSwitchState() {
-    if (!catalogueNewFavouritesOnlySwitch) return
     const fav = readCatalogueFavourites()
-    const n = fav.size
-    const hadFavouritesFilter = state.favouritesOnly
-    if (catalogueNewFavouritesCountEl) {
-      catalogueNewFavouritesCountEl.textContent = String(n)
-      catalogueNewFavouritesCountEl.toggleAttribute('hidden', n === 0)
+    const result = syncCatalogFavouritesControls(favouritesUiElements, fav.size, state.favouritesOnly)
+    state.favouritesOnly = result.favouritesOnly
+    if (result.shouldReapplyFilters) {
+      visibleCardsLimit = CATALOGUE_PAGE_SIZE
+      applyFilters()
     }
-    if (n === 0) {
-      state.favouritesOnly = false
-      catalogueNewFavouritesOnlySwitch.classList.remove('is-on')
-      catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', 'false')
-      catalogueNewFavouritesOnlySwitch.disabled = true
-      if (catalogueNewFavouritesLink) {
-        catalogueNewFavouritesLink.classList.add('is-disabled')
-        catalogueNewFavouritesLink.setAttribute('aria-disabled', 'true')
-        catalogueNewFavouritesLink.tabIndex = -1
-      }
-      if (catalogueNewFavouritesContactBtn) {
-        catalogueNewFavouritesContactBtn.disabled = true
-      }
-      if (catalogueNewFavouritesShareBtn) {
-        catalogueNewFavouritesShareBtn.disabled = true
-      }
-      if (catalogueNewFavouritesActions) {
-        catalogueNewFavouritesActions.hidden = true
-      }
-      if (hadFavouritesFilter) {
-        visibleCardsLimit = CATALOGUE_PAGE_SIZE
-        applyFilters()
-      }
-    } else {
-      catalogueNewFavouritesOnlySwitch.disabled = false
-      if (catalogueNewFavouritesLink) {
-        catalogueNewFavouritesLink.classList.remove('is-disabled')
-        catalogueNewFavouritesLink.removeAttribute('aria-disabled')
-        catalogueNewFavouritesLink.removeAttribute('tabindex')
-      }
-      if (catalogueNewFavouritesContactBtn) {
-        catalogueNewFavouritesContactBtn.disabled = false
-      }
-      if (catalogueNewFavouritesShareBtn) {
-        catalogueNewFavouritesShareBtn.disabled = false
-      }
-    }
-  }
-
-  function emitCatalogueManagerContactIntent(detail) {
-    const payload = {
-      source: detail?.source || 'unknown',
-      slugs: Array.isArray(detail?.slugs) ? detail.slugs.filter(Boolean) : [],
-      title: String(detail?.title || '').trim(),
-    }
-    window.dispatchEvent(new CustomEvent('catalogue:contact-manager', { detail: payload }))
   }
 
   function syncCatalogueFavouritesUi() {
     const fav = readCatalogueFavourites()
-    catalogueNewCardsRoot.querySelectorAll('.catalogue-new-favourite').forEach((btn) => {
-      const slug = String(btn.dataset.productSlug || '')
-      const on = Boolean(slug && fav.has(slug))
-      btn.classList.toggle('is-active', on)
-      btn.setAttribute('aria-pressed', on ? 'true' : 'false')
-      btn.setAttribute('aria-label', on ? 'Удалить из избранного' : 'Добавить в избранное')
-    })
+    syncCatalogFavouriteButtons(catalogueNewCardsRoot, fav)
     syncCatalogueFavouritesFilterSwitchState()
     // Не диспатчить catalogue:favourites-updated отсюда — слушатель вызывает syncCatalogueFavouritesUi() и получится бесконечная рекурсия.
   }
@@ -1070,6 +1024,15 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   const mobileFiltersOptions = {
     lockScroll: typeof lockScroll === 'function' ? lockScroll : undefined,
     unlockScroll: typeof unlockScroll === 'function' ? unlockScroll : undefined,
+  }
+  const favouritesUiElements = {
+    cardsRoot: catalogueNewCardsRoot,
+    switchEl: catalogueNewFavouritesOnlySwitch,
+    countEl: catalogueNewFavouritesCountEl,
+    linkEl: catalogueNewFavouritesLink,
+    contactBtn: catalogueNewFavouritesContactBtn,
+    shareBtn: catalogueNewFavouritesShareBtn,
+    actionsEl: catalogueNewFavouritesActions,
   }
 
   updateCardsCache()
@@ -1188,11 +1151,8 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     if (fav.size === 0) return
     resetCatalogueNewFilterChipsAndSort()
     state.favouritesOnly = true
-    if (catalogueNewFavouritesOnlySwitch) {
-      catalogueNewFavouritesOnlySwitch.classList.add('is-on')
-      catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', 'true')
-      catalogueNewFavouritesOnlySwitch.disabled = false
-    }
+    setCatalogFavouritesSwitchState(catalogueNewFavouritesOnlySwitch, true)
+    if (catalogueNewFavouritesOnlySwitch) catalogueNewFavouritesOnlySwitch.disabled = false
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
     applyFilters()
     scrollToCatalogueToolbar()
@@ -1215,7 +1175,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       if (catalogueNewFavouritesContactBtn.disabled) return
       const fav = [...readCatalogueFavourites()]
       if (!fav.length) return
-      emitCatalogueManagerContactIntent({
+      emitCatalogManagerContactIntent({
         source: 'favourites',
         slugs: fav,
         title: 'Избранные позиции',
@@ -1226,10 +1186,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   if (catalogueNewFavouritesBackBtn) {
     catalogueNewFavouritesBackBtn.addEventListener('click', () => {
       state.favouritesOnly = false
-      if (catalogueNewFavouritesOnlySwitch) {
-        catalogueNewFavouritesOnlySwitch.classList.remove('is-on')
-        catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', 'false')
-      }
+      setCatalogFavouritesSwitchState(catalogueNewFavouritesOnlySwitch, false)
       visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
     })
@@ -1240,13 +1197,11 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
       if (catalogueNewFavouritesShareBtn.disabled) return
       const fav = [...readCatalogueFavourites()]
       if (!fav.length) return
-      window.dispatchEvent(new CustomEvent('catalogue:share', {
-        detail: {
-          source: 'favourites',
-          slugs: fav,
-          title: 'Избранные позиции',
-        },
-      }))
+      emitCatalogShareIntent({
+        source: 'favourites',
+        slugs: fav,
+        title: 'Избранные позиции',
+      })
     })
   }
 
@@ -1477,8 +1432,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   if (catalogueNewFavouritesOnlySwitch) {
     catalogueNewFavouritesOnlySwitch.addEventListener('click', () => {
       toggleCatalogFavouritesOnly(state)
-      catalogueNewFavouritesOnlySwitch.classList.toggle('is-on', state.favouritesOnly)
-      catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', state.favouritesOnly ? 'true' : 'false')
+      setCatalogFavouritesSwitchState(catalogueNewFavouritesOnlySwitch, state.favouritesOnly)
       visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
       scrollToCatalogueToolbar()
@@ -1545,10 +1499,7 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     catalogueNewReset.addEventListener('click', () => {
       resetCatalogueNewFilterChipsAndSort()
       state.favouritesOnly = false
-      if (catalogueNewFavouritesOnlySwitch) {
-        catalogueNewFavouritesOnlySwitch.classList.remove('is-on')
-        catalogueNewFavouritesOnlySwitch.setAttribute('aria-checked', 'false')
-      }
+      setCatalogFavouritesSwitchState(catalogueNewFavouritesOnlySwitch, false)
       syncCatalogueFavouritesFilterSwitchState()
       visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
