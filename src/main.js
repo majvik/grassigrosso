@@ -1,6 +1,7 @@
 import './style.css'
 import { gsap } from 'gsap'
 import Lenis from 'lenis'
+import { readCatalogFavourites, writeCatalogFavourites } from './catalog/catalog-favourites'
 import { normalizeCatalogFilterOptions } from './catalog/catalog-filter-options'
 
 if (document.querySelector('[data-react-root]')) {
@@ -900,23 +901,6 @@ if (mobileMenuBtn && mobileMenuClose && mobileMenuOverlay) {
   })
 }
 
-/** localStorage: избранное в каталоге (миграция с прежнего ключа catalogue-new). */
-const CATALOG_FAV_STORAGE_KEY = 'grassigrosso-catalog-favourites'
-const CATALOG_FAV_STORAGE_KEY_LEGACY = 'grassigrosso-catalogue-new-favourites'
-
-function migrateCatalogFavouritesStorageOnce() {
-  try {
-    if (localStorage.getItem(CATALOG_FAV_STORAGE_KEY)) return
-    const leg = localStorage.getItem(CATALOG_FAV_STORAGE_KEY_LEGACY)
-    if (leg != null) {
-      localStorage.setItem(CATALOG_FAV_STORAGE_KEY, leg)
-      localStorage.removeItem(CATALOG_FAV_STORAGE_KEY_LEGACY)
-    }
-  } catch {
-    // ignore
-  }
-}
-
 // Catalogue: sidebar filters + sorting
 const catalogueNewSidebar = document.querySelector('.catalogue-new-sidebar')
 const catalogueNewCardsRoot = document.querySelector('.catalogue-new-cards')
@@ -1136,18 +1120,11 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
   }
 
   function readCatalogueFavourites() {
-    try {
-      migrateCatalogFavouritesStorageOnce()
-      const raw = localStorage.getItem(CATALOG_FAV_STORAGE_KEY)
-      const list = raw ? JSON.parse(raw) : []
-      return Array.isArray(list) ? new Set(list.map(String)) : new Set()
-    } catch {
-      return new Set()
-    }
+    return readCatalogFavourites()
   }
 
   function writeCatalogueFavourites(set) {
-    localStorage.setItem(CATALOG_FAV_STORAGE_KEY, JSON.stringify([...set]))
+    writeCatalogFavourites(set)
   }
 
   function syncCatalogueFavouritesFilterSwitchState() {
@@ -2406,18 +2383,11 @@ if (
       .filter(Boolean)
 
   const readModalFavourites = () => {
-    try {
-      migrateCatalogFavouritesStorageOnce()
-      const raw = localStorage.getItem(CATALOG_FAV_STORAGE_KEY)
-      const list = raw ? JSON.parse(raw) : []
-      return Array.isArray(list) ? new Set(list.map(String)) : new Set()
-    } catch {
-      return new Set()
-    }
+    return readCatalogFavourites()
   }
 
   const writeModalFavourites = (set) => {
-    localStorage.setItem(CATALOG_FAV_STORAGE_KEY, JSON.stringify([...set]))
+    writeCatalogFavourites(set)
   }
 
   const mapValue = (value, map) => {
