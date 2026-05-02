@@ -5,6 +5,7 @@ import { fetchCatalogFilterGroups, fetchCatalogHeroFeed, fetchCatalogProducts } 
 import { buildCatalogueCardHtml } from './catalog/catalog-card'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog/catalog-favourites'
 import { normalizeCatalogFilterOptions } from './catalog/catalog-filter-options'
+import { applyCatalogHeroFeed } from './catalog/catalog-hero'
 import {
   STANDARD_MATTRESS_SIZES,
   STANDARD_MATTRESS_SIZE_SET,
@@ -327,64 +328,13 @@ function waitForHeroMedia() {
   }
 }
 
-function escapeCatalogHeroAttr(value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
-
-function applyCatalogHeroStrapiPayload(sliderRoot, data) {
-  const slidesRoot = sliderRoot.querySelector('.catalog-hero-slides')
-  const dotsRoot = sliderRoot.querySelector('.catalog-hero-dots')
-  if (!slidesRoot || !dotsRoot) return
-
-  const ap = Number(data.autoplayMs ?? data.autoplay_ms ?? sliderRoot.dataset.autoplayMs)
-  if (Number.isFinite(ap) && ap >= 2500) {
-    sliderRoot.dataset.autoplayMs = String(ap)
-  }
-
-  const slides = Array.isArray(data.slides) ? data.slides : []
-  const slidesHtml = slides.map((slide, i) => {
-    const active = i === 0
-    const activeClass = active ? ' is-active' : ''
-    const ariaHidden = active ? 'false' : 'true'
-    const id = `catalog-hero-slide-${i}`
-    const loading = i === 0 ? 'eager' : 'lazy'
-    const fetchPriority = i === 0 ? ' fetchpriority="high"' : ''
-    const alt = escapeCatalogHeroAttr(slide.alt || '')
-    const src = escapeCatalogHeroAttr(slide.src || '')
-    if (slide.type === 'video') {
-      const poster = escapeCatalogHeroAttr(slide.poster || '')
-      const mime = escapeCatalogHeroAttr(slide.mime || 'video/mp4')
-      return `<div class="catalog-hero-slide${activeClass}" id="${id}" data-slide="${i}" aria-hidden="${ariaHidden}"><video${poster ? ` poster="${poster}"` : ''} muted loop playsinline preload="metadata" aria-label="${alt}"><source src="${src}" type="${mime}" /></video></div>`
-    }
-    return `<div class="catalog-hero-slide${activeClass}" id="${id}" data-slide="${i}" aria-hidden="${ariaHidden}"><img src="${src}" alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} /></div>`
-  }).join('')
-
-  const dotsHtml = slides.map((_, i) => {
-    const active = i === 0
-    const activeClass = active ? ' is-active' : ''
-    const selected = active ? 'true' : 'false'
-    const tabId = `catalog-hero-tab-${i}`
-    const slideId = `catalog-hero-slide-${i}`
-    const label = `Слайд ${i + 1}`
-    return `<button type="button" class="catalog-hero-dot${activeClass}" role="tab" aria-selected="${selected}" aria-controls="${slideId}" id="${tabId}" data-target="${i}" aria-label="${escapeCatalogHeroAttr(label)}"><span class="catalog-hero-dot-shape" aria-hidden="true"><span class="catalog-hero-dot-fill"></span></span></button>`
-  }).join('')
-
-  slidesRoot.innerHTML = slidesHtml
-  dotsRoot.innerHTML = dotsHtml
-}
-
 async function setupCatalogueNewPageHero() {
   const sliderRoot = document.querySelector('.catalog-hero-slider')
   if (!sliderRoot) return
   try {
     const data = await fetchCatalogHeroFeed()
     if (Array.isArray(data.slides) && data.slides.length > 0) {
-      applyCatalogHeroStrapiPayload(sliderRoot, data)
+      applyCatalogHeroFeed(sliderRoot, data)
     }
   } catch (err) {
     console.warn('Catalog hero Strapi fetch failed, using static slides:', err)
