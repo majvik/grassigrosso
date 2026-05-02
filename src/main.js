@@ -3,6 +3,7 @@ import { gsap } from 'gsap'
 import Lenis from 'lenis'
 import { fetchCatalogFilterGroups, fetchCatalogHeroFeed, fetchCatalogProducts } from './catalog/catalog-api'
 import { buildCatalogueCardHtml } from './catalog/catalog-card'
+import { readCatalogueCardMeta } from './catalog/catalog-card-meta'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog/catalog-favourites'
 import {
   applyAvailableFilterOptions,
@@ -24,12 +25,6 @@ import {
 } from './catalog/catalog-filtering'
 import { applyCatalogHeroFeed } from './catalog/catalog-hero'
 import { buildCatalogModalSpecs } from './catalog/catalog-modal'
-import {
-  STANDARD_MATTRESS_SIZES,
-  STANDARD_MATTRESS_SIZE_SET,
-  buildStandardMattressSizesFromLegacy,
-  normalizeCatalogSizeValue,
-} from './catalog/catalog-sizes'
 
 if (document.querySelector('[data-react-root]')) {
   await import('./react-entry')
@@ -925,13 +920,6 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     favouritesOnly: false,
   }
 
-  function parseCsvDataset(value) {
-    return String(value || '')
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean)
-  }
-
   function renderCatalogueFilterGroups(groups) {
     const rendered = renderCatalogueFilterGroupsInto(catalogueNewSidebar, groups)
     if (!rendered) return false
@@ -941,43 +929,11 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     return true
   }
 
-  function parseSizesToSet(value) {
-    return new Set(
-      parseCsvDataset(value)
-        .map(normalizeCatalogSizeValue)
-        .filter((size) => STANDARD_MATTRESS_SIZE_SET.has(size))
-    )
-  }
-
-  function readCardMeta(card, index) {
-    const dataset = card.dataset || {}
-    return {
-      card,
-      initialOrder: index,
-      slug: String(dataset.productSlug || ''),
-      collection: String(dataset.collection || ''),
-      firmness: String(dataset.firmness || ''),
-      type: String(dataset.type || ''),
-      height: Number(dataset.height || 0),
-      load: Number(dataset.load || 0),
-      loadRange: String(dataset.loadRange || '').trim(),
-      heightRange: String(dataset.heightRange || '').trim(),
-      sizes: (() => {
-        const sizes = parseSizesToSet(dataset.sizes)
-        if (sizes.size) return sizes
-        const legacySizes = buildStandardMattressSizesFromLegacy(dataset.widths, dataset.lengths)
-        return legacySizes.size ? legacySizes : new Set(STANDARD_MATTRESS_SIZES)
-      })(),
-      fillings: new Set(parseCsvDataset(dataset.fillings)),
-      features: new Set(parseCsvDataset(dataset.features)),
-    }
-  }
-
   function updateCardsCache() {
     cards = [...catalogueNewCardsRoot.querySelectorAll('.catalogue-new-card')]
     cardMeta = cards.map((card, index) => {
       card.dataset.initialOrder = String(index)
-      return readCardMeta(card, index)
+      return readCatalogueCardMeta(card, index)
     })
   }
 
