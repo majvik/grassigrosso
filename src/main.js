@@ -2,6 +2,10 @@ import './style.css'
 import { gsap } from 'gsap'
 import Lenis from 'lenis'
 
+if (document.querySelector('[data-react-root]')) {
+  await import('./react-entry')
+}
+
 // Типографика: привязка коротких предлогов/союзов к следующему слову неразрывным пробелом
 ;(function fixWidows() {
   const WORDS = [
@@ -3024,11 +3028,8 @@ const pageHeroImage = document.querySelector('.page-hero-image')
 // Check by looking for conditions-section which is unique to dealers page
 function isDealersPage() {
   const path = window.location.pathname
-  const href = window.location.href
-  return path.includes('dealers.html') || 
-         path.includes('/dealers') ||
-         href.includes('dealers.html') ||
-         href.includes('/dealers') ||
+  return path === '/dealers' ||
+         path === '/dealers.html' ||
          document.querySelector('.conditions-section') !== null ||
          document.title.includes('Дилер') ||
          document.title.includes('дилер')

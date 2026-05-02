@@ -1065,7 +1065,7 @@ app.get('/api/unsubscribe', async (req, res) => {
     }
   }
 
-  return res.redirect('/unsubscribe.html');
+  return res.redirect('/unsubscribe');
 });
 
 app.post('/api/submit', async (req, res) => {

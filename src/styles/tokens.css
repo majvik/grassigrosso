@@ -95,4 +95,23 @@
   --font-size-section-title: 56px;
   /* ≤430px в components.css: clamp(min, vw, max) */
   --font-size-section-title-xs-max: 40px;
+
+  /* Semantic UI aliases for the React/Base UI layer. Keep these mapped to
+     existing brand tokens so migration does not fork the visual language. */
+  --ui-font-body: var(--font-family);
+  --ui-font-display: var(--font-bounded);
+  --ui-text: var(--color-text);
+  --ui-text-muted: var(--color-text-gray);
+  --ui-surface: var(--color-bg-white);
+  --ui-surface-muted: var(--color-surface-muted);
+  --ui-border: var(--color-border);
+  --ui-input-border: var(--color-border);
+  --ui-focus-ring: var(--color-accent-soft);
+  --ui-action-primary: var(--color-primary);
+  --ui-action-primary-hover: var(--color-primary-hover);
+  --ui-action-primary-foreground: var(--color-bg-white);
+  --ui-radius-control: var(--radius-sm);
+  --ui-radius-card: var(--radius-md);
+  --ui-radius-panel: var(--radius-lg);
+  --ui-shadow-popover: 0 24px 60px rgba(30, 30, 30, 0.18);
 }

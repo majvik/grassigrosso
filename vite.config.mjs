@@ -1,9 +1,23 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv } from 'vite'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const cleanHtmlRoutes = {
+  '/': 'index.html',
+  '/hotels': 'hotels.html',
+  '/dealers': 'dealers.html',
+  '/catalog': 'catalog.html',
+  '/documents': 'documents.html',
+  '/contacts': 'contacts.html',
+  '/privacy': 'privacy.html',
+  '/terms': 'terms.html',
+  '/cookies': 'cookies.html',
+  '/404': '404.html',
+  '/unsubscribe': 'unsubscribe.html',
+}
 
 function criticalPreloaderPlugin() {
   return {
@@ -16,6 +30,31 @@ function criticalPreloaderPlugin() {
         /<style id="vite-critical-css">\s*<\/style>/,
         `<style id="vite-critical-css">\n${critical}\n</style>`
       )
+    },
+  }
+}
+
+function cleanUrlDevPlugin() {
+  return {
+    name: 'grassigrosso-clean-url-dev',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        if (!req.url || req.method !== 'GET') return next()
+        const url = new URL(req.url, 'http://localhost')
+        const htmlFile = cleanHtmlRoutes[url.pathname]
+        if (!htmlFile) return next()
+
+        try {
+          const filePath = path.resolve(__dirname, htmlFile)
+          let html = await fs.promises.readFile(filePath, 'utf8')
+          html = await server.transformIndexHtml(url.pathname, html)
+          res.statusCode = 200
+          res.setHeader('Content-Type', 'text/html; charset=utf-8')
+          res.end(html)
+        } catch (error) {
+          next(error)
+        }
+      })
     },
   }
 }
@@ -36,7 +75,12 @@ export default defineConfig(({ mode }) => {
   return {
     root: '.',
     base: './',
-    plugins: [criticalPreloaderPlugin(), siteOriginPlugin(siteOrigin)],
+    plugins: [react(), cleanUrlDevPlugin(), criticalPreloaderPlugin(), siteOriginPlugin(siteOrigin)],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      },
+    },
     build: {
       outDir: 'dist',
       assetsDir: 'assets',

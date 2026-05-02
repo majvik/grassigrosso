@@ -26,6 +26,7 @@ strapi-catalog/tmp/
 strapi-catalog/.tmp/
 strapi-catalog/build/
 strapi-catalog/.cache/
+strapi-catalog/tsconfig.tsbuildinfo
 
 # Source video and data files
 *.mov
