@@ -1,6 +1,7 @@
 import './style.css'
 import { gsap } from 'gsap'
 import Lenis from 'lenis'
+import { fetchCatalogFilterGroups, fetchCatalogHeroFeed, fetchCatalogProducts } from './catalog/catalog-api'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog/catalog-favourites'
 import { normalizeCatalogFilterOptions } from './catalog/catalog-filter-options'
 
@@ -373,12 +374,9 @@ async function setupCatalogueNewPageHero() {
   const sliderRoot = document.querySelector('.catalog-hero-slider')
   if (!sliderRoot) return
   try {
-    const res = await fetch('/api/catalog/hero-slides', { headers: { Accept: 'application/json' } })
-    if (res.ok) {
-      const data = await res.json()
-      if (Array.isArray(data.slides) && data.slides.length > 0) {
-        applyCatalogHeroStrapiPayload(sliderRoot, data)
-      }
+    const data = await fetchCatalogHeroFeed()
+    if (Array.isArray(data.slides) && data.slides.length > 0) {
+      applyCatalogHeroStrapiPayload(sliderRoot, data)
     }
   } catch (err) {
     console.warn('Catalog hero Strapi fetch failed, using static slides:', err)
@@ -1294,18 +1292,10 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
     `
   }
 
-  function normalizeApiCollectionValue(item) {
-    const raw = String(item.collectionSlug || item.slug || '').trim().toLowerCase()
-    if (raw === 'toppers' || raw === 'topers' || raw === 'topper') return 'topper'
-    return raw
-  }
-
   async function loadCatalogueFiltersFromStrapi() {
     try {
-      const response = await fetch('/api/catalog/filters', { headers: { Accept: 'application/json' } })
-      if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      const payload = await response.json()
-      renderCatalogueFilterGroups(payload.groups)
+      const groups = await fetchCatalogFilterGroups()
+      renderCatalogueFilterGroups(groups)
     } catch (err) {
       console.warn('Catalogue filter feed failed, using static filter controls:', err)
     }
@@ -1313,16 +1303,10 @@ if (catalogueNewSidebar && catalogueNewCardsRoot) {
 
   async function loadCatalogueFromStrapi() {
     try {
-      const response = await fetch('/api/catalog/products', { headers: { Accept: 'application/json' } })
-      if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      const payload = await response.json()
-      const items = Array.isArray(payload.items) ? payload.items : []
+      const items = await fetchCatalogProducts()
       if (items.length === 0) return
 
-      const html = items.map((item) => buildCatalogueCard({
-        ...item,
-        collectionSlug: normalizeApiCollectionValue(item)
-      })).join('')
+      const html = items.map((item) => buildCatalogueCard(item)).join('')
       catalogueNewCardsRoot.innerHTML = html
       updateCardsCache()
       syncCatalogueFavouritesUi()
