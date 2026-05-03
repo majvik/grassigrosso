@@ -224,14 +224,6 @@ export function renderCatalogueFilterGroups(root: Element, groups: CatalogFilter
   ].some(Boolean)
 }
 
-export function setSingleChipSelection(root: Element, groupName: string, value: string): void {
-  const group = root.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
-  if (!group) return
-  group.querySelectorAll<HTMLElement>(`.catalogue-new-chip[data-filter-group="${groupName}"]`).forEach((chip) => {
-    chip.classList.toggle('is-active', chip.dataset.value === value)
-  })
-}
-
 export function setFilterGroupDisabled(root: Element, groupName: string, disabled: boolean): void {
   const group = root.querySelector(`.catalogue-new-filter-group[data-filter-group="${groupName}"]`)
   if (!group) return
@@ -244,8 +236,51 @@ export function syncCatalogFilterDependencies(root: Element, state: CatalogFilte
   setFilterGroupDisabled(root, 'loadRange', topperOnly)
 }
 
+function selectedCountForFilterGroup(state: CatalogFilterState, groupKey: string): number {
+  switch (groupKey) {
+    case 'collection':
+      return state.collection.size
+    case 'size':
+      return state.size.size
+    case 'firmness':
+      return state.firmness.size
+    case 'type':
+      return state.type.size
+    case 'loadRange':
+      return state.loadRange.size
+    case 'heightRange':
+      return state.heightRange.size
+    case 'fillings':
+      return state.fillings.size
+    case 'features':
+      return state.features.size
+    default:
+      return 0
+  }
+}
+
+/** Бейдж числа активных значений в строке заголовка аккордиона (как у избранного). */
+function syncCatalogFilterAccordionBadges(root: Element, state: CatalogFilterState): void {
+  root.querySelectorAll<HTMLElement>('.catalogue-new-filter-group[data-filter-group]').forEach((group) => {
+    const key = String(group.dataset.filterGroup || '')
+    const badge = group.querySelector<HTMLElement>('.catalogue-new-filter-selection-count')
+    if (!badge) return
+    const n = selectedCountForFilterGroup(state, key)
+    if (n <= 0) {
+      badge.textContent = ''
+      badge.hidden = true
+      badge.setAttribute('aria-hidden', 'true')
+      badge.removeAttribute('aria-label')
+      return
+    }
+    badge.textContent = String(n)
+    badge.hidden = false
+    badge.setAttribute('aria-hidden', 'false')
+    badge.setAttribute('aria-label', `Выбрано: ${n}`)
+  })
+}
+
 export function syncCatalogueFilterUi(root: Element, state: CatalogFilterState, resolveSizeSelectMenu: ResolveSizeMenu): void {
-  setSingleChipSelection(root, 'collection', state.collection)
   const setMultiChipSelection = (groupName: string, targetSet: Set<string>) => {
     root.querySelectorAll<HTMLElement>(`.catalogue-new-chip[data-filter-group="${groupName}"]`).forEach((chip) => {
       const chipValue = String(chip.dataset.value || '')
@@ -253,6 +288,7 @@ export function syncCatalogueFilterUi(root: Element, state: CatalogFilterState, 
       chip.classList.toggle('is-active', isAll ? targetSet.size === 0 : targetSet.has(chipValue))
     })
   }
+  setMultiChipSelection('collection', state.collection)
   setMultiChipSelection('firmness', state.firmness)
   setMultiChipSelection('type', state.type)
   setMultiChipSelection('heightRange', state.heightRange)
@@ -323,6 +359,7 @@ export function syncCatalogueFilterUi(root: Element, state: CatalogFilterState, 
     loadUnder.setAttribute('aria-hidden', showLoadUnder ? 'false' : 'true')
   }
   syncCatalogFilterDependencies(root, state)
+  syncCatalogFilterAccordionBadges(root, state)
 }
 
 export function applyAvailableFilterOptions(
@@ -355,7 +392,7 @@ export function applyAvailableFilterOptions(
   toggleBySet('.catalogue-new-size-select[data-catalog-select="size"] .catalogue-new-size-select-option', available.size)
   toggleBySet('.catalogue-new-size-select[data-catalog-select="loadRange"] .catalogue-new-size-select-option', available.loadRange)
 
-  if (state.collection !== 'all' && !available.collection.has(state.collection)) state.collection = 'all'
+  state.collection.forEach((value) => { if (!available.collection.has(value)) state.collection.delete(value) })
   state.loadRange.forEach((value) => { if (!available.loadRange.has(value)) state.loadRange.delete(value) })
   state.heightRange.forEach((value) => { if (!available.heightRange.has(value)) state.heightRange.delete(value) })
   state.firmness.forEach((value) => { if (!available.firmness.has(value)) state.firmness.delete(value) })

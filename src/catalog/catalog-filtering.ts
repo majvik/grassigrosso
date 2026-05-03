@@ -9,7 +9,7 @@ export type CatalogSortValue =
   | 'firmness-desc'
 
 export type CatalogFilterState = {
-  collection: string
+  collection: Set<string>
   firmness: Set<string>
   type: Set<string>
   size: Set<string>
@@ -49,6 +49,7 @@ export type CatalogAvailableFilterSets = {
 }
 
 export const CATALOG_MULTI_FILTER_GROUPS = new Set([
+  'collection',
   'firmness',
   'type',
   'heightRange',
@@ -148,7 +149,7 @@ export function matchesCatalogCardMeta<TCard>(
   state: CatalogFilterState,
   favouriteSlugs: Set<string>,
 ): boolean {
-  const matchCollection = state.collection === 'all' || meta.collection === state.collection
+  const matchCollection = !state.collection.size || state.collection.has(meta.collection)
   const matchFirmness = !state.firmness.size || state.firmness.has(meta.firmness)
   const matchType = !state.type.size || state.type.has(meta.type)
   const matchSize = intersectsSet(meta.sizes, state.size)
@@ -216,7 +217,7 @@ export function collectAvailableCatalogFilters<TCard>(cardMeta: CatalogCardMeta<
 }
 
 export function resetCatalogFilterState(state: CatalogFilterState): void {
-  state.collection = 'all'
+  state.collection.clear()
   state.firmness.clear()
   state.type.clear()
   state.size.clear()
@@ -240,6 +241,7 @@ export function toggleCatalogFavouritesOnly(state: CatalogFilterState): boolean 
 export function applyCatalogChipFilter(state: CatalogFilterState, groupName: string, value: string): boolean {
   if (CATALOG_MULTI_FILTER_GROUPS.has(groupName)) {
     const targetSet =
+      groupName === 'collection' ? state.collection :
       groupName === 'firmness' ? state.firmness :
       groupName === 'type' ? state.type :
       groupName === 'loadRange' ? state.loadRange :
@@ -254,11 +256,6 @@ export function applyCatalogChipFilter(state: CatalogFilterState, groupName: str
     } else {
       targetSet.add(value)
     }
-    return true
-  }
-
-  if (groupName === 'collection') {
-    state.collection = value
     return true
   }
 

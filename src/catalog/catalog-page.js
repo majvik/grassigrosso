@@ -1,8 +1,9 @@
 import {
   initCatalogExclusiveAccordionState,
   openCatalogAccordionGroupExclusive,
+  setCatalogAccordionGroupExpanded,
 } from './catalog-accordion'
-import { fetchCatalogFilterGroups, fetchCatalogProducts } from './catalog-api'
+import { fetchCatalogFilters, fetchCatalogProducts } from './catalog-api'
 import { buildCatalogueCardHtml } from './catalog-card'
 import { readCatalogueCardMeta } from './catalog-card-meta'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
@@ -16,12 +17,10 @@ import {
 import {
   applyAvailableFilterOptions,
   renderCatalogueFilterGroups as renderCatalogueFilterGroupsInto,
-  setSingleChipSelection as setSingleChipSelectionInto,
   syncCatalogFilterDependencies,
   syncCatalogueFilterUi,
 } from './catalog-filter-dom'
 import {
-  CATALOG_MULTI_FILTER_GROUPS,
   applyCatalogChipFilter,
   applyCatalogLoadRangeSelect,
   applyCatalogSizeFilter,
@@ -46,6 +45,7 @@ import {
 } from './catalog-sort-menu'
 import { initCatalogStickySidebar } from './catalog-sticky-sidebar'
 import { initCatalogViewToggle } from './catalog-view-toggle'
+import { initCatalogFilterHelpModal, setCatalogFilterHelpFromApi } from './catalog-filter-help-modal'
 
 export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
   const catalogueNewSidebar = document.querySelector('.catalogue-new-sidebar')
@@ -86,7 +86,7 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
     infiniteSentinel.setAttribute('aria-hidden', 'true')
     catalogueNewCardsRoot.insertAdjacentElement('afterend', infiniteSentinel)
     const state = {
-      collection: 'all',
+      collection: new Set(),
       firmness: new Set(),
       type: new Set(),
       size: new Set(),
@@ -151,10 +151,12 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
 
     async function loadCatalogueFiltersFromStrapi() {
       try {
-        const groups = await fetchCatalogFilterGroups()
+        const { groups, filterHelp } = await fetchCatalogFilters()
+        setCatalogFilterHelpFromApi(filterHelp)
         renderCatalogueFilterGroups(groups)
       } catch (err) {
         console.warn('Catalogue filter feed failed, using static filter controls:', err)
+        setCatalogFilterHelpFromApi(undefined)
         renderCatalogueFilterGroups({ size: [] })
       }
     }
@@ -397,11 +399,8 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
         const groupName = chip.dataset.filterGroup
         const value = chip.dataset.value
         if (groupName && value) {
-          const isMultiGroup = CATALOG_MULTI_FILTER_GROUPS.has(groupName)
-          if (applyCatalogChipFilter(state, groupName, value) && isMultiGroup) {
+          if (applyCatalogChipFilter(state, groupName, value)) {
             syncUiFromState()
-          } else if (groupName === 'collection') {
-            setSingleChipSelectionInto(catalogueNewSidebar, groupName, value)
           }
           syncFilterDependencies()
           visibleCardsLimit = CATALOGUE_PAGE_SIZE
@@ -415,9 +414,12 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
       const groupEl = trigger.closest('.catalogue-new-filter-group')
       if (!groupEl) return
       const expanded = trigger.getAttribute('aria-expanded') === 'true'
-      if (expanded) return
+      if (expanded) {
+        setCatalogAccordionGroupExpanded(groupEl, false)
+        return
+      }
       openCatalogAccordionGroupExclusive(catalogueNewSidebar, groupEl)
-    })
+    }, true)
 
     // Канон размеров из JS сразу (не ждём Strapi); при открытом портале renderCatalogueFilterGroups закроет меню и обновит DOM.
     renderCatalogueFilterGroups({ size: [] })
@@ -588,6 +590,29 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
       favouriteBtn: catalogueImageModalFavouriteBtn,
       closeBtn: catalogueImageModalClose,
       cardsRoot: catalogueCardsRootForModal,
+    }, {
+      lockScroll: typeof lockScroll === 'function' ? lockScroll : undefined,
+      unlockScroll: typeof unlockScroll === 'function' ? unlockScroll : undefined,
+    })
+  }
+
+  const catalogueFilterHelpModal = document.getElementById('catalogueFilterHelpModal')
+  const catalogueFilterHelpModalOverlay = document.getElementById('catalogueFilterHelpModalOverlay')
+  const catalogueFilterHelpModalTitle = document.getElementById('catalogueFilterHelpModalTitle')
+  const catalogueFilterHelpModalBody = document.getElementById('catalogueFilterHelpModalBody')
+  const catalogueFilterHelpModalClose = document.getElementById('catalogueFilterHelpModalClose')
+  if (
+    catalogueFilterHelpModal &&
+    catalogueFilterHelpModalOverlay &&
+    catalogueFilterHelpModalTitle &&
+    catalogueFilterHelpModalBody
+  ) {
+    initCatalogFilterHelpModal(document, {
+      modal: catalogueFilterHelpModal,
+      overlay: catalogueFilterHelpModalOverlay,
+      title: catalogueFilterHelpModalTitle,
+      body: catalogueFilterHelpModalBody,
+      closeBtn: catalogueFilterHelpModalClose,
     }, {
       lockScroll: typeof lockScroll === 'function' ? lockScroll : undefined,
       unlockScroll: typeof unlockScroll === 'function' ? unlockScroll : undefined,
