@@ -393,14 +393,14 @@ export function IndexPage() {
         <h2 className="section-title">Партнеры и технологии</h2>
         <div className="partners-grid partners-grid-image" aria-hidden="true">
           <img
-            src="./logos@2x-normal.png"
+            src="/logos@2x-normal.png"
             alt=""
             className="partners-img partners-img-normal"
             width="1920"
             height="640"
           />
           <img
-            src="./logos@2x-mobile.png"
+            src="/logos@2x-mobile.png"
             alt=""
             className="partners-img partners-img-mobile"
             width="750"

@@ -32,11 +32,13 @@
 - JSX-структура каталога теперь разнесена по `src/components/catalog-page/*`; при правках hero/filters/cards/toolbar сначала расширять эти локальные компоненты, а не возвращать большой монолитный page-файл.
 - Runtime каталога тоже уже разнесён: `src/catalog/catalog-page.js` — только bootstrap, а крупные куски логики живут в отдельных модулях (`catalog-listing-controller.ts`, `catalog-modals-bootstrap.ts`). Не возвращать orchestration обратно в один большой файл.
 - Общие полноширинные React-секции для migrated marketing pages теперь живут в `src/components/marketing/shared-page-sections.tsx`; при унификации `contact` / `faq` сначала расширять их, а не копировать ещё один локальный вариант.
+- Основной следующий migration-step уже не page rendering, а cleanup оставшегося catalog runtime, прежде всего `src/catalog/catalog-image-modal.ts` и `src/catalog/catalog-filter-dom.ts`.
 - Не держать параллельно string-source разметки для страниц, уже переведённых на `src/components/pages/*.tsx`.
 - Не возвращать runtime fallback через `dangerouslySetInnerHTML` для уже маршрутизируемых React-страниц; неизвестный `page` должен считаться ошибкой маршрутизации, а не поводом рендерить старый HTML blob.
 - React migration меняет слой рендера, но не должна самовольно менять пространственную модель страницы: если legacy страница была полноширинной, не зажимать её в новый container/page-shell без отдельного решения по дизайну.
 - Для новых React-страниц **не привязывать JS-поведение к hash-классам CSS Modules**. Интерактивные hook'и задавать через `data-*` атрибуты (`data-faq-item`, `data-document-card`, `data-document-request-trigger` и т.п.).
 - Legacy global CSS и старые class selectors допускаются как fallback для ещё не перенесённых зон, но не как новый контракт.
+- Для public assets использовать только корневые пути `/...`; `./public/...` в HTML/React считается ошибкой и ломает CI/CD deploy contract.
 - Подробный статус и порядок миграции: [docs/ui-migration.md](docs/ui-migration.md).
 
 ## SEO

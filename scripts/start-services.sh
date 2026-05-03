@@ -15,8 +15,20 @@ JWT_SECRET_VALUE="${JWT_SECRET:-dev-jwt-secret}"
 ENCRYPTION_KEY_VALUE="${ENCRYPTION_KEY:-dev-encryption-key-32chars-min}"
 STRAPI_TELEMETRY_DISABLED_VALUE="${STRAPI_TELEMETRY_DISABLED:-true}"
 STRAPI_LOG_FILE="/tmp/strapi.log"
+STRAPI_NODE_MODULES_SENTINEL="strapi-catalog/node_modules/@strapi/strapi/package.json"
+STRAPI_BUILD_SENTINEL="strapi-catalog/build/index.html"
 
 mkdir -p "$(dirname "$STRAPI_DB_FILE")"
+
+if [[ ! -f "$STRAPI_NODE_MODULES_SENTINEL" ]]; then
+  echo "[boot] Installing Strapi dependencies"
+  npm install --prefix strapi-catalog --no-audit --fund=false --no-update-notifier --loglevel=error
+fi
+
+if [[ ! -f "$STRAPI_BUILD_SENTINEL" ]]; then
+  echo "[boot] Building Strapi admin"
+  npm run build --prefix strapi-catalog
+fi
 
 if [[ ! -s "$STRAPI_DB_FILE" && -f "$STRAPI_SEED_DB_FILE" ]]; then
   echo "[boot] Seeding Strapi database from ${STRAPI_SEED_DB_FILE}"

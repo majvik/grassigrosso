@@ -64,6 +64,7 @@ npm start
 - Новый React visual layer: CSS Modules там, где это не ломает parity; legacy global CSS остаётся как fallback для каталога и для полноширинных migrated layouts, которые пока нельзя безболезненно пересобрать. Для migrated pages вторым источником истины HTML-строки больше не держим.
 - `ReactIslandRoot` больше не использует runtime fallback через `dangerouslySetInnerHTML`; неизвестные page id уходят в `NotFoundPage`.
 - Критический CSS прелоадера инжектится плагином из `vite.config.mjs` в `<style id="vite-critical-css"></style>`.
+- Public assets для HTML entry pages и React layer теперь должны использоваться через корневой путь `/...`; путь вида `./public/...` считается ошибкой деплой-контракта.
 
 ### Backend
 
@@ -164,3 +165,11 @@ npm start
 - Исторические markdown-отчёты/точечные инструкции, дублирующие этот хаб, удалены или сведены к ссылкам.
 - При выносе кода из `src/main.js` документация должна обновляться синхронно: минимум `AGENTS.md` и этот файл.
 - Отдельный инвариант parity: React migration не должна самовольно зажимать старые полноширинные секции в новые container/page-shell обёртки без отдельного дизайн-решения.
+
+## 11. Что осталось по React migration
+
+- Основной page-level migration завершён: page HTML strings и runtime fallback уже убраны.
+- Остаток миграции теперь в двух слоях:
+  - `src/catalog/*` runtime cleanup, начиная с `catalog-image-modal.ts` и `catalog-filter-dom.ts`;
+  - постепенный перенос visual layer migrated React pages с legacy global CSS на CSS Modules без потери полноширинного parity.
+- Подробный пошаговый остаток и инструкция для следующего ИИ поддерживаются в `docs/ui-migration.md`.
