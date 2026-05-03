@@ -7,10 +7,14 @@ export type CatalogSizeSelectController = {
   hasOpenMenu: () => boolean
 }
 
+export type CatalogSelectGroup = 'size' | 'loadRange'
+
 export type CatalogSizeSelectOptions = {
-  onOptionSelected: (value: string) => boolean
-  /** Клик «Сбросить» в строке «Любой» внутри открытого меню (портал на document.body). */
+  onOptionSelected: (group: CatalogSelectGroup, value: string) => boolean
+  /** Клик «Сбросить» у размера внутри открытого меню (портал). */
   onSizeReset?: () => void
+  /** Клик «Сбросить» у нагрузки внутри открытого меню (портал). */
+  onLoadRangeReset?: () => void
 }
 
 export function initCatalogSizeSelect(
@@ -70,7 +74,9 @@ export function initCatalogSizeSelect(
         const available = option.dataset.available !== '0'
         option.hidden = !available
         const optionRow = option.closest<HTMLElement>('li')
-        if (optionRow) optionRow.hidden = !available
+        if (optionRow && !optionRow.classList.contains('catalogue-new-size-select-all-row')) {
+          optionRow.hidden = !available
+        }
         return
       }
       const text = option.textContent?.trim().toLowerCase() || ''
@@ -97,7 +103,9 @@ export function initCatalogSizeSelect(
       const available = option.dataset.available !== '0'
       option.hidden = !available
       const optionRow = option.closest<HTMLElement>('li')
-      if (optionRow) optionRow.hidden = !available
+      if (optionRow && !optionRow.classList.contains('catalogue-new-size-select-all-row')) {
+        optionRow.hidden = !available
+      }
     })
   }
 
@@ -153,10 +161,17 @@ export function initCatalogSizeSelect(
     if (!option || !(option instanceof HTMLElement)) return false
     const sizeSelect = option.closest('.catalogue-new-size-select') || activeSizeSelectHost
     if (!sizeSelect || !(sizeSelect instanceof HTMLElement)) return false
-    const groupName = sizeSelect.dataset.sizeGroup
+    const catalogSelect = String(sizeSelect.dataset.catalogSelect || '').trim()
+    const legacySize = sizeSelect.dataset.sizeGroup === 'size'
+    const group: CatalogSelectGroup | '' =
+      catalogSelect === 'size' || catalogSelect === 'loadRange'
+        ? (catalogSelect as CatalogSelectGroup)
+        : legacySize
+          ? 'size'
+          : ''
+    if (group !== 'size' && group !== 'loadRange') return false
     const value = String(option.dataset.value || 'all')
-    if (groupName !== 'size') return false
-    const shouldCloseAfterSelect = options.onOptionSelected(value)
+    const shouldCloseAfterSelect = options.onOptionSelected(group, value)
     if (shouldCloseAfterSelect) closeMenus()
     return true
   }
@@ -222,6 +237,14 @@ export function initCatalogSizeSelect(
         event.preventDefault()
         event.stopPropagation()
         options.onSizeReset?.()
+        closeMenus()
+        return true
+      }
+      const loadRangeResetMark = event.target.closest<HTMLElement>('[data-action="load-range-reset"]')
+      if (loadRangeResetMark && activeSizeSelectMenu?.contains(loadRangeResetMark)) {
+        event.preventDefault()
+        event.stopPropagation()
+        options.onLoadRangeReset?.()
         closeMenus()
         return true
       }

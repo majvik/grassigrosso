@@ -5,6 +5,7 @@ import {
   type CatalogAvailableFilterSets,
   type CatalogFilterState,
   CANONICAL_CATALOG_FIRMNESS_SLUGS,
+  CANONICAL_LOAD_RANGE_SLUGS,
 } from './catalog-filtering'
 import {
   STANDARD_MATTRESS_SIZES,
@@ -33,8 +34,7 @@ function mergeSizeOptionsWithStandard(apiOptions: unknown): NormalizedCatalogFil
 }
 
 /** Канон жёсткости из кода; подписи из API при совпадении slug (как у размеров). */
-const STANDARD_FIRMNESS_SLUGS = ['soft', 'medium', 'hard', 'dualFirmness'] as const
-const STANDARD_FIRMNESS_SET = new Set<string>(STANDARD_FIRMNESS_SLUGS)
+const STANDARD_FIRMNESS_SET = new Set<string>(CANONICAL_CATALOG_FIRMNESS_SLUGS)
 const DEFAULT_FIRMNESS_LABELS: Record<string, string> = {
   soft: 'Мягкий',
   medium: 'Средний',
@@ -78,6 +78,65 @@ function renderCatalogueFirmnessChips(root: Element, options: unknown): boolean 
   return true
 }
 
+const LOAD_RANGE_SLUG_SET = new Set<string>(CANONICAL_LOAD_RANGE_SLUGS)
+const DEFAULT_LOAD_RANGE_LABELS: Record<string, string> = {
+  upTo120: 'до 120кг',
+  upTo160: 'до 160кг',
+  upTo180: 'до 180кг',
+  over160: 'Без ограничений',
+}
+
+function mergeLoadRangeOptionsWithStandard(apiOptions: unknown): NormalizedCatalogFilterOption[] {
+  const normalized = normalizeCatalogFilterOptions(apiOptions)
+  const labelBySlug = new Map<string, string>()
+  for (const row of normalized) {
+    const slug = String(row.value || '').trim()
+    if (!slug || !LOAD_RANGE_SLUG_SET.has(slug)) continue
+    if (row.label) labelBySlug.set(slug, row.label)
+  }
+  return CANONICAL_LOAD_RANGE_SLUGS.map((slug, i) => ({
+    value: slug,
+    label: labelBySlug.get(slug) ?? DEFAULT_LOAD_RANGE_LABELS[slug] ?? slug,
+    sortOrder: i,
+  }))
+}
+
+function renderCatalogueLoadRangeOptions(root: Element, options: unknown): boolean {
+  const normalized = mergeLoadRangeOptionsWithStandard(options)
+  if (!normalized.length) return false
+  const host = root.querySelector('.catalogue-new-size-select[data-catalog-select="loadRange"]')
+  const menu = host?.querySelector('.catalogue-new-size-select-menu')
+  if (!menu) return false
+  const allRow = document.createElement('li')
+  allRow.className = 'catalogue-new-size-select-all-row'
+  const allRowInner = document.createElement('div')
+  allRowInner.className = 'catalogue-new-size-select-all-row-inner'
+  allRowInner.appendChild(createCatalogueFilterButton(
+    'catalogue-new-size-select-option is-active',
+    { 'data-value': 'all' },
+    'Любая',
+  ))
+  const menuResetMark = document.createElement('button')
+  menuResetMark.type = 'button'
+  menuResetMark.className = 'catalogue-new-size-reset-mark'
+  menuResetMark.dataset.action = 'load-range-reset'
+  menuResetMark.textContent = 'Сбросить'
+  allRowInner.appendChild(menuResetMark)
+  allRow.appendChild(allRowInner)
+  const rows: Element[] = [allRow]
+  normalized.forEach((option) => {
+    const row = document.createElement('li')
+    row.appendChild(createCatalogueFilterButton(
+      'catalogue-new-size-select-option',
+      { 'data-value': option.value },
+      option.label,
+    ))
+    rows.push(row)
+  })
+  menu.replaceChildren(...rows)
+  return true
+}
+
 type ResolveSizeMenu = (sizeSelectEl: Element | null) => Element | null
 
 function createCatalogueFilterButton(className: string, attrs: Record<string, string>, label: string): HTMLButtonElement {
@@ -115,7 +174,7 @@ function renderCatalogueChipOptions(root: Element, groupName: string, options: u
 function renderCatalogueSizeOptions(root: Element, options: unknown): boolean {
   const normalized = mergeSizeOptionsWithStandard(options)
   if (!normalized.length) return false
-  const sizeSelect = root.querySelector('.catalogue-new-size-select[data-size-group="size"]')
+  const sizeSelect = root.querySelector('.catalogue-new-size-select[data-catalog-select="size"]')
   const menu = sizeSelect?.querySelector('.catalogue-new-size-select-menu')
   if (!menu) return false
   const searchRow = menu.querySelector('.catalogue-new-size-select-search-row')
@@ -158,7 +217,7 @@ export function renderCatalogueFilterGroups(root: Element, groups: CatalogFilter
     renderCatalogueSizeOptions(root, groups.size),
     renderCatalogueFirmnessChips(root, groups.firmness),
     renderCatalogueChipOptions(root, 'type', groups.type, 'Любая'),
-    renderCatalogueChipOptions(root, 'loadRange', groups.loadRange, 'Любая'),
+    renderCatalogueLoadRangeOptions(root, groups.loadRange),
     renderCatalogueChipOptions(root, 'heightRange', groups.heightRange, 'Любая'),
     renderCatalogueChipOptions(root, 'fillings', groups.fillings, 'Любая'),
     renderCatalogueChipOptions(root, 'features', groups.features, 'Любые'),
@@ -196,12 +255,11 @@ export function syncCatalogueFilterUi(root: Element, state: CatalogFilterState, 
   }
   setMultiChipSelection('firmness', state.firmness)
   setMultiChipSelection('type', state.type)
-  setMultiChipSelection('loadRange', state.loadRange)
   setMultiChipSelection('heightRange', state.heightRange)
   setMultiChipSelection('fillings', state.fillings)
   setMultiChipSelection('features', state.features)
 
-  const sizeSelect = root.querySelector('.catalogue-new-size-select[data-size-group="size"]')
+  const sizeSelect = root.querySelector('.catalogue-new-size-select[data-catalog-select="size"]')
   const menu = resolveSizeSelectMenu(sizeSelect)
   const trigger = sizeSelect?.querySelector<HTMLElement>('.catalogue-new-size-select-trigger')
   const options = menu ? [...menu.querySelectorAll<HTMLElement>('.catalogue-new-size-select-option')] : []
@@ -237,6 +295,33 @@ export function syncCatalogueFilterUi(root: Element, state: CatalogFilterState, 
     sizeUnder.hidden = !showUnder
     sizeUnder.setAttribute('aria-hidden', showUnder ? 'false' : 'true')
   }
+
+  const loadSelect = root.querySelector('.catalogue-new-size-select[data-catalog-select="loadRange"]')
+  const loadMenu = resolveSizeSelectMenu(loadSelect)
+  const loadTrigger = loadSelect?.querySelector<HTMLElement>('.catalogue-new-size-select-trigger')
+  const loadOptions = loadMenu ? [...loadMenu.querySelectorAll<HTMLElement>('.catalogue-new-size-select-option')] : []
+  loadOptions.forEach((option) => {
+    const value = String(option.dataset.value || '')
+    const isAll = value === 'all'
+    option.classList.toggle('is-active', isAll ? state.loadRange.size === 0 : state.loadRange.has(value))
+    if (isAll) option.textContent = 'Любая'
+  })
+  if (loadTrigger) {
+    if (!state.loadRange.size) {
+      loadTrigger.textContent = 'Любая'
+    } else {
+      const selected = [...state.loadRange][0]
+      const opt = loadOptions.find((o) => String(o.dataset.value || '') === selected)
+      loadTrigger.textContent = opt?.textContent?.trim() || 'Любая'
+    }
+  }
+  const loadField = loadSelect?.closest('.catalogue-new-filter-field')
+  const loadUnder = loadField?.querySelector<HTMLElement>('.catalogue-new-size-select-under')
+  if (loadUnder) {
+    const showLoadUnder = state.loadRange.size > 0
+    loadUnder.hidden = !showLoadUnder
+    loadUnder.setAttribute('aria-hidden', showLoadUnder ? 'false' : 'true')
+  }
   syncCatalogFilterDependencies(root, state)
 }
 
@@ -254,18 +339,21 @@ export function applyAvailableFilterOptions(
       const shouldHide = !visible || filteredOut
       el.hidden = shouldHide
       const optionRow = el.closest<HTMLElement>('li')
-      if (optionRow) optionRow.hidden = shouldHide
+      // Строка «Любой»/«Любая» + «Сбросить» в одном li — не скрываем весь li (иначе пропадает пометка Сбросить, как у размера).
+      if (optionRow && !optionRow.classList.contains('catalogue-new-size-select-all-row')) {
+        optionRow.hidden = shouldHide
+      }
     })
   }
 
   toggleBySet('.catalogue-new-chip[data-filter-group="collection"]', available.collection)
   toggleBySet('.catalogue-new-chip[data-filter-group="firmness"]', available.firmness)
   toggleBySet('.catalogue-new-chip[data-filter-group="type"]', available.type)
-  toggleBySet('.catalogue-new-chip[data-filter-group="loadRange"]', available.loadRange)
   toggleBySet('.catalogue-new-chip[data-filter-group="heightRange"]', available.heightRange)
   toggleBySet('.catalogue-new-chip[data-filter-group="fillings"]', available.fillings)
   toggleBySet('.catalogue-new-chip[data-filter-group="features"]', available.features)
-  toggleBySet('.catalogue-new-size-select[data-size-group="size"] .catalogue-new-size-select-option', available.size)
+  toggleBySet('.catalogue-new-size-select[data-catalog-select="size"] .catalogue-new-size-select-option', available.size)
+  toggleBySet('.catalogue-new-size-select[data-catalog-select="loadRange"] .catalogue-new-size-select-option', available.loadRange)
 
   if (state.collection !== 'all' && !available.collection.has(state.collection)) state.collection = 'all'
   state.loadRange.forEach((value) => { if (!available.loadRange.has(value)) state.loadRange.delete(value) })

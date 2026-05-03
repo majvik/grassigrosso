@@ -23,6 +23,7 @@ import {
 import {
   CATALOG_MULTI_FILTER_GROUPS,
   applyCatalogChipFilter,
+  applyCatalogLoadRangeSelect,
   applyCatalogSizeFilter,
   collectAvailableCatalogFilters,
   compareCatalogCardMeta,
@@ -341,18 +342,44 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
       scrollToCatalogueToolbar()
     }
 
+    const runCatalogLoadRangeReset = () => {
+      applyCatalogLoadRangeSelect(state, 'all')
+      syncUiFromState()
+      visibleCardsLimit = CATALOGUE_PAGE_SIZE
+      applyFilters()
+      scrollToCatalogueToolbar()
+    }
+
     const sizeSelectController = initCatalogSizeSelect(catalogueNewSidebar, {
-      onOptionSelected: (value) => {
-        const shouldCloseAfterSelect = applyCatalogSizeFilter(state, value)
-        syncUiFromState()
-        visibleCardsLimit = CATALOGUE_PAGE_SIZE
-        applyFilters()
-        return shouldCloseAfterSelect
+      onOptionSelected: (group, value) => {
+        if (group === 'size') {
+          const shouldCloseAfterSelect = applyCatalogSizeFilter(state, value)
+          syncUiFromState()
+          visibleCardsLimit = CATALOGUE_PAGE_SIZE
+          applyFilters()
+          return shouldCloseAfterSelect
+        }
+        if (group === 'loadRange') {
+          applyCatalogLoadRangeSelect(state, value)
+          syncUiFromState()
+          visibleCardsLimit = CATALOGUE_PAGE_SIZE
+          applyFilters()
+          return true
+        }
+        return true
       },
       onSizeReset: runCatalogSizeReset,
+      onLoadRangeReset: runCatalogLoadRangeReset,
     })
 
     catalogueNewSidebar.addEventListener('click', (event) => {
+      const loadRangeResetMark = event.target.closest('[data-action="load-range-reset"]')
+      if (loadRangeResetMark) {
+        event.preventDefault()
+        sizeSelectController.closeMenus()
+        runCatalogLoadRangeReset()
+        return
+      }
       const sizeResetMark = event.target.closest('[data-action="size-reset"]')
       if (sizeResetMark) {
         event.preventDefault()

@@ -98,7 +98,8 @@ module.exports = {
     const loadRangeOptions = await ensureRows('api::load-range-option.load-range-option', [
       { name: 'до 120 кг', slug: 'upTo120', is_active: true },
       { name: 'до 160 кг', slug: 'upTo160', is_active: true },
-      { name: 'свыше 160 кг', slug: 'over160', is_active: true },
+      { name: 'до 180 кг', slug: 'upTo180', is_active: true },
+      { name: 'Без ограничений', slug: 'over160', is_active: true },
     ]);
     const heightRangeOptions = await ensureRows('api::height-range-option.height-range-option', [
       { name: 'Компактные до 16 см', slug: 'low', is_active: true },
@@ -136,8 +137,10 @@ module.exports = {
       'до_130_кг': 'upTo160',
       'до_150_кг': 'upTo160',
       'до_160_кг': 'upTo160',
+      'до_180_кг': 'upTo180',
       'свыше_150_кг': 'over160',
       'свыше_160_кг': 'over160',
+      'свыше_180_кг': 'over160',
     }[normalize(value)] || String(value || '').trim());
     const mapHeightRange = (value) => ({
       'низкий': 'low',

@@ -83,9 +83,17 @@ module.exports = {
         'свыше_150_кг': 'over160',
         'до_120_кг': 'upTo120',
         'до_160_кг': 'upTo160',
+        'до_180_кг': 'upTo180',
         'свыше_160_кг': 'over160',
+        'свыше_180_кг': 'over160',
       }
       return dict[raw] || raw
+    }
+    const normalizeProductLoadRangeSlug = (slug, maxLoadKg) => {
+      const s = String(slug || '').trim()
+      const m = Number(maxLoadKg || 0)
+      if (s === 'over160' && m > 0 && m <= 180) return 'upTo180'
+      return s
     }
     const mapHeightRange = (value) => {
       const raw = String(value || '').trim()
@@ -178,7 +186,10 @@ module.exports = {
       mattressType: row.mattress_type_option?.slug || mapMattressType(row.mattress_type || ''),
       heightCm: Number(row.height_cm || 0),
       maxLoadKg: Number(row.max_load_kg || 0),
-      loadRange: row.load_range_option?.slug || mapLoadRange(row.load_range || ''),
+      loadRange: normalizeProductLoadRangeSlug(
+        row.load_range_option?.slug || mapLoadRange(row.load_range || ''),
+        Number(row.max_load_kg || 0),
+      ),
       heightRange: row.height_range_option?.slug || mapHeightRange(row.height_range || ''),
       sizes: (() => {
         const relationSizes = Array.isArray(row.sizes)

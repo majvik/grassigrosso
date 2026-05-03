@@ -254,6 +254,7 @@
   font: inherit;
   background: #fff;
   color: var(--color-text);
+  cursor: pointer;
 }
 
 .catalogue-new-chip.is-active {
@@ -266,7 +267,9 @@
 }
 .catalogue-new-filter-group.is-disabled .catalogue-new-chip,
 .catalogue-new-filter-group.is-disabled input,
-.catalogue-new-filter-group.is-disabled select {
+.catalogue-new-filter-group.is-disabled select,
+.catalogue-new-filter-group.is-disabled .catalogue-new-size-select,
+.catalogue-new-filter-group.is-disabled .catalogue-new-size-reset-mark {
   pointer-events: none;
 }
 .catalogue-new-filter-size-grid {

@@ -51,7 +51,6 @@ export type CatalogAvailableFilterSets = {
 export const CATALOG_MULTI_FILTER_GROUPS = new Set([
   'firmness',
   'type',
-  'loadRange',
   'heightRange',
   'fillings',
   'features',
@@ -67,8 +66,10 @@ const firmnessRank: Record<string, number> = {
 /** Все пункты фильтра «Жёсткость» остаются в разметке (как канон размеров); отбор карточек по-прежнему по data-firmness. */
 export const CANONICAL_CATALOG_FIRMNESS_SLUGS = ['soft', 'medium', 'hard', 'dualFirmness'] as const
 
+/** Канон диапазонов нагрузки в UI (селект «Нагрузка»). `over160` — «Без ограничений», по числу max load: >180 кг. */
+export const CANONICAL_LOAD_RANGE_SLUGS = ['upTo120', 'upTo160', 'upTo180', 'over160'] as const
+
 const knownTypeOptions = ['spring', 'nospring', 'topper', 'doubleSided', 'singleSided']
-const knownLoadRangeOptions = ['upTo120', 'upTo160', 'over160']
 const knownHeightRangeOptions = ['low', 'mid', 'high']
 const knownFillingOptions = ['coir', 'latex', 'orthoFoam', 'memoryEffect', 'nanoFoam', 'forplit']
 const knownFeatureOptions = ['removableCover', 'winterSummer', 'edgeSupport']
@@ -93,7 +94,8 @@ export function matchLoadRange(load: number, range: string): boolean {
   if (range === 'all') return true
   if (range === 'upTo120') return load <= 120
   if (range === 'upTo160') return load <= 160
-  if (range === 'over160') return load > 160
+  if (range === 'upTo180') return load <= 180
+  if (range === 'over160') return load > 180
   return true
 }
 
@@ -108,6 +110,7 @@ export function matchHeightRange(height: number, range: string): boolean {
 export function getLoadRangeBucket(load: number): string {
   if (load <= 120) return 'upTo120'
   if (load <= 160) return 'upTo160'
+  if (load <= 180) return 'upTo180'
   return 'over160'
 }
 
@@ -198,7 +201,7 @@ export function collectAvailableCatalogFilters<TCard>(cardMeta: CatalogCardMeta<
   })
 
   knownTypeOptions.forEach((value) => available.type.add(value))
-  knownLoadRangeOptions.forEach((value) => available.loadRange.add(value))
+  CANONICAL_LOAD_RANGE_SLUGS.forEach((value) => available.loadRange.add(value))
   knownHeightRangeOptions.forEach((value) => available.heightRange.add(value))
   knownFillingOptions.forEach((value) => available.fillings.add(value))
   knownFeatureOptions.forEach((value) => available.features.add(value))
@@ -274,4 +277,15 @@ export function applyCatalogSizeFilter(state: CatalogFilterState, value: string)
     state.size.add(value)
   }
   return false
+}
+
+/** Селект нагрузки: одно значение или «Любая» (пустой набор). */
+export function applyCatalogLoadRangeSelect(state: CatalogFilterState, value: string): boolean {
+  if (value === 'all') {
+    state.loadRange.clear()
+    return true
+  }
+  state.loadRange.clear()
+  state.loadRange.add(value)
+  return true
 }

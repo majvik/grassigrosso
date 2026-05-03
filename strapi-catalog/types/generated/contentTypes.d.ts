@@ -807,7 +807,9 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       [
         '\u0434\u043E_120_\u043A\u0433',
         '\u0434\u043E_160_\u043A\u0433',
+        '\u0434\u043E_180_\u043A\u0433',
         '\u0441\u0432\u044B\u0448\u0435_160_\u043A\u0433',
+        '\u0441\u0432\u044B\u0448\u0435_180_\u043A\u0433',
       ]
     >;
     load_range_option: Schema.Attribute.Relation<

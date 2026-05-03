@@ -1939,7 +1939,7 @@ export const MARKETING_PAGE_CONTENT = {
                   <label>Выберите размер</label>
                   <a href="#" class="catalogue-new-size-help-link" data-action="size-help">Нет нужного?</a>
                 </div>
-                <div class="catalogue-new-size-select" data-size-group="size">
+                <div class="catalogue-new-size-select" data-catalog-select="size">
                   <button type="button" class="catalogue-new-size-select-trigger" aria-haspopup="listbox" aria-expanded="false">Любой</button>
                   <ul class="catalogue-new-size-select-menu" role="listbox" hidden>
                     <li class="catalogue-new-size-select-search-row">
@@ -2012,14 +2012,31 @@ export const MARKETING_PAGE_CONTENT = {
 
           <div class="catalogue-new-filter-group" data-filter-group="loadRange">
             <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="false">
-              <h3>Макс. нагрузка на спальное место</h3>
+              <h3>Нагрузка</h3>
             </button>
             <div class="catalogue-new-filter-accordion-panel" hidden>
-              <div class="catalogue-new-filter-list">
-                <button type="button" class="catalogue-new-chip is-active" data-filter-group="loadRange" data-value="all">Любая</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="upTo120">до 120кг</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="upTo160">до 160кг</button>
-                <button type="button" class="catalogue-new-chip" data-filter-group="loadRange" data-value="over160">без ограничений (свыше 160кг)</button>
+              <div class="catalogue-new-filter-field">
+                <div class="catalogue-new-filter-field-head">
+                  <label>Макс. нагрузка на спальное место</label>
+                </div>
+                <div class="catalogue-new-size-select" data-catalog-select="loadRange">
+                  <button type="button" class="catalogue-new-size-select-trigger" aria-haspopup="listbox" aria-expanded="false">Любая</button>
+                  <ul class="catalogue-new-size-select-menu" role="listbox" hidden>
+                    <li class="catalogue-new-size-select-all-row">
+                      <div class="catalogue-new-size-select-all-row-inner">
+                        <button type="button" class="catalogue-new-size-select-option is-active" data-value="all">Любая</button>
+                        <button type="button" class="catalogue-new-size-reset-mark" data-action="load-range-reset">Сбросить</button>
+                      </div>
+                    </li>
+                    <li><button type="button" class="catalogue-new-size-select-option" data-value="upTo120">до 120кг</button></li>
+                    <li><button type="button" class="catalogue-new-size-select-option" data-value="upTo160">до 160кг</button></li>
+                    <li><button type="button" class="catalogue-new-size-select-option" data-value="upTo180">до 180кг</button></li>
+                    <li><button type="button" class="catalogue-new-size-select-option" data-value="over160">Без ограничений</button></li>
+                  </ul>
+                </div>
+                <div class="catalogue-new-size-select-under" hidden aria-hidden="true">
+                  <button type="button" class="catalogue-new-size-reset-mark" data-action="load-range-reset">Сбросить</button>
+                </div>
               </div>
             </div>
           </div>

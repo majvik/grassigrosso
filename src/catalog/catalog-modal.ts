@@ -40,7 +40,8 @@ const modalLabelMaps = {
   loadRange: {
     upTo120: 'до 120кг',
     upTo160: 'до 160кг',
-    over160: 'без ограничений (свыше 160кг)',
+    upTo180: 'до 180кг',
+    over160: 'Без ограничений',
   },
   heightRange: {
     low: 'Компактные до 16 см',

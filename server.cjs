@@ -311,11 +311,16 @@ function mapStrapiProduct(item) {
   const mapLoadRange = (value) => {
     const raw = String(value || '').trim()
     const dict = {
-      'до_90_кг': 'upTo90',
-      'до_110_кг': 'upTo110',
-      'до_130_кг': 'upTo130',
-      'до_150_кг': 'upTo150',
-      'свыше_150_кг': 'over150',
+      'до_90_кг': 'upTo120',
+      'до_110_кг': 'upTo120',
+      'до_120_кг': 'upTo120',
+      'до_130_кг': 'upTo160',
+      'до_150_кг': 'upTo160',
+      'до_160_кг': 'upTo160',
+      'до_180_кг': 'upTo180',
+      'свыше_150_кг': 'over160',
+      'свыше_160_кг': 'over160',
+      'свыше_180_кг': 'over160',
     }
     return dict[raw] || raw
   };
