@@ -86,6 +86,42 @@ const CORS_ALLOWED_ORIGINS = normalizeOriginList(
   process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173'
 );
 
+/** TTL кэша ответов Strapi для GET /api/catalog/* (мс). 0 — отключено. В production по умолчанию 45s — меньше нагрузка на SQLite при трафике на /catalog. */
+function readCatalogStrapiCacheTtlMs() {
+  const raw = process.env.CATALOG_STRAPI_CACHE_TTL_MS;
+  if (raw === undefined || raw === '') return isProd ? 45000 : 0;
+  const n = Number(raw);
+  return Number.isFinite(n) ? Math.max(0, n) : (isProd ? 45000 : 0);
+}
+const CATALOG_STRAPI_CACHE_TTL_MS = readCatalogStrapiCacheTtlMs();
+const catalogStrapiResponseCache = new Map();
+
+function getCatalogStrapiCache(key) {
+  if (CATALOG_STRAPI_CACHE_TTL_MS <= 0) return undefined;
+  const row = catalogStrapiResponseCache.get(key);
+  if (!row) return undefined;
+  if (Date.now() > row.expires) {
+    catalogStrapiResponseCache.delete(key);
+    return undefined;
+  }
+  return row.body;
+}
+
+function setCatalogStrapiCache(key, body) {
+  if (CATALOG_STRAPI_CACHE_TTL_MS <= 0) return;
+  catalogStrapiResponseCache.set(key, {
+    expires: Date.now() + CATALOG_STRAPI_CACHE_TTL_MS,
+    body
+  });
+}
+
+function attachCatalogApiCacheHeaders(res) {
+  if (CATALOG_STRAPI_CACHE_TTL_MS <= 0) return;
+  const sec = Math.max(1, Math.floor(CATALOG_STRAPI_CACHE_TTL_MS / 1000));
+  const swr = Math.min(300, sec * 5);
+  res.set('Cache-Control', `public, max-age=${sec}, stale-while-revalidate=${swr}`);
+}
+
 let isQueueProcessing = false;
 
 const corsOptions = buildCorsOptions({
@@ -798,7 +834,8 @@ console.log(`   SPAM_MAX_SUBMITS_PER_WINDOW: ${SPAM_MAX_SUBMITS_PER_WINDOW}`);
 console.log(`   SPAM_MIN_SUBMIT_INTERVAL_MS: ${SPAM_MIN_SUBMIT_INTERVAL_MS}`);
 console.log(`   SPAM_BLOCK_MS: ${SPAM_BLOCK_MS}`);
 console.log(`   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS.length > 0 ? CORS_ALLOWED_ORIGINS.join(', ') : '(none)'}`);
-console.log(`   DB_PATH: ${db.DB_PATH}\n`);
+console.log(`   DB_PATH: ${db.DB_PATH}`);
+console.log(`   CATALOG_STRAPI_CACHE_TTL_MS: ${CATALOG_STRAPI_CACHE_TTL_MS}\n`);
 
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -817,6 +854,13 @@ app.get('/api/catalog/hero-slides', async (req, res) => {
     return res.status(503).json({ error: 'STRAPI_URL is not configured', slides: [] });
   }
 
+  const cacheKey = 'catalog:hero-slides';
+  const cached = getCatalogStrapiCache(cacheKey);
+  if (cached !== undefined) {
+    attachCatalogApiCacheHeaders(res);
+    return res.json(cached);
+  }
+
   try {
     const feedUrl = `${STRAPI_URL}/api/catalog-hero-feed`;
     const response = await axios.get(feedUrl, { timeout: 10000 });
@@ -830,11 +874,14 @@ app.get('/api/catalog/hero-slides', async (req, res) => {
     })).filter((slide) => slide.src);
     const autoplayRaw = Number(response.data?.autoplayMs ?? response.data?.autoplay_ms);
     const autoplayMs = Number.isFinite(autoplayRaw) ? Math.max(2500, autoplayRaw) : 6500;
-    return res.json({
+    const payload = {
       slides: normalizedSlides,
       autoplayMs,
       source: response.data?.source || 'strapi-catalog-hero-feed',
-    });
+    };
+    setCatalogStrapiCache(cacheKey, payload);
+    attachCatalogApiCacheHeaders(res);
+    return res.json(payload);
   } catch (error) {
     const details = extractAxiosErrorDetails(error);
     console.error('❌ Ошибка загрузки hero-слайдера из Strapi:', details);
@@ -851,6 +898,13 @@ app.get('/api/catalog/products', async (req, res) => {
     return res.status(503).json({ error: 'STRAPI_URL is not configured' });
   }
 
+  const cacheKey = 'catalog:products';
+  const cached = getCatalogStrapiCache(cacheKey);
+  if (cached !== undefined) {
+    attachCatalogApiCacheHeaders(res);
+    return res.json(cached);
+  }
+
   try {
     // Preferred: custom public Strapi endpoint (no role permissions needed)
     const feedUrl = `${STRAPI_URL}/api/catalog-feed`;
@@ -862,7 +916,10 @@ app.get('/api/catalog/products', async (req, res) => {
     }));
     // Treat a successful feed response as authoritative even when list is empty.
     // This avoids false 502 when Strapi /api/products is unavailable in current setup.
-    return res.json({ items: normalizedFeedItems, source: 'strapi-catalog-feed' });
+    const payload = { items: normalizedFeedItems, source: 'strapi-catalog-feed' };
+    setCatalogStrapiCache(cacheKey, payload);
+    attachCatalogApiCacheHeaders(res);
+    return res.json(payload);
   } catch (_) {
     // Fallback to default products endpoint (if project is configured that way)
   }
@@ -884,7 +941,10 @@ app.get('/api/catalog/products', async (req, res) => {
 
     const rows = normalizeStrapiListPayload(fallbackResponse.data);
     const products = rows.map(mapStrapiProduct).filter((item) => item && item.name);
-    return res.json({ items: products, source: 'strapi-products' });
+    const payload = { items: products, source: 'strapi-products' };
+    setCatalogStrapiCache(cacheKey, payload);
+    attachCatalogApiCacheHeaders(res);
+    return res.json(payload);
   } catch (error) {
     const details = extractAxiosErrorDetails(error);
     console.error('❌ Ошибка загрузки каталога из Strapi:', details);
@@ -900,6 +960,13 @@ app.get('/api/catalog/filters', async (req, res) => {
     return res.status(503).json({ error: 'STRAPI_URL is not configured' });
   }
 
+  const cacheKey = 'catalog:filters';
+  const cached = getCatalogStrapiCache(cacheKey);
+  if (cached !== undefined) {
+    attachCatalogApiCacheHeaders(res);
+    return res.json(cached);
+  }
+
   try {
     const feedUrl = `${STRAPI_URL}/api/catalog-filter-feed`;
     const response = await axios.get(feedUrl, { timeout: 10000 });
@@ -910,11 +977,14 @@ app.get('/api/catalog/filters', async (req, res) => {
       response.data?.filterHelp && typeof response.data.filterHelp === 'object' && !Array.isArray(response.data.filterHelp)
         ? response.data.filterHelp
         : {};
-    return res.json({
+    const payload = {
       groups,
       filterHelp,
       source: response.data?.source || 'strapi-catalog-filter-feed',
-    });
+    };
+    setCatalogStrapiCache(cacheKey, payload);
+    attachCatalogApiCacheHeaders(res);
+    return res.json(payload);
   } catch (error) {
     const details = extractAxiosErrorDetails(error);
     console.error('❌ Ошибка загрузки фильтров каталога из Strapi:', details);

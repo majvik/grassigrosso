@@ -8,7 +8,7 @@ import {
   relocateOverlayRoots,
   scalePageForWideScreens,
 } from './app-shell'
-import { setupCatalogueNewPageHero } from './catalog-hero-slider'
+import { setupCatalogueNewPageHero, prefetchCatalogHeroFeed } from './catalog-hero-slider'
 import { initCommercialOfferModal } from './commercial-offer'
 import { initCollectionsSlider } from './collections-slider'
 import { initContactForms } from './contact-forms'
@@ -61,8 +61,10 @@ function initApp() {
   initCommercialOfferModal({ lockScroll, unlockScroll })
 }
 
+// Start hero feed network request immediately — before React renders.
+// DOM initialization (initCatalogHeroSlider) happens after React in reactEntryPromise.finally().
 if (document.body.dataset.page === 'catalog') {
-  void setupCatalogueNewPageHero()
+  prefetchCatalogHeroFeed()
 }
 
 initPageLoad({
@@ -87,5 +89,10 @@ initPageLoad({
   .finally(() => {
     void reactEntryPromise.finally(() => {
       initApp()
+      // Initialize hero slider AFTER React has rendered the catalog DOM.
+      // prefetchCatalogHeroFeed() already started the network request above.
+      if (document.body.dataset.page === 'catalog') {
+        void setupCatalogueNewPageHero()
+      }
     })
   })

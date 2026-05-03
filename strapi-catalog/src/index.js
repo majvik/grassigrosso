@@ -1,5 +1,21 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
+(function syncDistRuntimeAssetsEarly() {
+  const fromSrc = path.join(__dirname, '..', 'scripts', 'prepare-dist.cjs');
+  const fromDist = path.join(__dirname, '..', '..', 'scripts', 'prepare-dist.cjs');
+  const scriptPath = fs.existsSync(fromSrc) ? fromSrc : fromDist;
+  const appRoot = fs.existsSync(fromSrc) ? path.resolve(__dirname, '..') : path.resolve(__dirname, '..', '..');
+  try {
+    const { syncDistRuntimeAssets } = require(scriptPath);
+    syncDistRuntimeAssets(appRoot);
+  } catch {
+    /* dist ещё не собран или скрипт недоступен — strapi build подставит файлы */
+  }
+})();
+
 module.exports = {
   register(/*{ strapi }*/) {},
 

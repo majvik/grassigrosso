@@ -140,7 +140,25 @@ const pageNames = {
 
 Опционально для локального Docker без пересборки: bind-mount — [docker-compose.override.example.yml](docker-compose.override.example.yml).
 
-**Переменные на Timeweb:** по смыслу дублируется **корневой** `.env` (см. [.env.example](.env.example)). Файл `strapi-catalog/.env` в образ не попадает ([.dockerignore](.dockerignore)); секреты Strapi для контейнера должны быть **в панели Timeweb с теми же именами**, что в примере в конце `.env.example` (`APP_KEYS`, `JWT_SECRET`, …), иначе `start-services.sh` подставит dev-значения.
+### `strapi develop` и content-types (schema в dist)
+
+- `strapi develop` очищает `strapi-catalog/dist` и компилирует только `.ts` → в `dist/src/api` без доп. шага **нет** `schema.json` у API без своих исходников на TS, из‑за этого не регистрируются `api::product`, `api::mattress-size` и т.д. и падает bootstrap.
+- В [strapi-catalog/src/index.js](strapi-catalog/src/index.js) при загрузке модуля вызывается [scripts/prepare-dist.cjs](strapi-catalog/scripts/prepare-dist.cjs) (копирование `src/api`, `components`, `extensions` в `dist/src`), как после полного `strapi build`.
+
+### Локально: редирект на `/admin/auth/register-admin` вместо логина
+
+- При `npm run develop --prefix strapi-catalog` Strapi грузит `config/database.js` из `dist/config/`. Раньше там использовался `__dirname` (= `dist/config`), поэтому путь `.tmp/data.db` разрешался в `dist/.tmp/data.db` — папка `dist/.tmp/` не существовала, Strapi создавал пустую БД и предлагал зарегистрировать первого админа. Кроме того, в watch-режиме `strapi develop` периодически пересобирает и очищает `dist/`, удаляя `dist/.tmp/data.db` прямо в рантайме → SQLite-соединение к удалённому файлу → «attempt to write a readonly database» в крон-задачах.
+- **Исправление** уже применено в `config/database.js` (заменено `__dirname` на `process.cwd()`). Теперь `DATABASE_FILENAME=.tmp/data.db` всегда резолвится в `strapi-catalog/.tmp/data.db` независимо от того, откуда загружен конфиг.
+- На проде [scripts/start-services.sh](scripts/start-services.sh) при пустом рабочем файле копирует сид **`strapi-catalog/database/seed/data.db`** в `STRAPI_DATABASE_FILENAME` (по умолчанию `/app/data/strapi/data.db`), поэтому на проде всегда есть готовые данные.
+- **Если `.tmp/data.db` всё же пустая локально:** `cp strapi-catalog/database/seed/data.db strapi-catalog/.tmp/data.db` — скопирует сид (осторожно: перезапишет локальные изменения).
+
+### Производительность каталога и админки на проде
+
+- Публичные ответы `GET /api/catalog/products`, `/api/catalog/filters`, `/api/catalog/hero-slides` в **production** кэшируются в памяти Node на **45 с** (переменная **`CATALOG_STRAPI_CACHE_TTL_MS`** в корневом **`.env`**, `0` — отключить). Это снижает повторные тяжёлые запросы к SQLite Strapi при заходах на `/catalog`.
+- В [nginx.conf](nginx.conf) включён **gzip** для JSON/JS/CSS и ответов прокси — меньше объём при первой загрузке админки и ассетов.
+- Если админка «висит» минутами: проверить холодный старт контейнера, лимиты CPU/RAM у хостинга, лог `/tmp/strapi.log`; убедиться, что в production запускается **`strapi start`**, а не `develop`.
+
+**Переменные на Timeweb:** по смыслу совпадают с **корневым `.env`** у вас локально; образец имён — [.env.example](.env.example) (в git только шаблон, не секреты). Файл `strapi-catalog/.env` в образ не попадает ([.dockerignore](.dockerignore)); секреты Strapi для контейнера должны быть **в панели Timeweb с теми же именами**, что в конце `.env.example` (`APP_KEYS`, `JWT_SECRET`, …), иначе `start-services.sh` подставит dev-значения.
 
 ### 502 на `POST …/admin/login` и «Unexpected end of JSON input»
 

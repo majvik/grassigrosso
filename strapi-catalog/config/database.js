@@ -3,9 +3,12 @@ const path = require('path');
 module.exports = ({ env }) => {
   const client = env('DATABASE_CLIENT', 'sqlite');
   const databaseFilename = env('DATABASE_FILENAME', '.tmp/data.db');
+  // Используем process.cwd() вместо __dirname: при «strapi develop» config грузится из dist/config,
+  // поэтому __dirname = dist/config и БД падала в dist/.tmp/ вместо корня strapi-catalog.
+  // process.cwd() всегда указывает на strapi-catalog/ (откуда запускается strapi).
   const sqliteFilename = path.isAbsolute(databaseFilename)
     ? databaseFilename
-    : path.join(__dirname, '..', databaseFilename);
+    : path.join(process.cwd(), databaseFilename);
 
   const connections = {
     mysql: {
@@ -51,6 +54,15 @@ module.exports = ({ env }) => {
         filename: sqliteFilename,
       },
       useNullAsDefault: true,
+      // WAL mode: позволяет одновременные чтения во время записи, снижает задержки
+      // на resource-limited хостинге (Timeweb) при конкурентных запросах к каталогу.
+      pool: {
+        min: 1,
+        max: 1,
+        afterCreate(conn, done) {
+          conn.run('PRAGMA journal_mode = WAL;', done);
+        },
+      },
     },
   };
 

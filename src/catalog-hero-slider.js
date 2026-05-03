@@ -1,12 +1,21 @@
 import { fetchCatalogHeroFeed } from './catalog/catalog-api'
 import { applyCatalogHeroFeed } from './catalog/catalog-hero'
 
+// Prefetch started early (before React renders) so the network request is in-flight
+// while React hydrates the page. setupCatalogueNewPageHero() then just awaits this promise.
+let _heroFeedPrefetch = null
+
+export function prefetchCatalogHeroFeed() {
+  _heroFeedPrefetch = fetchCatalogHeroFeed()
+}
+
 export async function setupCatalogueNewPageHero() {
+  // By the time this is called, React has already rendered (see main.js).
   const sliderRoot = document.querySelector('.catalog-hero-slider')
   if (!sliderRoot) return
 
   try {
-    const data = await fetchCatalogHeroFeed()
+    const data = await (_heroFeedPrefetch || fetchCatalogHeroFeed())
     if (Array.isArray(data.slides) && data.slides.length > 0) {
       applyCatalogHeroFeed(sliderRoot, data)
     }
