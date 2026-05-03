@@ -1916,8 +1916,20 @@ export const MARKETING_PAGE_CONTENT = {
           <div class="catalogue-new-filter-group" data-filter-group="collection">
             <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="true">
               <h3>Коллекция</h3>
+              <span class="catalogue-new-tag catalogue-new-filter-selection-count" hidden aria-hidden="true"></span>
             </button>
             <div class="catalogue-new-filter-accordion-panel">
+              <div class="catalogue-new-filter-help-row">
+                <button type="button" class="catalogue-new-filter-help-trigger" data-filter-help-open="collection" aria-haspopup="dialog" aria-label="Как выбрать коллекцию">
+                  <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
+                      <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                  </span>
+                  <span class="catalogue-new-filter-help-label">Как выбрать?</span>
+                </button>
+              </div>
               <div class="catalogue-new-filter-list">
                 <button type="button" class="catalogue-new-chip is-active" data-filter-group="collection" data-value="all">Все коллекции</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="collection" data-value="classic">Classic</button>
@@ -1930,10 +1942,22 @@ export const MARKETING_PAGE_CONTENT = {
           </div>
 
           <div class="catalogue-new-filter-group" data-filter-group="size">
-            <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="true">
+            <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="false">
               <h3>Размер</h3>
+              <span class="catalogue-new-tag catalogue-new-filter-selection-count" hidden aria-hidden="true"></span>
             </button>
-            <div class="catalogue-new-filter-accordion-panel">
+            <div class="catalogue-new-filter-accordion-panel" hidden>
+              <div class="catalogue-new-filter-help-row">
+                <button type="button" class="catalogue-new-filter-help-trigger" data-filter-help-open="size" aria-haspopup="dialog" aria-label="Как выбрать размер">
+                  <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
+                      <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                  </span>
+                  <span class="catalogue-new-filter-help-label">Как выбрать?</span>
+                </button>
+              </div>
               <div class="catalogue-new-filter-field">
                 <div class="catalogue-new-filter-field-head">
                   <label>Выберите размер</label>
@@ -1980,10 +2004,22 @@ export const MARKETING_PAGE_CONTENT = {
           </div>
 
           <div class="catalogue-new-filter-group" data-filter-group="firmness">
-            <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="true">
+            <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="false">
               <h3>Жесткость</h3>
+              <span class="catalogue-new-tag catalogue-new-filter-selection-count" hidden aria-hidden="true"></span>
             </button>
-            <div class="catalogue-new-filter-accordion-panel">
+            <div class="catalogue-new-filter-accordion-panel" hidden>
+              <div class="catalogue-new-filter-help-row">
+                <button type="button" class="catalogue-new-filter-help-trigger" data-filter-help-open="firmness" aria-haspopup="dialog" aria-label="Как выбрать жёсткость">
+                  <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
+                      <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                  </span>
+                  <span class="catalogue-new-filter-help-label">Как выбрать?</span>
+                </button>
+              </div>
               <div class="catalogue-new-filter-list">
                 <button type="button" class="catalogue-new-chip is-active" data-filter-group="firmness" data-value="all">Любая</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="firmness" data-value="soft">Мягкий</button>
@@ -1995,10 +2031,22 @@ export const MARKETING_PAGE_CONTENT = {
           </div>
 
           <div class="catalogue-new-filter-group" data-filter-group="type">
-            <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="true">
+            <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="false">
               <h3>Тип конструкции</h3>
+              <span class="catalogue-new-tag catalogue-new-filter-selection-count" hidden aria-hidden="true"></span>
             </button>
-            <div class="catalogue-new-filter-accordion-panel">
+            <div class="catalogue-new-filter-accordion-panel" hidden>
+              <div class="catalogue-new-filter-help-row">
+                <button type="button" class="catalogue-new-filter-help-trigger" data-filter-help-open="type" aria-haspopup="dialog" aria-label="Как выбрать тип конструкции">
+                  <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
+                      <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                  </span>
+                  <span class="catalogue-new-filter-help-label">Как выбрать?</span>
+                </button>
+              </div>
               <div class="catalogue-new-filter-list">
                 <button type="button" class="catalogue-new-chip is-active" data-filter-group="type" data-value="all">Любая</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="type" data-value="spring">Пружинный</button>
@@ -2013,8 +2061,20 @@ export const MARKETING_PAGE_CONTENT = {
           <div class="catalogue-new-filter-group" data-filter-group="loadRange">
             <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="false">
               <h3>Нагрузка</h3>
+              <span class="catalogue-new-tag catalogue-new-filter-selection-count" hidden aria-hidden="true"></span>
             </button>
             <div class="catalogue-new-filter-accordion-panel" hidden>
+              <div class="catalogue-new-filter-help-row">
+                <button type="button" class="catalogue-new-filter-help-trigger" data-filter-help-open="loadRange" aria-haspopup="dialog" aria-label="Как выбрать нагрузку">
+                  <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
+                      <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                  </span>
+                  <span class="catalogue-new-filter-help-label">Как выбрать?</span>
+                </button>
+              </div>
               <div class="catalogue-new-filter-field">
                 <div class="catalogue-new-filter-field-head">
                   <label>Макс. нагрузка на спальное место</label>
@@ -2044,8 +2104,20 @@ export const MARKETING_PAGE_CONTENT = {
           <div class="catalogue-new-filter-group" data-filter-group="heightRange">
             <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="false">
               <h3>Высота матраса</h3>
+              <span class="catalogue-new-tag catalogue-new-filter-selection-count" hidden aria-hidden="true"></span>
             </button>
             <div class="catalogue-new-filter-accordion-panel" hidden>
+              <div class="catalogue-new-filter-help-row">
+                <button type="button" class="catalogue-new-filter-help-trigger" data-filter-help-open="heightRange" aria-haspopup="dialog" aria-label="Как выбрать высоту матраса">
+                  <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
+                      <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                  </span>
+                  <span class="catalogue-new-filter-help-label">Как выбрать?</span>
+                </button>
+              </div>
               <div class="catalogue-new-filter-list">
                 <button type="button" class="catalogue-new-chip is-active" data-filter-group="heightRange" data-value="all">Любая</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="heightRange" data-value="low">Компактные до 16 см</button>
@@ -2058,8 +2130,20 @@ export const MARKETING_PAGE_CONTENT = {
           <div class="catalogue-new-filter-group" data-filter-group="fillings">
             <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="false">
               <h3>Состав / Наполнитель</h3>
+              <span class="catalogue-new-tag catalogue-new-filter-selection-count" hidden aria-hidden="true"></span>
             </button>
             <div class="catalogue-new-filter-accordion-panel" hidden>
+              <div class="catalogue-new-filter-help-row">
+                <button type="button" class="catalogue-new-filter-help-trigger" data-filter-help-open="fillings" aria-haspopup="dialog" aria-label="Как выбрать наполнитель">
+                  <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
+                      <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                  </span>
+                  <span class="catalogue-new-filter-help-label">Как выбрать?</span>
+                </button>
+              </div>
               <div class="catalogue-new-filter-list">
                 <button type="button" class="catalogue-new-chip is-active" data-filter-group="fillings" data-value="all">Любая</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="fillings" data-value="coir">Кокосовая койра</button>
@@ -2074,9 +2158,21 @@ export const MARKETING_PAGE_CONTENT = {
 
           <div class="catalogue-new-filter-group" data-filter-group="features">
             <button type="button" class="catalogue-new-filter-accordion-trigger" aria-expanded="false">
-              <h3>Дополнительные особенности</h3>
+              <h3>Доп. особенности</h3>
+              <span class="catalogue-new-tag catalogue-new-filter-selection-count" hidden aria-hidden="true"></span>
             </button>
             <div class="catalogue-new-filter-accordion-panel" hidden>
+              <div class="catalogue-new-filter-help-row">
+                <button type="button" class="catalogue-new-filter-help-trigger" data-filter-help-open="features" aria-haspopup="dialog" aria-label="Как выбрать особенности">
+                  <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
+                      <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                  </span>
+                  <span class="catalogue-new-filter-help-label">Как выбрать?</span>
+                </button>
+              </div>
               <div class="catalogue-new-filter-list">
                 <button type="button" class="catalogue-new-chip is-active" data-filter-group="features" data-value="all">Любые</button>
                 <button type="button" class="catalogue-new-chip" data-filter-group="features" data-value="removableCover">Съемный чехол</button>
@@ -2129,10 +2225,15 @@ export const MARKETING_PAGE_CONTENT = {
             </div>
           </div>
           <div class="catalogue-new-favourites-back-row" id="catalogue-new-favourites-back-row" hidden>
-            <button type="button" class="catalogue-new-favourites-back" id="catalogue-new-favourites-back">
-              <img src="./public/icons/arrow-back-left.svg" alt="" aria-hidden="true" />
-              <span>Назад</span>
-            </button>
+            <div class="catalogue-new-favourites-back-row-inner">
+              <button type="button" class="catalogue-new-favourites-back" id="catalogue-new-favourites-back">
+                <img src="./public/icons/arrow-back-left.svg" alt="" aria-hidden="true" />
+                <span>Назад</span>
+              </button>
+              <button type="button" class="catalogue-new-favourites-clear-all" id="catalogue-new-favourites-clear-all">
+                Очистить
+              </button>
+            </div>
           </div>
 
           <div class="catalogue-new-cards">
