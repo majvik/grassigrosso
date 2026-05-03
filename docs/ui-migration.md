@@ -1,6 +1,6 @@
 # UI Migration: React + Base UI + CSS Modules
 
-Этот документ фиксирует фактический контракт миграции UI-слоя после распила `src/main.js`.
+Этот документ фиксирует фактический контракт миграции UI-слоя после распила `src/main.js` и после восстановления визуального паритета для `documents` и `contacts`.
 
 ## Целевой стек
 
@@ -20,8 +20,8 @@
 
 ### Pages
 
-- `documents` — React page c локальными данными, CSS Modules и UI-kit.
-- `contacts` — React page с офисами, формой и maps/tabs hooks через `data-*`.
+- `documents` — React page без HTML-строк; рендер идёт через JSX, но визуальный слой опирается на legacy full-width classes ради точного parity.
+- `contacts` — React page с офисами, формой и maps/tabs hooks через `data-*`; layout также сохранён на legacy full-width classes.
 - `hotels`, `dealers` — React pages без HTML-строк; текущий визуальный слой пока опирается на legacy global CSS для ускоренного parity.
 - `privacy`, `terms`, `cookies` — React legal pages.
 - `unsubscribe` — React service page.
@@ -33,9 +33,9 @@
 
 ## Что пока не переведено
 
-- Главные маркетинговые страницы (`index`, `hotels`, `dealers`, `contacts`) пока рендерятся из `marketing-content.ts` как HTML-строки.
+- `index` пока рендерится из `src/components/pages/marketing-content.ts` как HTML-строка.
 - `catalog` остаётся отдельным миграционным слоем со Strapi/runtime-логикой и legacy DOM contract.
-- `404` пока использует отдельную React-страницу, но ещё не является эталоном для дальнейшего page-shell API.
+- часть shared visual layer всё ещё живёт в legacy global CSS, даже когда страница уже переведена на React-рендер.
 
 ## Обязательные инварианты миграции
 
@@ -45,13 +45,24 @@
 - Каталог продолжает жить через backend proxy, без прямого фронтового доступа к Strapi.
 - `.html` остаётся только build entry, публичные ссылки и canonical — без суффикса.
 
-### 2. Не завязывать новый React UI на legacy class selectors
+### 2. Не ломать визуальный контракт страницы
+
+React migration меняет слой рендера, но не даёт права самовольно менять композицию страницы.
+
+- если legacy страница была полноширинной и секционной, React-версия должна сохранить ту же композицию;
+- нельзя без отдельного дизайн-решения оборачивать migrated page в новый container shell, card-shell или иную сужающую рамку;
+- если parity быстрее и надёжнее достигается через legacy global classes, это допустимо;
+- CSS Modules и новый UI-kit применяются там, где они не меняют существующую пространственную модель страницы.
+
+`documents` и `contacts` уже были примером ошибки: container-based page shell изменил макет, поэтому страницы возвращены на legacy full-width layout при сохранении React-рендера.
+
+### 3. Не завязывать новый React UI на hash-классы CSS Modules
 
 Для нового React/CSS Modules слоя:
 
-- стили задаются через module classes;
 - DOM-интеграция со старым JS делается через `data-*` hooks;
-- допустимо временно поддерживать legacy selectors только как fallback, но не как основной контракт.
+- module classes остаются только стилевым механизмом, а не JS-контрактом;
+- допустимо временно поддерживать legacy selectors только как fallback, но не как единственный путь интеграции.
 
 Примеры правильных hook-атрибутов:
 
@@ -60,7 +71,7 @@
 - `data-faq-item`
 - `data-faq-question`
 
-### 3. Не удалять legacy HTML до подтверждённого паритета
+### 4. Не удалять legacy HTML до подтверждённого паритета
 
 - HTML внутри `<main data-react-root>` остаётся fallback-представлением;
 - React migration должна давать одинаковую или более полную функциональность;
@@ -74,15 +85,16 @@
    - hotels/dealers
    - index
    - catalog последним крупным этапом
-2. Сначала переносить page shell и interactive affordances.
-3. Только потом вычищать устаревшие global selectors из `src/styles/components.css`.
+2. Сначала переносить page rendering и interactive affordances без визуального дрейфа.
+3. Только после подтверждённого parity выносить visual layer с legacy global CSS на CSS Modules.
+4. Только потом вычищать устаревшие global selectors из `src/styles/components.css`.
 
 ## Проверки на каждом большом пакете
 
 - `npm run typecheck`
 - `npm run build`
 - `npm run check:catalog-ui` при затрагивании общего runtime или shared styles
-- ручная визуальная проверка React-страниц против текущего production-like вида
+- ручная визуальная проверка React-страниц против текущего production-like вида, особенно на предмет внезапного появления container shells вместо полноширинных секций
 
 ## Критерий завершения migration phase
 

@@ -1,8 +1,3 @@
-import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/Card'
-import styles from './documents-page.module.css'
-
 const certificates = [
   {
     id: 'declaration',
@@ -29,7 +24,7 @@ const companyDocuments = [
   { id: 'presentation', title: 'Презентация компании', label: 'Запросить презентацию компании' },
 ]
 
-const faqItems = [
+const faqItems: Array<{ active?: boolean; answer: string; question: string }> = [
   {
     active: true,
     answer:
@@ -50,123 +45,118 @@ const faqItems = [
 
 export function DocumentsPage() {
   return (
-    <div className={styles.page}>
-      <section className={`${styles.section} ${styles.hero}`}>
-        <div className={styles.heroText}>
-          <div className={styles.eyebrow}>Grassigrosso</div>
-          <div>
-            <h1 className={styles.heroTitle}>Документы и сертификаты</h1>
-            <p className={styles.heroDescription}>
+    <>
+      <section className="documents-hero">
+        <div className="documents-hero-content">
+          <div className="documents-hero-text">
+            <h1 className="documents-hero-title">Документы и сертификаты</h1>
+            <p className="documents-hero-description">
               Полная прозрачность и соответствие стандартам. Мы предоставляем всю необходимую документацию для работы.
             </p>
           </div>
-        </div>
-        <div className={styles.heroMedia}>
-          <picture>
-            <source type="image/avif" srcSet="./public/docs-hero@2x.avif 2x, ./public/docs-hero.avif 1x" />
-            <source type="image/webp" srcSet="./public/docs-hero@2x.webp 2x, ./public/docs-hero.webp 1x" />
-            <source type="image/png" srcSet="./public/docs-hero@2x.png 2x, ./public/docs-hero.png 1x" />
-            <img src="./public/docs-hero.png" alt="Интерьер спальни" />
-          </picture>
+          <div className="documents-hero-image">
+            <picture>
+              <source type="image/avif" srcSet="./public/docs-hero@2x.avif 2x, ./public/docs-hero.avif 1x" />
+              <source type="image/webp" srcSet="./public/docs-hero@2x.webp 2x, ./public/docs-hero.webp 1x" />
+              <source type="image/png" srcSet="./public/docs-hero@2x.png 2x, ./public/docs-hero.png 1x" />
+              <img src="./public/docs-hero.png" alt="Интерьер спальни" />
+            </picture>
+          </div>
         </div>
       </section>
 
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Официальная сертификация</h2>
-          <p className={styles.sectionLead}>
-            Официальные документы доступны по запросу. После отправки заявки менеджер сразу откроет доступ к скачиванию.
-          </p>
+      <section className="documents-certification">
+        <div className="documents-certification-header">
+          <div className="documents-certification-header-left">
+            <h2 className="section-title">Официальная сертификация</h2>
+          </div>
+          <div className="documents-certification-header-right">
+            <p className="documents-certification-intro" />
+          </div>
         </div>
-        <div className={styles.certGrid}>
+        <div className="documents-certification-grid">
           {certificates.map((document) => (
-            <Card className={styles.certCard} data-document={document.id} data-document-card key={document.id}>
-              <CardHeader className={styles.certCardHeader}>
-                <div className={styles.certIcon}>
-                  <img src="./public/document.svg" alt="" />
-                </div>
-                <Badge variant="muted">{document.type}</Badge>
-                <h3 className={styles.certTitle}>{document.title}</h3>
-              </CardHeader>
-              <CardContent>
-                <div className={styles.metaText}>Файл PDF, доступен после отправки заявки.</div>
-              </CardContent>
-              <CardFooter className={styles.certActions}>
-                <Button className={styles.ghostButton} data-document-request-trigger size="md" type="button" variant="secondary">
-                  Запросить
-                </Button>
-                <span className={styles.metaText}>{document.size}</span>
-              </CardFooter>
-            </Card>
+            <div className="documents-cert-card" data-document={document.id} data-document-card key={document.id}>
+              <div className="documents-cert-icon">
+                <img src="./public/document.svg" alt="" />
+              </div>
+              <h3 className="documents-cert-title">{document.title}</h3>
+              <span className="documents-cert-type">{document.type}</span>
+              <div className="documents-cert-footer">
+                <a href="#" className="documents-cert-download" data-document-request-trigger>
+                  ЗАПРОСИТЬ
+                  <img src="./public/arrow-down.svg" alt="" className="arrow-down" />
+                </a>
+                <span className="documents-cert-size">{document.size}</span>
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
-      <section className={styles.section}>
-        <div className={styles.documentsBlock}>
-          <div className={styles.documentsAside}>
-            <div className={`${styles.sectionHeader} ${styles.sectionHeaderCompact}`}>
-              <h2 className={styles.sectionTitle}>О компании Grassigrosso</h2>
-            </div>
-            <div className={styles.documentsAsideIllustration}>
+      <section className="documents-commercial">
+        <div className="documents-commercial-content">
+          <div className="documents-commercial-left">
+            <h2 className="section-title documents-commercial-title">О компании Grassigrosso</h2>
+            <div className="documents-commercial-icon">
               <img src="./public/catalog-illustration.svg" alt="" />
             </div>
           </div>
-          <div className={styles.documentsList}>
-            {companyDocuments.map((document) => (
-              <article className={styles.documentRow} data-document={document.id} data-document-card key={document.id}>
-                <div className={styles.documentIcon}>
-                  <img src="./public/catalog.svg" alt="" />
+          <div className="documents-commercial-right">
+            <div className="documents-commercial-list">
+              {companyDocuments.map((document) => (
+                <div className="documents-commercial-item" data-document={document.id} data-document-card key={document.id}>
+                  <div className="documents-commercial-item-icon">
+                    <img src="./public/catalog.svg" alt="" />
+                  </div>
+                  <div className="documents-commercial-item-content">
+                    <h3 className="documents-commercial-item-title">{document.title}</h3>
+                    <p className="documents-commercial-item-type">PDF документ</p>
+                  </div>
+                  <a
+                    href="#"
+                    className="documents-commercial-item-download"
+                    data-document-request-trigger
+                    aria-label={document.label}
+                  >
+                    <img src="./public/arrow-down.svg" alt="" />
+                  </a>
                 </div>
-                <div className={styles.documentMeta}>
-                  <h3 className={styles.documentTitle}>{document.title}</h3>
-                  <span className={styles.documentType}>PDF документ</span>
-                </div>
-                <Button
-                  aria-label={document.label}
-                  className={styles.actionButton}
-                  data-document-request-trigger
-                  size="md"
-                  type="button"
-                  variant="secondary"
-                >
-                  Запросить
-                </Button>
-              </article>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className={styles.section}>
-        <div className={styles.helpCard}>
-          <div className={styles.helpCopy}>
-            <h2 className={styles.sectionTitle}>Нужна помощь с документами?</h2>
-            <p className={styles.helpText}>Наши менеджеры готовы предоставить любые необходимые документы по запросу.</p>
+      <section className="documents-help">
+        <div className="documents-help-content">
+          <div className="documents-help-left">
+            <h2 className="section-title">Нужна помощь с документами?</h2>
           </div>
-          <Button data-open-help-modal size="lg" type="button">
-            Связаться с менеджером
-          </Button>
+          <div className="documents-help-right">
+            <p className="documents-help-text">Наши менеджеры готовы предоставить любые необходимые документы по запросу</p>
+            <a href="#" className="btn-primary-large" data-open-help-modal>
+              Связаться с менеджером
+            </a>
+          </div>
         </div>
       </section>
 
-      <section className={styles.section}>
-        <div className={`${styles.sectionHeader} ${styles.sectionHeaderCompact}`}>
-          <h2 className={styles.sectionTitle}>Часто задаваемые вопросы</h2>
-        </div>
-        <div className={styles.faqList}>
+      <section className="documents-faq">
+        <h2 className="section-title">Часто задаваемые вопросы</h2>
+        <div className="faq-list">
           {faqItems.map((item) => (
             <div
-              className={`${styles.faqItem}${item.active ? ' active' : ''}`}
+              className={`faq-item${item.active ? ' active' : ''}`}
               data-faq-item
               data-open={item.active ? 'true' : 'false'}
               key={item.question}
             >
-              <button className={styles.faqQuestion} data-faq-question type="button">
+              <div className="faq-question" data-faq-question>
                 <h3>{item.question}</h3>
-                <span className={styles.faqToggle} aria-hidden="true" />
-              </button>
-              <div className={styles.faqAnswer}>
+                <div className="faq-toggle" />
+              </div>
+              <div className="faq-answer">
                 <p>
                   {item.answer.split('\n').map((line, index, lines) => (
                     <span key={line}>
@@ -180,6 +170,6 @@ export function DocumentsPage() {
           ))}
         </div>
       </section>
-    </div>
+    </>
   )
 }

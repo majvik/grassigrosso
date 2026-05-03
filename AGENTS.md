@@ -27,6 +27,7 @@
 ## React / Base UI migration
 
 - В проекте уже используется React island-layer через `data-react-root` и [src/react-entry.tsx](src/react-entry.tsx). Новый UI-слой строим на `@base-ui/react`, локальных компонентах `src/components/ui/*` и CSS Modules.
+- React migration меняет слой рендера, но не должна самовольно менять пространственную модель страницы: если legacy страница была полноширинной, не зажимать её в новый container/page-shell без отдельного решения по дизайну.
 - Для новых React-страниц **не привязывать JS-поведение к hash-классам CSS Modules**. Интерактивные hook'и задавать через `data-*` атрибуты (`data-faq-item`, `data-document-card`, `data-document-request-trigger` и т.п.).
 - Legacy global CSS и старые class selectors допускаются как fallback для ещё не перенесённых зон, но не как новый контракт.
 - Подробный статус и порядок миграции: [docs/ui-migration.md](docs/ui-migration.md).

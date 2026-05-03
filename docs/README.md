@@ -54,9 +54,9 @@ npm start
   - `src/commercial-offer.js` — многошаговая форма коммерческого предложения.
   - `src/contacts-maps.js` — Yandex Maps и contacts tabs.
   - `src/components/ui/*` — локальный Base UI-based UI kit без Tailwind.
-  - `src/components/pages/*` — React page layer для service/legal/documents и следующих migration families.
+  - `src/components/pages/*` — React page layer; `documents`, `contacts`, `hotels`, `dealers`, legal/service pages уже вынесены из HTML-строк.
 - Стили: `src/style.css` + `src/styles/*`.
-- Новый React visual layer: CSS Modules, legacy global CSS остаётся как fallback для ещё не перенесённых зон.
+- Новый React visual layer: CSS Modules там, где это не ломает parity; legacy global CSS остаётся как fallback для ещё не перенесённых зон и для полноширинных migrated layouts, которые пока нельзя безболезненно пересобрать.
 - Критический CSS прелоадера инжектится плагином из `vite.config.mjs` в `<style id="vite-critical-css"></style>`.
 
 ### Backend
@@ -157,3 +157,4 @@ npm start
 - Отдельный статус и контракт UI migration: `docs/ui-migration.md`.
 - Исторические markdown-отчёты/точечные инструкции, дублирующие этот хаб, удалены или сведены к ссылкам.
 - При выносе кода из `src/main.js` документация должна обновляться синхронно: минимум `AGENTS.md` и этот файл.
+- Отдельный инвариант parity: React migration не должна самовольно зажимать старые полноширинные секции в новые container/page-shell обёртки без отдельного дизайн-решения.

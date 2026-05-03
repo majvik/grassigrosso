@@ -1,10 +1,3 @@
-import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
-import { Card, CardContent, CardHeader } from '@/components/ui/Card'
-import { Input } from '@/components/ui/Input'
-import { Textarea } from '@/components/ui/Textarea'
-import styles from './contacts-page.module.css'
-
 const offices = [
   {
     id: 'main',
@@ -54,68 +47,55 @@ const offices = [
     schedule: 'Пн-Пт: 8:00 - 17:00',
     tabLabel: 'ДНР',
   },
-] as const
+]
 
 const primaryOffice = offices[0]
 
 export function ContactsPage() {
   return (
-    <div className={styles.page}>
-      <section className={`${styles.section} ${styles.hero}`}>
-        <div className={styles.heroText}>
-          <div className={styles.eyebrow}>Grassigrosso</div>
-          <div>
-            <h1 className={styles.heroTitle}>Контакты</h1>
-            <p className={styles.heroDescription}>
-              Свяжитесь с нами удобным способом. Мы всегда готовы ответить на ваши вопросы.
-            </p>
+    <>
+      <section className="contacts-hero">
+        <div className="contacts-hero-content">
+          <div className="contacts-hero-text">
+            <h1 className="contacts-hero-title">Контакты</h1>
+            <p className="contacts-hero-description">Свяжитесь с нами удобным способом. Мы всегда готовы ответить на ваши вопросы.</p>
           </div>
-        </div>
-        <div className={styles.heroMedia}>
-          <picture>
-            <source type="image/avif" srcSet="./public/contacts-hero@2x.avif 2x, ./public/contacts-hero.avif 1x" />
-            <source type="image/webp" srcSet="./public/contacts-hero@2x.webp 2x, ./public/contacts-hero.webp 1x" />
-            <source type="image/png" srcSet="./public/contacts-hero@2x.png 2x, ./public/contacts-hero.png 1x" />
-            <img src="./public/contacts-hero.png" alt="Интерьер спальни" />
-          </picture>
+          <div className="contacts-hero-image">
+            <picture>
+              <source type="image/avif" srcSet="./public/contacts-hero@2x.avif 2x, ./public/contacts-hero.avif 1x" />
+              <source type="image/webp" srcSet="./public/contacts-hero@2x.webp 2x, ./public/contacts-hero.webp 1x" />
+              <source type="image/png" srcSet="./public/contacts-hero@2x.png 2x, ./public/contacts-hero.png 1x" />
+              <img src="./public/contacts-hero.png" alt="Интерьер спальни" />
+            </picture>
+          </div>
         </div>
       </section>
 
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Наши офисы</h2>
-        </div>
-        <div className={styles.officeGrid}>
+      <section className="contacts-offices">
+        <h2 className="section-title">Наши офисы</h2>
+        <div className="contacts-offices-grid">
           {offices.map((office) => (
-            <Card className={styles.officeCard} key={office.id}>
-              <CardHeader className={styles.officeHeader}>
-                <Badge variant={office.id === 'main' ? 'default' : 'muted'}>{office.badge}</Badge>
-                {office.region ? <p className={styles.officeRegion}>{office.region}</p> : null}
-                <h3 className={styles.officeCity}>{office.city}</h3>
-              </CardHeader>
-              <CardContent className={styles.officeInfo}>
-                <div className={styles.officeItem}>
-                  <span className={styles.officeLabel}>Адрес:</span>
-                  <span className={styles.officeValue}>{office.address}</span>
+            <div className="contacts-office-card" key={office.id}>
+              <div className="contacts-office-header">
+                <span className="contacts-office-badge">{office.badge}</span>
+                {office.region ? <p className="contacts-office-region">{office.region}</p> : null}
+                <h3 className="contacts-office-city">{office.city}</h3>
+              </div>
+              <div className="contacts-office-info">
+                <div className="contacts-office-item">
+                  <span className="contacts-office-label">Адрес:</span>
+                  <span className="contacts-office-value">{office.address}</span>
                 </div>
-                <div className={styles.officeItem}>
-                  <span className={styles.officeLabel}>Телефон:</span>
-                  <span className={styles.officeValue}>
-                    <a href={office.phoneHref}>{office.phone}</a>
-                  </span>
+                <div className="contacts-office-item">
+                  <span className="contacts-office-label">Телефон:</span>
+                  <span className="contacts-office-value"><a href={office.phoneHref}>{office.phone}</a></span>
                 </div>
-                <div className={styles.officeItem}>
-                  <span className={styles.officeLabel}>Email:</span>
-                  <span className={styles.officeValue}>
-                    <span className={styles.officeEmailRow} data-office-email-row>
+                <div className="contacts-office-item">
+                  <span className="contacts-office-label">Email:</span>
+                  <span className="contacts-office-value">
+                    <span className="contacts-office-email-row" data-office-email-row>
                       <a href={`mailto:${office.email}`}>{office.email}</a>
-                      <button
-                        aria-label="Скопировать email"
-                        className={styles.copyEmail}
-                        data-copy-email={office.email}
-                        data-copy-email-trigger
-                        type="button"
-                      >
+                      <button type="button" className="contacts-office-copy-email" aria-label="Скопировать email" data-copy-email={office.email} data-copy-email-trigger>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                           <path d="M15.8 4H12.2C9.8804 4 8 5.8804 8 8.2V11.8C8 14.1196 9.8804 16 12.2 16H15.8C18.1196 16 20 14.1196 20 11.8V8.2C20 5.8804 18.1196 4 15.8 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                           <path d="M14.5 16V16.4C14.5 18.6644 12.6644 20.5 10.4 20.5H8.1C5.83563 20.5 4 18.6644 4 16.4V13C4 10.7909 5.79086 9 8 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -124,134 +104,95 @@ export function ContactsPage() {
                     </span>
                   </span>
                 </div>
-                <div className={styles.officeItem}>
-                  <span className={styles.officeLabel}>Время работы:</span>
-                  <span className={styles.officeValue}>{office.schedule}</span>
+                <div className="contacts-office-item">
+                  <span className="contacts-office-label">Время работы:</span>
+                  <span className="contacts-office-value">{office.schedule}</span>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
-      <section className={styles.section}>
-        <div className={styles.mapHeader}>
-          <h2 className={styles.sectionTitle}>Как нас найти</h2>
-          <div className={styles.mapTabs}>
+      <section className="contacts-map">
+        <div className="contacts-map-header">
+          <h2 className="section-title">Как нас найти</h2>
+          <div className="contacts-map-tabs">
             {offices.map((office, index) => (
-              <button
-                className={`${styles.mapTab}${index === 0 ? ' active' : ''}`}
-                data-map-tab
-                data-office={office.id}
-                key={office.id}
-                type="button"
-              >
+              <button className={`contacts-map-tab${index === 0 ? ' active' : ''}`} data-office={office.id} data-map-tab key={office.id}>
                 {office.tabLabel}
               </button>
             ))}
           </div>
         </div>
-        <div className={styles.mapContainer}>
+        <div className="contacts-map-container">
           {offices.map((office, index) => (
-            <div
-              className={styles.mapFrame}
-              data-map-frame
-              data-office={office.id}
-              hidden={index !== 0}
-              id={`map-${office.id}`}
-              key={office.id}
-            />
+            <div className="contacts-map-placeholder contacts-map-frame" id={`map-${office.id}`} data-office={office.id} data-map-frame hidden={index !== 0} key={office.id} />
           ))}
         </div>
       </section>
 
-      <section className={`${styles.section} ${styles.contactSection}`} id="contact-form">
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Доброе утро!</h2>
-        </div>
-        <div className={styles.contactGrid}>
-          <Card className={styles.contactCard}>
-            <CardHeader>
-              <h3 className={styles.contactFormTitle}>Форма обратной связи</h3>
-            </CardHeader>
-            <CardContent>
-              <form className={styles.contactForm} data-contact-form>
-                <div style={{ position: 'absolute', left: '-10000px', top: 'auto', width: '1px', height: '1px', overflow: 'hidden' }} aria-hidden="true">
-                  <label htmlFor="website">Website</label>
-                  <input type="text" id="website" name="website" tabIndex={-1} autoComplete="off" />
-                </div>
-
-                <div className={styles.formGroup} data-form-group>
-                  <label className={styles.formLabel} htmlFor="name">Имя</label>
-                  <Input id="name" placeholder="Иван Иванов" />
-                </div>
-                <div className={styles.formGroup} data-form-group>
-                  <label className={styles.formLabel} htmlFor="city">Город</label>
-                  <Input id="city" placeholder="Москва" />
-                </div>
-                <div className={styles.formGroup} data-form-group>
-                  <label className={styles.formLabel} htmlFor="email">E-mail</label>
-                  <Input id="email" placeholder="example@company.com" required type="email" />
-                </div>
-                <div className={styles.formGroup} data-form-group>
-                  <label className={styles.formLabel} htmlFor="phone">Телефон</label>
-                  <Input id="phone" placeholder="+7 (999) 123-45-67" type="tel" />
-                </div>
-                <div className={styles.formGroup} data-form-group>
-                  <label className={styles.formLabel} htmlFor="message">Сообщение</label>
-                  <Textarea id="message" placeholder="Ваше сообщение" />
-                </div>
-                <label className={styles.privacyRow}>
-                  <input defaultChecked id="privacy" type="checkbox" />
-                  <span className={styles.privacyText}>
-                    Я согласен на обработку моих персональных данных в соответствии с <a href="/privacy">Политикой конфиденциальности</a>
+      <section className="contact-section" id="contact-form">
+        <h2 className="section-title">Доброе утро!</h2>
+        <div className="contact-grid">
+          <div className="contact-form-wrapper">
+            <h3 className="contact-form-title">Форма обратной связи</h3>
+            <form className="contact-form" data-contact-form>
+              <div style={{ position: 'absolute', left: '-10000px', top: 'auto', width: '1px', height: '1px', overflow: 'hidden' }} aria-hidden="true">
+                <label htmlFor="website">Website</label>
+                <input type="text" id="website" name="website" tabIndex={-1} autoComplete="off" />
+              </div>
+              <div className="form-group" data-form-group><label htmlFor="name">Имя</label><input type="text" id="name" placeholder="Иван Иванов" /></div>
+              <div className="form-group" data-form-group><label htmlFor="city">Город</label><input type="text" id="city" placeholder="Москва" /></div>
+              <div className="form-group" data-form-group><label htmlFor="email">E-mail</label><input type="email" id="email" placeholder="example@company.com" required /></div>
+              <div className="form-group" data-form-group><label htmlFor="phone">Телефон</label><input type="tel" id="phone" placeholder="+7 (999) 123-45-67" /></div>
+              <div className="form-group" data-form-group><label htmlFor="message">Сообщение</label><textarea id="message" placeholder="Ваше сообщение" /></div>
+              <div className="form-checkbox">
+                <input type="checkbox" id="privacy" defaultChecked />
+                <label htmlFor="privacy">
+                  <span className="checkbox-custom">
+                    <svg className="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white" />
+                      <path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" strokeOpacity="0.1" />
+                      <path className="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" strokeWidth="2" />
+                    </svg>
                   </span>
+                  <span className="checkbox-text">Я согласен на обработку моих персональных данных в соответствии с <a href="/privacy">Политикой конфиденциальности</a></span>
                 </label>
-                <Button className={styles.submitButton} size="lg" type="submit">
-                  Отправить
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          <Card className={styles.contactInfoCard}>
-            <CardContent className={styles.contactInfo}>
-              <div className={styles.contactInfoItem}>
-                <div className={styles.contactInfoIcon}>
-                  <img src="./public/icon-phone-vectorly.svg" alt="" />
-                </div>
-                <div className={styles.contactInfoContent}>
-                  <h4 className={styles.contactInfoTitle}>Телефон</h4>
-                  <p className={styles.contactInfoValue}><a href={primaryOffice.phoneHref}>{primaryOffice.phone}</a></p>
-                  <p className={styles.contactInfoNote}>Пн-Пт: 9:00 - 18:00 МСК</p>
-                </div>
               </div>
-              <div className={styles.contactInfoDivider} />
-              <div className={styles.contactInfoItem}>
-                <div className={styles.contactInfoIcon}>
-                  <img src="./public/icon-email-vectorly.svg" alt="" />
-                </div>
-                <div className={styles.contactInfoContent}>
-                  <h4 className={styles.contactInfoTitle}>Email</h4>
-                  <p className={styles.contactInfoValue}><a href={`mailto:${primaryOffice.email}`}>{primaryOffice.email}</a></p>
-                  <p className={styles.contactInfoNote}>Ответим в течение 24 часов в рамках рабочего времени</p>
-                </div>
+              <button type="submit" className="btn-primary">Отправить</button>
+            </form>
+          </div>
+          <div className="contact-info">
+            <div className="contact-info-item">
+              <div className="contact-info-icon"><img src="./public/icon-phone-vectorly.svg" alt="" /></div>
+              <div className="contact-info-content">
+                <h4 className="contact-info-title">Телефон</h4>
+                <p className="contact-info-value"><a href={primaryOffice.phoneHref}>{primaryOffice.phone}</a></p>
+                <p className="contact-info-note">Пн-Пт: 9:00 - 18:00 МСК</p>
               </div>
-              <div className={styles.contactInfoDivider} />
-              <div className={styles.contactInfoItem}>
-                <div className={styles.contactInfoIcon}>
-                  <img src="./public/icon-location-vectorly.svg" alt="" />
-                </div>
-                <div className={styles.contactInfoContent}>
-                  <h4 className={styles.contactInfoTitle}>Адрес</h4>
-                  <p className={styles.contactInfoValue}>Симферополь, ул. Кубанская д. 25</p>
-                  <p className={styles.contactInfoNote}>Главный офис</p>
-                </div>
+            </div>
+            <div className="contact-info-divider" />
+            <div className="contact-info-item">
+              <div className="contact-info-icon"><img src="./public/icon-email-vectorly.svg" alt="" /></div>
+              <div className="contact-info-content">
+                <h4 className="contact-info-title">Email</h4>
+                <p className="contact-info-value"><a href={`mailto:${primaryOffice.email}`}>{primaryOffice.email}</a></p>
+                <p className="contact-info-note">Ответим в течение 24 часов в рамках рабочего времени</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="contact-info-divider" />
+            <div className="contact-info-item">
+              <div className="contact-info-icon"><img src="./public/icon-location-vectorly.svg" alt="" /></div>
+              <div className="contact-info-content">
+                <h4 className="contact-info-title">Адрес</h4>
+                <p className="contact-info-value">Симферополь, ул. Кубанская д. 25</p>
+                <p className="contact-info-note">Главный офис</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
-    </div>
+    </>
   )
 }
