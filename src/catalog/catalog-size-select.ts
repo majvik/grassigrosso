@@ -9,6 +9,8 @@ export type CatalogSizeSelectController = {
 
 export type CatalogSizeSelectOptions = {
   onOptionSelected: (value: string) => boolean
+  /** Клик «Сбросить» в строке «Любой» внутри открытого меню (портал на document.body). */
+  onSizeReset?: () => void
 }
 
 export function initCatalogSizeSelect(
@@ -215,6 +217,14 @@ export function initCatalogSizeSelect(
     containsActiveMenuTarget: (target) => Boolean(activeSizeSelectMenu && target instanceof Node && activeSizeSelectMenu.contains(target)),
     handleDocumentClick: (event) => {
       if (!(event.target instanceof Element)) return false
+      const resetMark = event.target.closest<HTMLElement>('[data-action="size-reset"]')
+      if (resetMark && activeSizeSelectMenu?.contains(resetMark)) {
+        event.preventDefault()
+        event.stopPropagation()
+        options.onSizeReset?.()
+        closeMenus()
+        return true
+      }
       const sizeOption = event.target.closest('.catalogue-new-size-select-option')
       if (sizeOption && activeSizeSelectMenu && activeSizeSelectMenu.contains(sizeOption)) {
         event.preventDefault()

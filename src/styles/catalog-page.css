@@ -301,6 +301,89 @@
 .catalogue-new-size-help-link:hover {
   text-decoration: underline;
 }
+.catalogue-new-size-reset-mark {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 400;
+  color: var(--color-text-gray);
+  opacity: 0.9;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: left;
+}
+.catalogue-new-size-reset-mark:hover,
+.catalogue-new-size-reset-mark:focus-visible {
+  color: var(--color-primary);
+  opacity: 1;
+}
+.catalogue-new-size-reset-mark:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.25);
+  border-radius: 2px;
+}
+.catalogue-new-size-select-all-row {
+  width: 100%;
+  max-width: 100%;
+}
+/* Одна визуальная строка-пункт: общий фон/hover/active как у .catalogue-new-size-select-option */
+.catalogue-new-size-select-all-row-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: var(--catalogue-new-size-option-height);
+  padding-block: 8px;
+  padding-inline: 10px;
+}
+.catalogue-new-size-select-all-row-inner:hover {
+  background: rgba(var(--color-primary-rgb), 0.06);
+}
+.catalogue-new-size-select-all-row-inner:has(.catalogue-new-size-select-option.is-active) {
+  color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.1);
+}
+.catalogue-new-size-select-all-row-inner:has(.catalogue-new-size-select-option.is-active):hover {
+  background: rgba(var(--color-primary-rgb), 0.12);
+}
+.catalogue-new-size-select-all-row-inner > .catalogue-new-size-select-option {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  max-width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  line-height: 1.25;
+  color: inherit;
+  background: transparent;
+}
+.catalogue-new-size-select-all-row-inner > .catalogue-new-size-select-option:hover,
+.catalogue-new-size-select-all-row-inner > .catalogue-new-size-select-option.is-active {
+  background: transparent;
+}
+.catalogue-new-size-select-all-row-inner > .catalogue-new-size-select-option.is-active {
+  color: inherit;
+}
+.catalogue-new-size-select-all-row-inner > .catalogue-new-size-reset-mark {
+  flex: 0 0 auto;
+  line-height: 1.25;
+}
+.catalogue-new-size-select-under {
+  margin-top: 6px;
+  text-align: left;
+}
 .catalogue-new-size-select {
   position: relative;
 }

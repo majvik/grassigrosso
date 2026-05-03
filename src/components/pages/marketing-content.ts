@@ -1942,7 +1942,6 @@ export const MARKETING_PAGE_CONTENT = {
                 <div class="catalogue-new-size-select" data-size-group="size">
                   <button type="button" class="catalogue-new-size-select-trigger" aria-haspopup="listbox" aria-expanded="false">Любой</button>
                   <ul class="catalogue-new-size-select-menu" role="listbox" hidden>
-                    <li><button type="button" class="catalogue-new-size-select-option is-active" data-value="all">Любой</button></li>
                     <li class="catalogue-new-size-select-search-row">
                       <input
                         type="text"
@@ -1952,6 +1951,12 @@ export const MARKETING_PAGE_CONTENT = {
                         spellcheck="false"
                         aria-label="Поиск размера"
                       />
+                    </li>
+                    <li class="catalogue-new-size-select-all-row">
+                      <div class="catalogue-new-size-select-all-row-inner">
+                        <button type="button" class="catalogue-new-size-select-option is-active" data-value="all">Любой</button>
+                        <button type="button" class="catalogue-new-size-reset-mark" data-action="size-reset">Сбросить</button>
+                      </div>
                     </li>
                     <li><button type="button" class="catalogue-new-size-select-option" data-value="80x190">80 × 190</button></li>
                     <li><button type="button" class="catalogue-new-size-select-option" data-value="80x200">80 × 200</button></li>
@@ -1966,6 +1971,9 @@ export const MARKETING_PAGE_CONTENT = {
                     <li><button type="button" class="catalogue-new-size-select-option" data-value="160x200">160 × 200</button></li>
                     <li><button type="button" class="catalogue-new-size-select-option" data-value="180x200">180 × 200</button></li>
                   </ul>
+                </div>
+                <div class="catalogue-new-size-select-under" hidden aria-hidden="true">
+                  <button type="button" class="catalogue-new-size-reset-mark" data-action="size-reset">Сбросить</button>
                 </div>
               </div>
             </div>

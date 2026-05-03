@@ -70,13 +70,24 @@ function renderCatalogueSizeOptions(root: Element, options: unknown): boolean {
   if (!menu) return false
   const searchRow = menu.querySelector('.catalogue-new-size-select-search-row')
   const allRow = document.createElement('li')
-  allRow.appendChild(createCatalogueFilterButton(
+  allRow.className = 'catalogue-new-size-select-all-row'
+  const allRowInner = document.createElement('div')
+  allRowInner.className = 'catalogue-new-size-select-all-row-inner'
+  allRowInner.appendChild(createCatalogueFilterButton(
     'catalogue-new-size-select-option is-active',
     { 'data-value': 'all' },
     'Любой',
   ))
-  const rows: Element[] = [allRow]
+  const menuResetMark = document.createElement('button')
+  menuResetMark.type = 'button'
+  menuResetMark.className = 'catalogue-new-size-reset-mark'
+  menuResetMark.dataset.action = 'size-reset'
+  menuResetMark.textContent = 'Сбросить'
+  allRowInner.appendChild(menuResetMark)
+  allRow.appendChild(allRowInner)
+  const rows: Element[] = []
   if (searchRow) rows.push(searchRow)
+  rows.push(allRow)
   normalized.forEach((option) => {
     const row = document.createElement('li')
     row.appendChild(createCatalogueFilterButton(
@@ -168,6 +179,13 @@ export function syncCatalogueFilterUi(root: Element, state: CatalogFilterState, 
         trigger.textContent = 'Любой'
       }
     }
+  }
+  const sizeField = sizeSelect?.closest('.catalogue-new-filter-field')
+  const sizeUnder = sizeField?.querySelector<HTMLElement>('.catalogue-new-size-select-under')
+  if (sizeUnder) {
+    const showUnder = state.size.size > 0
+    sizeUnder.hidden = !showUnder
+    sizeUnder.setAttribute('aria-hidden', showUnder ? 'false' : 'true')
   }
   syncCatalogFilterDependencies(root, state)
 }

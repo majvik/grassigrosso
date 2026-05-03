@@ -333,7 +333,33 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
       })
     }
 
+    const runCatalogSizeReset = () => {
+      applyCatalogSizeFilter(state, 'all')
+      syncUiFromState()
+      visibleCardsLimit = CATALOGUE_PAGE_SIZE
+      applyFilters()
+      scrollToCatalogueToolbar()
+    }
+
+    const sizeSelectController = initCatalogSizeSelect(catalogueNewSidebar, {
+      onOptionSelected: (value) => {
+        const shouldCloseAfterSelect = applyCatalogSizeFilter(state, value)
+        syncUiFromState()
+        visibleCardsLimit = CATALOGUE_PAGE_SIZE
+        applyFilters()
+        return shouldCloseAfterSelect
+      },
+      onSizeReset: runCatalogSizeReset,
+    })
+
     catalogueNewSidebar.addEventListener('click', (event) => {
+      const sizeResetMark = event.target.closest('[data-action="size-reset"]')
+      if (sizeResetMark) {
+        event.preventDefault()
+        sizeSelectController.closeMenus()
+        runCatalogSizeReset()
+        return
+      }
       const sizeHelpLink = event.target.closest('.catalogue-new-size-help-link[data-action="size-help"]')
       if (sizeHelpLink) {
         event.preventDefault()
@@ -366,16 +392,6 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
       openCatalogAccordionGroupExclusive(catalogueNewSidebar, groupEl)
     })
 
-    const sizeSelectController = initCatalogSizeSelect(catalogueNewSidebar, {
-      onOptionSelected: (value) => {
-        const shouldCloseAfterSelect = applyCatalogSizeFilter(state, value)
-        syncUiFromState()
-        visibleCardsLimit = CATALOGUE_PAGE_SIZE
-        applyFilters()
-        return shouldCloseAfterSelect
-      },
-    })
-
     // Канон размеров из JS сразу (не ждём Strapi); при открытом портале renderCatalogueFilterGroups закроет меню и обновит DOM.
     renderCatalogueFilterGroups({ size: [] })
 
@@ -403,6 +419,23 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
       })
     }
 
+    document.addEventListener('click', (event) => {
+      if (sizeSelectController.handleDocumentClick(event)) return
+      if (catalogueNewSort && !catalogueNewSort.contains(event.target)) {
+        closeCatalogSortMenu(sortMenuElements)
+      }
+      const clickedInsidePortalSizeMenu = sizeSelectController.containsActiveMenuTarget(event.target)
+      if (!catalogueNewSidebar.contains(event.target) && !clickedInsidePortalSizeMenu) {
+        sizeSelectController.closeMenus()
+      }
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return
+      closeCatalogSortMenu(sortMenuElements)
+      sizeSelectController.closeMenus()
+    })
+
     if (catalogueNewSort && catalogueNewSortTrigger && catalogueNewSortOptions.length > 0) {
       catalogueNewSortTrigger.addEventListener('click', () => {
         toggleCatalogSortMenu(sortMenuElements)
@@ -418,24 +451,6 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
           applyFilters()
           scrollToCatalogueToolbar()
         })
-      })
-
-      document.addEventListener('click', (event) => {
-        if (sizeSelectController.handleDocumentClick(event)) return
-        if (!catalogueNewSort.contains(event.target)) {
-          closeCatalogSortMenu(sortMenuElements)
-        }
-        const clickedInsidePortalSizeMenu = sizeSelectController.containsActiveMenuTarget(event.target)
-        if (!catalogueNewSidebar.contains(event.target) && !clickedInsidePortalSizeMenu) {
-          sizeSelectController.closeMenus()
-        }
-      })
-
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-          closeCatalogSortMenu(sortMenuElements)
-          sizeSelectController.closeMenus()
-        }
       })
 
       setCatalogActiveSortOption(sortMenuElements, 'default')
