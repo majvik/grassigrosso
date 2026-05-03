@@ -12,6 +12,25 @@ export type CatalogFilterGroupKey =
 
 export type CatalogFilterGroups = Partial<Record<CatalogFilterGroupKey, CatalogFilterOption[]>>
 
+/** Сегмент модалки «Как выбрать?»: текст и опционально изображение (из Strapi). */
+export type CatalogFilterHelpSegment = {
+  text: string
+  imageUrl?: string
+  imageAlt?: string
+}
+
+export type CatalogFilterHelpEntry = {
+  modalTitle: string
+  segments: CatalogFilterHelpSegment[]
+}
+
+export type CatalogFilterHelp = Partial<Record<CatalogFilterGroupKey, CatalogFilterHelpEntry>>
+
+export type CatalogFiltersPayload = {
+  groups: CatalogFilterGroups
+  filterHelp: CatalogFilterHelp
+}
+
 export type CatalogProduct = {
   name?: string | null
   slug?: string | null
@@ -54,9 +73,19 @@ async function fetchJson<T>(path: string): Promise<T> {
   return response.json() as Promise<T>
 }
 
-export async function fetchCatalogFilterGroups(): Promise<CatalogFilterGroups> {
-  const payload = await fetchJson<{ groups?: CatalogFilterGroups }>('/api/catalog/filters')
-  return payload.groups && typeof payload.groups === 'object' ? payload.groups : {}
+export async function fetchCatalogFilters(): Promise<CatalogFiltersPayload> {
+  const payload = await fetchJson<{
+    groups?: CatalogFilterGroups
+    filterHelp?: CatalogFilterHelp
+  }>('/api/catalog/filters')
+  const filterHelp =
+    payload.filterHelp && typeof payload.filterHelp === 'object' && !Array.isArray(payload.filterHelp)
+      ? payload.filterHelp
+      : {}
+  return {
+    groups: payload.groups && typeof payload.groups === 'object' ? payload.groups : {},
+    filterHelp,
+  }
 }
 
 export function normalizeCatalogCollectionSlug(item: CatalogProduct): string {

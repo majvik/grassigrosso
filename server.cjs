@@ -69,9 +69,14 @@ const QUEUE_RETRY_INTERVAL_MS = Number(process.env.QUEUE_RETRY_INTERVAL_MS || 15
 const QUEUE_BASE_RETRY_DELAY_MS = Number(process.env.QUEUE_BASE_RETRY_DELAY_MS || 30000);
 const QUEUE_MAX_RETRY_DELAY_MS = Number(process.env.QUEUE_MAX_RETRY_DELAY_MS || 15 * 60 * 1000);
 const SPAM_WINDOW_MS = Number(process.env.SPAM_WINDOW_MS || 10 * 60 * 1000);
-const SPAM_MAX_SUBMITS_PER_WINDOW = Number(process.env.SPAM_MAX_SUBMITS_PER_WINDOW || 6);
-const SPAM_MIN_SUBMIT_INTERVAL_MS = Number(process.env.SPAM_MIN_SUBMIT_INTERVAL_MS || 8000);
-const SPAM_BLOCK_MS = Number(process.env.SPAM_BLOCK_MS || 30 * 60 * 1000);
+/** В dev частые тесты форм иначе ловят 429 на полчаса — в production оставляем строгие значения. */
+const SPAM_MAX_SUBMITS_PER_WINDOW = Number(
+  process.env.SPAM_MAX_SUBMITS_PER_WINDOW || (isProd ? 6 : 120),
+);
+const SPAM_MIN_SUBMIT_INTERVAL_MS = Number(
+  process.env.SPAM_MIN_SUBMIT_INTERVAL_MS || (isProd ? 8000 : 500),
+);
+const SPAM_BLOCK_MS = Number(process.env.SPAM_BLOCK_MS || (isProd ? 30 * 60 * 1000 : 90 * 1000));
 const SPAM_MAX_COMMENT_LENGTH = Number(process.env.SPAM_MAX_COMMENT_LENGTH || 2500);
 const SPAM_MAX_NAME_LENGTH = Number(process.env.SPAM_MAX_NAME_LENGTH || 120);
 const SPAM_MAX_PHONE_LENGTH = Number(process.env.SPAM_MAX_PHONE_LENGTH || 40);
@@ -893,8 +898,13 @@ app.get('/api/catalog/filters', async (req, res) => {
     const groups = response.data?.groups && typeof response.data.groups === 'object'
       ? response.data.groups
       : {};
+    const filterHelp =
+      response.data?.filterHelp && typeof response.data.filterHelp === 'object' && !Array.isArray(response.data.filterHelp)
+        ? response.data.filterHelp
+        : {};
     return res.json({
       groups,
+      filterHelp,
       source: response.data?.source || 'strapi-catalog-filter-feed',
     });
   } catch (error) {

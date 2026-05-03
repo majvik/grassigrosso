@@ -122,7 +122,7 @@
           <div class="catalog-hero-text">
             <h1 class="catalog-hero-title">Каталог <br> продукции</h1>
             <p class="catalog-hero-description">
-              Мы создаем продуманные системы для сна и естественного восстановления, чтобы каждое утро начиналось легко и спокойно. Подберите матрас под ваши задачи: формат использования, уровень жесткости и требуемую нагрузку.
+              Подберите матрас под ваши задачи: формат использования, уровень жесткости и требуемую нагрузку.
             </p>
           </div>
           <div class="catalog-hero-image">
@@ -712,29 +712,95 @@
       </section>
     </main>
 
-    <div class="catalogue-new-image-modal" id="catalogueImageModal" hidden>
-      <div class="catalogue-new-image-modal-dialog">
-        <button type="button" class="catalogue-new-image-modal-close" id="catalogueImageModalClose" aria-label="Закрыть карточку матраса">×</button>
-        <div class="catalogue-new-image-modal-media">
-          <img id="catalogueImageModalImg" src="" alt="" />
+    <div class="catalogue-new-image-modal" id="catalogueImageModal" hidden data-lenis-prevent>
+      <div class="catalogue-new-image-modal-dialog" id="catalogueImageModalDialog">
+        <button type="button" class="catalogue-new-image-modal-close" id="catalogueImageModalClose" aria-label="Закрыть">×</button>
+
+        <div class="catalogue-new-image-modal-preview" id="catalogueImageModalPreview">
+          <div class="catalogue-new-image-modal-media">
+            <img id="catalogueImageModalImg" src="" alt="" />
+          </div>
+          <div class="catalogue-new-image-modal-content">
+            <h3 class="catalogue-new-image-modal-title" id="catalogueImageModalTitle"></h3>
+            <div class="catalogue-new-image-modal-specs" id="catalogueImageModalSpecs"></div>
+            <p class="catalogue-new-image-modal-specs-empty" id="catalogueImageModalSpecsEmpty" hidden>Характеристики не указаны</p>
+            <div class="catalogue-new-image-modal-actions">
+              <button type="button" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" id="catalogueImageModalContactBtn">Связаться с менеджером по позиции</button>
+              <div class="catalogue-new-image-modal-side-actions">
+                <button type="button" class="catalogue-new-image-modal-share" id="catalogueImageModalShareBtn" aria-label="Поделиться">
+                  <img class="catalogue-new-image-modal-share-icon--default" src="./public/icons/share-default.svg" alt="" aria-hidden="true" />
+                  <img class="catalogue-new-image-modal-share-icon--hover" src="./public/icons/share-hover.svg" alt="" aria-hidden="true" />
+                  <span class="catalogue-new-image-modal-share-label">Поделиться</span>
+                </button>
+                <button type="button" class="catalogue-new-image-modal-favourite" id="catalogueImageModalFavouriteBtn" aria-pressed="false" aria-label="Добавить в избранное">
+                  <img class="catalogue-new-image-modal-favourite-icon--empty" src="./public/icons/favourite-empty.svg" alt="" aria-hidden="true" />
+                  <img class="catalogue-new-image-modal-favourite-icon--full" src="./public/icons/favourite-full.svg" alt="" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="catalogue-new-image-modal-content">
-          <h3 class="catalogue-new-image-modal-title" id="catalogueImageModalTitle"></h3>
-          <div class="catalogue-new-image-modal-specs" id="catalogueImageModalSpecs"></div>
-          <p class="catalogue-new-image-modal-specs-empty" id="catalogueImageModalSpecsEmpty" hidden>Характеристики не указаны</p>
-          <div class="catalogue-new-image-modal-actions">
-            <button type="button" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" id="catalogueImageModalContactBtn">Связаться с менеджером по позиции</button>
-            <div class="catalogue-new-image-modal-side-actions">
-              <button type="button" class="catalogue-new-image-modal-share" id="catalogueImageModalShareBtn" aria-label="Поделиться">
-                <img class="catalogue-new-image-modal-share-icon--default" src="./public/icons/share-default.svg" alt="" aria-hidden="true" />
-                <img class="catalogue-new-image-modal-share-icon--hover" src="./public/icons/share-hover.svg" alt="" aria-hidden="true" />
-                <span class="catalogue-new-image-modal-share-label">Поделиться</span>
-              </button>
-              <button type="button" class="catalogue-new-image-modal-favourite" id="catalogueImageModalFavouriteBtn" aria-pressed="false" aria-label="Добавить в избранное">
-                <img class="catalogue-new-image-modal-favourite-icon--empty" src="./public/icons/favourite-empty.svg" alt="" aria-hidden="true" />
-                <img class="catalogue-new-image-modal-favourite-icon--full" src="./public/icons/favourite-full.svg" alt="" aria-hidden="true" />
+
+        <div class="catalogue-new-image-modal-contact-view" id="catalogueImageModalContactView" hidden>
+          <div class="catalogue-new-image-modal-contact-scroll">
+            <div class="catalogue-new-image-modal-contact-head">
+              <h2 class="catalogue-new-image-modal-contact-heading" id="catalogueImageModalContactHeading">Связаться по позиции</h2>
+              <div class="catalogue-new-image-modal-contact-head-rule" role="presentation"></div>
+              <button type="button" class="catalogue-new-favourites-back" id="catalogueImageModalContactBack" hidden>
+                <img src="./public/icons/arrow-back-left.svg" alt="" aria-hidden="true" />
+                <span>Назад к просмотру</span>
               </button>
             </div>
+            <form class="catalogue-new-image-modal-contact-form" id="catalogueImageModalContactForm" novalidate>
+              <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+                <label for="cim-website">Website</label>
+                <input type="text" id="cim-website" name="website" tabindex="-1" autocomplete="off" />
+              </div>
+              <div class="catalogue-new-image-modal-form-grid">
+                <div class="form-group" data-form-group>
+                  <label for="cim-name">Имя</label>
+                  <input type="text" id="cim-name" name="name" autocomplete="name" placeholder="Иван Иванов" />
+                </div>
+                <div class="form-group" data-form-group>
+                  <label for="cim-city">Город</label>
+                  <input type="text" id="cim-city" name="city" autocomplete="address-level2" placeholder="Москва" />
+                </div>
+                <div class="form-group" data-form-group>
+                  <label for="cim-email">E-mail</label>
+                  <input type="email" id="cim-email" name="email" autocomplete="email" placeholder="example@company.com" required />
+                </div>
+                <div class="form-group" data-form-group>
+                  <label for="cim-phone">Телефон</label>
+                  <input type="tel" id="cim-phone" name="phone" autocomplete="tel" placeholder="+7 (999) 123-45-67" />
+                </div>
+                <div class="form-group catalogue-new-image-modal-form-message" data-form-group>
+                  <label for="cim-message">Сообщение</label>
+                  <textarea id="cim-message" name="message" rows="4" placeholder="Ваше сообщение"></textarea>
+                </div>
+                <div class="form-checkbox">
+                  <input type="checkbox" id="cim-privacy" checked />
+                  <label for="cim-privacy">
+                    <span class="checkbox-custom">
+                      <svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white"/>
+                        <path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" stroke-opacity="0.1"/>
+                        <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <span class="checkbox-text">Я согласен на обработку моих персональных данных в соответствии с <a href="/privacy">Политикой конфиденциальности</a></span>
+                  </label>
+                </div>
+              </div>
+              <div class="catalogue-new-image-modal-positions-rule" role="presentation"></div>
+              <div class="catalogue-new-image-modal-positions-head">
+                <span class="catalogue-new-image-modal-positions-label">Интересующие позиции</span>
+                <span class="catalogue-new-tag catalogue-new-favourites-only-count catalogue-new-image-modal-positions-count" id="catalogueImageModalPositionsCount" aria-live="polite">0</span>
+              </div>
+              <div class="catalogue-new-image-modal-positions-list" id="catalogueImageModalPositionsList"></div>
+              <div class="catalogue-new-image-modal-contact-footer">
+                <button type="submit" class="btn-primary catalogue-new-image-modal-contact-submit" id="catalogueImageModalContactSubmit">Отправить</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

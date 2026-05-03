@@ -101,3 +101,30 @@ export function buildCatalogModalSpecs(dataset: CatalogCardDataset): CatalogModa
     { label: 'Особенности', value: features },
   ].filter((spec) => spec.value)
 }
+
+function escapeHtmlLite(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+/** Как в карточке каталога: только высота и нагрузка (без тегов). */
+export function buildCatalogCardMetaHtmlFromDataset(dataset: CatalogCardDataset): string {
+  const height = String(dataset.height || '').trim()
+  const load = String(dataset.load || '').trim()
+  const lines: string[] = []
+  if (height) {
+    lines.push(
+      `<span class="catalogue-new-meta-line">Высота: <span class="catalogue-new-meta-value">${escapeHtmlLite(height)}см</span></span>`,
+    )
+  }
+  if (load) {
+    lines.push(
+      `<span class="catalogue-new-meta-line">Нагрузка: <span class="catalogue-new-meta-value">до ${escapeHtmlLite(load)} кг</span></span>`,
+    )
+  }
+  if (!lines.length) return ''
+  return `<p class="catalogue-new-meta">${lines.join('')}</p>`
+}

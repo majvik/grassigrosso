@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "catalog_filter_helps",
+  "info": {
+    "singularName": "catalog-filter-help",
+    "pluralName": "catalog-filter-helps",
+    "displayName": "Подсказка к фильтру каталога"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "filter_key": {
+      "type": "enumeration",
+      "enum": [
+        "collection",
+        "size",
+        "firmness",
+        "type",
+        "loadRange",
+        "heightRange",
+        "fillings",
+        "features"
+      ],
+      "required": true,
+      "unique": true
+    },
+    "modal_title": {
+      "type": "string",
+      "required": true
+    },
+    "segments": {
+      "type": "component",
+      "repeatable": true,
+      "component": "catalog.filter-help-segment"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

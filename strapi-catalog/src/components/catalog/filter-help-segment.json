@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_catalog_filter_help_segments",
+  "info": {
+    "displayName": "Filter help segment",
+    "icon": "file"
+  },
+  "options": {},
+  "attributes": {
+    "body": {
+      "type": "text",
+      "required": false
+    },
+    "photo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

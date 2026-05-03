@@ -13,6 +13,7 @@ export function openCatalogAccordionGroupExclusive(sidebar: Element, groupElToOp
   })
 }
 
+/** Одна открытая секция: первая с aria-expanded=true в разметке, иначе первая с триггером. */
 export function initCatalogExclusiveAccordionState(sidebar: Element): void {
   const groups = [...sidebar.querySelectorAll('.catalogue-new-filter-group')]
   const accordionGroups = groups.filter((groupEl) => groupEl.querySelector('.catalogue-new-filter-accordion-trigger'))

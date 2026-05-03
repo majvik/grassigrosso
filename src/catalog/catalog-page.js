@@ -45,6 +45,7 @@ import {
 } from './catalog-sort-menu'
 import { initCatalogStickySidebar } from './catalog-sticky-sidebar'
 import { initCatalogViewToggle } from './catalog-view-toggle'
+import { initCatalogFavouritesClearModal } from './catalog-favourites-clear-modal'
 import { initCatalogFilterHelpModal, setCatalogFilterHelpFromApi } from './catalog-filter-help-modal'
 
 export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
@@ -67,6 +68,7 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
   const catalogueNewMobileFiltersOpen = document.querySelector('#catalogue-new-mobile-filters-open')
   const catalogueNewMobileFiltersClose = document.querySelector('#catalogue-new-mobile-filters-close')
   const catalogueNewMobileFiltersOverlay = document.querySelector('#catalogue-new-mobile-filters-overlay')
+  const catalogueNewFavouritesClearAllBtn = document.querySelector('#catalogue-new-favourites-clear-all')
 
   if (catalogueNewSidebar && catalogueNewCardsRoot) {
     const catalogueNewLayout = document.querySelector('.catalogue-new-layout')
@@ -561,6 +563,14 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
   }
 
   const catalogueImageModal = document.getElementById('catalogueImageModal')
+  const catalogueImageModalDialog = document.getElementById('catalogueImageModalDialog')
+  const catalogueImageModalPreview = document.getElementById('catalogueImageModalPreview')
+  const catalogueImageModalContactView = document.getElementById('catalogueImageModalContactView')
+  const catalogueImageModalContactForm = document.getElementById('catalogueImageModalContactForm')
+  const catalogueImageModalContactHeading = document.getElementById('catalogueImageModalContactHeading')
+  const catalogueImageModalContactBack = document.getElementById('catalogueImageModalContactBack')
+  const catalogueImageModalPositionsList = document.getElementById('catalogueImageModalPositionsList')
+  const catalogueImageModalPositionsCount = document.getElementById('catalogueImageModalPositionsCount')
   const catalogueImageModalImg = document.getElementById('catalogueImageModalImg')
   const catalogueImageModalTitle = document.getElementById('catalogueImageModalTitle')
   const catalogueImageModalSpecs = document.getElementById('catalogueImageModalSpecs')
@@ -572,6 +582,14 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
 
   if (
     catalogueImageModal &&
+    catalogueImageModalDialog &&
+    catalogueImageModalPreview &&
+    catalogueImageModalContactView &&
+    catalogueImageModalContactForm &&
+    catalogueImageModalContactHeading &&
+    catalogueImageModalContactBack &&
+    catalogueImageModalPositionsList &&
+    catalogueImageModalPositionsCount &&
     catalogueImageModalImg &&
     catalogueImageModalTitle &&
     catalogueImageModalSpecs &&
@@ -582,6 +600,14 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
   ) {
     initCatalogImageModal({
       modal: catalogueImageModal,
+      dialog: catalogueImageModalDialog,
+      previewRoot: catalogueImageModalPreview,
+      contactRoot: catalogueImageModalContactView,
+      contactForm: catalogueImageModalContactForm,
+      contactHeading: catalogueImageModalContactHeading,
+      contactBackBtn: catalogueImageModalContactBack,
+      positionsList: catalogueImageModalPositionsList,
+      positionsCount: catalogueImageModalPositionsCount,
       image: catalogueImageModalImg,
       title: catalogueImageModalTitle,
       specs: catalogueImageModalSpecs,
@@ -617,5 +643,34 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
       lockScroll: typeof lockScroll === 'function' ? lockScroll : undefined,
       unlockScroll: typeof unlockScroll === 'function' ? unlockScroll : undefined,
     })
+  }
+
+  const catalogueFavouritesClearModal = document.getElementById('catalogueFavouritesClearModal')
+  const catalogueFavouritesClearModalOverlay = document.getElementById('catalogueFavouritesClearModalOverlay')
+  const catalogueFavouritesClearModalCancel = document.getElementById('catalogueFavouritesClearModalCancel')
+  const catalogueFavouritesClearModalConfirm = document.getElementById('catalogueFavouritesClearModalConfirm')
+  if (
+    catalogueFavouritesClearModal &&
+    catalogueFavouritesClearModalOverlay &&
+    catalogueFavouritesClearModalConfirm
+  ) {
+    initCatalogFavouritesClearModal(
+      {
+        modal: catalogueFavouritesClearModal,
+        overlay: catalogueFavouritesClearModalOverlay,
+        openTrigger: catalogueNewFavouritesClearAllBtn,
+        cancelBtn: catalogueFavouritesClearModalCancel,
+        confirmBtn: catalogueFavouritesClearModalConfirm,
+      },
+      {
+        lockScroll: typeof lockScroll === 'function' ? lockScroll : undefined,
+        unlockScroll: typeof unlockScroll === 'function' ? unlockScroll : undefined,
+        getFavouritesCount: () => readCatalogFavourites().size,
+        onConfirm: () => {
+          writeCatalogFavourites(new Set())
+          window.dispatchEvent(new CustomEvent('catalogue:favourites-updated'))
+        },
+      },
+    )
   }
 }

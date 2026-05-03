@@ -430,6 +430,51 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCatalogFilterHelpCatalogFilterHelp
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'catalog_filter_helps';
+  info: {
+    displayName: '\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u043A \u0444\u0438\u043B\u044C\u0442\u0440\u0443 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430';
+    pluralName: 'catalog-filter-helps';
+    singularName: 'catalog-filter-help';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    filter_key: Schema.Attribute.Enumeration<
+      [
+        'collection',
+        'size',
+        'firmness',
+        'type',
+        'loadRange',
+        'heightRange',
+        'fillings',
+        'features',
+      ]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::catalog-filter-help.catalog-filter-help'
+    > &
+      Schema.Attribute.Private;
+    modal_title: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    segments: Schema.Attribute.Component<'catalog.filter-help-segment', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCatalogNewHeroCatalogNewHero
   extends Struct.SingleTypeSchema {
   collectionName: 'catalog_new_heroes';
@@ -1395,6 +1440,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::catalog-filter-help.catalog-filter-help': ApiCatalogFilterHelpCatalogFilterHelp;
       'api::catalog-new-hero.catalog-new-hero': ApiCatalogNewHeroCatalogNewHero;
       'api::collection.collection': ApiCollectionCollection;
       'api::feature-option.feature-option': ApiFeatureOptionFeatureOption;

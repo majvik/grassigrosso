@@ -32,6 +32,25 @@ module.exports = {
       orderBy: [{ sort_order: 'asc' }, { id: 'asc' }],
     });
 
+    const mediaUrl = (media) => (media && media.url ? String(media.url) : '')
+    const mediaAlt = (media, fallback) => {
+      if (!media) return fallback || ''
+      return String(media.alternativeText || media.name || fallback || '')
+    }
+
+    let filterHelpRows = []
+    try {
+      filterHelpRows = await strapi.db.query('api::catalog-filter-help.catalog-filter-help').findMany({
+        where: { is_active: true },
+        populate: {
+          segments: { populate: ['photo'] },
+        },
+        orderBy: [{ id: 'asc' }],
+      })
+    } catch (error) {
+      strapi.log.warn(`catalog-filter-feed: catalog-filter-help unavailable: ${error.message}`)
+    }
+
     const [
       collections,
       sizes,
@@ -50,7 +69,23 @@ module.exports = {
       findMany('api::height-range-option.height-range-option', activeWhere),
       findMany('api::filling-option.filling-option', activeWhere),
       findMany('api::feature-option.feature-option'),
-    ]);
+    ])
+
+    const filterHelp = {}
+    for (const row of Array.isArray(filterHelpRows) ? filterHelpRows : []) {
+      const key = String(row?.filter_key || '').trim()
+      if (!key) continue
+      const segments = (Array.isArray(row.segments) ? row.segments : [])
+        .map((seg) => ({
+          text: String(seg?.body || '').trim(),
+          imageUrl: mediaUrl(seg?.photo) || undefined,
+          imageAlt: mediaAlt(seg?.photo, '') || undefined,
+        }))
+        .filter((s) => s.text || s.imageUrl)
+      const modalTitle = String(row?.modal_title || '').trim()
+      if (!modalTitle && segments.length === 0) continue
+      filterHelp[key] = { modalTitle, segments }
+    }
 
     ctx.body = {
       groups: {
@@ -63,6 +98,7 @@ module.exports = {
         fillings: normalizeRows(fillings),
         features: normalizeRows(features),
       },
+      filterHelp,
       source: 'strapi-catalog-filter-feed',
     };
   },

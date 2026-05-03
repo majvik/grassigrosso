@@ -212,6 +212,37 @@ module.exports = {
       }
     }
 
+    try {
+      const helpRepo = strapi.db.query('api::catalog-filter-help.catalog-filter-help');
+      const catalogueFilterHelpBody = [
+        'Этот абзац — временный текст для проверки вёрстки модального окна. Редактор заменит его в Strapi на пояснение, как выбрать значение фильтра в каталоге.',
+        'Второй абзац — типографский набросок на русском языке: он помогает оценить межстрочные интервалы и отступы между блоками перед публикацией финального материала.',
+      ];
+      const catalogueFilterHelpSeeds = [
+        ['collection', 'Как выбрать коллекцию'],
+        ['size', 'Как выбрать размер'],
+        ['firmness', 'Как выбрать жёсткость'],
+        ['type', 'Как выбрать тип конструкции'],
+        ['loadRange', 'Как выбрать нагрузку'],
+        ['heightRange', 'Как выбрать высоту матраса'],
+        ['fillings', 'Как выбрать наполнитель'],
+        ['features', 'Как выбрать особенности'],
+      ];
+      const segments = [
+        { body: catalogueFilterHelpBody[0] },
+        { body: catalogueFilterHelpBody[1] },
+      ];
+      for (const [filter_key, modal_title] of catalogueFilterHelpSeeds) {
+        const existing = await helpRepo.findOne({ where: { filter_key } });
+        if (existing) continue;
+        await helpRepo.create({
+          data: { filter_key, modal_title, segments, is_active: true },
+        });
+      }
+    } catch (e) {
+      strapi.log.warn(`Catalog bootstrap: catalog-filter-help seed skipped: ${e.message}`);
+    }
+
     strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products`);
   },
 };
