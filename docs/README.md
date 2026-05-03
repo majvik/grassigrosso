@@ -43,6 +43,7 @@ npm start
 - Модульная клиентская логика:
   - `src/catalog/*` — каталог, hero, filters, cards, controls, smoke helpers.
   - `src/app-shell.js` — preloader/page-load, lenis, overlay relocation, scroll lock, wide-screen scaling.
+  - `src/page-bootstrap.js` — widow typography fix, font/media preload helpers, inline video activation, dealers package preset.
   - `src/catalog-hero-slider.js` — catalog hero data hydration и slider runtime.
   - `src/geography-effects.js` — geography marquee и SVG-point animation.
   - `src/page-interactions.js` — welcome/cookie/nav/mobile/FAQ/copy toast и другой общий UI interaction слой.
