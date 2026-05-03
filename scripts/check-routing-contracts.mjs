@@ -79,6 +79,8 @@ const server = read('server.cjs')
 const clientRoutingSources = [
   'src/main.js',
   'src/resource-modals.js',
+  'src/contact-forms.js',
+  'src/commercial-offer.js',
 ]
 const clientRoutingSource = clientRoutingSources
   .map((file) => read(file))
