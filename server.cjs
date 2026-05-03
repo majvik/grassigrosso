@@ -81,6 +81,7 @@ const SPAM_MAX_COMMENT_LENGTH = Number(process.env.SPAM_MAX_COMMENT_LENGTH || 25
 const SPAM_MAX_NAME_LENGTH = Number(process.env.SPAM_MAX_NAME_LENGTH || 120);
 const SPAM_MAX_PHONE_LENGTH = Number(process.env.SPAM_MAX_PHONE_LENGTH || 40);
 const SPAM_MAX_EMAIL_LENGTH = Number(process.env.SPAM_MAX_EMAIL_LENGTH || 160);
+const SPAM_DISABLE_IN_NON_PROD = (process.env.SPAM_DISABLE_IN_NON_PROD || 'true') === 'true';
 const CORS_ALLOWED_ORIGINS = normalizeOriginList(
   process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173'
 );
@@ -532,6 +533,13 @@ const antiSpamProtector = createAntiSpamProtector({
   maxPhoneLength: SPAM_MAX_PHONE_LENGTH,
   maxEmailLength: SPAM_MAX_EMAIL_LENGTH
 });
+
+function shouldBypassAntiSpam(req) {
+  if (isProd) return false;
+  if (!SPAM_DISABLE_IN_NON_PROD) return false;
+  const host = String(req.headers.host || '').toLowerCase();
+  return host.includes('localhost') || host.includes('127.0.0.1') || host.includes('0.0.0.0');
+}
 
 function createMailTransport() {
   const transportOptions = {
@@ -1111,19 +1119,21 @@ app.get('/api/unsubscribe', async (req, res) => {
 app.post('/api/submit', async (req, res) => {
   const lead = normalizeLeadPayload(req.body);
 
-  const antiSpamResult = antiSpamProtector.checkSubmission({
-    ip: getClientIp(req),
-    body: req.body,
-    lead
-  });
-  if (!antiSpamResult.ok) {
-    if (antiSpamResult.retryAfterSeconds) {
-      res.setHeader('Retry-After', String(antiSpamResult.retryAfterSeconds));
-    }
-    console.warn(`🛡️ Антиспам: блокировка submit с IP ${antiSpamResult.ip}. Причина: ${antiSpamResult.error}`);
-    return res.status(antiSpamResult.status).json({
-      error: antiSpamResult.error
+  if (!shouldBypassAntiSpam(req)) {
+    const antiSpamResult = antiSpamProtector.checkSubmission({
+      ip: getClientIp(req),
+      body: req.body,
+      lead
     });
+    if (!antiSpamResult.ok) {
+      if (antiSpamResult.retryAfterSeconds) {
+        res.setHeader('Retry-After', String(antiSpamResult.retryAfterSeconds));
+      }
+      console.warn(`🛡️ Антиспам: блокировка submit с IP ${antiSpamResult.ip}. Причина: ${antiSpamResult.error}`);
+      return res.status(antiSpamResult.status).json({
+        error: antiSpamResult.error
+      });
+    }
   }
 
   if (!lead.name || !lead.phone || !lead.email) {

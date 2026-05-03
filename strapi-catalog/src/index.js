@@ -53,27 +53,15 @@ module.exports = {
       mattressSizeUid,
       standardSizes.map((name) => ({ name, slug: name.replace(/\s*×\s*/g, 'x') }))
     );
-    /** Полный обход таблицы (без лимита Document API), затем удаление «лишних» slug. */
     const existingSizes = await sizeRepo.findMany({ orderBy: [{ id: 'asc' }] });
-    let removedSizes = 0;
-    for (const row of existingSizes) {
-      const slug = String(row.slug || '').trim();
-      if (allowedSlugs.has(slug)) continue;
-      const documentId = row.documentId ?? row.document_id;
-      try {
-        if (documentId) {
-          await strapi.documents(mattressSizeUid).delete({ documentId: String(documentId) });
-        } else {
-          await sizeRepo.delete({ where: { id: row.id } });
-        }
-        removedSizes += 1;
-      } catch (e) {
-        strapi.log.warn(
-          `Catalog bootstrap: could not delete mattress-size id=${row.id} slug=${slug} documentId=${documentId || ''}: ${e.message}`
-        );
-      }
+    const obsoleteSizeSlugs = existingSizes
+      .map((row) => String(row.slug || '').trim())
+      .filter((slug) => slug && !allowedSlugs.has(slug));
+    if (obsoleteSizeSlugs.length) {
+      strapi.log.warn(
+        `Catalog bootstrap: obsolete mattress-size rows remain in DB and are ignored by storefront feed: ${obsoleteSizeSlugs.join(', ')}`
+      );
     }
-    if (removedSizes) strapi.log.info(`Catalog bootstrap: removed ${removedSizes} obsolete mattress-size row(s)`);
 
     const standardFeatures = [
       { name: 'Съемный чехол', slug: 'removableCover' },
@@ -214,10 +202,6 @@ module.exports = {
 
     try {
       const helpRepo = strapi.db.query('api::catalog-filter-help.catalog-filter-help');
-      const catalogueFilterHelpBody = [
-        'Этот абзац — временный текст для проверки вёрстки модального окна. Редактор заменит его в Strapi на пояснение, как выбрать значение фильтра в каталоге.',
-        'Второй абзац — типографский набросок на русском языке: он помогает оценить межстрочные интервалы и отступы между блоками перед публикацией финального материала.',
-      ];
       const catalogueFilterHelpSeeds = [
         ['collection', 'Как выбрать коллекцию'],
         ['size', 'Как выбрать размер'],
@@ -228,15 +212,11 @@ module.exports = {
         ['fillings', 'Как выбрать наполнитель'],
         ['features', 'Как выбрать особенности'],
       ];
-      const segments = [
-        { body: catalogueFilterHelpBody[0] },
-        { body: catalogueFilterHelpBody[1] },
-      ];
       for (const [filter_key, modal_title] of catalogueFilterHelpSeeds) {
         const existing = await helpRepo.findOne({ where: { filter_key } });
         if (existing) continue;
         await helpRepo.create({
-          data: { filter_key, modal_title, segments, is_active: true },
+          data: { filter_key, modal_title, is_active: true },
         });
       }
     } catch (e) {

@@ -43,19 +43,6 @@ module.exports = {
       }
       return [...new Set(out)]
     }
-    /** Старые связи в БД (220 см / 200×200) → ближайший slug из актуального канона */
-    const mapObsoleteMattressSizeSlug = (normalizedSlug) => {
-      const s = String(normalizedSlug || '').trim().toLowerCase()
-      const m = {
-        '140x220': '140x200',
-        '160x220': '160x200',
-        '180x220': '180x200',
-        '200x220': '180x200',
-        '220x220': '180x200',
-        '200x200': '180x200',
-      }
-      return m[s] || s
-    }
     const mapFirmness = (value) => {
       const raw = String(value || '').trim().toLowerCase()
       if (raw === 'мягкий') return 'soft'
@@ -195,7 +182,7 @@ module.exports = {
         const relationSizes = Array.isArray(row.sizes)
           ? filterToStandardSizes(
             row.sizes.map((sizeRow) =>
-              mapObsoleteMattressSizeSlug(normalizeSizeValue(sizeRow?.name || sizeRow?.slug || '')),
+              normalizeSizeValue(sizeRow?.name || sizeRow?.slug || ''),
             ),
           )
           : []
@@ -203,7 +190,7 @@ module.exports = {
         const merged = [...new Set([...relationSizes, ...legacy])]
         if (merged.length) return merged
         if (legacy.length) return legacy
-        return ['180x200']
+        return []
       })(),
       fillings: Array.isArray(row.filling_options) && row.filling_options.length
         ? row.filling_options.map((item) => item.slug).filter(Boolean)

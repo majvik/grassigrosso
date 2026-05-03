@@ -46,17 +46,23 @@ function showFormNotification(form: HTMLFormElement, message: string, type: 'suc
   const notification = document.createElement('div')
   notification.className = `form-notification form-notification-${type}`
   notification.textContent = message
-  const target = anchor?.parentNode
-  if (target && anchor) {
-    target.insertBefore(notification, anchor.nextSibling)
+  const footer = anchor?.closest('.catalogue-new-image-modal-contact-footer')
+  if (footer?.parentNode) {
+    footer.parentNode.insertBefore(notification, footer)
   } else {
-    form.appendChild(notification)
+    const target = anchor?.parentNode
+    if (target && anchor) {
+      target.insertBefore(notification, anchor.nextSibling)
+    } else {
+      form.appendChild(notification)
+    }
   }
   const scrollHost = notification.closest('.catalogue-new-image-modal-contact-scroll')
   if (scrollHost) {
     scrollHost.scrollTo({ top: scrollHost.scrollHeight, behavior: 'smooth' })
+  } else {
+    notification.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }
-  notification.scrollIntoView({ behavior: 'smooth', block: 'end' })
   window.setTimeout(() => {
     notification.classList.add('form-notification-hide')
     window.setTimeout(() => notification.remove(), 300)
@@ -300,7 +306,7 @@ export function initCatalogImageModal(
         removeBtn.type = 'button'
         removeBtn.className = 'catalogue-new-modal-position-remove'
         removeBtn.dataset.productSlug = slug
-        removeBtn.setAttribute('aria-label', 'Удалить позицию из списка и из избранного')
+        removeBtn.setAttribute('aria-label', 'Убрать позицию из текущей отправки')
         const removeIcon = document.createElement('img')
         removeIcon.src = './public/icons/catalogue-modal-remove-position.svg'
         removeIcon.width = 24
@@ -441,11 +447,6 @@ export function initCatalogImageModal(
     if (!(btn instanceof HTMLButtonElement)) return
     const slug = String(btn.dataset.productSlug || '').trim()
     if (!slug) return
-
-    const favSet = readCatalogFavourites()
-    favSet.delete(slug)
-    writeCatalogFavourites(favSet)
-    window.dispatchEvent(new CustomEvent('catalogue:favourites-updated'))
 
     pendingContactSlugs = pendingContactSlugs.filter((s) => s !== slug)
     if (pendingContactSlugs.length === 0) {

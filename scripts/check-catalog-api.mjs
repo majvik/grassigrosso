@@ -136,8 +136,8 @@ if (products) {
     if (!product.collectionSlug || typeof product.collectionSlug !== 'string') {
       failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} missing collectionSlug`)
     }
-    if (!Array.isArray(product.sizes) || product.sizes.length === 0) {
-      failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} missing sizes`)
+    if (!Array.isArray(product.sizes)) {
+      failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} sizes must be an array`)
     }
     if (!Array.isArray(product.fillings)) {
       failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} fillings must be an array`)
