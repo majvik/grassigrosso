@@ -10,7 +10,7 @@
     "lib": ["ES2021"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "noEmit": true,
+    "outDir": "dist",
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": false,

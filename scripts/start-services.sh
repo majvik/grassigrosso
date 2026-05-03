@@ -16,7 +16,7 @@ ENCRYPTION_KEY_VALUE="${ENCRYPTION_KEY:-dev-encryption-key-32chars-min}"
 STRAPI_TELEMETRY_DISABLED_VALUE="${STRAPI_TELEMETRY_DISABLED:-true}"
 STRAPI_LOG_FILE="/tmp/strapi.log"
 STRAPI_NODE_MODULES_SENTINEL="strapi-catalog/node_modules/@strapi/strapi/package.json"
-STRAPI_BUILD_SENTINEL="strapi-catalog/build/index.html"
+STRAPI_BUILD_SENTINEL="strapi-catalog/dist/build/index.html"
 
 mkdir -p "$(dirname "$STRAPI_DB_FILE")"
 
