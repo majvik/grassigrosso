@@ -52,8 +52,8 @@ function initContactMaps() {
 }
 
 export function initContactsMaps() {
-  const contactsMapTabs = document.querySelectorAll('.contacts-map-tab')
-  const contactsMapFrames = document.querySelectorAll('.contacts-map-frame')
+  const contactsMapTabs = document.querySelectorAll('.contacts-map-tab, [data-map-tab]')
+  const contactsMapFrames = document.querySelectorAll('.contacts-map-frame, [data-map-frame]')
   if (contactsMapTabs.length === 0 || contactsMapFrames.length === 0) return
 
   const yandexMapsUrl = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU'
@@ -74,4 +74,9 @@ export function initContactsMaps() {
       })
     })
   })
+
+  const firstTab = contactsMapTabs[0]
+  if (firstTab && !firstTab.classList.contains('active')) {
+    firstTab.classList.add('active')
+  }
 }

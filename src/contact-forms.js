@@ -33,7 +33,7 @@ function getPageName() {
 }
 
 function clearErrors(form) {
-  form.querySelectorAll('.form-group').forEach((group) => {
+  form.querySelectorAll('.form-group, [data-form-group]').forEach((group) => {
     group.classList.remove('error')
     const input = group.querySelector('input, textarea')
     if (input) input.classList.remove('error')
@@ -42,7 +42,7 @@ function clearErrors(form) {
 }
 
 function showError(input, message) {
-  const formGroup = input.closest('.form-group')
+  const formGroup = input.closest('.form-group, [data-form-group]')
   if (!formGroup) return
 
   formGroup.classList.add('error')
@@ -112,7 +112,7 @@ function attachBlurValidation(form) {
   form.querySelectorAll('input, textarea').forEach((input) => {
     input.addEventListener('blur', () => {
       if (!['name', 'phone', 'email'].includes(input.id)) return
-      const formGroup = input.closest('.form-group')
+      const formGroup = input.closest('.form-group, [data-form-group]')
       if (!formGroup || !formGroup.classList.contains('error')) return
 
       if (input.id === 'name') {
@@ -147,7 +147,7 @@ function attachBlurValidation(form) {
 }
 
 export function initContactForms() {
-  const contactForms = document.querySelectorAll('.contact-form')
+  const contactForms = document.querySelectorAll('.contact-form, [data-contact-form]')
   if (contactForms.length === 0) return
 
   const apiUrl = import.meta.env.VITE_API_URL || '/api/submit'

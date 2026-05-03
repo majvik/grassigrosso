@@ -114,7 +114,7 @@ function setupCopyToast(copyToastRoot) {
   }
 
   document.body.addEventListener('click', (event) => {
-    const button = event.target.closest('.contacts-office-copy-email')
+    const button = event.target.closest('.contacts-office-copy-email, [data-copy-email-trigger]')
     if (!button) return
     const email = button.getAttribute('data-copy-email')
     if (!email) return
@@ -124,7 +124,7 @@ function setupCopyToast(copyToastRoot) {
 }
 
 function setupContactsOfficeEmailRows() {
-  const contactsOfficeEmailRows = document.querySelectorAll('.contacts-office-email-row')
+  const contactsOfficeEmailRows = document.querySelectorAll('.contacts-office-email-row, [data-office-email-row]')
   if (contactsOfficeEmailRows.length === 0) return
 
   const measureSingleLineHeightPx = (element) => {

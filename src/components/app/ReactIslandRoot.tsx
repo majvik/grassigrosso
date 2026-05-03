@@ -1,3 +1,4 @@
+import { ContactsPage } from '@/components/pages/ContactsPage'
 import { DocumentsPage } from '@/components/pages/DocumentsPage'
 import { LegacyContentPage } from '@/components/pages/LegacyContentPage'
 import { LegalPage } from '@/components/pages/LegalPage'
@@ -13,6 +14,7 @@ interface ReactIslandRootProps {
 }
 
 export function ReactIslandRoot({ fallbackHtml, page }: ReactIslandRootProps) {
+  if (page === 'contacts') return <ContactsPage />
   if (page === 'documents') return <DocumentsPage />
   if (page === 'unsubscribe') return <UnsubscribePage />
   if (page === '404') return <NotFoundPage />

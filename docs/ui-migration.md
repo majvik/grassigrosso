@@ -21,6 +21,7 @@
 ### Pages
 
 - `documents` — React page c локальными данными, CSS Modules и UI-kit.
+- `contacts` — React page с офисами, формой и maps/tabs hooks через `data-*`.
 - `privacy`, `terms`, `cookies` — React legal pages.
 - `unsubscribe` — React service page.
 
