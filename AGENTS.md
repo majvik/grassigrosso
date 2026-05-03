@@ -24,6 +24,13 @@
 
 8. **Логика страницы:** входная точка — [src/main.js](src/main.js); page-specific поведение теперь разнесено по модулям в `src/` (`page-interactions.js`, `page-layout.js`, `contact-forms.js`, `resource-modals.js`, `commercial-offer.js`, `contacts-maps.js`, `catalog/*`). Для выбора поведения по странице можно ориентироваться на `document.body.dataset.page` (атрибут `data-page` в шаблоне).
 
+## React / Base UI migration
+
+- В проекте уже используется React island-layer через `data-react-root` и [src/react-entry.tsx](src/react-entry.tsx). Новый UI-слой строим на `@base-ui/react`, локальных компонентах `src/components/ui/*` и CSS Modules.
+- Для новых React-страниц **не привязывать JS-поведение к hash-классам CSS Modules**. Интерактивные hook'и задавать через `data-*` атрибуты (`data-faq-item`, `data-document-card`, `data-document-request-trigger` и т.п.).
+- Legacy global CSS и старые class selectors допускаются как fallback для ещё не перенесённых зон, но не как новый контракт.
+- Подробный статус и порядок миграции: [docs/ui-migration.md](docs/ui-migration.md).
+
 ## SEO
 
 - В HTML используются плейсхолдеры `%%SITE_ORIGIN%%`; при **`npm run build`** подставляется `SITE_URL` из `.env` (см. [.env.example](.env.example), по умолчанию `https://grassigrosso.com`).

@@ -293,14 +293,14 @@ export function initResourceModals({ lockScroll, unlockScroll, ensureVideoSource
     }
 
     document.body.addEventListener('click', (event) => {
-      const certLink = event.target.closest('.documents-cert-download[data-request-document]')
-      const certCard = event.target.closest('.documents-cert-card[data-document]')
-      const commercialLink = event.target.closest('.documents-commercial-item-download[data-request-document]')
-      const commercialItem = event.target.closest('.documents-commercial-item[data-document]')
+      const certLink = event.target.closest('.documents-cert-download[data-request-document], [data-document-request-trigger]')
+      const certCard = event.target.closest('.documents-cert-card[data-document], [data-document-card][data-document]')
+      const commercialLink = event.target.closest('.documents-commercial-item-download[data-request-document], [data-document-request-trigger]')
+      const commercialItem = event.target.closest('.documents-commercial-item[data-document], [data-document-card][data-document]')
       const target = certLink || certCard || commercialLink || commercialItem
       if (!target) return
       if (certLink || commercialLink) event.preventDefault()
-      const card = target.closest('.documents-cert-card') || target.closest('.documents-commercial-item')
+      const card = target.closest('.documents-cert-card, [data-document-card]') || target.closest('.documents-commercial-item, [data-document-card]')
       openDocumentRequestModal((card && card.dataset.document) || 'declaration')
     })
 

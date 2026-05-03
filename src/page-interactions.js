@@ -294,18 +294,21 @@ function setupHotelCategories() {
 }
 
 function setupFaqAccordion() {
-  const faqItems = document.querySelectorAll('.faq-item')
+  const faqItems = document.querySelectorAll('.faq-item, [data-faq-item]')
   if (faqItems.length === 0) return
 
   faqItems.forEach((item) => {
-    const question = item.querySelector('.faq-question')
+    const question = item.querySelector('.faq-question, [data-faq-question]')
     question?.addEventListener('click', () => {
       faqItems.forEach((otherItem) => {
-        if (otherItem !== item && otherItem.classList.contains('active')) {
+        const isOpen = otherItem.classList.contains('active') || otherItem.getAttribute('data-open') === 'true'
+        if (otherItem !== item && isOpen) {
           otherItem.classList.remove('active')
+          otherItem.setAttribute('data-open', 'false')
         }
       })
       item.classList.toggle('active')
+      item.setAttribute('data-open', item.classList.contains('active') ? 'true' : 'false')
     })
   })
 }
@@ -345,7 +348,4 @@ export function initPageInteractions({ lockScroll, unlockScroll, copyToastRoot }
   setupFaqAccordion()
 
   setupTopPaddingSync('.catalog-custom-left', '.catalog-custom-right', '.catalog-custom-left .section-title')
-  setupTopPaddingSync('.documents-certification-header-left', '.documents-certification-header-right', '.documents-certification-header-left .section-title')
-  setupTopPaddingSync('.documents-help-left', '.documents-help-right', '.documents-help-left .section-title')
-  setupTopPaddingSync('.documents-commercial-left', '.documents-commercial-right', '.documents-commercial-title')
 }

@@ -29,7 +29,7 @@ npm start
 
 ## 2. Технологический стек
 
-- Frontend: Vite, Vanilla JS, HTML/CSS (MPA).
+- Frontend: Vite MPA, Vanilla JS + React islands, Base UI, CSS Modules.
 - Backend: Node.js + Express.
 - Доставка лидов: Telegram Bot API + SMTP (`nodemailer`).
 - Персистентность: SQLite (`better-sqlite3`) с retry-очередью.
@@ -40,6 +40,7 @@ npm start
 
 - HTML-страницы: `index`, `hotels`, `dealers`, `catalog`, `documents`, `contacts`, сервисные (`privacy`, `terms`, `cookies`, `404`, `unsubscribe`).
 - Точка входа: `src/main.js`.
+- React runtime: `src/react-entry.tsx` + `src/components/app/ReactIslandRoot.tsx`.
 - Модульная клиентская логика:
   - `src/catalog/*` — каталог, hero, filters, cards, controls, smoke helpers.
   - `src/app-shell.js` — preloader/page-load, lenis, overlay relocation, scroll lock, wide-screen scaling.
@@ -52,7 +53,10 @@ npm start
   - `src/resource-modals.js` — video/catalog/documents/help modals.
   - `src/commercial-offer.js` — многошаговая форма коммерческого предложения.
   - `src/contacts-maps.js` — Yandex Maps и contacts tabs.
+  - `src/components/ui/*` — локальный Base UI-based UI kit без Tailwind.
+  - `src/components/pages/*` — React page layer для service/legal/documents и следующих migration families.
 - Стили: `src/style.css` + `src/styles/*`.
+- Новый React visual layer: CSS Modules, legacy global CSS остаётся как fallback для ещё не перенесённых зон.
 - Критический CSS прелоадера инжектится плагином из `vite.config.mjs` в `<style id="vite-critical-css"></style>`.
 
 ### Backend
@@ -150,5 +154,6 @@ npm start
 ## 10. Статус документации
 
 - Этот файл — основной источник истины.
+- Отдельный статус и контракт UI migration: `docs/ui-migration.md`.
 - Исторические markdown-отчёты/точечные инструкции, дублирующие этот хаб, удалены или сведены к ссылкам.
 - При выносе кода из `src/main.js` документация должна обновляться синхронно: минимум `AGENTS.md` и этот файл.
