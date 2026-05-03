@@ -22,7 +22,7 @@
 
 7. **Стили:** дизайн-токены и структура CSS — [README.md](README.md) раздел «Дизайн-система», файл [src/styles/tokens.css](src/styles/tokens.css).
 
-8. **Логика страницы:** при необходимости JS — [src/main.js](src/main.js); можно ориентироваться на `document.body.dataset.page` (атрибут `data-page` в шаблоне).
+8. **Логика страницы:** входная точка — [src/main.js](src/main.js); page-specific поведение теперь разнесено по модулям в `src/` (`page-interactions.js`, `page-layout.js`, `contact-forms.js`, `resource-modals.js`, `commercial-offer.js`, `contacts-maps.js`, `catalog/*`). Для выбора поведения по странице можно ориентироваться на `document.body.dataset.page` (атрибут `data-page` в шаблоне).
 
 ## SEO
 
@@ -34,7 +34,7 @@
 
 Заявки из форм маршрутизируются на разные почтовые ящики в зависимости от страницы. Логика разделена на две части — **нарушение синхронности ломает доставку**.
 
-### Клиент (`src/main.js`): `getPageName()`
+### Клиент (`src/contact-forms.js`): `getPageName()`
 
 Определяет значение поля `page`, которое отправляется в `POST /api/submit`. Использует **slug без `.html`** из `window.location.pathname` (после 301-редиректа URL не содержат `.html`).
 
@@ -74,7 +74,7 @@ const pageNames = {
 
 ### При добавлении новой страницы с формой
 
-1. Добавить slug → название в `getPageName()` в `src/main.js`
+1. Добавить slug → название в `getPageName()` в `src/contact-forms.js`
 2. Добавить название → email в `PAGE_EMAIL_ROUTING` в `server.cjs`
 3. **Ключи должны совпадать точно** — иначе письма уйдут в fallback
 4. **Не использовать `.html` в ключах** `getPageName()` — URL чистые после 301-редиректа
@@ -82,7 +82,7 @@ const pageNames = {
 ## Чего не делать
 
 - Не удалять критический слот прелоадера и не дублировать обходной путь без `vite-critical-css`.
-- Не менять ключи в `getPageName()` (`src/main.js`) без синхронного обновления `PAGE_EMAIL_ROUTING` (`server.cjs`) — иначе email-маршрутизация сломается.
+- Не менять ключи в `getPageName()` (`src/contact-forms.js`) без синхронного обновления `PAGE_EMAIL_ROUTING` (`server.cjs`) — иначе email-маршрутизация сломается.
 - Не использовать `.html` в ключах `getPageName()` — в production URL чистые (301-редирект убирает суффикс).
 - Не внедрять в этот репозиторий отдельную CMS-админку как второй фронтовый бандл — см. roadmap ниже.
 

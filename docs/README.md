@@ -39,7 +39,15 @@ npm start
 ### Frontend
 
 - HTML-страницы: `index`, `hotels`, `dealers`, `catalog`, `documents`, `contacts`, сервисные (`privacy`, `terms`, `cookies`, `404`, `unsubscribe`).
-- Общая логика: `src/main.js`.
+- Точка входа: `src/main.js`.
+- Модульная клиентская логика:
+  - `src/catalog/*` — каталог, hero, filters, cards, controls, smoke helpers.
+  - `src/page-interactions.js` — welcome/cookie/nav/mobile/FAQ/copy toast и другой общий UI interaction слой.
+  - `src/page-layout.js` — page-specific layout sync и desktop sizing behavior.
+  - `src/contact-forms.js` — общие lead/contact формы и `getPageName()`.
+  - `src/resource-modals.js` — video/catalog/documents/help modals.
+  - `src/commercial-offer.js` — многошаговая форма коммерческого предложения.
+  - `src/contacts-maps.js` — Yandex Maps и contacts tabs.
 - Стили: `src/style.css` + `src/styles/*`.
 - Критический CSS прелоадера инжектится плагином из `vite.config.mjs` в `<style id="vite-critical-css"></style>`.
 
@@ -60,7 +68,7 @@ npm start
 
 ### Контракт маршрутизации email (критично)
 
-- Клиент формирует `page` в `src/main.js` (`getPageName()` + хардкод для отдельных модалок).
+- Клиент формирует `page` в `src/contact-forms.js` (`getPageName()`) и в отдельных модальных flow (`src/resource-modals.js`, `src/commercial-offer.js`).
 - Сервер маршрутизирует `page` через `PAGE_EMAIL_ROUTING` в `server.cjs`.
 - Ключи в клиенте и сервере должны совпадать 1:1, иначе уйдёт в fallback `MAIL_TO`.
 
@@ -104,7 +112,7 @@ npm start
 
 ## 6. Яндекс Карты
 
-- Используется Yandex JavaScript API 2.1 (`ymaps`) в `src/main.js`.
+- Используется Yandex JavaScript API 2.1 (`ymaps`) в `src/contacts-maps.js`.
 - API ключ: `VITE_YANDEX_MAPS_API_KEY`.
 - Метки/поведение (цвет, hover/balloon) задаются программно.
 - Подход через Яндекс Конструктор в текущей реализации не используется.
@@ -139,3 +147,4 @@ npm start
 
 - Этот файл — основной источник истины.
 - Исторические markdown-отчёты/точечные инструкции, дублирующие этот хаб, удалены или сведены к ссылкам.
+- При выносе кода из `src/main.js` документация должна обновляться синхронно: минимум `AGENTS.md` и этот файл.
