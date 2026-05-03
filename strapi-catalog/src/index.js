@@ -30,6 +30,7 @@ module.exports = {
       return bySlug;
     };
 
+    // Синхронно с src/catalog/catalog-sizes.ts (порядок важен для sort_order).
     const standardSizes = [
       '80 × 190',
       '80 × 200',
@@ -40,20 +41,39 @@ module.exports = {
       '140 × 190',
       '140 × 200',
       '160 × 190',
+      '180 × 190',
       '160 × 200',
       '180 × 200',
-      '200 × 200',
-      '140 × 220',
-      '160 × 220',
-      '180 × 220',
-      '200 × 220',
-      '220 × 220',
     ];
 
+    const sizeRepo = strapi.db.query('api::mattress-size.mattress-size');
+    const mattressSizeUid = 'api::mattress-size.mattress-size';
+    const allowedSlugs = new Set(standardSizes.map((name) => name.replace(/\s*×\s*/g, 'x')));
     await ensureRows(
-      'api::mattress-size.mattress-size',
+      mattressSizeUid,
       standardSizes.map((name) => ({ name, slug: name.replace(/\s*×\s*/g, 'x') }))
     );
+    /** Полный обход таблицы (без лимита Document API), затем удаление «лишних» slug. */
+    const existingSizes = await sizeRepo.findMany({ orderBy: [{ id: 'asc' }] });
+    let removedSizes = 0;
+    for (const row of existingSizes) {
+      const slug = String(row.slug || '').trim();
+      if (allowedSlugs.has(slug)) continue;
+      const documentId = row.documentId ?? row.document_id;
+      try {
+        if (documentId) {
+          await strapi.documents(mattressSizeUid).delete({ documentId: String(documentId) });
+        } else {
+          await sizeRepo.delete({ where: { id: row.id } });
+        }
+        removedSizes += 1;
+      } catch (e) {
+        strapi.log.warn(
+          `Catalog bootstrap: could not delete mattress-size id=${row.id} slug=${slug} documentId=${documentId || ''}: ${e.message}`
+        );
+      }
+    }
+    if (removedSizes) strapi.log.info(`Catalog bootstrap: removed ${removedSizes} obsolete mattress-size row(s)`);
 
     const standardFeatures = [
       { name: 'Съемный чехол', slug: 'removableCover' },

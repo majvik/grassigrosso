@@ -1,7 +1,32 @@
 import type { CatalogFilterGroups } from './catalog-api'
 import { normalizeCatalogFilterOptions } from './catalog-filter-options'
+import type { NormalizedCatalogFilterOption } from './catalog-filter-options'
 import type { CatalogAvailableFilterSets, CatalogFilterState } from './catalog-filtering'
-import { normalizeCatalogSizeValue } from './catalog-sizes'
+import {
+  STANDARD_MATTRESS_SIZES,
+  STANDARD_MATTRESS_SIZE_SET,
+  normalizeCatalogSizeValue,
+} from './catalog-sizes'
+
+/**
+ * Меню размеров всегда = канон из кода (никогда не подмешиваем «лишнее» из Strapi и не опускаем slug,
+ * которого ещё нет ни на одной карточке — иначе после syncFilterOptionsFromCards пункт скрывался бы).
+ * Подписи подтягиваем из API, если slug совпал.
+ */
+function mergeSizeOptionsWithStandard(apiOptions: unknown): NormalizedCatalogFilterOption[] {
+  const normalized = normalizeCatalogFilterOptions(apiOptions)
+  const labelBySlug = new Map<string, string>()
+  for (const row of normalized) {
+    const slug = normalizeCatalogSizeValue(row.value) || String(row.value || '').trim()
+    if (!slug || !STANDARD_MATTRESS_SIZE_SET.has(slug)) continue
+    if (row.label) labelBySlug.set(slug, row.label)
+  }
+  return STANDARD_MATTRESS_SIZES.map((slug, i) => ({
+    value: slug,
+    label: labelBySlug.get(slug) ?? slug.replace('x', ' × '),
+    sortOrder: i,
+  }))
+}
 
 type ResolveSizeMenu = (sizeSelectEl: Element | null) => Element | null
 
@@ -38,7 +63,7 @@ function renderCatalogueChipOptions(root: Element, groupName: string, options: u
 }
 
 function renderCatalogueSizeOptions(root: Element, options: unknown): boolean {
-  const normalized = normalizeCatalogFilterOptions(options)
+  const normalized = mergeSizeOptionsWithStandard(options)
   if (!normalized.length) return false
   const sizeSelect = root.querySelector('.catalogue-new-size-select[data-size-group="size"]')
   const menu = sizeSelect?.querySelector('.catalogue-new-size-select-menu')

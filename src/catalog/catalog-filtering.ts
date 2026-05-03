@@ -1,3 +1,5 @@
+import { STANDARD_MATTRESS_SIZES } from './catalog-sizes'
+
 export type CatalogSortValue =
   | 'default'
   | 'height-asc'
@@ -197,6 +199,10 @@ export function collectAvailableCatalogFilters<TCard>(cardMeta: CatalogCardMeta<
   knownHeightRangeOptions.forEach((value) => available.heightRange.add(value))
   knownFillingOptions.forEach((value) => available.fillings.add(value))
   knownFeatureOptions.forEach((value) => available.features.add(value))
+
+  // Размеры: как у type/loadRange — все канонические пункты фильтра остаются кликабельными;
+  // отбор товаров по-прежнему по data-sizes на карточках (см. matchesCatalogCardMeta).
+  STANDARD_MATTRESS_SIZES.forEach((value) => available.size.add(value))
 
   return available
 }

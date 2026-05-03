@@ -89,6 +89,35 @@ if (filters) {
       }
     }
 
+    const expectedMattressSizeSlugs = [
+      '80x190',
+      '80x200',
+      '90x190',
+      '90x200',
+      '120x190',
+      '120x200',
+      '140x190',
+      '140x200',
+      '160x190',
+      '180x190',
+      '160x200',
+      '180x200',
+    ]
+    const sizeSlugsFromFeed = (groups.size || []).map((option) => option.slug)
+    if (sizeSlugsFromFeed.length !== expectedMattressSizeSlugs.length) {
+      failures.push(
+        `/api/catalog/filters: groups.size expected ${expectedMattressSizeSlugs.length} entries, got ${sizeSlugsFromFeed.length} (${sizeSlugsFromFeed.join(', ')})`,
+      )
+    }
+    for (let i = 0; i < expectedMattressSizeSlugs.length; i += 1) {
+      if (sizeSlugsFromFeed[i] !== expectedMattressSizeSlugs[i]) {
+        failures.push(
+          `/api/catalog/filters: groups.size[${i}] expected slug ${expectedMattressSizeSlugs[i]}, got ${sizeSlugsFromFeed[i] ?? '(missing)'}`,
+        )
+        break
+      }
+    }
+
     catalogFilterSlugSets = Object.fromEntries(
       requiredFilterGroups.map((groupName) => [
         groupName,

@@ -1,3 +1,7 @@
+/**
+ * Канон размеров матрасов для каталога (slug = ширина + «x» + длина в см).
+ * После 160×190 добавлен 180×190; удалены: 200×200, 140×220, 160×220, 180×220, 200×220, 220×220.
+ */
 export const STANDARD_MATTRESS_SIZES = [
   '80x190',
   '80x200',
@@ -8,14 +12,9 @@ export const STANDARD_MATTRESS_SIZES = [
   '140x190',
   '140x200',
   '160x190',
+  '180x190',
   '160x200',
   '180x200',
-  '200x200',
-  '140x220',
-  '160x220',
-  '180x220',
-  '200x220',
-  '220x220',
 ] as const
 
 export const STANDARD_MATTRESS_SIZE_SET = new Set<string>(STANDARD_MATTRESS_SIZES)

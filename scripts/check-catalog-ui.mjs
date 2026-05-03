@@ -193,21 +193,21 @@ try {
   })()`)
   if (!classic) failures.push('classic filter did not produce 26 results')
 
-  await evaluate(`(() => {
+  const sizeMenuOk = await waitFor('catalog size menu slugs', `(() => {
     const trigger = document.querySelector('.catalogue-new-size-select-trigger')
     if (!trigger) return false
     trigger.click()
-    const option = [...document.querySelectorAll('.catalogue-new-size-select-option')]
-      .find((item) => item.dataset.value === '90x200')
-    if (!option) return false
-    option.click()
-    return true
+    const slugs = [...document.querySelectorAll('.catalogue-new-size-select-option')]
+      .map((item) => item.dataset.value)
+      .filter((v) => v && v !== 'all')
+    const expected = ['80x190','80x200','90x190','90x200','120x190','120x200','140x190','140x200','160x190','180x190','160x200','180x200']
+    const banned = ['200x200','140x220','160x220','180x220','200x220','220x220']
+    if (slugs.length !== 12) return false
+    for (let i = 0; i < 12; i++) if (slugs[i] !== expected[i]) return false
+    if (banned.some((b) => slugs.includes(b))) return false
+    return { slugs: slugs.join(',') }
   })()`)
-  const size = await waitFor('size filter applied', `(() => {
-    const result = document.querySelector('.catalogue-new-results strong')?.textContent?.trim()
-    return result === '8' ? { result } : false
-  })()`)
-  if (!size) failures.push('90x200 size filter did not produce 8 Classic results')
+  if (!sizeMenuOk) failures.push('catalog size menu: expected 12 slugs in order, 180x190 after 160x190, no removed 220/200x200 line')
 
   await evaluate(`(() => {
     const option = document.querySelector('.catalogue-new-sort-option[data-value="height-desc"]')

@@ -98,6 +98,8 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
     }
 
     function renderCatalogueFilterGroups(groups) {
+      // Пока меню размеров в портале (body), querySelector в сайдбаре не находит ul — replaceChildren не срабатывал.
+      sizeSelectController.closeMenus()
       const rendered = renderCatalogueFilterGroupsInto(catalogueNewSidebar, groups)
       if (!rendered) return false
       syncUiFromState()
@@ -152,6 +154,7 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
         renderCatalogueFilterGroups(groups)
       } catch (err) {
         console.warn('Catalogue filter feed failed, using static filter controls:', err)
+        renderCatalogueFilterGroups({ size: [] })
       }
     }
 
@@ -372,6 +375,9 @@ export function initCataloguePage({ lockScroll, unlockScroll } = {}) {
         return shouldCloseAfterSelect
       },
     })
+
+    // Канон размеров из JS сразу (не ждём Strapi); при открытом портале renderCatalogueFilterGroups закроет меню и обновит DOM.
+    renderCatalogueFilterGroups({ size: [] })
 
     catalogueNewCardsRoot.addEventListener('click', (event) => {
       const btn = event.target.closest('.catalogue-new-favourite')

@@ -20,6 +20,42 @@ module.exports = {
       if (!match) return ''
       return `${match[1]}x${match[2]}`
     }
+    // Синхронно с src/catalog/catalog-sizes.ts
+    const STANDARD_MATTRESS_SIZE_SLUGS = new Set([
+      '80x190',
+      '80x200',
+      '90x190',
+      '90x200',
+      '120x190',
+      '120x200',
+      '140x190',
+      '140x200',
+      '160x190',
+      '180x190',
+      '160x200',
+      '180x200',
+    ])
+    const filterToStandardSizes = (list) => {
+      const out = []
+      for (const slug of list) {
+        const s = normalizeSizeValue(slug)
+        if (s && STANDARD_MATTRESS_SIZE_SLUGS.has(s)) out.push(s)
+      }
+      return [...new Set(out)]
+    }
+    /** Старые связи в БД (220 см / 200×200) → ближайший slug из актуального канона */
+    const mapObsoleteMattressSizeSlug = (normalizedSlug) => {
+      const s = String(normalizedSlug || '').trim().toLowerCase()
+      const m = {
+        '140x220': '140x200',
+        '160x220': '160x200',
+        '180x220': '180x200',
+        '200x220': '180x200',
+        '220x220': '180x200',
+        '200x200': '180x200',
+      }
+      return m[s] || s
+    }
     const mapFirmness = (value) => {
       const raw = String(value || '').trim().toLowerCase()
       if (raw === 'мягкий') return 'soft'
@@ -126,10 +162,11 @@ module.exports = {
       widths.forEach((width) => {
         lengths.forEach((length) => {
           const size = normalizeSizeValue(`${width}x${length}`)
-          if (size) result.push(size)
+          const mapped = mapObsoleteMattressSizeSlug(size)
+          if (mapped && STANDARD_MATTRESS_SIZE_SLUGS.has(mapped)) result.push(mapped)
         })
       })
-      return result
+      return [...new Set(result)]
     }
 
     const items = rows.map((row) => ({
@@ -145,11 +182,17 @@ module.exports = {
       heightRange: row.height_range_option?.slug || mapHeightRange(row.height_range || ''),
       sizes: (() => {
         const relationSizes = Array.isArray(row.sizes)
-          ? row.sizes
-            .map((sizeRow) => normalizeSizeValue(sizeRow?.name || sizeRow?.slug || ''))
-            .filter(Boolean)
+          ? filterToStandardSizes(
+            row.sizes.map((sizeRow) =>
+              mapObsoleteMattressSizeSlug(normalizeSizeValue(sizeRow?.name || sizeRow?.slug || '')),
+            ),
+          )
           : []
-        return relationSizes.length ? relationSizes : buildSizesFromLegacy(row)
+        const legacy = filterToStandardSizes(buildSizesFromLegacy(row))
+        const merged = [...new Set([...relationSizes, ...legacy])]
+        if (merged.length) return merged
+        if (legacy.length) return legacy
+        return ['180x200']
       })(),
       fillings: Array.isArray(row.filling_options) && row.filling_options.length
         ? row.filling_options.map((item) => item.slug).filter(Boolean)
