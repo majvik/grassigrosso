@@ -1,5 +1,7 @@
+import { DealersPage } from '@/components/pages/DealersPage'
 import { ContactsPage } from '@/components/pages/ContactsPage'
 import { DocumentsPage } from '@/components/pages/DocumentsPage'
+import { HotelsPage } from '@/components/pages/HotelsPage'
 import { LegacyContentPage } from '@/components/pages/LegacyContentPage'
 import { LegalPage } from '@/components/pages/LegalPage'
 import { LEGAL_PAGES, type LegalPageId } from '@/components/pages/legal-content'
@@ -14,6 +16,8 @@ interface ReactIslandRootProps {
 }
 
 export function ReactIslandRoot({ fallbackHtml, page }: ReactIslandRootProps) {
+  if (page === 'hotels') return <HotelsPage />
+  if (page === 'dealers') return <DealersPage />
   if (page === 'contacts') return <ContactsPage />
   if (page === 'documents') return <DocumentsPage />
   if (page === 'unsubscribe') return <UnsubscribePage />

@@ -22,6 +22,7 @@
 
 - `documents` — React page c локальными данными, CSS Modules и UI-kit.
 - `contacts` — React page с офисами, формой и maps/tabs hooks через `data-*`.
+- `hotels`, `dealers` — React pages без HTML-строк; текущий визуальный слой пока опирается на legacy global CSS для ускоренного parity.
 - `privacy`, `terms`, `cookies` — React legal pages.
 - `unsubscribe` — React service page.
 
