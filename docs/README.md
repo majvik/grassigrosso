@@ -42,6 +42,9 @@ npm start
 - Точка входа: `src/main.js`.
 - Модульная клиентская логика:
   - `src/catalog/*` — каталог, hero, filters, cards, controls, smoke helpers.
+  - `src/app-shell.js` — preloader/page-load, lenis, overlay relocation, scroll lock, wide-screen scaling.
+  - `src/catalog-hero-slider.js` — catalog hero data hydration и slider runtime.
+  - `src/geography-effects.js` — geography marquee и SVG-point animation.
   - `src/page-interactions.js` — welcome/cookie/nav/mobile/FAQ/copy toast и другой общий UI interaction слой.
   - `src/page-layout.js` — page-specific layout sync и desktop sizing behavior.
   - `src/contact-forms.js` — общие lead/contact формы и `getPageName()`.
