@@ -76,7 +76,13 @@ if (!template.includes('<link rel="canonical" href="%%SITE_ORIGIN%%/__CANONICAL_
 const routing = JSON.parse(read('src/contracts/lead-routing.json'))
 const requiredLabels = Array.isArray(routing.labels) ? routing.labels : []
 const server = read('server.cjs')
-const main = read('src/main.js')
+const clientRoutingSources = [
+  'src/main.js',
+  'src/resource-modals.js',
+]
+const clientRoutingSource = clientRoutingSources
+  .map((file) => read(file))
+  .join('\n')
 const routingBlock = server.match(/const PAGE_EMAIL_ROUTING = \{([\s\S]*?)\n\};/)
 if (!routingBlock) {
   failures.push('server.cjs: PAGE_EMAIL_ROUTING block not found')
@@ -88,7 +94,7 @@ if (!routingBlock) {
 }
 
 for (const label of requiredLabels) {
-  if (!main.includes(label)) failures.push(`src/main.js missing form page label: ${label}`)
+  if (!clientRoutingSource.includes(label)) failures.push(`client form routing missing page label: ${label}`)
 }
 
 if (failures.length > 0) {
