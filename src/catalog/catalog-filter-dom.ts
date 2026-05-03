@@ -1,7 +1,11 @@
 import type { CatalogFilterGroups } from './catalog-api'
 import { normalizeCatalogFilterOptions } from './catalog-filter-options'
 import type { NormalizedCatalogFilterOption } from './catalog-filter-options'
-import type { CatalogAvailableFilterSets, CatalogFilterState } from './catalog-filtering'
+import {
+  type CatalogAvailableFilterSets,
+  type CatalogFilterState,
+  CANONICAL_CATALOG_FIRMNESS_SLUGS,
+} from './catalog-filtering'
 import {
   STANDARD_MATTRESS_SIZES,
   STANDARD_MATTRESS_SIZE_SET,
@@ -26,6 +30,52 @@ function mergeSizeOptionsWithStandard(apiOptions: unknown): NormalizedCatalogFil
     label: labelBySlug.get(slug) ?? slug.replace('x', ' × '),
     sortOrder: i,
   }))
+}
+
+/** Канон жёсткости из кода; подписи из API при совпадении slug (как у размеров). */
+const STANDARD_FIRMNESS_SLUGS = ['soft', 'medium', 'hard', 'dualFirmness'] as const
+const STANDARD_FIRMNESS_SET = new Set<string>(STANDARD_FIRMNESS_SLUGS)
+const DEFAULT_FIRMNESS_LABELS: Record<string, string> = {
+  soft: 'Мягкий',
+  medium: 'Средний',
+  hard: 'Жесткий',
+  dualFirmness: 'Разная жесткость сторон',
+}
+
+function mergeFirmnessOptionsWithStandard(apiOptions: unknown): NormalizedCatalogFilterOption[] {
+  const normalized = normalizeCatalogFilterOptions(apiOptions)
+  const labelBySlug = new Map<string, string>()
+  for (const row of normalized) {
+    const slug = String(row.value || '').trim()
+    if (!slug || !STANDARD_FIRMNESS_SET.has(slug)) continue
+    if (row.label) labelBySlug.set(slug, row.label)
+  }
+  return CANONICAL_CATALOG_FIRMNESS_SLUGS.map((slug, i) => ({
+    value: slug,
+    label: labelBySlug.get(slug) ?? DEFAULT_FIRMNESS_LABELS[slug] ?? slug,
+    sortOrder: i,
+  }))
+}
+
+function renderCatalogueFirmnessChips(root: Element, options: unknown): boolean {
+  const normalized = mergeFirmnessOptionsWithStandard(options)
+  if (!normalized.length) return false
+  const group = root.querySelector('.catalogue-new-filter-group[data-filter-group="firmness"]')
+  const list = group?.querySelector('.catalogue-new-filter-list')
+  if (!list) return false
+  list.replaceChildren(
+    createCatalogueFilterButton(
+      'catalogue-new-chip is-active',
+      { 'data-filter-group': 'firmness', 'data-value': 'all' },
+      'Любая',
+    ),
+    ...normalized.map((option) => createCatalogueFilterButton(
+      'catalogue-new-chip',
+      { 'data-filter-group': 'firmness', 'data-value': option.value },
+      option.label,
+    )),
+  )
+  return true
 }
 
 type ResolveSizeMenu = (sizeSelectEl: Element | null) => Element | null
@@ -106,7 +156,7 @@ export function renderCatalogueFilterGroups(root: Element, groups: CatalogFilter
   return [
     renderCatalogueChipOptions(root, 'collection', groups.collection, 'Все коллекции'),
     renderCatalogueSizeOptions(root, groups.size),
-    renderCatalogueChipOptions(root, 'firmness', groups.firmness, 'Любая'),
+    renderCatalogueFirmnessChips(root, groups.firmness),
     renderCatalogueChipOptions(root, 'type', groups.type, 'Любая'),
     renderCatalogueChipOptions(root, 'loadRange', groups.loadRange, 'Любая'),
     renderCatalogueChipOptions(root, 'heightRange', groups.heightRange, 'Любая'),

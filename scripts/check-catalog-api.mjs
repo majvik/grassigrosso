@@ -17,7 +17,7 @@ const requiredFilterGroups = [
 
 const requiredFilterSlugs = {
   collection: ['classic', 'flexi', 'relax', 'trend'],
-  firmness: ['soft', 'medium', 'hard'],
+  firmness: ['soft', 'medium', 'hard', 'dualFirmness'],
   type: ['spring', 'nospring'],
   fillings: ['memoryEffect'],
 }

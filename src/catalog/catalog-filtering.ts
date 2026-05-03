@@ -64,6 +64,9 @@ const firmnessRank: Record<string, number> = {
   dualFirmness: 4,
 }
 
+/** Все пункты фильтра «Жёсткость» остаются в разметке (как канон размеров); отбор карточек по-прежнему по data-firmness. */
+export const CANONICAL_CATALOG_FIRMNESS_SLUGS = ['soft', 'medium', 'hard', 'dualFirmness'] as const
+
 const knownTypeOptions = ['spring', 'nospring', 'topper', 'doubleSided', 'singleSided']
 const knownLoadRangeOptions = ['upTo120', 'upTo160', 'over160']
 const knownHeightRangeOptions = ['low', 'mid', 'high']
@@ -203,6 +206,8 @@ export function collectAvailableCatalogFilters<TCard>(cardMeta: CatalogCardMeta<
   // Размеры: как у type/loadRange — все канонические пункты фильтра остаются кликабельными;
   // отбор товаров по-прежнему по data-sizes на карточках (см. matchesCatalogCardMeta).
   STANDARD_MATTRESS_SIZES.forEach((value) => available.size.add(value))
+
+  CANONICAL_CATALOG_FIRMNESS_SLUGS.forEach((value) => available.firmness.add(value))
 
   return available
 }
