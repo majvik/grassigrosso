@@ -6,9 +6,10 @@ import { spawn } from 'node:child_process'
 
 const baseUrl = String(process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5177').replace(/\/+$/, '')
 const chromePath = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-const port = Number(process.env.CHROME_DEBUG_PORT || 9223)
+const port = Number(process.env.CHROME_DEBUG_PORT || (9200 + Math.floor(Math.random() * 400)))
 const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grass-catalog-chrome-'))
 const failures = []
+const OVERALL_TIMEOUT_MS = Number(process.env.CATALOG_UI_TIMEOUT_MS || 45000)
 
 if (!fs.existsSync(chromePath)) {
   console.error(`Chrome not found: ${chromePath}`)
@@ -30,12 +31,22 @@ let socket
 let nextId = 1
 const pending = new Map()
 let cleaned = false
+let overallTimeoutId = null
+
+function failPending(reason) {
+  for (const [id, entry] of pending.entries()) {
+    pending.delete(id)
+    entry.reject(new Error(reason))
+  }
+}
 
 function cleanup() {
   if (cleaned) return
   cleaned = true
+  if (overallTimeoutId) clearTimeout(overallTimeoutId)
+  failPending('Smoke runner was cleaned up')
   try { socket?.close() } catch {}
-  try { chrome.kill('SIGTERM') } catch {}
+  try { chrome.kill('SIGKILL') } catch {}
   try { fs.rmSync(userDataDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }) } catch {}
 }
 
@@ -44,6 +55,16 @@ process.on('SIGINT', () => {
   cleanup()
   process.exit(130)
 })
+chrome.on('exit', (code, signal) => {
+  if (cleaned) return
+  failures.push(`Chrome exited early (code=${code ?? 'null'}, signal=${signal ?? 'null'})`)
+  cleanup()
+})
+
+overallTimeoutId = setTimeout(() => {
+  failures.push(`catalog ui smoke exceeded ${OVERALL_TIMEOUT_MS}ms`)
+  cleanup()
+}, OVERALL_TIMEOUT_MS)
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -73,9 +94,27 @@ async function waitForDevtools() {
 
 function connect(wsUrl) {
   return new Promise((resolve, reject) => {
+    let settled = false
     socket = new WebSocket(wsUrl)
-    socket.addEventListener('open', () => resolve())
-    socket.addEventListener('error', reject)
+    const settleResolve = () => {
+      if (settled) return
+      settled = true
+      resolve()
+    }
+    const settleReject = (error) => {
+      if (settled) return
+      settled = true
+      reject(error)
+    }
+
+    socket.addEventListener('open', settleResolve)
+    socket.addEventListener('error', (event) => {
+      settleReject(event.error || new Error('WebSocket connection error'))
+    })
+    socket.addEventListener('close', () => {
+      failPending('WebSocket closed')
+      settleReject(new Error('WebSocket closed before smoke finished'))
+    })
     socket.addEventListener('message', (event) => {
       const message = JSON.parse(event.data)
       if (!message.id) return
