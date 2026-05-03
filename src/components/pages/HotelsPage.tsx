@@ -26,10 +26,10 @@ const productCards = [
     title: 'BoxSpring',
     description: 'Основания для кроватей и изголовья. Надежная база и стильный дизайн для любого интерьера.',
     image: {
-      avif: './public/boxspring@2x.avif 2x, ./public/boxspring.avif 1x',
-      webp: './public/boxspring@2x.webp 2x, ./public/boxspring.webp 1x',
-      fallback: './public/boxspring@2x.jpg 2x, ./public/boxspring.jpg 1x',
-      src: './public/boxspring.jpg',
+      avif: '/boxspring@2x.avif 2x, /boxspring.avif 1x',
+      webp: '/boxspring@2x.webp 2x, /boxspring.webp 1x',
+      fallback: '/boxspring@2x.jpg 2x, /boxspring.jpg 1x',
+      src: '/boxspring.jpg',
     },
   },
   {
@@ -37,10 +37,10 @@ const productCards = [
     title: 'Аксессуары',
     description: 'Корректирующие топперы, наматрасники и другие финальные штрихи для идеального спального места.',
     image: {
-      avif: './public/accessories@2x.avif 2x, ./public/accessories.avif 1x',
-      webp: './public/accessories@2x.webp 2x, ./public/accessories.webp 1x',
-      fallback: './public/accessories@2x.png 2x, ./public/accessories.png 1x',
-      src: './public/accessories.png',
+      avif: '/accessories@2x.avif 2x, /accessories.avif 1x',
+      webp: '/accessories@2x.webp 2x, /accessories.webp 1x',
+      fallback: '/accessories@2x.png 2x, /accessories.png 1x',
+      src: '/accessories.png',
     },
   },
 ] as const
@@ -64,20 +64,20 @@ const faqItems: Array<{ active?: boolean; answer: string; question: string }> = 
 const contactInfoItems = [
   {
     href: 'tel:+79782484380',
-    iconSrc: './public/icon-phone-vectorly.svg',
+    iconSrc: '/icon-phone-vectorly.svg',
     note: 'Пн-Пт: 9:00 - 18:00 МСК',
     title: 'Телефон',
     value: '+ 7 (978) 248-43-80',
   },
   {
     href: 'mailto:hotels@grassigrosso.com',
-    iconSrc: './public/icon-email-vectorly.svg',
+    iconSrc: '/icon-email-vectorly.svg',
     note: 'Ответим в течение 24 часов в рамках рабочего времени',
     title: 'Email',
     value: 'hotels@grassigrosso.com',
   },
   {
-    iconSrc: './public/icon-location-vectorly.svg',
+    iconSrc: '/icon-location-vectorly.svg',
     note: 'Главный офис',
     title: 'Адрес',
     value: 'Симферополь, ул. Кубанская д. 25',
@@ -111,20 +111,20 @@ export function HotelsPage() {
             </div>
             <a href="/catalog" className="catalog-link catalog-link-desktop">
               <span>Смотреть<br />каталог</span>
-              <img src="./public/arrow-hero-catalog.svg" alt="" className="catalog-arrow" />
+              <img src="/arrow-hero-catalog.svg" alt="" className="catalog-arrow" />
             </a>
           </div>
           <div className="page-hero-image">
             <picture>
-              <source type="image/avif" srcSet="./public/hotels-hero@2x.avif 2x, ./public/hotels-hero.avif 1x" />
-              <source type="image/webp" srcSet="./public/hotels-hero@2x.webp 2x, ./public/hotels-hero.webp 1x" />
-              <source type="image/png" srcSet="./public/hotels-hero@2x.png 2x, ./public/hotels-hero.png 1x" />
-              <img src="./public/hotels-hero.png" alt="Интерьер спальни" />
+              <source type="image/avif" srcSet="/hotels-hero@2x.avif 2x, /hotels-hero.avif 1x" />
+              <source type="image/webp" srcSet="/hotels-hero@2x.webp 2x, /hotels-hero.webp 1x" />
+              <source type="image/png" srcSet="/hotels-hero@2x.png 2x, /hotels-hero.png 1x" />
+              <img src="/hotels-hero.png" alt="Интерьер спальни" />
             </picture>
           </div>
           <a href="/catalog" className="catalog-link catalog-link-mobile">
             <span>Смотреть<br />каталог</span>
-            <img src="./public/arrow-hero-catalog.svg" alt="" className="catalog-arrow" />
+            <img src="/arrow-hero-catalog.svg" alt="" className="catalog-arrow" />
           </a>
         </div>
         <div className="section-divider" />
@@ -149,7 +149,7 @@ export function HotelsPage() {
               <div className={`category-item${item.active ? ' category-active' : ''}`} data-text={item.text} key={item.name}>
                 <div className="category-item-row">
                   <span className="category-name">{item.name}</span>
-                  <img src="./public/arrow-category.svg" alt="" className="category-arrow" />
+                  <img src="/arrow-category.svg" alt="" className="category-arrow" />
                 </div>
                 <div className="category-divider" />
               </div>
@@ -177,7 +177,7 @@ export function HotelsPage() {
                 </div>
                 <a href="#" className="product-card-link" data-open-catalog>
                   <span>Подробнее</span>
-                  <img src="./public/arrow-small.svg" alt="" />
+                  <img src="/arrow-small.svg" alt="" />
                 </a>
               </div>
               <div className="product-card-image">
@@ -228,18 +228,18 @@ export function HotelsPage() {
           <h2 className="section-title">Плановая замена матрасов</h2>
           <p className="refresh-description">Программа регулярного обновления матрасного фонда отеля. Сфокусируйтесь на главном, а мы позаботимся о комфортном восстановлении ваших гостей.</p>
           <div className="refresh-features">
-            <div className="refresh-feature"><div className="refresh-feature-icon"><img src="./public/icon-calendar.svg" alt="" /></div><div className="refresh-feature-content"><h4 className="refresh-feature-title">Плановая замена</h4><p className="refresh-feature-text">График замены матрасов согласно регламенту отеля</p></div></div>
+            <div className="refresh-feature"><div className="refresh-feature-icon"><img src="/icon-calendar.svg" alt="" /></div><div className="refresh-feature-content"><h4 className="refresh-feature-title">Плановая замена</h4><p className="refresh-feature-text">График замены матрасов согласно регламенту отеля</p></div></div>
             <div className="refresh-feature-divider" />
-            <div className="refresh-feature"><div className="refresh-feature-icon"><img src="./public/icon-hand-gesture.svg" alt="" /></div><div className="refresh-feature-content"><h4 className="refresh-feature-title">Специальные условия</h4><p className="refresh-feature-text">Фиксированные условия сотрудничества и приоритетное производство для участников программы</p></div></div>
+            <div className="refresh-feature"><div className="refresh-feature-icon"><img src="/icon-hand-gesture.svg" alt="" /></div><div className="refresh-feature-content"><h4 className="refresh-feature-title">Специальные условия</h4><p className="refresh-feature-text">Фиксированные условия сотрудничества и приоритетное производство для участников программы</p></div></div>
           </div>
           <a href="#" className="btn-primary-large" data-open-commercial-offer="seasonal">Подключить Refresh-программу</a>
         </div>
         <div className="refresh-image">
           <picture>
-            <source type="image/avif" srcSet="./public/refresh@2x.avif 2x, ./public/refresh.avif 1x" />
-            <source type="image/webp" srcSet="./public/refresh@2x.webp 2x, ./public/refresh.webp 1x" />
-            <source type="image/png" srcSet="./public/refresh@2x.png 2x, ./public/refresh.png 1x" />
-            <img src="./public/refresh.png" alt="Refresh программа" />
+            <source type="image/avif" srcSet="/refresh@2x.avif 2x, /refresh.avif 1x" />
+            <source type="image/webp" srcSet="/refresh@2x.webp 2x, /refresh.webp 1x" />
+            <source type="image/png" srcSet="/refresh@2x.png 2x, /refresh.png 1x" />
+            <img src="/refresh.png" alt="Refresh программа" />
           </picture>
         </div>
       </section>

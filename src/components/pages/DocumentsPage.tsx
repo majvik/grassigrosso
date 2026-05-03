@@ -58,10 +58,10 @@ export function DocumentsPage() {
           </div>
           <div className="documents-hero-image">
             <picture>
-              <source type="image/avif" srcSet="./public/docs-hero@2x.avif 2x, ./public/docs-hero.avif 1x" />
-              <source type="image/webp" srcSet="./public/docs-hero@2x.webp 2x, ./public/docs-hero.webp 1x" />
-              <source type="image/png" srcSet="./public/docs-hero@2x.png 2x, ./public/docs-hero.png 1x" />
-              <img src="./public/docs-hero.png" alt="Интерьер спальни" />
+              <source type="image/avif" srcSet="/docs-hero@2x.avif 2x, /docs-hero.avif 1x" />
+              <source type="image/webp" srcSet="/docs-hero@2x.webp 2x, /docs-hero.webp 1x" />
+              <source type="image/png" srcSet="/docs-hero@2x.png 2x, /docs-hero.png 1x" />
+              <img src="/docs-hero.png" alt="Интерьер спальни" />
             </picture>
           </div>
         </div>
@@ -80,14 +80,14 @@ export function DocumentsPage() {
           {certificates.map((document) => (
             <div className="documents-cert-card" data-document={document.id} data-document-card key={document.id}>
               <div className="documents-cert-icon">
-                <img src="./public/document.svg" alt="" />
+                <img src="/document.svg" alt="" />
               </div>
               <h3 className="documents-cert-title">{document.title}</h3>
               <span className="documents-cert-type">{document.type}</span>
               <div className="documents-cert-footer">
                 <a href="#" className="documents-cert-download" data-document-request-trigger>
                   ЗАПРОСИТЬ
-                  <img src="./public/arrow-down.svg" alt="" className="arrow-down" />
+                  <img src="/arrow-down.svg" alt="" className="arrow-down" />
                 </a>
                 <span className="documents-cert-size">{document.size}</span>
               </div>
@@ -101,7 +101,7 @@ export function DocumentsPage() {
           <div className="documents-commercial-left">
             <h2 className="section-title documents-commercial-title">О компании Grassigrosso</h2>
             <div className="documents-commercial-icon">
-              <img src="./public/catalog-illustration.svg" alt="" />
+              <img src="/catalog-illustration.svg" alt="" />
             </div>
           </div>
           <div className="documents-commercial-right">
@@ -109,7 +109,7 @@ export function DocumentsPage() {
               {companyDocuments.map((document) => (
                 <div className="documents-commercial-item" data-document={document.id} data-document-card key={document.id}>
                   <div className="documents-commercial-item-icon">
-                    <img src="./public/catalog.svg" alt="" />
+                    <img src="/catalog.svg" alt="" />
                   </div>
                   <div className="documents-commercial-item-content">
                     <h3 className="documents-commercial-item-title">{document.title}</h3>
@@ -121,7 +121,7 @@ export function DocumentsPage() {
                     data-document-request-trigger
                     aria-label={document.label}
                   >
-                    <img src="./public/arrow-down.svg" alt="" />
+                    <img src="/arrow-down.svg" alt="" />
                   </a>
                 </div>
               ))}

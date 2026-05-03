@@ -19,10 +19,10 @@ export function NotFoundPage() {
         </defs>
       </svg>
       <div className="page-404-video-wrap">
-        <video poster="./public/grassigrosso-poster.avif" autoPlay loop muted playsInline>
-          <source src="./public/grassigrosso-silent.av1.mp4" type="video/mp4; codecs=av01.0.08M.08" />
-          <source src="./public/grassigrosso-silent.webm" type="video/webm" />
-          <source src="./public/grassigrosso-silent.mp4" type="video/mp4" />
+        <video poster="/grassigrosso-poster.avif" autoPlay loop muted playsInline>
+          <source src="/grassigrosso-silent.av1.mp4" type="video/mp4; codecs=av01.0.08M.08" />
+          <source src="/grassigrosso-silent.webm" type="video/webm" />
+          <source src="/grassigrosso-silent.mp4" type="video/mp4" />
         </video>
       </div>
       <div className="page-404-content">

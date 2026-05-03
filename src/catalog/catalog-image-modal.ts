@@ -308,7 +308,7 @@ export function initCatalogImageModal(
         removeBtn.dataset.productSlug = slug
         removeBtn.setAttribute('aria-label', 'Убрать позицию из текущей отправки')
         const removeIcon = document.createElement('img')
-        removeIcon.src = './public/icons/catalogue-modal-remove-position.svg'
+        removeIcon.src = '/icons/catalogue-modal-remove-position.svg'
         removeIcon.width = 24
         removeIcon.height = 24
         removeIcon.alt = ''

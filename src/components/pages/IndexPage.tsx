@@ -28,7 +28,7 @@ export function IndexPage() {
                 информацию
               </span>
               <span className="arrow-icon">
-                <img src="./public/arrow-down.svg" alt="" />
+                <img src="/arrow-down.svg" alt="" />
               </span>
             </a>
           </div>
@@ -36,46 +36,46 @@ export function IndexPage() {
         <div className="hero-image" id="heroVideo">
           <video
             className="hero-video hero-video--desktop"
-            poster="./public/grassigrosso-poster.avif"
+            poster="/grassigrosso-poster.avif"
             autoPlay
             loop
             muted
             playsInline
           >
             <source
-              src="./public/grassigrosso-silent.av1.mp4"
+              src="/grassigrosso-silent.av1.mp4"
               type="video/mp4; codecs=av01.0.08M.08"
             />
-            <source src="./public/grassigrosso-silent.webm" type="video/webm" />
-            <source src="./public/grassigrosso-silent.mp4" type="video/mp4" />
+            <source src="/grassigrosso-silent.webm" type="video/webm" />
+            <source src="/grassigrosso-silent.mp4" type="video/mp4" />
           </video>
           <video
             className="hero-video hero-video--mobile"
-            poster="./public/grassigrosso-poster.avif"
+            poster="/grassigrosso-poster.avif"
             autoPlay
             loop
             muted
             playsInline
           >
             <source
-              src="./public/grassigrosso-silent-mobile.webm"
+              src="/grassigrosso-silent-mobile.webm"
               type="video/webm"
             />
             <source
-              src="./public/grassigrosso-silent-mobile.mp4"
+              src="/grassigrosso-silent-mobile.mp4"
               type="video/mp4"
             />
           </video>
           <picture className="hero-poster">
             <source
               type="image/avif"
-              srcSet="./public/grassigrosso-poster.avif"
+              srcSet="/grassigrosso-poster.avif"
             />
             <source
               type="image/webp"
-              srcSet="./public/grassigrosso-poster.webp"
+              srcSet="/grassigrosso-poster.webp"
             />
-            <img src="./public/grassigrosso-poster.jpg" alt="Grassigrosso" />
+            <img src="/grassigrosso-poster.jpg" alt="Grassigrosso" />
           </picture>
           <button className="hero-play-btn" aria-label="Воспроизвести видео">
             <svg
@@ -97,7 +97,7 @@ export function IndexPage() {
         <div className="solutions-grid">
           <div className="solution-card">
             <div className="solution-icon">
-              <img src="./public/icon-hotels.svg" alt="" />
+              <img src="/icon-hotels.svg" alt="" />
             </div>
             <div className="solution-content">
               <h3 className="solution-title">Отелям</h3>
@@ -109,7 +109,7 @@ export function IndexPage() {
               <a href="/hotels" className="solution-link">
                 Узнать больше
                 <img
-                  src="./public/arrow-small.svg"
+                  src="/arrow-small.svg"
                   alt=""
                   className="arrow-small"
                 />
@@ -119,7 +119,7 @@ export function IndexPage() {
           <div className="solution-divider" />
           <div className="solution-card">
             <div className="solution-icon">
-              <img src="./public/icon-dealers.svg" alt="" />
+              <img src="/icon-dealers.svg" alt="" />
             </div>
             <div className="solution-content">
               <h3 className="solution-title">Дилерам</h3>
@@ -130,7 +130,7 @@ export function IndexPage() {
               <a href="/dealers" className="solution-link">
                 Условия партнёрства
                 <img
-                  src="./public/arrow-small.svg"
+                  src="/arrow-small.svg"
                   alt=""
                   className="arrow-small"
                 />
@@ -140,7 +140,7 @@ export function IndexPage() {
           <div className="solution-divider" />
           <div className="solution-card">
             <div className="solution-icon">
-              <img src="./public/icon-catalog.svg" alt="" />
+              <img src="/icon-catalog.svg" alt="" />
             </div>
             <div className="solution-content">
               <h3 className="solution-title">Каталог</h3>
@@ -152,7 +152,7 @@ export function IndexPage() {
               <a href="/catalog" className="solution-link">
                 Смотреть коллекции
                 <img
-                  src="./public/arrow-small.svg"
+                  src="/arrow-small.svg"
                   alt=""
                   className="arrow-small"
                 />
@@ -174,7 +174,7 @@ export function IndexPage() {
         <div className="philosophy-right">
           <div className="philosophy-feature">
             <div className="feature-icon">
-              <img src="./public/icon-engineering.svg" alt="" />
+              <img src="/icon-engineering.svg" alt="" />
             </div>
             <div className="feature-content">
               <h3 className="feature-title">Инженерная точность сна</h3>
@@ -187,7 +187,7 @@ export function IndexPage() {
           <div className="philosophy-divider" />
           <div className="philosophy-feature">
             <div className="feature-icon">
-              <img src="./public/icon-nature.svg" alt="" />
+              <img src="/icon-nature.svg" alt="" />
             </div>
             <div className="feature-content">
               <h3 className="feature-title">Естественное восстановление</h3>
@@ -213,7 +213,7 @@ export function IndexPage() {
           <a href="/catalog" className="collections-link">
             смотреть Все коллекции
             <img
-              src="./public/arrow-small.svg"
+              src="/arrow-small.svg"
               alt=""
               className="arrow-small"
             />
@@ -225,17 +225,17 @@ export function IndexPage() {
               <picture>
                 <source
                   type="image/avif"
-                  srcSet="./public/collection-Classic.avif 2x, ./public/collection-Classic@0.5x.avif 1x"
+                  srcSet="/collection-Classic.avif 2x, /collection-Classic@0.5x.avif 1x"
                 />
                 <source
                   type="image/webp"
-                  srcSet="./public/collection-Classic.webp 2x, ./public/collection-Classic@0.5x.webp 1x"
+                  srcSet="/collection-Classic.webp 2x, /collection-Classic@0.5x.webp 1x"
                 />
                 <source
                   type="image/png"
-                  srcSet="./public/collection-Classic.png 2x, ./public/collection-Classic@0.5x.png 1x"
+                  srcSet="/collection-Classic.png 2x, /collection-Classic@0.5x.png 1x"
                 />
-                <img src="./public/collection-Classic@0.5x.png" alt="Classic" />
+                <img src="/collection-Classic@0.5x.png" alt="Classic" />
               </picture>
             </div>
             <div className="collection-content">
@@ -255,17 +255,17 @@ export function IndexPage() {
               <picture>
                 <source
                   type="image/avif"
-                  srcSet="./public/collection-Flexi.avif 2x, ./public/collection-Flexi@0.5x.avif 1x"
+                  srcSet="/collection-Flexi.avif 2x, /collection-Flexi@0.5x.avif 1x"
                 />
                 <source
                   type="image/webp"
-                  srcSet="./public/collection-Flexi.webp 2x, ./public/collection-Flexi@0.5x.webp 1x"
+                  srcSet="/collection-Flexi.webp 2x, /collection-Flexi@0.5x.webp 1x"
                 />
                 <source
                   type="image/png"
-                  srcSet="./public/collection-Flexi.png 2x, ./public/collection-Flexi@0.5x.png 1x"
+                  srcSet="/collection-Flexi.png 2x, /collection-Flexi@0.5x.png 1x"
                 />
-                <img src="./public/collection-Flexi@0.5x.png" alt="Flexi" />
+                <img src="/collection-Flexi@0.5x.png" alt="Flexi" />
               </picture>
             </div>
             <div className="collection-content">
@@ -285,17 +285,17 @@ export function IndexPage() {
               <picture>
                 <source
                   type="image/avif"
-                  srcSet="./public/collection-Relax.avif 2x, ./public/collection-Relax@0.5x.avif 1x"
+                  srcSet="/collection-Relax.avif 2x, /collection-Relax@0.5x.avif 1x"
                 />
                 <source
                   type="image/webp"
-                  srcSet="./public/collection-Relax.webp 2x, ./public/collection-Relax@0.5x.webp 1x"
+                  srcSet="/collection-Relax.webp 2x, /collection-Relax@0.5x.webp 1x"
                 />
                 <source
                   type="image/png"
-                  srcSet="./public/collection-Relax.png 2x, ./public/collection-Relax@0.5x.png 1x"
+                  srcSet="/collection-Relax.png 2x, /collection-Relax@0.5x.png 1x"
                 />
-                <img src="./public/collection-Relax@0.5x.png" alt="Relax" />
+                <img src="/collection-Relax@0.5x.png" alt="Relax" />
               </picture>
             </div>
             <div className="collection-content">
@@ -315,17 +315,17 @@ export function IndexPage() {
               <picture>
                 <source
                   type="image/avif"
-                  srcSet="./public/collection-Trend.avif 2x, ./public/collection-Trend@0.5x.avif 1x"
+                  srcSet="/collection-Trend.avif 2x, /collection-Trend@0.5x.avif 1x"
                 />
                 <source
                   type="image/webp"
-                  srcSet="./public/collection-Trend.webp 2x, ./public/collection-Trend@0.5x.webp 1x"
+                  srcSet="/collection-Trend.webp 2x, /collection-Trend@0.5x.webp 1x"
                 />
                 <source
                   type="image/png"
-                  srcSet="./public/collection-Trend.png 2x, ./public/collection-Trend@0.5x.png 1x"
+                  srcSet="/collection-Trend.png 2x, /collection-Trend@0.5x.png 1x"
                 />
-                <img src="./public/collection-Trend@0.5x.png" alt="Trend" />
+                <img src="/collection-Trend@0.5x.png" alt="Trend" />
               </picture>
             </div>
             <div className="collection-content">
@@ -345,18 +345,18 @@ export function IndexPage() {
               <picture>
                 <source
                   type="image/avif"
-                  srcSet="./public/collection-Viva-Natura@2x.avif 2x, ./public/collection-Viva-Natura@0.5x.avif 1x"
+                  srcSet="/collection-Viva-Natura@2x.avif 2x, /collection-Viva-Natura@0.5x.avif 1x"
                 />
                 <source
                   type="image/webp"
-                  srcSet="./public/collection-Viva-Natura@2x.webp 2x, ./public/collection-Viva-Natura@0.5x.webp 1x"
+                  srcSet="/collection-Viva-Natura@2x.webp 2x, /collection-Viva-Natura@0.5x.webp 1x"
                 />
                 <source
                   type="image/png"
-                  srcSet="./public/collection-Viva-Natura@2x.png 2x, ./public/collection-Viva-Natura@0.5x.png 1x"
+                  srcSet="/collection-Viva-Natura@2x.png 2x, /collection-Viva-Natura@0.5x.png 1x"
                 />
                 <img
-                  src="./public/collection-Viva-Natura@0.5x.png"
+                  src="/collection-Viva-Natura@0.5x.png"
                   alt="Viva Natura"
                 />
               </picture>
@@ -380,10 +380,10 @@ export function IndexPage() {
           </div>
           <div className="collections-arrows">
             <button className="arrow-btn prev" disabled>
-              <img src="./public/arrow-down.svg" alt="" />
+              <img src="/arrow-down.svg" alt="" />
             </button>
             <button className="arrow-btn next">
-              <img src="./public/arrow-down.svg" alt="" />
+              <img src="/arrow-down.svg" alt="" />
             </button>
           </div>
         </div>
@@ -420,11 +420,11 @@ export function IndexPage() {
               <p className="author-position">Директор розничной торговли</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Больше всего ценим логистику, ассортимент, качество,
@@ -441,11 +441,11 @@ export function IndexPage() {
               <p className="author-position">Директор</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Отмечаем сроки и качество продукции. Работа персонала организована
@@ -460,11 +460,11 @@ export function IndexPage() {
               <p className="author-position">Специалист по закупкам</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Остались довольны качеством, сроками, ценовой политикой.
@@ -478,11 +478,11 @@ export function IndexPage() {
               <p className="author-position">Предприниматель</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Впечатлил индивидуальный подход – погружение в ситуацию!
@@ -497,11 +497,11 @@ export function IndexPage() {
               <p className="author-position">Заместитель управляющего</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Выделяем скорость реакции на запросы, оперативность согласования
@@ -522,11 +522,11 @@ export function IndexPage() {
               <p className="author-position">Консультант</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Радует качество продукции – нареканий нет. Быстрая доставка,
@@ -541,11 +541,11 @@ export function IndexPage() {
               <p className="author-position">Менеджер по продажам</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Особенно довольны сроками доставки.
@@ -559,11 +559,11 @@ export function IndexPage() {
               <p className="author-position">Специалист по закупкам</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Остались довольны качеством, сроками, ценовой политикой.
@@ -577,11 +577,11 @@ export function IndexPage() {
               <p className="author-position">Администратор</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Хочу отметить отличное качество продукции и профессиональный
@@ -600,11 +600,11 @@ export function IndexPage() {
               <p className="author-position">Руководитель</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               От принятия заказа до поставки матрасов всё проходит быстро. По
@@ -620,11 +620,11 @@ export function IndexPage() {
               <p className="author-position">Бухгалтер</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Высоко оцениваем скорость доставки, работу с рекламациями,
@@ -639,11 +639,11 @@ export function IndexPage() {
               <p className="author-position">Специалист по закупкам</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Остались довольны качеством, сроками, ценовой политикой.
@@ -657,11 +657,11 @@ export function IndexPage() {
               <p className="author-position">Администратор</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Приятно удивило, что наш салон посещали представители фабрики и
@@ -677,11 +677,11 @@ export function IndexPage() {
               <p className="author-position">Продавец-консультант</p>
             </div>
             <div className="testimonial-rating">
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
-              <img src="./public/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
+              <img src="/star.svg" alt="★" />
             </div>
             <p className="testimonial-text">
               Цена, сроки, качество, логистика – всё на высоте. Ни одной
@@ -697,7 +697,7 @@ export function IndexPage() {
           <a href="/documents" className="certification-link">
             Документы и сертификаты
             <img
-              src="./public/arrow-medium.svg"
+              src="/arrow-medium.svg"
               alt=""
               className="arrow-medium"
             />
@@ -706,7 +706,7 @@ export function IndexPage() {
         <div className="certification-grid">
           <div className="certification-card">
             <div className="certification-image">
-              <img src="./public/production.svg" alt="Производство" />
+              <img src="/production.svg" alt="Производство" />
             </div>
             <div className="certification-content">
               <h3 className="certification-title">Производство</h3>
@@ -720,7 +720,7 @@ export function IndexPage() {
           <div className="certification-card">
             <div className="certification-image">
               <img
-                src="./public/cooperation.svg"
+                src="/cooperation.svg"
                 alt="Особенности сотрудничества"
               />
             </div>
@@ -737,7 +737,7 @@ export function IndexPage() {
           </div>
           <div className="certification-card">
             <div className="certification-image">
-              <img src="./public/certification.svg" alt="Сертификация" />
+              <img src="/certification.svg" alt="Сертификация" />
             </div>
             <div className="certification-content">
               <h3 className="certification-title">Сертификация</h3>

@@ -56,20 +56,20 @@ const primaryOffice = offices[0]
 const contactInfoItems = [
   {
     href: primaryOffice.phoneHref,
-    iconSrc: './public/icon-phone-vectorly.svg',
+    iconSrc: '/icon-phone-vectorly.svg',
     note: 'Пн-Пт: 9:00 - 18:00 МСК',
     title: 'Телефон',
     value: primaryOffice.phone,
   },
   {
     href: `mailto:${primaryOffice.email}`,
-    iconSrc: './public/icon-email-vectorly.svg',
+    iconSrc: '/icon-email-vectorly.svg',
     note: 'Ответим в течение 24 часов в рамках рабочего времени',
     title: 'Email',
     value: primaryOffice.email,
   },
   {
-    iconSrc: './public/icon-location-vectorly.svg',
+    iconSrc: '/icon-location-vectorly.svg',
     note: 'Главный офис',
     title: 'Адрес',
     value: 'Симферополь, ул. Кубанская д. 25',
@@ -95,10 +95,10 @@ export function ContactsPage() {
           </div>
           <div className="contacts-hero-image">
             <picture>
-              <source type="image/avif" srcSet="./public/contacts-hero@2x.avif 2x, ./public/contacts-hero.avif 1x" />
-              <source type="image/webp" srcSet="./public/contacts-hero@2x.webp 2x, ./public/contacts-hero.webp 1x" />
-              <source type="image/png" srcSet="./public/contacts-hero@2x.png 2x, ./public/contacts-hero.png 1x" />
-              <img src="./public/contacts-hero.png" alt="Интерьер спальни" />
+              <source type="image/avif" srcSet="/contacts-hero@2x.avif 2x, /contacts-hero.avif 1x" />
+              <source type="image/webp" srcSet="/contacts-hero@2x.webp 2x, /contacts-hero.webp 1x" />
+              <source type="image/png" srcSet="/contacts-hero@2x.png 2x, /contacts-hero.png 1x" />
+              <img src="/contacts-hero.png" alt="Интерьер спальни" />
             </picture>
           </div>
         </div>

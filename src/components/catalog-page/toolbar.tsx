@@ -58,7 +58,7 @@ export function CatalogFavouritesBackRow() {
     <div className="catalogue-new-favourites-back-row" id="catalogue-new-favourites-back-row" hidden>
       <div className="catalogue-new-favourites-back-row-inner">
         <button type="button" className="catalogue-new-favourites-back" id="catalogue-new-favourites-back">
-          <img src="./public/icons/arrow-back-left.svg" alt="" aria-hidden="true" />
+          <img src="/icons/arrow-back-left.svg" alt="" aria-hidden="true" />
           <span>Назад</span>
         </button>
         <button type="button" className="catalogue-new-favourites-clear-all" id="catalogue-new-favourites-clear-all">
@@ -76,8 +76,8 @@ export function CatalogFavouritesActions() {
         Связаться с менеджером по позициям
       </button>
       <button type="button" className="catalogue-new-share-btn" id="catalogue-new-favourites-share" aria-label="Поделиться избранным" disabled>
-        <img className="catalogue-new-share-icon--default" src="./public/icons/share-default.svg" alt="" aria-hidden="true" />
-        <img className="catalogue-new-share-icon--hover" src="./public/icons/share-hover.svg" alt="" aria-hidden="true" />
+        <img className="catalogue-new-share-icon--default" src="/icons/share-default.svg" alt="" aria-hidden="true" />
+        <img className="catalogue-new-share-icon--hover" src="/icons/share-hover.svg" alt="" aria-hidden="true" />
         <span className="catalogue-new-share-label">Поделиться</span>
       </button>
     </div>
