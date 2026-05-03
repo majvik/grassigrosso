@@ -1,3 +1,5 @@
+import { ContactSection, FaqSection } from '@/components/marketing/shared-page-sections'
+
 const categoryItems: Array<{ active?: boolean; name: string; text: string }> = [
   {
     name: 'Люкс',
@@ -58,6 +60,37 @@ const faqItems: Array<{ active?: boolean; answer: string; question: string }> = 
     question: 'Какие есть способы оплаты?',
   },
 ]
+
+const contactInfoItems = [
+  {
+    href: 'tel:+79782484380',
+    iconSrc: './public/icon-phone-vectorly.svg',
+    note: 'Пн-Пт: 9:00 - 18:00 МСК',
+    title: 'Телефон',
+    value: '+ 7 (978) 248-43-80',
+  },
+  {
+    href: 'mailto:hotels@grassigrosso.com',
+    iconSrc: './public/icon-email-vectorly.svg',
+    note: 'Ответим в течение 24 часов в рамках рабочего времени',
+    title: 'Email',
+    value: 'hotels@grassigrosso.com',
+  },
+  {
+    iconSrc: './public/icon-location-vectorly.svg',
+    note: 'Главный офис',
+    title: 'Адрес',
+    value: 'Симферополь, ул. Кубанская д. 25',
+  },
+] as const
+
+const contactFormFields = [
+  { id: 'name', label: 'Имя', placeholder: 'Иван Иванов', type: 'text' },
+  { id: 'city', label: 'Город', placeholder: 'Москва', type: 'text' },
+  { id: 'email', label: 'E-mail', placeholder: 'example@company.com', required: true, type: 'email' },
+  { id: 'phone', label: 'Телефон', placeholder: '+7 (999) 123-45-67', type: 'tel' },
+  { id: 'message', label: 'Сообщение', placeholder: 'Ваше сообщение', type: 'textarea' },
+] as const
 
 export function HotelsPage() {
   return (
@@ -182,40 +215,12 @@ export function HotelsPage() {
         </div>
       </section>
 
-      <section className="contact-section" id="contact-form">
-        <h2 className="section-title">Доброе утро!</h2>
-        <div className="contact-grid">
-          <div className="contact-form-wrapper">
-            <h3 className="contact-form-title">Форма обратной связи</h3>
-            <form className="contact-form" data-contact-form>
-              <div style={{ position: 'absolute', left: '-10000px', top: 'auto', width: '1px', height: '1px', overflow: 'hidden' }} aria-hidden="true">
-                <label htmlFor="website">Website</label>
-                <input type="text" id="website" name="website" tabIndex={-1} autoComplete="off" />
-              </div>
-              <div className="form-group" data-form-group><label htmlFor="name">Имя</label><input type="text" id="name" placeholder="Иван Иванов" /></div>
-              <div className="form-group" data-form-group><label htmlFor="city">Город</label><input type="text" id="city" placeholder="Москва" /></div>
-              <div className="form-group" data-form-group><label htmlFor="email">E-mail</label><input type="email" id="email" placeholder="example@company.com" required /></div>
-              <div className="form-group" data-form-group><label htmlFor="phone">Телефон</label><input type="tel" id="phone" placeholder="+7 (999) 123-45-67" /></div>
-              <div className="form-group" data-form-group><label htmlFor="message">Сообщение</label><textarea id="message" placeholder="Ваше сообщение" /></div>
-              <div className="form-checkbox">
-                <input type="checkbox" id="privacy" defaultChecked />
-                <label htmlFor="privacy">
-                  <span className="checkbox-custom"><svg className="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white" /><path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" strokeOpacity="0.1" /><path className="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" strokeWidth="2" /></svg></span>
-                  <span className="checkbox-text">Я согласен на обработку моих персональных данных в соответствии с <a href="/privacy">Политикой конфиденциальности</a></span>
-                </label>
-              </div>
-              <button type="submit" className="btn-primary">Отправить</button>
-            </form>
-          </div>
-          <div className="contact-info">
-            <div className="contact-info-item"><div className="contact-info-icon"><img src="./public/icon-phone-vectorly.svg" alt="" /></div><div className="contact-info-content"><h4 className="contact-info-title">Телефон</h4><p className="contact-info-value"><a href="tel:+79782484380">+ 7 (978) 248-43-80</a></p><p className="contact-info-note">Пн-Пт: 9:00 - 18:00 МСК</p></div></div>
-            <div className="contact-info-divider" />
-            <div className="contact-info-item"><div className="contact-info-icon"><img src="./public/icon-email-vectorly.svg" alt="" /></div><div className="contact-info-content"><h4 className="contact-info-title">Email</h4><p className="contact-info-value"><a href="mailto:hotels@grassigrosso.com">hotels@grassigrosso.com</a></p><p className="contact-info-note">Ответим в течение 24 часов в рамках рабочего времени</p></div></div>
-            <div className="contact-info-divider" />
-            <div className="contact-info-item"><div className="contact-info-icon"><img src="./public/icon-location-vectorly.svg" alt="" /></div><div className="contact-info-content"><h4 className="contact-info-title">Адрес</h4><p className="contact-info-value">Симферополь, ул. Кубанская д. 25</p><p className="contact-info-note">Главный офис</p></div></div>
-          </div>
-        </div>
-      </section>
+      <ContactSection
+        contactInfoItems={contactInfoItems}
+        fields={contactFormFields}
+        formTitle="Форма обратной связи"
+        sectionTitle="Доброе утро!"
+      />
 
       <section className="refresh-section">
         <div className="refresh-content">
@@ -239,29 +244,7 @@ export function HotelsPage() {
         </div>
       </section>
 
-      <section className="faq-section">
-        <h2 className="section-title">Часто задаваемые вопросы</h2>
-        <div className="faq-list">
-          {faqItems.map((item) => (
-            <div className={`faq-item${item.active ? ' active' : ''}`} data-faq-item data-open={item.active ? 'true' : 'false'} key={item.question}>
-              <div className="faq-question" data-faq-question>
-                <h3>{item.question}</h3>
-                <span className="faq-toggle" />
-              </div>
-              <div className="faq-answer">
-                <p>
-                  {item.answer.split('\n').map((line, index, lines) => (
-                    <span key={line}>
-                      {line}
-                      {index < lines.length - 1 ? <br /> : null}
-                    </span>
-                  ))}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <FaqSection items={faqItems} title="Часто задаваемые вопросы" />
     </>
   )
 }

@@ -43,6 +43,9 @@ npm start
 - React runtime: `src/react-entry.tsx` + `src/components/app/ReactIslandRoot.tsx`.
 - Модульная клиентская логика:
   - `src/catalog/*` — каталог, hero, filters, cards, controls, smoke helpers.
+    - `catalog-page.js` — thin catalog bootstrap.
+    - `catalog-listing-controller.ts` — filters, sort, favourites, infinite scroll, Strapi hydration.
+    - `catalog-modals-bootstrap.ts` — image modal, filter-help modal, favourites-clear modal wiring.
   - `src/app-shell.js` — preloader/page-load, lenis, overlay relocation, scroll lock, wide-screen scaling.
   - `src/page-bootstrap.js` — widow typography fix, font/media preload helpers, inline video activation, dealers package preset.
   - `src/catalog-hero-slider.js` — catalog hero data hydration и slider runtime.
@@ -54,9 +57,12 @@ npm start
   - `src/commercial-offer.js` — многошаговая форма коммерческого предложения.
   - `src/contacts-maps.js` — Yandex Maps и contacts tabs.
   - `src/components/ui/*` — локальный Base UI-based UI kit без Tailwind.
-  - `src/components/pages/*` — React page layer; `documents`, `contacts`, `hotels`, `dealers`, legal/service pages уже вынесены из HTML-строк.
+  - `src/components/marketing/shared-page-sections.tsx` — общие полноширинные React-секции (`contact`, `faq`) поверх legacy layout contract.
+  - `src/components/catalog-page/*` — локальный React subtree каталога: hero, filters, toolbar, cards, layout.
+  - `src/components/pages/*` — React page layer; `index`, `catalog`, `documents`, `contacts`, `hotels`, `dealers`, legal/service pages уже вынесены из HTML-строк runtime.
 - Стили: `src/style.css` + `src/styles/*`.
-- Новый React visual layer: CSS Modules там, где это не ломает parity; legacy global CSS остаётся как fallback для ещё не перенесённых зон и для полноширинных migrated layouts, которые пока нельзя безболезненно пересобрать.
+- Новый React visual layer: CSS Modules там, где это не ломает parity; legacy global CSS остаётся как fallback для каталога и для полноширинных migrated layouts, которые пока нельзя безболезненно пересобрать. Для migrated pages вторым источником истины HTML-строки больше не держим.
+- `ReactIslandRoot` больше не использует runtime fallback через `dangerouslySetInnerHTML`; неизвестные page id уходят в `NotFoundPage`.
 - Критический CSS прелоадера инжектится плагином из `vite.config.mjs` в `<style id="vite-critical-css"></style>`.
 
 ### Backend

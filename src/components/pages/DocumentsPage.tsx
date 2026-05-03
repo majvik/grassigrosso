@@ -1,3 +1,5 @@
+import { FaqSection } from '@/components/marketing/shared-page-sections'
+
 const certificates = [
   {
     id: 'declaration',
@@ -142,34 +144,12 @@ export function DocumentsPage() {
         </div>
       </section>
 
-      <section className="documents-faq">
-        <h2 className="section-title">Часто задаваемые вопросы</h2>
-        <div className="faq-list">
-          {faqItems.map((item) => (
-            <div
-              className={`faq-item${item.active ? ' active' : ''}`}
-              data-faq-item
-              data-open={item.active ? 'true' : 'false'}
-              key={item.question}
-            >
-              <div className="faq-question" data-faq-question>
-                <h3>{item.question}</h3>
-                <div className="faq-toggle" />
-              </div>
-              <div className="faq-answer">
-                <p>
-                  {item.answer.split('\n').map((line, index, lines) => (
-                    <span key={line}>
-                      {line}
-                      {index < lines.length - 1 ? <br /> : null}
-                    </span>
-                  ))}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <FaqSection
+        items={faqItems}
+        sectionClassName="documents-faq"
+        title="Часто задаваемые вопросы"
+        toggleElement="div"
+      />
     </>
   )
 }

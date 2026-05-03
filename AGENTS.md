@@ -27,6 +27,13 @@
 ## React / Base UI migration
 
 - В проекте уже используется React island-layer через `data-react-root` и [src/react-entry.tsx](src/react-entry.tsx). Новый UI-слой строим на `@base-ui/react`, локальных компонентах `src/components/ui/*` и CSS Modules.
+- `index`, `documents`, `contacts`, `hotels`, `dealers`, legal/service страницы уже имеют React page-layer; при правках этих страниц источником истины считать соответствующие `src/components/pages/*.tsx`, а не legacy HTML-строки.
+- `catalog` тоже переведён на React page-layer; его runtime-поведение по-прежнему живёт в `src/catalog/*`, поэтому при правках важно сохранять текущие `id`, `class` и `data-*` hook-атрибуты.
+- JSX-структура каталога теперь разнесена по `src/components/catalog-page/*`; при правках hero/filters/cards/toolbar сначала расширять эти локальные компоненты, а не возвращать большой монолитный page-файл.
+- Runtime каталога тоже уже разнесён: `src/catalog/catalog-page.js` — только bootstrap, а крупные куски логики живут в отдельных модулях (`catalog-listing-controller.ts`, `catalog-modals-bootstrap.ts`). Не возвращать orchestration обратно в один большой файл.
+- Общие полноширинные React-секции для migrated marketing pages теперь живут в `src/components/marketing/shared-page-sections.tsx`; при унификации `contact` / `faq` сначала расширять их, а не копировать ещё один локальный вариант.
+- Не держать параллельно string-source разметки для страниц, уже переведённых на `src/components/pages/*.tsx`.
+- Не возвращать runtime fallback через `dangerouslySetInnerHTML` для уже маршрутизируемых React-страниц; неизвестный `page` должен считаться ошибкой маршрутизации, а не поводом рендерить старый HTML blob.
 - React migration меняет слой рендера, но не должна самовольно менять пространственную модель страницы: если legacy страница была полноширинной, не зажимать её в новый container/page-shell без отдельного решения по дизайну.
 - Для новых React-страниц **не привязывать JS-поведение к hash-классам CSS Modules**. Интерактивные hook'и задавать через `data-*` атрибуты (`data-faq-item`, `data-document-card`, `data-document-request-trigger` и т.п.).
 - Legacy global CSS и старые class selectors допускаются как fallback для ещё не перенесённых зон, но не как новый контракт.
@@ -49,15 +56,16 @@
 ```js
 // slug: 'index' | 'hotels' | 'dealers' | 'catalog' | 'contacts' | ...
 const pageNames = {
-  'index':    'Главная страница',
-  'hotels':   'Страница "Отелям"',
-  'dealers':  'Страница "Дилерам"',
-  'catalog':  'Страница "Каталог"',
-  'contacts': 'Страница "Контакты"'
-}
+  index: "Главная страница",
+  hotels: 'Страница "Отелям"',
+  dealers: 'Страница "Дилерам"',
+  catalog: 'Страница "Каталог"',
+  contacts: 'Страница "Контакты"',
+};
 ```
 
 Некоторые формы задают `page` напрямую (не через `getPageName()`):
+
 - `'Главная (КП)'` — форма запроса коммерческого предложения
 - `'Отелям (каталог)'` — форма запроса каталога на странице отелей
 - `'Документы'` — форма запроса документов
@@ -67,18 +75,18 @@ const pageNames = {
 
 Маппинг значения `page` → адреса получателей. `callback@grassigrosso.com` добавляется в копию ко всем формам автоматически.
 
-| Значение `page` | Получатель |
-|---|---|
-| `Главная страница` | sales@ |
-| `Главная (КП)` | sales@ |
-| `Страница "Отелям"` | hotels@ |
-| `Отелям (каталог)` | hotels@ |
-| `Страница "Дилерам"` | b2b@ |
-| `Страница "Каталог"` | sales@ |
-| `Документы` | sales@ |
-| `Документы (помощь)` | sales@ |
-| `Страница "Контакты"` | sales@ |
-| *(любое другое)* | `MAIL_TO` (fallback) |
+| Значение `page`       | Получатель           |
+| --------------------- | -------------------- |
+| `Главная страница`    | sales@               |
+| `Главная (КП)`        | sales@               |
+| `Страница "Отелям"`   | hotels@              |
+| `Отелям (каталог)`    | hotels@              |
+| `Страница "Дилерам"`  | b2b@                 |
+| `Страница "Каталог"`  | sales@               |
+| `Документы`           | sales@               |
+| `Документы (помощь)`  | sales@               |
+| `Страница "Контакты"` | sales@               |
+| _(любое другое)_      | `MAIL_TO` (fallback) |
 
 ### При добавлении новой страницы с формой
 
@@ -146,11 +154,13 @@ const pageNames = {
 ## Roadmap (статус на текущий момент)
 
 Интеграция **Strapi** для каталога уже внедрена через backend proxy:
+
 - `GET /api/catalog/products`
 - `GET /api/catalog/hero-slides`
 - `GET /api/catalog/filters`
 
 Ключевые инварианты:
+
 - фронтенд не ходит в Strapi напрямую (используем backend endpoint'ы);
 - публичный контракт форм и `POST /api/submit` не меняется;
 - не добавлять обязательные `VITE_STRAPI_*` во фронтовый рантайм без отдельной задачи.

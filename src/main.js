@@ -28,9 +28,11 @@ import { initResourceModals } from './resource-modals'
 import { initTestimonialsSlider } from './testimonials-slider'
 import { initCataloguePage } from './catalog/catalog-page'
 
-if (document.querySelector('[data-react-root]')) {
-  await import('./react-entry')
-}
+const reactEntryPromise = document.querySelector('[data-react-root]')
+  ? import('./react-entry').catch((error) => {
+      console.error('react-entry bootstrap failed:', error)
+    })
+  : Promise.resolve()
 
 applyWidowFix()
 
@@ -83,5 +85,7 @@ initPageLoad({
     }
   })
   .finally(() => {
-    initApp()
+    void reactEntryPromise.finally(() => {
+      initApp()
+    })
   })

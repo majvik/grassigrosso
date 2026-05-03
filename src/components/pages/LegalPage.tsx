@@ -15,7 +15,7 @@ export function LegalPage({ pageId }: LegalPageProps) {
           {page.title}
         </h1>
         <p className={styles.date}>{page.updatedAt}</p>
-        <div className={styles.content} dangerouslySetInnerHTML={{ __html: page.contentHtml }} />
+        <div className={styles.content}>{page.content}</div>
       </div>
     </section>
   )
