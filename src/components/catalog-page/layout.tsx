@@ -54,7 +54,7 @@ const CATALOG_FAQ_ITEMS = [
 
 export function CatalogHelpSection() {
   return (
-    <section className="documents-help">
+    <section className="documents-help documents-help--white">
       <div className="documents-help-content">
         <div className="documents-help-left">
           <h2 className="section-title">Нужна помощь с подбором?</h2>
