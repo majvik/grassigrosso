@@ -56,11 +56,18 @@ module.exports = ({ env }) => {
       useNullAsDefault: true,
       // WAL mode: позволяет одновременные чтения во время записи, снижает задержки
       // на resource-limited хостинге (Timeweb) при конкурентных запросах к каталогу.
+      // Strapi 5 использует better-sqlite3 (синхронный драйвер), поэтому API — conn.pragma(),
+      // а не conn.run() из callback-based sqlite3.
       pool: {
         min: 1,
         max: 1,
         afterCreate(conn, done) {
-          conn.run('PRAGMA journal_mode = WAL;', done);
+          try {
+            conn.pragma('journal_mode = WAL');
+            done(null, conn);
+          } catch (err) {
+            done(err, conn);
+          }
         },
       },
     },
