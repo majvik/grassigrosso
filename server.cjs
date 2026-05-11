@@ -344,7 +344,9 @@ async function sendLeadToTelegram(lead) {
         parse_mode: 'HTML'
       });
     } catch (err) {
-      errors.push({ chatId: id, error: extractErrorDetails(err) });
+      const detail = extractErrorDetails(err);
+      errors.push({ chatId: id, error: detail });
+      console.error(`❌ Telegram chat_id ${id}: ${detail}`);
     }
   }
 
