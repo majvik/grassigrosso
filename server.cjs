@@ -128,14 +128,19 @@ function normalizeLeadPayload(body = {}) {
   };
 }
 
+function escapeTg(text) {
+  if (!text) return '';
+  return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function buildTelegramMessage(lead) {
-  return `🚀 <b>Новая заявка с сайта</b>\n\n` +
-    `📄 <b>Страница:</b> ${escapeHtml(lead.page) || 'Не указана'}\n` +
-    `👤 <b>Имя:</b> ${escapeHtml(lead.name) || 'Не указано'}\n` +
-    (lead.city ? `📍 <b>Город:</b> ${escapeHtml(lead.city)}\n` : '') +
-    (lead.email ? `📧 <b>Email:</b> ${escapeHtml(lead.email)}\n` : '') +
-    `📞 <b>Телефон:</b> ${escapeHtml(lead.phone) || 'Не указан'}\n` +
-    `💬 <b>Сообщение:</b> ${escapeHtml(lead.comment) || 'Нет'}`;
+  return `<b>Новая заявка с сайта</b>\n\n` +
+    `• <b>Страница:</b> ${escapeTg(lead.page) || 'Не указана'}\n` +
+    `• <b>Имя:</b> ${escapeTg(lead.name) || 'Не указано'}\n` +
+    (lead.city ? `• <b>Город:</b> ${escapeTg(lead.city)}\n` : '') +
+    (lead.email ? `• <b>Email:</b> ${escapeTg(lead.email)}\n` : '') +
+    `• <b>Телефон:</b> ${escapeTg(lead.phone) || 'Не указан'}\n` +
+    `• <b>Сообщение:</b> ${escapeTg(lead.comment) || 'Нет'}`;
 }
 
 function buildEmailSubject(lead) {

@@ -2341,14 +2341,14 @@ if (documentRequestModal && documentRequestForm && documentRequestText) {
   }
 
   document.body.addEventListener('click', (e) => {
-    const certLink = e.target.closest('.documents-cert-download[data-request-document]')
+    const certLink = e.target.closest('.documents-cert-download[data-request-document], [data-document-request-trigger]')
     const certCard = e.target.closest('.documents-cert-card[data-document]')
     const commercialLink = e.target.closest('.documents-commercial-item-download[data-request-document]')
-    const commercialItem = e.target.closest('.documents-commercial-item[data-document]')
+    const commercialItem = e.target.closest('.documents-commercial-item[data-document], [data-document-card][data-document]')
     const target = certLink || certCard || commercialLink || commercialItem
     if (!target) return
     if (certLink || commercialLink) e.preventDefault()
-    const card = target.closest('.documents-cert-card') || target.closest('.documents-commercial-item')
+    const card = target.closest('.documents-cert-card') || target.closest('.documents-commercial-item, [data-document-card]')
     const documentType = (card && card.dataset.document) || 'declaration'
     openDocumentRequestModal(documentType)
   })
