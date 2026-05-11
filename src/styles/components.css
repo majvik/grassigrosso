@@ -1192,6 +1192,20 @@ a:hover .arrow-small {
   align-items: flex-start;
 }
 
+.philosophy-feature--doc {
+  align-items: center;
+  cursor: pointer;
+}
+
+.philosophy-feature--doc .documents-commercial-item-download {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.philosophy-feature--doc:hover .documents-commercial-item-download img {
+  animation: arrow-nudge 0.5s ease-out;
+}
+
 .feature-icon {
   width: 88px;
   height: 88px;

@@ -189,6 +189,14 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+function escapeTg(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function escapeMarkdown(text) {
   if (!text) return '';
   return String(text)
@@ -426,13 +434,13 @@ function mapStrapiProduct(item) {
 }
 
 function buildTelegramMessage(lead) {
-  return `🚀 *Новая заявка с сайта*\n\n` +
-    `📄 *Страница:* ${escapeMarkdown(lead.page) || 'Не указана'}\n` +
-    `👤 *Имя:* ${escapeMarkdown(lead.name) || 'Не указано'}\n` +
-    (lead.city ? `📍 *Город:* ${escapeMarkdown(lead.city)}\n` : '') +
-    (lead.email ? `📧 *Email:* ${escapeMarkdown(lead.email)}\n` : '') +
-    `📞 *Телефон:* ${escapeMarkdown(lead.phone) || 'Не указан'}\n` +
-    `💬 *Сообщение:* ${escapeMarkdown(lead.comment) || 'Нет'}`;
+  return `<b>Новая заявка с сайта</b>\n\n` +
+    `• <b>Страница:</b> ${escapeTg(lead.page) || 'Не указана'}\n` +
+    `• <b>Имя:</b> ${escapeTg(lead.name) || 'Не указано'}\n` +
+    (lead.city ? `• <b>Город:</b> ${escapeTg(lead.city)}\n` : '') +
+    (lead.email ? `• <b>Email:</b> ${escapeTg(lead.email)}\n` : '') +
+    `• <b>Телефон:</b> ${escapeTg(lead.phone) || 'Не указан'}\n` +
+    `• <b>Сообщение:</b> ${escapeTg(lead.comment) || 'Нет'}`;
 }
 
 function buildEmailSubject(lead) {
@@ -688,10 +696,12 @@ async function sendLeadToTelegram(lead) {
       await axios.post(url, {
         chat_id: id,
         text: message,
-        parse_mode: 'Markdown'
+        parse_mode: 'HTML'
       });
     } catch (err) {
-      errors.push({ chatId: id, error: extractErrorDetails(err) });
+      const detail = extractErrorDetails(err);
+      errors.push({ chatId: id, error: detail });
+      console.error(`❌ Telegram chat_id ${id}: ${detail}`);
     }
   }
 
