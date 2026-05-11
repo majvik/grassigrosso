@@ -129,13 +129,13 @@ function normalizeLeadPayload(body = {}) {
 }
 
 function buildTelegramMessage(lead) {
-  return `🚀 *Новая заявка с сайта*\n\n` +
-    `📄 *Страница:* ${escapeMarkdown(lead.page) || 'Не указана'}\n` +
-    `👤 *Имя:* ${escapeMarkdown(lead.name) || 'Не указано'}\n` +
-    (lead.city ? `📍 *Город:* ${escapeMarkdown(lead.city)}\n` : '') +
-    (lead.email ? `📧 *Email:* ${escapeMarkdown(lead.email)}\n` : '') +
-    `📞 *Телефон:* ${escapeMarkdown(lead.phone) || 'Не указан'}\n` +
-    `💬 *Сообщение:* ${escapeMarkdown(lead.comment) || 'Нет'}`;
+  return `🚀 <b>Новая заявка с сайта</b>\n\n` +
+    `📄 <b>Страница:</b> ${escapeHtml(lead.page) || 'Не указана'}\n` +
+    `👤 <b>Имя:</b> ${escapeHtml(lead.name) || 'Не указано'}\n` +
+    (lead.city ? `📍 <b>Город:</b> ${escapeHtml(lead.city)}\n` : '') +
+    (lead.email ? `📧 <b>Email:</b> ${escapeHtml(lead.email)}\n` : '') +
+    `📞 <b>Телефон:</b> ${escapeHtml(lead.phone) || 'Не указан'}\n` +
+    `💬 <b>Сообщение:</b> ${escapeHtml(lead.comment) || 'Нет'}`;
 }
 
 function buildEmailSubject(lead) {
@@ -336,7 +336,7 @@ async function sendLeadToTelegram(lead) {
       await axios.post(url, {
         chat_id: id,
         text: message,
-        parse_mode: 'Markdown'
+        parse_mode: 'HTML'
       });
     } catch (err) {
       errors.push({ chatId: id, error: extractErrorDetails(err) });

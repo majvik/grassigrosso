@@ -125,6 +125,7 @@
             <p class="catalog-hero-description">
               Мы собираем современные технологии и лучшие инженерные решения в продуманные продукты для сна, чтобы восстановление было естественным, а каждый ваш день начинался как лучший.
             </p>
+            <a href="#" class="btn-primary-large" data-document-card data-document="catalog" data-document-request-trigger>Скачать в электронном виде</a>
           </div>
           <div class="catalog-hero-image">
             <picture>
@@ -310,6 +311,46 @@
         </div>
       </section>
 
+      <!-- Documents Request Section -->
+      <section class="documents-commercial" style="background-color: #f1f0ea;">
+        <div class="documents-commercial-content">
+          <div class="documents-commercial-left">
+            <h2 class="section-title documents-commercial-title">Не нашли что искали?</h2>
+            <div class="documents-commercial-icon">
+              <img src="./public/catalog-illustration.svg" alt="" />
+            </div>
+          </div>
+          <div class="documents-commercial-right">
+            <div class="documents-commercial-list">
+              <div class="documents-commercial-item" data-document="catalog">
+                <div class="documents-commercial-item-icon">
+                  <img src="./public/catalog.svg" alt="" />
+                </div>
+                <div class="documents-commercial-item-content">
+                  <h3 class="documents-commercial-item-title">Каталог продукции</h3>
+                  <p class="documents-commercial-item-type">PDF документ</p>
+                </div>
+                <a href="#" class="documents-commercial-item-download" data-request-document aria-label="Запросить каталог продукции">
+                  <img src="./public/arrow-down.svg" alt="" />
+                </a>
+              </div>
+              <div class="documents-commercial-item" data-document="presentation">
+                <div class="documents-commercial-item-icon">
+                  <img src="./public/catalog.svg" alt="" />
+                </div>
+                <div class="documents-commercial-item-content">
+                  <h3 class="documents-commercial-item-title">Презентация компании</h3>
+                  <p class="documents-commercial-item-type">PDF документ</p>
+                </div>
+                <a href="#" class="documents-commercial-item-download" data-request-document aria-label="Запросить презентацию компании">
+                  <img src="./public/arrow-down.svg" alt="" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Custom Request Section -->
       <section class="catalog-custom">
         <div class="catalog-custom-content" data-catalog="consultation">
@@ -431,6 +472,51 @@
         <p class="footer-copyright footer-copyright-legal"><span class="footer-copyright-brand">© Grassigrosso, 2026.</span> Все материалы, размещённые на сайте grassigrosso.com, включая текстовые, графические, фото- и видеоматериалы, элементы дизайна и оформления, структуру страниц, товарные знаки, фирменное наименование и доменное имя, являются объектами авторского права и иных прав на интеллектуальную собственность. Указанные материалы охраняются законодательством Российской Федерации и международными нормами в сфере защиты авторских и смежных прав. Любое использование материалов сайта, включая воспроизведение, копирование, переработку, распространение или размещение на других ресурсах, допускается только с предварительного письменного согласия правообладателя. Запрещаются действия, способные ввести пользователей в заблуждение относительно принадлежности размещённых материалов и их связи с доменом grassigrosso.com</p>
       </div>
     </footer>
+
+    <!-- Document Request Modal -->
+    <div class="modal-overlay" id="documentRequestModal" aria-modal="true" role="dialog" aria-labelledby="documentRequestTitle">
+      <div class="modal-content catalog-request-modal-content">
+        <button type="button" class="modal-close document-request-close" aria-label="Закрыть">
+          <svg width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 12L36 36M36 12L12 36" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <h2 class="catalog-request-title" id="documentRequestTitle">Запросить документ</h2>
+        <p class="catalog-request-text" id="documentRequestText"></p>
+        <form class="catalog-request-form" id="documentRequestForm">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;" aria-hidden="true" />
+          <input type="hidden" name="documentType" id="documentRequestType" value="" />
+          <div class="form-group">
+            <label for="dr-name">Имя</label>
+            <input type="text" id="dr-name" name="name" placeholder="Иван Иванов" />
+          </div>
+          <div class="form-group">
+            <label for="dr-phone">Телефон</label>
+            <input type="tel" id="dr-phone" name="phone" placeholder="+7 (999) 123-45-67" required />
+          </div>
+          <div class="form-group">
+            <label for="dr-email">E-mail</label>
+            <input type="email" id="dr-email" name="email" placeholder="example@company.com" required />
+          </div>
+          <div class="form-checkbox">
+            <input type="checkbox" id="dr-privacy" name="privacy" required checked />
+            <label for="dr-privacy">
+              <span class="checkbox-custom">
+                <svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white"/>
+                  <path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" stroke-opacity="0.1"/>
+                  <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2"/>
+                </svg>
+              </span>
+              <span class="checkbox-text">Я согласен на обработку персональных данных в соответствии с <a href="privacy.html" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
+            </label>
+          </div>
+          <div class="catalog-request-buttons">
+            <button type="submit" class="btn-commercial-offer btn-submit">ОТПРАВИТЬ</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Catalog Request Modal (коллекции: Boxspring / Аксессуары) -->
     <div class="modal-overlay" id="catalogRequestModal" aria-modal="true" role="dialog" aria-labelledby="catalogRequestTitle">

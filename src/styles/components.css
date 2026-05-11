@@ -1192,6 +1192,20 @@ a:hover .arrow-small {
   align-items: flex-start;
 }
 
+.philosophy-feature--doc {
+  align-items: center;
+  cursor: pointer;
+}
+
+.philosophy-feature--doc .documents-commercial-item-download {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.philosophy-feature--doc:hover .documents-commercial-item-download img {
+  animation: arrow-nudge 0.5s ease-out;
+}
+
 .feature-icon {
   width: 88px;
   height: 88px;
@@ -6237,7 +6251,7 @@ a:hover .arrow-medium {
 
 /* Catalog Custom Request */
 .catalog-custom {
-  background-color: var(--color-bg-beige);
+  background-color: var(--color-bg-white);
   padding: 120px 64px;
 }
 
@@ -6275,7 +6289,7 @@ a:hover .arrow-medium {
 /* Catalog FAQ */
 .catalog-faq {
   padding: 120px 64px;
-  background-color: var(--color-bg-white);
+  background-color: #f1f0ea;
 }
 
 .catalog-faq .section-title {
