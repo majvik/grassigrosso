@@ -106,12 +106,12 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       proxy: {
         '/api': {
-          target: 'http://127.0.0.1:3000',
+          target: `http://127.0.0.1:${env.PORT || 3000}`,
           changeOrigin: true,
         },
         // Strapi media: hero и карточки каталога ссылаются на /uploads/… — без прокси Vite отдаёт HTML-фолбэк.
         '/uploads': {
-          target: 'http://127.0.0.1:3000',
+          target: `http://127.0.0.1:${env.PORT || 3000}`,
           changeOrigin: true,
         },
       }
