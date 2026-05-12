@@ -9,23 +9,6 @@ export function prefetchCatalogHeroFeed() {
   _heroFeedPrefetch = fetchCatalogHeroFeed()
 }
 
-function preloadImageWithTimeout(src, timeoutMs = 2500) {
-  if (!src) return Promise.resolve()
-  return new Promise((resolve) => {
-    const img = new Image()
-    const done = () => resolve()
-    img.onload = done
-    img.onerror = done
-    img.decoding = 'async'
-    img.src = src
-    if (img.complete && img.naturalWidth > 0) {
-      resolve()
-      return
-    }
-    setTimeout(done, timeoutMs)
-  })
-}
-
 export async function setupCatalogueNewPageHero() {
   // By the time this is called, React has already rendered (see main.js).
   const sliderRoot = document.querySelector('.catalog-hero-slider')
@@ -34,11 +17,6 @@ export async function setupCatalogueNewPageHero() {
   try {
     const data = await (_heroFeedPrefetch || fetchCatalogHeroFeed())
     if (Array.isArray(data.slides) && data.slides.length > 0) {
-      const firstSlide = data.slides[0]
-      const firstSrc = firstSlide && firstSlide.type !== 'video' ? firstSlide.src : null
-      if (firstSrc) {
-        await preloadImageWithTimeout(firstSrc)
-      }
       applyCatalogHeroFeed(sliderRoot, data)
     }
   } catch (error) {

@@ -562,27 +562,30 @@ function createStrapiProxy() {
     // Express strips the mount prefix from req.url for app.use('/admin', ...).
     // Forward the original URL so Strapi receives /admin/* instead of /init, /login, etc.
     pathRewrite: (path, req) => req.originalUrl || path,
-    onProxyRes(proxyRes, req) {
-      const originalUrl = String(req.originalUrl || '');
-      if (originalUrl.startsWith('/uploads/')) {
-        if (/\.avif(\?|$)/i.test(originalUrl)) {
-          proxyRes.headers['content-type'] = 'image/avif';
+    // http-proxy-middleware v3: events живут в `on: { ... }`, top-level onProxyRes/onError игнорируются.
+    on: {
+      proxyRes(proxyRes, req) {
+        const originalUrl = String(req.originalUrl || '');
+        if (originalUrl.startsWith('/uploads/')) {
+          if (/\.avif(\?|$)/i.test(originalUrl)) {
+            proxyRes.headers['content-type'] = 'image/avif';
+          }
+          proxyRes.headers['cache-control'] = CACHE_LONG_MEDIA;
         }
-        proxyRes.headers['cache-control'] = CACHE_LONG_MEDIA;
+      },
+      error(err, req, res) {
+        const errorDetails = {
+          message: String(err?.message || 'Proxy error'),
+          code: err?.code ? String(err.code) : undefined
+        };
+        console.error('❌ Ошибка Strapi proxy:', { path: req.originalUrl, ...errorDetails });
+        if (!res || res.headersSent) return;
+        res.status(502).json({
+          error: 'Failed to proxy request to Strapi',
+          path: req.originalUrl,
+          details: errorDetails
+        });
       }
-    },
-    onError(err, req, res) {
-      const errorDetails = {
-        message: String(err?.message || 'Proxy error'),
-        code: err?.code ? String(err.code) : undefined
-      };
-      console.error('❌ Ошибка Strapi proxy:', { path: req.originalUrl, ...errorDetails });
-      if (res.headersSent) return;
-      res.status(502).json({
-        error: 'Failed to proxy request to Strapi',
-        path: req.originalUrl,
-        details: errorDetails
-      });
     }
   });
 }
