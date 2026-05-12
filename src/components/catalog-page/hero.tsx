@@ -47,7 +47,7 @@ export function CatalogHeroSlides() {
             data-slide={String(slide.id)}
             aria-hidden={slide.id === 0 ? 'false' : 'true'}
           >
-            <HeroSlideAsset slide={slide} />
+            {slide.id === 0 ? <HeroSlideAsset slide={slide} /> : null}
           </div>
         ))}
       </div>

@@ -1,5 +1,7 @@
 'use strict';
 
+const { preferAvifVariant } = require('../utils/prefer-avif');
+
 module.exports = {
   async index(ctx) {
     const normalizeStringList = (value) => {
@@ -196,7 +198,7 @@ module.exports = {
         ? row.filling_options.map((item) => item.slug).filter(Boolean)
         : normalizeStringList(row.fillings).map(mapFilling),
       features: Array.isArray(row.features) ? normalizeFeatures(row.features) : normalizeStringList(row.features).map(mapFeature),
-      imageUrl: row.media?.url || row.image_url || '',
+      imageUrl: preferAvifVariant(row.media?.url || row.image_url || ''),
       imageAlt: row.media?.alternativeText || (row.name ? `Коллекция ${row.name}` : 'Изображение товара'),
       tags: Array.isArray(row.tags) ? row.tags.map((tag) => tag.name).filter(Boolean) : [],
       isActive: row.is_active !== false

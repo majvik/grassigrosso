@@ -1,5 +1,7 @@
 'use strict';
 
+const { preferAvifVariant } = require('../utils/prefer-avif');
+
 module.exports = {
   async index(ctx) {
     // Синхронно с src/catalog/catalog-sizes.ts
@@ -32,7 +34,7 @@ module.exports = {
       orderBy: [{ sort_order: 'asc' }, { id: 'asc' }],
     });
 
-    const mediaUrl = (media) => (media && media.url ? String(media.url) : '')
+    const mediaUrl = (media) => (media && media.url ? preferAvifVariant(String(media.url)) : '')
     const mediaAlt = (media, fallback) => {
       if (!media) return fallback || ''
       return String(media.alternativeText || media.name || fallback || '')
