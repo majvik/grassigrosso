@@ -103,6 +103,9 @@ const pageNames = {
 - Не менять ключи в `getPageName()` (`src/contact-forms.js`) без синхронного обновления `PAGE_EMAIL_ROUTING` (`server.cjs`) — иначе email-маршрутизация сломается.
 - Не использовать `.html` в ключах `getPageName()` — в production URL чистые (301-редирект убирает суффикс).
 - Не внедрять в этот репозиторий отдельную CMS-админку как второй фронтовый бандл — см. roadmap ниже.
+- Не возвращать `<picture>` для hero-слайдов #1…#N в [catalog.html](catalog.html) и [src/components/catalog-page/hero.tsx](src/components/catalog-page/hero.tsx) — будет двойная загрузка изображений ещё до React-hydration (см. «Кеш статики, AVIF и hero-слайдер»).
+- Не возвращать `preload="metadata"` у `<video>` в hero — на десктопе это качает webm целиком при первом заходе.
+- Не убирать `applyMediaResponseHeaders` / `onProxyRes` из `server.cjs` без замены: без них `.avif` отдаётся как `application/octet-stream` и теряется `Cache-Control` для `/uploads/*`.
 
 ## Strapi (каталог): медиа, Docker и админка
 
@@ -157,6 +160,27 @@ const pageNames = {
 - Публичные ответы `GET /api/catalog/products`, `/api/catalog/filters`, `/api/catalog/hero-slides` в **production** кэшируются в памяти Node на **45 с** (переменная **`CATALOG_STRAPI_CACHE_TTL_MS`** в корневом **`.env`**, `0` — отключить). Это снижает повторные тяжёлые запросы к SQLite Strapi при заходах на `/catalog`.
 - В [nginx.conf](nginx.conf) включён **gzip** для JSON/JS/CSS и ответов прокси — меньше объём при первой загрузке админки и ассетов.
 - Если админка «висит» минутами: проверить холодный старт контейнера, лимиты CPU/RAM у хостинга, лог `/tmp/strapi.log`; убедиться, что в production запускается **`strapi start`**, а не `develop`.
+
+#### Кеш статики, AVIF и hero-слайдер
+
+Реализовано в `server.cjs` и контроллерах Strapi. Не откатывать без отдельной задачи.
+
+- **Кеш статики и MIME** ([server.cjs](server.cjs), функция `applyMediaResponseHeaders`):
+  - Хешированные ассеты `/assets/*.{js,css,...}` → `Cache-Control: public, max-age=31536000, immutable`.
+  - Картинки/видео в корне `public/` и в проксируемых `/uploads/*` → `Cache-Control: public, max-age=2592000` (30 дней).
+  - Для `.avif` принудительно ставится `Content-Type: image/avif` (раньше отдавался `application/octet-stream` и WebKit не использовал его как `<source type="image/avif">`).
+  - HTML отдаётся с `Cache-Control: no-cache` чтобы свежий деплой был виден сразу.
+- **AVIF из Strapi-uploads** — общая утилита [strapi-catalog/src/api/catalog/utils/prefer-avif.js](strapi-catalog/src/api/catalog/utils/prefer-avif.js):
+  - Если в `strapi-catalog/public/uploads/` рядом с PNG/JPG лежит `.avif` с тем же базовым именем — feed-эндпоинты подменяют URL на `.avif` автоматически.
+  - Подключена в `catalog-hero-feed` (hero images + video poster), `catalog-feed` (`imageUrl` карточек коллекций), `catalog-filter-feed` (`photo` в filter-help сегментах).
+  - **Контракт:** чтобы оптимизировать новый медиафайл — положить `<basename>.avif` рядом с оригиналом в `strapi-catalog/public/uploads/`, закоммитить, дальше всё автоматом (URL остаётся `/uploads/<basename>.png` в БД Strapi, замена происходит на лету в контроллере).
+  - Путь к `public/` резолвится через `strapi.dirs.app.root` — работает и в `strapi develop`, и в production из `dist/`.
+- **Hero-слайдер каталога — без двойной загрузки** ([catalog.html](catalog.html) + [src/components/catalog-page/hero.tsx](src/components/catalog-page/hero.tsx)):
+  - В SSR-разметке и в React-island `<picture>` рендерится **только для первого слайда** (`slide.id === 0`) — он отвечает за LCP и работает как fallback если Strapi-feed недоступен.
+  - Слайды #1…#N — пустые `<div class="catalog-hero-slide">` контейнеры. После прихода `/api/catalog/hero-slides` функция `applyCatalogHeroFeed` ([src/catalog/catalog-hero.ts](src/catalog/catalog-hero.ts)) атомарно заполняет все слайды через `innerHTML`.
+  - Если в SSR-fallback или JSX вернуть `<picture>` для #1…#N — браузер до hydration скачает 3–4 hero AVIF, которые тут же будут затёрты Strapi-feed'ом (двойная загрузка ~200 КБ).
+  - Video в hero (`<video preload="none">` в [catalog.html](catalog.html), [src/catalog/catalog-hero.ts](src/catalog/catalog-hero.ts), [src/components/catalog-page/hero.tsx](src/components/catalog-page/hero.tsx)): не качать целиком до клика по слайду. **Не возвращать `preload="metadata"`** — он триггерил полную загрузку webm на десктопе.
+- **Префетч feed'а** — `prefetchCatalogHeroFeed()` в `src/catalog-hero-slider.js` стартует XHR на `/api/catalog/hero-slides` ещё до React-hydration; `setupCatalogueNewPageHero()` затем просто `await` существующий промис. Не возвращать `await` блокирующих `preloadImage` внутри `setupCatalogueNewPageHero` — это удерживает init слайдера и видится как тормоза.
 
 **Переменные на Timeweb:** по смыслу совпадают с **корневым `.env`** у вас локально; образец имён — [.env.example](.env.example) (в git только шаблон, не секреты). Файл `strapi-catalog/.env` в образ не попадает ([.dockerignore](.dockerignore)); секреты Strapi для контейнера должны быть **в панели Timeweb с теми же именами**, что в конце `.env.example` (`APP_KEYS`, `JWT_SECRET`, …), иначе `start-services.sh` подставит dev-значения.
 
