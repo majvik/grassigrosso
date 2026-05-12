@@ -1,5 +1,33 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
+function strapiRootDir() {
+  // __dirname = .../strapi-catalog/src/api/catalog/controllers
+  return path.resolve(__dirname, '..', '..', '..', '..');
+}
+
+/**
+ * Если рядом с PNG/JPG/JPEG файлом из Strapi-uploads лежит .avif с тем же
+ * базовым именем — отдаём AVIF (в 5-10 раз меньше PNG). Это касается и
+ * основной картинки, и video-poster. Файлы попадают в образ через COPY . . и
+ * раздаются Node-прокси на /uploads/* (см. server.cjs).
+ */
+function preferAvifVariant(url) {
+  if (!url) return url;
+  const match = String(url).match(/^(.+\.)(png|jpe?g)(\?.*)?$/i);
+  if (!match) return url;
+  const avifUrl = `${match[1]}avif${match[3] || ''}`;
+  if (!avifUrl.startsWith('/uploads/')) return url;
+  const relativePath = avifUrl.split('?')[0].replace(/^\//, '');
+  const absPath = path.join(strapiRootDir(), 'public', relativePath);
+  try {
+    if (fs.existsSync(absPath)) return avifUrl;
+  } catch {}
+  return url;
+}
+
 function mediaUrl(media) {
   if (!media) return '';
   return media.url || '';
@@ -43,7 +71,7 @@ module.exports = {
         slides.push({
           type: 'video',
           src: videoUrl,
-          poster: posterUrl,
+          poster: preferAvifVariant(posterUrl),
           alt: alt || mediaAlt(row.slide_video, 'Видео'),
           mime: mediaMime(row.slide_video) || 'video/mp4',
         });
@@ -52,7 +80,7 @@ module.exports = {
       if (imageUrl) {
         slides.push({
           type: 'image',
-          src: imageUrl,
+          src: preferAvifVariant(imageUrl),
           alt: alt || mediaAlt(row.slide_image, 'Слайд'),
         });
       }
