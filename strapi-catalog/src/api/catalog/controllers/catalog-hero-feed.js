@@ -3,9 +3,25 @@
 const fs = require('fs');
 const path = require('path');
 
-function strapiRootDir() {
-  // __dirname = .../strapi-catalog/src/api/catalog/controllers
-  return path.resolve(__dirname, '..', '..', '..', '..');
+function getStrapiPublicDir() {
+  try {
+    const fromStrapi = strapi && strapi.dirs && strapi.dirs.app && strapi.dirs.app.root;
+    if (fromStrapi) {
+      return path.join(fromStrapi, 'public');
+    }
+  } catch {}
+  // Fallback для случаев когда strapi.dirs недоступен (тесты и т.п.).
+  // В production контроллер исполняется из dist/src/..., поэтому пробуем оба варианта.
+  const candidates = [
+    path.resolve(__dirname, '..', '..', '..', '..', 'public'),       // src/api/.../controllers → 4 уровня + public
+    path.resolve(__dirname, '..', '..', '..', '..', '..', 'public'), // dist/src/api/.../controllers → 5 уровней + public
+  ];
+  for (const candidate of candidates) {
+    try {
+      if (fs.existsSync(candidate)) return candidate;
+    } catch {}
+  }
+  return candidates[0];
 }
 
 /**
@@ -21,7 +37,7 @@ function preferAvifVariant(url) {
   const avifUrl = `${match[1]}avif${match[3] || ''}`;
   if (!avifUrl.startsWith('/uploads/')) return url;
   const relativePath = avifUrl.split('?')[0].replace(/^\//, '');
-  const absPath = path.join(strapiRootDir(), 'public', relativePath);
+  const absPath = path.join(getStrapiPublicDir(), relativePath);
   try {
     if (fs.existsSync(absPath)) return avifUrl;
   } catch {}
