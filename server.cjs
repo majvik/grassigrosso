@@ -530,6 +530,26 @@ function extractAxiosErrorDetails(error) {
   return details;
 }
 
+const STATIC_MEDIA_EXT_RE = /\.(avif|webp|png|jpe?g|gif|svg|mp4|webm|woff2?|ttf|otf|ico)$/i;
+const STATIC_HASHED_ASSETS_RE = /^\/assets\//;
+const CACHE_IMMUTABLE = 'public, max-age=31536000, immutable';
+const CACHE_LONG_MEDIA = 'public, max-age=2592000'; // 30 дней — статика из /public/* и /uploads/*
+const CACHE_HTML_REVALIDATE = 'no-cache, must-revalidate';
+
+function applyMediaResponseHeaders(res, urlPath) {
+  if (!urlPath) return;
+  if (/\.avif$/i.test(urlPath)) {
+    res.setHeader('Content-Type', 'image/avif');
+  }
+  if (STATIC_HASHED_ASSETS_RE.test(urlPath)) {
+    res.setHeader('Cache-Control', CACHE_IMMUTABLE);
+  } else if (STATIC_MEDIA_EXT_RE.test(urlPath)) {
+    res.setHeader('Cache-Control', CACHE_LONG_MEDIA);
+  } else if (/\.html?$/i.test(urlPath)) {
+    res.setHeader('Cache-Control', CACHE_HTML_REVALIDATE);
+  }
+}
+
 function createStrapiProxy() {
   return createProxyMiddleware({
     target: STRAPI_URL,
@@ -542,6 +562,15 @@ function createStrapiProxy() {
     // Express strips the mount prefix from req.url for app.use('/admin', ...).
     // Forward the original URL so Strapi receives /admin/* instead of /init, /login, etc.
     pathRewrite: (path, req) => req.originalUrl || path,
+    onProxyRes(proxyRes, req) {
+      const originalUrl = String(req.originalUrl || '');
+      if (originalUrl.startsWith('/uploads/')) {
+        if (/\.avif(\?|$)/i.test(originalUrl)) {
+          proxyRes.headers['content-type'] = 'image/avif';
+        }
+        proxyRes.headers['cache-control'] = CACHE_LONG_MEDIA;
+      }
+    },
     onError(err, req, res) {
       const errorDetails = {
         message: String(err?.message || 'Proxy error'),
@@ -1301,13 +1330,22 @@ if (isDev) {
 
   const documentsVolumePath = path.join(__dirname, 'data', 'documents');
   if (fs.existsSync(documentsVolumePath)) {
-    app.use('/documents', express.static(documentsVolumePath, { redirect: false }));
+    app.use('/documents', express.static(documentsVolumePath, {
+      redirect: false,
+      setHeaders(res, filePath) {
+        applyMediaResponseHeaders(res, filePath);
+      }
+    }));
   }
 
   app.use(express.static(staticPath, {
     extensions: ['html', 'htm'],
     index: false,
-    redirect: false
+    redirect: false,
+    setHeaders(res, filePath) {
+      const requestPath = (res.req && res.req.path) || filePath;
+      applyMediaResponseHeaders(res, requestPath);
+    }
   }));
 
   app.get('*', (req, res, next) => {

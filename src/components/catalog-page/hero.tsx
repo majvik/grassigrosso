@@ -9,7 +9,7 @@ function HeroSlideAsset({ slide }: { slide: CatalogHeroSlideData }) {
 
   if (asset.type === 'video') {
     return (
-      <video muted loop playsInline preload="metadata" poster={asset.poster} aria-label={asset.ariaLabel}>
+      <video muted loop playsInline preload="none" poster={asset.poster} aria-label={asset.ariaLabel}>
         {asset.sources.map((source) => (
           <source key={source.src} src={source.src} type={source.type} />
         ))}

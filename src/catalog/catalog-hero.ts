@@ -22,7 +22,7 @@ function renderSlide(slide: CatalogHeroSlide, index: number): string {
   if (slide.type === 'video') {
     const poster = escapeAttr(slide.poster || '')
     const mime = escapeAttr(slide.mime || 'video/mp4')
-    return `<div class="catalog-hero-slide${activeClass}" id="${id}" data-slide="${index}" aria-hidden="${ariaHidden}"><video${poster ? ` poster="${poster}"` : ''} muted loop playsinline preload="metadata" aria-label="${alt}"><source src="${src}" type="${mime}" /></video></div>`
+    return `<div class="catalog-hero-slide${activeClass}" id="${id}" data-slide="${index}" aria-hidden="${ariaHidden}"><video${poster ? ` poster="${poster}"` : ''} muted loop playsinline preload="none" aria-label="${alt}"><source src="${src}" type="${mime}" /></video></div>`
   }
 
   return `<div class="catalog-hero-slide${activeClass}" id="${id}" data-slide="${index}" aria-hidden="${ariaHidden}"><img src="${src}" alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} /></div>`
