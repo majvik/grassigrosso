@@ -63,7 +63,16 @@ function setupCookieBanner() {
 }
 
 function setupCopyToast(copyToastRoot) {
-  if (!copyToastRoot) return
+  if (!copyToastRoot) {
+    copyToastRoot = document.createElement('div')
+    copyToastRoot.className = 'copy-toast'
+    copyToastRoot.id = 'copy-toast'
+    copyToastRoot.setAttribute('role', 'status')
+    copyToastRoot.setAttribute('aria-live', 'polite')
+    copyToastRoot.setAttribute('hidden', '')
+    copyToastRoot.textContent = 'Скопировано'
+    document.documentElement.appendChild(copyToastRoot)
+  }
 
   let copyToastHideTimer = null
   let copyToastRemoveHidingTimer = null
@@ -89,12 +98,12 @@ function setupCopyToast(copyToastRoot) {
     copyToastHideTimer = setTimeout(hideCopyToast, 3000)
   }
 
-  const copyEmailToClipboard = (email) => {
+  const copyTextToClipboard = (text) => {
     const done = () => showCopyToast()
 
     const fallbackCopy = () => {
       const textarea = document.createElement('textarea')
-      textarea.value = email
+      textarea.value = text
       textarea.setAttribute('readonly', '')
       textarea.style.position = 'fixed'
       textarea.style.left = '-9999px'
@@ -107,11 +116,17 @@ function setupCopyToast(copyToastRoot) {
     }
 
     if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-      navigator.clipboard.writeText(email).then(done).catch(fallbackCopy)
+      navigator.clipboard.writeText(text).then(done).catch(fallbackCopy)
     } else {
       fallbackCopy()
     }
   }
+
+  window.addEventListener('app:copy-text', (event) => {
+    const text = String(event.detail?.text || '').trim()
+    if (!text) return
+    copyTextToClipboard(text)
+  })
 
   document.body.addEventListener('click', (event) => {
     const button = event.target.closest('.contacts-office-copy-email, [data-copy-email-trigger]')
@@ -119,7 +134,7 @@ function setupCopyToast(copyToastRoot) {
     const email = button.getAttribute('data-copy-email')
     if (!email) return
     event.preventDefault()
-    copyEmailToClipboard(email)
+    copyTextToClipboard(email)
   })
 }
 

@@ -7,9 +7,9 @@ import { fetchCatalogFilters, fetchCatalogProducts, type CatalogFilterGroups } f
 import { buildCatalogueCardHtml } from './catalog-card'
 import { readCatalogueCardMeta } from './catalog-card-meta'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
+import { buildCatalogModalSpecs } from './catalog-modal'
 import {
   emitCatalogManagerContactIntent,
-  emitCatalogShareIntent,
   setCatalogFavouritesSwitchState,
   syncCatalogFavouriteButtons,
   syncCatalogFavouritesControls,
@@ -46,6 +46,12 @@ import {
 } from './catalog-sort-menu'
 import { initCatalogStickySidebar } from './catalog-sticky-sidebar'
 import { setCatalogFilterHelpFromApi } from './catalog-filter-help-modal'
+import {
+  buildCatalogFavouritesShareUrl,
+  buildCatalogProductShareUrl,
+  copyTextWithToast,
+  readCatalogSharedState,
+} from './catalog-share'
 
 const CATALOGUE_PAGE_SIZE = 6
 
@@ -62,6 +68,15 @@ function queryElements<T extends Element>(root: ParentNode, selector: string): T
   return [...root.querySelectorAll(selector)] as T[]
 }
 
+function escapeHtml(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export function initCatalogListingController(documentRef: Document, scrollOptions: ScrollOptions = {}) {
   const catalogueNewSidebar = queryElement<HTMLElement>(documentRef, '.catalogue-new-sidebar')
   const catalogueNewCardsRoot = queryElement<HTMLElement>(documentRef, '.catalogue-new-cards')
@@ -74,6 +89,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   const cardsRootEl = catalogueNewCardsRoot
 
   const catalogueNewLayout = queryElement<HTMLElement>(documentRef, '.catalogue-new-layout')
+  const catalogueHero = queryElement<HTMLElement>(documentRef, '.catalog-hero')
   const catalogueNewResultsValue = queryElement<HTMLElement>(documentRef, '.catalogue-new-results strong')
   const catalogueNewSort = queryElement<HTMLElement>(documentRef, '.catalogue-new-sort')
   const catalogueNewSortTrigger = queryElement<HTMLButtonElement>(documentRef, '.catalogue-new-sort-trigger')
@@ -102,6 +118,11 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   let cardMeta: CatalogCardMeta<HTMLElement>[] = []
   let visibleCardsLimit = CATALOGUE_PAGE_SIZE
   let matchedCards: HTMLElement[] = []
+  const sharedState = readCatalogSharedState()
+  const sharedSlugs = sharedState.mode === 'favourites' ? new Set(sharedState.slugs) : new Set<string>()
+  const isSharedFavouritesView = sharedState.mode === 'favourites'
+  const isSharedProductView = sharedState.mode === 'product'
+  let sharedProductSection: HTMLElement | null = null
   const infiniteSentinel = documentRef.createElement('div')
   infiniteSentinel.className = 'catalogue-new-infinite-sentinel'
   infiniteSentinel.setAttribute('aria-hidden', 'true')
@@ -142,6 +163,31 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     actionsEl: catalogueNewFavouritesActions,
   }
 
+  if (isSharedFavouritesView || isSharedProductView) {
+    documentRef.documentElement.classList.add('catalogue-shared-view')
+    catalogueHero?.setAttribute('hidden', '')
+  }
+  if (isSharedFavouritesView) {
+    documentRef.documentElement.classList.add('catalogue-shared-favourites-view')
+    visibleCardsLimit = Number.MAX_SAFE_INTEGER
+    const sharedHead = documentRef.createElement('div')
+    sharedHead.className = 'catalogue-new-shared-head'
+    const shareId = sharedState.mode === 'favourites' ? sharedState.id : ''
+    sharedHead.innerHTML = `<h1>Избранное</h1><span>ID ${escapeHtml(shareId)}</span>`
+    const content = queryElement<HTMLElement>(documentRef, '#catalogue-new-products')
+    if (content) {
+      content.insertBefore(sharedHead, catalogueNewFavouritesActions || cardsRootEl)
+      if (catalogueNewFavouritesActions) content.insertBefore(catalogueNewFavouritesActions, cardsRootEl)
+    }
+  }
+  if (isSharedProductView) {
+    documentRef.documentElement.classList.add('catalogue-shared-product-view')
+    sharedProductSection = documentRef.createElement('section')
+    sharedProductSection.className = 'catalogue-new-shared-product'
+    sharedProductSection.hidden = true
+    catalogueNewLayout?.insertBefore(sharedProductSection, catalogueNewSidebar)
+  }
+
   function updateCardsCache() {
     cards = queryElements<HTMLElement>(cardsRootEl, '.catalogue-new-card')
     cardMeta = cards.map((card, index) => {
@@ -176,6 +222,85 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     catalogueNewToolbar.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  function getSharedOrLocalFavouriteSlugs(): string[] {
+    if (isSharedFavouritesView && sharedState.mode === 'favourites') return sharedState.slugs
+    return [...readCatalogFavourites()]
+  }
+
+  function findCardBySlug(slug: string): HTMLElement | null {
+    const safe = typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+      ? CSS.escape(slug)
+      : slug.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
+    return cardsRootEl.querySelector<HTMLElement>(`.catalogue-new-card[data-product-slug="${safe}"]`)
+  }
+
+  function syncSharedProductFavouriteButton(button: HTMLButtonElement, slug: string): void {
+    const isActive = readCatalogFavourites().has(slug)
+    button.classList.toggle('is-active', isActive)
+    button.setAttribute('aria-pressed', isActive ? 'true' : 'false')
+    button.setAttribute('aria-label', isActive ? 'Удалить из избранного' : 'Добавить в избранное')
+  }
+
+  function renderSharedProductView(): void {
+    if (!isSharedProductView || sharedState.mode !== 'product' || !sharedProductSection) return
+    const card = findCardBySlug(sharedState.slug)
+    if (!card) {
+      sharedProductSection.hidden = true
+      return
+    }
+
+    const image = card.querySelector<HTMLImageElement>('picture img')
+    const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || image?.alt || 'Матрас'
+    const specs = buildCatalogModalSpecs(card.dataset)
+    const tags = [...card.querySelectorAll('.catalogue-new-tags > .catalogue-new-tag')]
+      .map((tag) => tag.textContent?.trim())
+      .filter((tag): tag is string => Boolean(tag))
+    const slug = String(card.dataset.productSlug || sharedState.slug).trim()
+    const specsHtml = specs
+      .map((spec) => (
+        `<div class="catalogue-new-shared-product-spec">` +
+        `<span class="catalogue-new-shared-product-spec-label">${escapeHtml(spec.label)}</span>` +
+        `<span class="catalogue-new-shared-product-spec-value">${escapeHtml(spec.value)}</span>` +
+        `</div>`
+      ))
+      .join('')
+    const tagsHtml = tags.length
+      ? `<div class="catalogue-new-shared-product-tags catalogue-new-tags">${tags.map((tag) => `<span class="catalogue-new-tag">${escapeHtml(tag)}</span>`).join('')}</div>`
+      : ''
+
+    sharedProductSection.hidden = false
+    sharedProductSection.innerHTML = `
+      <a class="catalogue-new-shared-back" href="/catalog">Назад в каталог</a>
+      <div class="catalogue-new-shared-product-shell">
+        <div class="catalogue-new-shared-product-info">
+          <h1 class="catalogue-new-shared-product-title">${escapeHtml(title)}</h1>
+          <div class="catalogue-new-shared-product-specs">${specsHtml}</div>
+          ${tagsHtml}
+          <div class="catalogue-new-shared-product-actions catalogue-new-image-modal-actions">
+            <button type="button" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" data-shared-product-contact>Связаться с менеджером по позиции</button>
+            <div class="catalogue-new-image-modal-side-actions">
+              <button type="button" class="catalogue-new-image-modal-share" data-shared-product-share aria-label="Поделиться">
+                <img class="catalogue-new-image-modal-share-icon--default" src="/icons/share-default.svg" alt="" aria-hidden="true" />
+                <img class="catalogue-new-image-modal-share-icon--hover" src="/icons/share-hover.svg" alt="" aria-hidden="true" />
+                <span class="catalogue-new-image-modal-share-label">Поделиться</span>
+              </button>
+              <button type="button" class="catalogue-new-image-modal-favourite" data-shared-product-favourite aria-pressed="false" aria-label="Добавить в избранное">
+                <img class="catalogue-new-image-modal-favourite-icon--empty" src="/icons/favourite-empty.svg" alt="" aria-hidden="true" />
+                <img class="catalogue-new-image-modal-favourite-icon--full" src="/icons/favourite-full.svg" alt="" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="catalogue-new-shared-product-media">
+          <img src="${escapeHtml(image?.getAttribute('src') || '')}" alt="${escapeHtml(image?.getAttribute('alt') || '')}" />
+        </div>
+      </div>
+    `
+
+    const favBtn = sharedProductSection.querySelector<HTMLButtonElement>('[data-shared-product-favourite]')
+    if (favBtn) syncSharedProductFavouriteButton(favBtn, slug)
+  }
+
   function applySorting() {
     const cardsToSort = [...cards]
     const metaByCard = new Map(cardMeta.map((meta) => [meta.card, meta]))
@@ -208,10 +333,15 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const favSet = readCatalogFavourites()
     matchedCards = []
     cardMeta.forEach((meta) => {
+      if (isSharedFavouritesView) {
+        if (meta.slug && sharedSlugs.has(meta.slug)) matchedCards.push(meta.card)
+        return
+      }
       if (matchesCatalogCardMeta(meta, state, favSet)) matchedCards.push(meta.card)
     })
 
-    const visibleSet = new Set(matchedCards.slice(0, visibleCardsLimit))
+    const limit = isSharedFavouritesView ? Number.MAX_SAFE_INTEGER : visibleCardsLimit
+    const visibleSet = new Set(matchedCards.slice(0, limit))
     cards.forEach((card) => {
       card.style.display = visibleSet.has(card) ? '' : 'none'
     })
@@ -220,12 +350,17 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       catalogueNewFavouritesBackRow.hidden = !state.favouritesOnly
     }
     if (catalogueNewFavouritesActions) {
-      const shouldShowFavouritesAction = state.favouritesOnly && readCatalogFavourites().size > 0
+      const shouldShowFavouritesAction = isSharedFavouritesView || (state.favouritesOnly && readCatalogFavourites().size > 0)
       catalogueNewFavouritesActions.hidden = !shouldShowFavouritesAction
     }
+    if (isSharedFavouritesView) {
+      if (catalogueNewFavouritesContactBtn) catalogueNewFavouritesContactBtn.disabled = matchedCards.length === 0
+      if (catalogueNewFavouritesShareBtn) catalogueNewFavouritesShareBtn.disabled = matchedCards.length === 0
+    }
 
-    infiniteSentinel.hidden = matchedCards.length <= visibleCardsLimit
+    infiniteSentinel.hidden = isSharedFavouritesView || isSharedProductView || matchedCards.length <= visibleCardsLimit
     updateResultsCount()
+    renderSharedProductView()
     scheduleStickySidebarSync()
   }
 
@@ -353,7 +488,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   if (catalogueNewFavouritesContactBtn) {
     catalogueNewFavouritesContactBtn.addEventListener('click', () => {
       if (catalogueNewFavouritesContactBtn.disabled) return
-      const fav = [...readCatalogFavourites()]
+      const fav = getSharedOrLocalFavouriteSlugs()
       if (!fav.length) return
       emitCatalogManagerContactIntent({
         source: 'favourites',
@@ -375,15 +510,39 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   if (catalogueNewFavouritesShareBtn) {
     catalogueNewFavouritesShareBtn.addEventListener('click', () => {
       if (catalogueNewFavouritesShareBtn.disabled) return
-      const fav = [...readCatalogFavourites()]
+      const fav = getSharedOrLocalFavouriteSlugs()
       if (!fav.length) return
-      emitCatalogShareIntent({
-        source: 'favourites',
-        slugs: fav,
-        title: 'Избранные позиции',
-      })
+      copyTextWithToast(buildCatalogFavouritesShareUrl(fav))
     })
   }
+
+  sharedProductSection?.addEventListener('click', (event) => {
+    if (sharedState.mode !== 'product') return
+    const target = event.target instanceof Element ? event.target : null
+    if (!target) return
+    const slug = sharedState.slug
+    if (target.closest('[data-shared-product-contact]')) {
+      emitCatalogManagerContactIntent({
+        source: 'product',
+        slugs: [slug],
+        title: 'Позиция',
+      })
+      return
+    }
+    if (target.closest('[data-shared-product-share]')) {
+      copyTextWithToast(buildCatalogProductShareUrl(slug))
+      return
+    }
+    const favBtn = target.closest<HTMLButtonElement>('[data-shared-product-favourite]')
+    if (favBtn) {
+      const favSet = readCatalogFavourites()
+      if (favSet.has(slug)) favSet.delete(slug)
+      else favSet.add(slug)
+      writeCatalogFavourites(favSet)
+      window.dispatchEvent(new CustomEvent('catalogue:favourites-updated'))
+      syncSharedProductFavouriteButton(favBtn, slug)
+    }
+  })
 
   catalogueNewSidebar.addEventListener(
     'click',

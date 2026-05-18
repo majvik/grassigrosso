@@ -1,5 +1,6 @@
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
 import { buildCatalogCardMetaHtmlFromDataset, buildCatalogModalSpecs } from './catalog-modal'
+import { buildCatalogProductShareUrl, copyTextWithToast } from './catalog-share'
 
 const CATALOG_PAGE_NAME = 'Страница "Каталог"'
 
@@ -26,6 +27,7 @@ export type CatalogImageModalElements = {
   specs: HTMLElement
   specsEmpty: HTMLElement
   contactBtn: HTMLButtonElement
+  shareBtn: HTMLButtonElement
   favouriteBtn: HTMLButtonElement
   closeBtn: HTMLElement | null
   cardsRoot: Element
@@ -465,6 +467,11 @@ export function initCatalogImageModal(
   elements.contactBtn.addEventListener('click', () => {
     if (!activeModalProductSlug) return
     openContactView([activeModalProductSlug], 'preview')
+  })
+
+  elements.shareBtn.addEventListener('click', () => {
+    if (!activeModalProductSlug) return
+    copyTextWithToast(buildCatalogProductShareUrl(activeModalProductSlug))
   })
 
   elements.contactBackBtn.addEventListener('click', () => {

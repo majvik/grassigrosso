@@ -27,6 +27,7 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
   const catalogueImageModalSpecs = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecs')
   const catalogueImageModalSpecsEmpty = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecsEmpty')
   const catalogueImageModalContactBtn = queryElement<HTMLButtonElement>(documentRef, 'catalogueImageModalContactBtn')
+  const catalogueImageModalShareBtn = queryElement<HTMLButtonElement>(documentRef, 'catalogueImageModalShareBtn')
   const catalogueImageModalFavouriteBtn = queryElement<HTMLButtonElement>(documentRef, 'catalogueImageModalFavouriteBtn')
   const catalogueImageModalClose = queryElement<HTMLElement>(documentRef, 'catalogueImageModalClose')
   const catalogueCardsRootForModal = documentRef.querySelector('.catalogue-new-cards')
@@ -46,6 +47,7 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
     catalogueImageModalSpecs &&
     catalogueImageModalSpecsEmpty &&
     catalogueImageModalContactBtn &&
+    catalogueImageModalShareBtn &&
     catalogueImageModalFavouriteBtn &&
     catalogueCardsRootForModal
   ) {
@@ -65,6 +67,7 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
         specs: catalogueImageModalSpecs,
         specsEmpty: catalogueImageModalSpecsEmpty,
         contactBtn: catalogueImageModalContactBtn,
+        shareBtn: catalogueImageModalShareBtn,
         favouriteBtn: catalogueImageModalFavouriteBtn,
         closeBtn: catalogueImageModalClose,
         cardsRoot: catalogueCardsRootForModal,

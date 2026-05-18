@@ -1030,7 +1030,7 @@
   box-shadow:
     0px 10px 15px -3px rgba(0, 0, 0, 0.1),
     0px 4px 6px -4px rgba(0, 0, 0, 0.1);
-  z-index: calc(var(--z-floating) + 1);
+  z-index: calc(var(--z-modal) + 20);
   font-family: var(--font-family);
   font-size: var(--font-size-body);
   font-weight: 400;
@@ -2695,7 +2695,7 @@ a:hover .arrow-medium {
     border-radius: 0;
     padding: var(--space-3) var(--space-4);
     transform: translateY(-100%);
-    z-index: calc(var(--z-banner-mobile) + 1);
+    z-index: calc(var(--z-modal) + 20);
   }
 
   .copy-toast.copy-toast--show {
