@@ -140,10 +140,12 @@ export function ContactSection({
                 {renderField(field)}
               </div>
             ))}
-            <PrivacyCheckbox />
-            <button type="submit" className="btn-primary">
-              {submitLabel}
-            </button>
+            <div className="form-submit-group">
+              <PrivacyCheckbox />
+              <button type="submit" className="btn-primary">
+                {submitLabel}
+              </button>
+            </div>
           </form>
         </div>
         <div className="contact-info">

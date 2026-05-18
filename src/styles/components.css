@@ -823,6 +823,10 @@
   overflow-wrap: break-word;
 }
 
+.commercial-offer-form .form-submit-group .commercial-offer-buttons {
+  margin-top: 0;
+}
+
 /* Catalog Request Modal (Boxspring / Аксессуары) */
 .catalog-request-modal-content {
   position: relative;
@@ -908,6 +912,10 @@
   margin-bottom: 24px;
 }
 
+.catalog-request-form .form-submit-group .form-checkbox {
+  margin-bottom: 0;
+}
+
 .catalog-request-form .form-checkbox .checkbox-text,
 .catalog-request-form .form-checkbox .checkbox-text a {
   word-wrap: break-word;
@@ -916,6 +924,10 @@
 
 .catalog-request-buttons {
   margin-top: 8px;
+}
+
+.catalog-request-form .form-submit-group .catalog-request-buttons {
+  margin-top: 0;
 }
 
 .catalog-request-buttons .btn-commercial-offer {
@@ -4191,6 +4203,17 @@ a:hover .arrow-medium {
   display: flex;
   align-items: flex-start;
   gap: 12px;
+}
+
+.form-submit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.form-submit-group .form-checkbox {
+  margin-bottom: 0;
 }
 
 .form-checkbox input[type="checkbox"] {

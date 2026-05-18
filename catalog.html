@@ -756,6 +756,14 @@
                   <label for="cim-message">Сообщение</label>
                   <textarea id="cim-message" name="message" rows="4" placeholder="Ваше сообщение"></textarea>
                 </div>
+              </div>
+              <div class="catalogue-new-image-modal-positions-rule" role="presentation"></div>
+              <div class="catalogue-new-image-modal-positions-head">
+                <span class="catalogue-new-image-modal-positions-label">Интересующие позиции</span>
+                <span class="catalogue-new-tag catalogue-new-favourites-only-count catalogue-new-image-modal-positions-count" id="catalogueImageModalPositionsCount" aria-live="polite">0</span>
+              </div>
+              <div class="catalogue-new-image-modal-positions-list" id="catalogueImageModalPositionsList"></div>
+              <div class="form-submit-group catalogue-new-image-modal-submit-group">
                 <div class="form-checkbox">
                   <input type="checkbox" id="cim-privacy" checked />
                   <label for="cim-privacy">
@@ -769,15 +777,9 @@
                     <span class="checkbox-text">Я согласен на обработку моих персональных данных в соответствии с <a href="/privacy">Политикой конфиденциальности</a></span>
                   </label>
                 </div>
-              </div>
-              <div class="catalogue-new-image-modal-positions-rule" role="presentation"></div>
-              <div class="catalogue-new-image-modal-positions-head">
-                <span class="catalogue-new-image-modal-positions-label">Интересующие позиции</span>
-                <span class="catalogue-new-tag catalogue-new-favourites-only-count catalogue-new-image-modal-positions-count" id="catalogueImageModalPositionsCount" aria-live="polite">0</span>
-              </div>
-              <div class="catalogue-new-image-modal-positions-list" id="catalogueImageModalPositionsList"></div>
-              <div class="catalogue-new-image-modal-contact-footer">
-                <button type="submit" class="btn-primary catalogue-new-image-modal-contact-submit" id="catalogueImageModalContactSubmit">Отправить</button>
+                <div class="catalogue-new-image-modal-contact-footer">
+                  <button type="submit" class="btn-primary catalogue-new-image-modal-contact-submit" id="catalogueImageModalContactSubmit">Отправить</button>
+                </div>
               </div>
             </form>
           </div>

@@ -1878,6 +1878,13 @@
   margin-top: 20px;
   padding-top: 4px;
 }
+.catalogue-new-image-modal-submit-group {
+  margin-top: 20px;
+}
+.catalogue-new-image-modal-submit-group .catalogue-new-image-modal-contact-footer {
+  margin-top: 0;
+  padding-top: 0;
+}
 .catalogue-new-image-modal-contact-submit {
   min-height: 44px;
 }
