@@ -629,7 +629,7 @@ export function initCatalogImageModal(
 
   elements.cardsRoot.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return
-    if (event.target.closest('.catalogue-new-favourite')) return
+    if (event.target.closest('.catalogue-new-favourite, .catalogue-new-shared-remove')) return
     const card = event.target.closest('.catalogue-new-card')
     if (!card) return
     openCatalogueImageModal(card)

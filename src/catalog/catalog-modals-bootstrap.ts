@@ -102,6 +102,8 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
 
   const catalogueFavouritesClearModal = queryElement<HTMLElement>(documentRef, 'catalogueFavouritesClearModal')
   const catalogueFavouritesClearModalOverlay = queryElement<HTMLElement>(documentRef, 'catalogueFavouritesClearModalOverlay')
+  const catalogueFavouritesClearModalTitle = queryElement<HTMLElement>(documentRef, 'catalogueFavouritesClearModalTitle')
+  const catalogueFavouritesClearModalText = documentRef.querySelector<HTMLElement>('.catalogue-new-favourites-clear-modal-text')
   const catalogueFavouritesClearModalCancel = queryElement<HTMLButtonElement>(documentRef, 'catalogueFavouritesClearModalCancel')
   const catalogueFavouritesClearModalConfirm = queryElement<HTMLButtonElement>(documentRef, 'catalogueFavouritesClearModalConfirm')
   const catalogueNewFavouritesClearAllBtn = queryElement<HTMLElement>(documentRef, 'catalogue-new-favourites-clear-all')
@@ -117,11 +119,19 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
         openTrigger: catalogueNewFavouritesClearAllBtn,
         cancelBtn: catalogueFavouritesClearModalCancel,
         confirmBtn: catalogueFavouritesClearModalConfirm,
+        titleEl: catalogueFavouritesClearModalTitle,
+        textEl: catalogueFavouritesClearModalText,
       },
       {
         ...scrollOptions,
         getFavouritesCount: () => readCatalogFavourites().size,
-        onConfirm: () => {
+        onConfirm: (context) => {
+          if (context.mode === 'remove-position') {
+            window.dispatchEvent(new CustomEvent('catalogue:remove-shared-position-confirmed', {
+              detail: { slug: context.slug },
+            }))
+            return
+          }
           writeCatalogFavourites(new Set())
           window.dispatchEvent(new CustomEvent('catalogue:favourites-updated'))
         },

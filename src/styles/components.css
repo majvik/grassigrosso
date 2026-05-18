@@ -1049,6 +1049,14 @@
   transform: translateY(0);
 }
 
+.copy-toast.copy-toast--warning {
+  background: var(--color-form-error-bg);
+  color: var(--color-form-error-text);
+  box-shadow:
+    0px 10px 15px -3px rgba(198, 40, 40, 0.16),
+    0px 4px 6px -4px rgba(198, 40, 40, 0.18);
+}
+
 .copy-toast.copy-toast--hiding {
   opacity: 0;
   transform: translateY(20px);

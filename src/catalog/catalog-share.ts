@@ -56,6 +56,14 @@ export function buildCatalogFavouritesShareUrl(slugs: string[]): string {
   return url.toString()
 }
 
+export function buildCatalogFavouritesShareMeta(slugs: string[]): { url: string; id: string } {
+  const normalized = normalizeSlugs(slugs)
+  const payload = encodeJsonPayload({ v: 1, slugs: normalized } satisfies CatalogSharedFavouritesPayload)
+  const url = catalogUrl()
+  url.searchParams.set('fav', payload)
+  return { url: url.toString(), id: buildShareId(payload) }
+}
+
 export function buildCatalogProductShareUrl(slug: string): string {
   const normalized = String(slug || '').trim()
   const url = catalogUrl()
@@ -85,4 +93,13 @@ export function readCatalogSharedState(): CatalogSharedState {
 
 export function copyTextWithToast(text: string): void {
   window.dispatchEvent(new CustomEvent('app:copy-text', { detail: { text } }))
+}
+
+export function showCatalogShareWarningToast(): void {
+  window.dispatchEvent(new CustomEvent('app:toast', {
+    detail: {
+      message: 'Позиции изменились. Скопируйте ссылку заново.',
+      tone: 'warning',
+    },
+  }))
 }

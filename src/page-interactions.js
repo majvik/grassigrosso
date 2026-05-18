@@ -87,11 +87,13 @@ function setupCopyToast(copyToastRoot) {
     }, 300)
   }
 
-  const showCopyToast = () => {
+  const showCopyToast = (message = 'Скопировано', tone = 'default') => {
     if (copyToastHideTimer) clearTimeout(copyToastHideTimer)
     if (copyToastRemoveHidingTimer) clearTimeout(copyToastRemoveHidingTimer)
+    copyToastRoot.textContent = message
     copyToastRoot.removeAttribute('hidden')
     copyToastRoot.classList.remove('copy-toast--hiding')
+    copyToastRoot.classList.toggle('copy-toast--warning', tone === 'warning')
     requestAnimationFrame(() => {
       copyToastRoot.classList.add('copy-toast--show')
     })
@@ -99,7 +101,7 @@ function setupCopyToast(copyToastRoot) {
   }
 
   const copyTextToClipboard = (text) => {
-    const done = () => showCopyToast()
+    const done = () => showCopyToast('Скопировано')
 
     const fallbackCopy = () => {
       const textarea = document.createElement('textarea')
@@ -126,6 +128,12 @@ function setupCopyToast(copyToastRoot) {
     const text = String(event.detail?.text || '').trim()
     if (!text) return
     copyTextToClipboard(text)
+  })
+
+  window.addEventListener('app:toast', (event) => {
+    const message = String(event.detail?.message || '').trim()
+    if (!message) return
+    showCopyToast(message, String(event.detail?.tone || 'default'))
   })
 
   document.body.addEventListener('click', (event) => {
