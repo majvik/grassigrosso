@@ -4,6 +4,7 @@ import {
   buildStandardMattressSizesFromLegacy,
   filterStandardMattressSizes,
 } from './catalog-sizes'
+import { buildCatalogCardMetaHtmlFromDataset } from './catalog-modal'
 
 function escapeHtml(value: unknown): string {
   return String(value ?? '')
@@ -12,10 +13,6 @@ function escapeHtml(value: unknown): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
-}
-
-function buildMetaLine(label: string, value: string): string {
-  return `<span class="catalogue-new-meta-line">${escapeHtml(label)}: <span class="catalogue-new-meta-value">${escapeHtml(value)}</span></span>`
 }
 
 function buildCatalogueFavouriteButton(slug: string): string {
@@ -60,6 +57,16 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
     : (sizesFromLegacy.length ? sizesFromLegacy : [...STANDARD_MATTRESS_SIZES])
   const fillings = Array.isArray(item.fillings) ? item.fillings.map((value) => String(value)) : []
   const features = Array.isArray(item.features) ? item.features.map((value) => String(value)) : []
+  const cardMetaHtml = buildCatalogCardMetaHtmlFromDataset({
+    firmness,
+    type: mattressType,
+    height: heightCm ? String(heightCm) : '',
+    loadRange,
+    heightRange,
+    sizes: sizes.join(','),
+    fillings: fillings.join(','),
+    features: features.join(','),
+  })
 
   return `
       <article class="catalogue-new-card"
@@ -79,10 +86,7 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
         </picture>
         <div class="catalogue-new-card-body">
           <h3>${name}</h3>
-          <p class="catalogue-new-meta">
-            ${buildMetaLine('Высота', `${heightCm}см`)}
-            ${buildMetaLine('Нагрузка', `до ${maxLoadKg} кг`)}
-          </p>
+          ${cardMetaHtml}
           <div class="catalogue-new-tags-row">
             <div class="catalogue-new-tags">
             ${tags.map((tag) => `<span class="catalogue-new-tag">${escapeHtml(tag)}</span>`).join('')}

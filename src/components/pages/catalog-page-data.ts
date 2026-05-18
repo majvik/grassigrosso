@@ -66,10 +66,13 @@ export interface CatalogFallbackCardData {
   collection: string
   firmness: string
   height: string
+  heightRange: string
   image: CatalogPictureImage
   load: string
+  loadRange: string
   metaHeightLabel: string
   metaLoadLabel: string
+  sizes: string
   slug: string
   tags: string[]
   title: string
@@ -317,6 +320,7 @@ export const CATALOG_FALLBACK_CARDS: CatalogFallbackCardData[] = [
     collection: 'classic',
     firmness: 'medium',
     height: '22',
+    heightRange: 'mid',
     image: {
       alt: 'Коллекция Classic',
       sources: {
@@ -327,8 +331,10 @@ export const CATALOG_FALLBACK_CARDS: CatalogFallbackCardData[] = [
       type: 'image',
     },
     load: '140',
+    loadRange: 'upTo160',
     metaHeightLabel: '22см',
-    metaLoadLabel: 'до 140 кг',
+    metaLoadLabel: 'до 160 кг',
+    sizes: '140x190,140x200,160x190,160x200,180x190,180x200',
     slug: 'classic',
     tags: ['Пружинный', 'Средняя жесткость'],
     title: 'Classic',
@@ -338,6 +344,7 @@ export const CATALOG_FALLBACK_CARDS: CatalogFallbackCardData[] = [
     collection: 'flexi',
     firmness: 'hard',
     height: '24',
+    heightRange: 'high',
     image: {
       alt: 'Коллекция Flexi',
       sources: {
@@ -348,8 +355,10 @@ export const CATALOG_FALLBACK_CARDS: CatalogFallbackCardData[] = [
       type: 'image',
     },
     load: '160',
+    loadRange: 'upTo160',
     metaHeightLabel: '24см',
     metaLoadLabel: 'до 160 кг',
+    sizes: '140x190,140x200,160x190,160x200,180x190,180x200',
     slug: 'flexi',
     tags: ['Беспружинный', 'Жесткий'],
     title: 'Flexi',
@@ -359,6 +368,7 @@ export const CATALOG_FALLBACK_CARDS: CatalogFallbackCardData[] = [
     collection: 'relax',
     firmness: 'soft',
     height: '26',
+    heightRange: 'high',
     image: {
       alt: 'Коллекция Relax',
       sources: {
@@ -369,8 +379,10 @@ export const CATALOG_FALLBACK_CARDS: CatalogFallbackCardData[] = [
       type: 'image',
     },
     load: '170',
+    loadRange: 'upTo180',
     metaHeightLabel: '26см',
-    metaLoadLabel: 'до 170 кг',
+    metaLoadLabel: 'до 180 кг',
+    sizes: '140x190,140x200,160x190,160x200,180x190,180x200',
     slug: 'relax',
     tags: ['Беспружинный', 'Мягкий'],
     title: 'Relax',
@@ -380,6 +392,7 @@ export const CATALOG_FALLBACK_CARDS: CatalogFallbackCardData[] = [
     collection: 'trend',
     firmness: 'medium',
     height: '23',
+    heightRange: 'high',
     image: {
       alt: 'Коллекция Trend',
       sources: {
@@ -390,8 +403,10 @@ export const CATALOG_FALLBACK_CARDS: CatalogFallbackCardData[] = [
       type: 'image',
     },
     load: '150',
+    loadRange: 'upTo160',
     metaHeightLabel: '23см',
-    metaLoadLabel: 'до 150 кг',
+    metaLoadLabel: 'до 160 кг',
+    sizes: '140x190,140x200,160x190,160x200,180x190,180x200',
     slug: 'trend',
     tags: ['Пружинный', 'Средняя жесткость'],
     title: 'Trend',

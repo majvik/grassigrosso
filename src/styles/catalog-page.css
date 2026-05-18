@@ -1354,6 +1354,15 @@ html.catalogue-shared-product-view .catalogue-new-content {
 .catalogue-new-meta-line {
   display: block;
 }
+.catalogue-new-card .catalogue-new-meta-line:nth-child(n + 3) {
+  display: none;
+}
+.catalogue-new-cards.is-list-view .catalogue-new-card .catalogue-new-meta-line {
+  display: block;
+}
+html.catalogue-shared-favourites-view .catalogue-new-card .catalogue-new-meta-line:nth-child(n + 3) {
+  display: none;
+}
 .catalogue-new-meta-value {
   color: var(--color-text);
 }
@@ -2256,6 +2265,13 @@ html.catalogue-shared-product-view .catalogue-new-content {
 .catalogue-new-image-modal-specs-empty {
   margin: 16px 0 0;
   color: var(--color-text-gray);
+}
+.catalogue-new-image-modal-tags-row {
+  margin-top: var(--space-4);
+  padding-top: 0;
+}
+.catalogue-new-image-modal-tags-row[hidden] {
+  display: none !important;
 }
 .catalogue-new-image-modal-close {
   position: absolute;

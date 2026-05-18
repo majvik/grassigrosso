@@ -4,7 +4,7 @@ import {
   formatCatalogSizeList,
 } from './catalog-sizes'
 
-type CatalogCardDataset = {
+export type CatalogCardDataset = {
   firmness?: string
   type?: string
   height?: string
@@ -38,9 +38,9 @@ const modalLabelMaps = {
     singleSided: 'Односторонние',
   },
   loadRange: {
-    upTo120: 'до 120кг',
-    upTo160: 'до 160кг',
-    upTo180: 'до 180кг',
+    upTo120: 'до 120 кг',
+    upTo160: 'до 160 кг',
+    upTo180: 'до 180 кг',
     over160: 'Без ограничений',
   },
   heightRange: {
@@ -88,14 +88,16 @@ export function buildCatalogModalSpecs(dataset: CatalogCardDataset): CatalogModa
   const sizes = readSizes(dataset)
   const fillings = parseCsv(dataset.fillings).map((value) => mapValue(value, modalLabelMaps.fillings)).join(', ')
   const features = parseCsv(dataset.features).map((value) => mapValue(value, modalLabelMaps.features)).join(', ')
+  const height = dataset.height ? `${dataset.height} см` : ''
+  const heightRange = mapValue(dataset.heightRange, modalLabelMaps.heightRange)
+  const heightLabel = height && heightRange ? `${height} (${heightRange})` : height || heightRange
+  const loadLabel = mapValue(dataset.loadRange, modalLabelMaps.loadRange)
 
   return [
     { label: 'Жесткость', value: mapValue(dataset.firmness, modalLabelMaps.firmness) },
     { label: 'Тип матраса', value: mapValue(dataset.type, modalLabelMaps.type) },
-    { label: 'Высота', value: dataset.height ? `${dataset.height} см` : '' },
-    { label: 'Нагрузка', value: dataset.load ? `До ${dataset.load} кг` : '' },
-    { label: 'Макс. нагрузка на спальное место', value: mapValue(dataset.loadRange, modalLabelMaps.loadRange) },
-    { label: 'Высота матраса', value: mapValue(dataset.heightRange, modalLabelMaps.heightRange) },
+    { label: 'Высота', value: heightLabel },
+    { label: 'Нагрузка', value: loadLabel },
     { label: 'Размер', value: sizes.length ? formatCatalogSizeList(sizes) : '' },
     { label: 'Наполнители', value: fillings },
     { label: 'Особенности', value: features },
@@ -110,21 +112,22 @@ function escapeHtmlLite(value: unknown): string {
     .replace(/"/g, '&quot;')
 }
 
-/** Как в карточке каталога: только высота и нагрузка (без тегов). */
 export function buildCatalogCardMetaHtmlFromDataset(dataset: CatalogCardDataset): string {
-  const height = String(dataset.height || '').trim()
-  const load = String(dataset.load || '').trim()
-  const lines: string[] = []
-  if (height) {
-    lines.push(
-      `<span class="catalogue-new-meta-line">Высота: <span class="catalogue-new-meta-value">${escapeHtmlLite(height)}см</span></span>`,
-    )
-  }
-  if (load) {
-    lines.push(
-      `<span class="catalogue-new-meta-line">Нагрузка: <span class="catalogue-new-meta-value">до ${escapeHtmlLite(load)} кг</span></span>`,
-    )
-  }
+  const specs = buildCatalogModalSpecs(dataset)
+  const byLabel = new Map(specs.map((spec) => [spec.label, spec.value]))
+  const orderedSpecs = [
+    { label: 'Высота', value: byLabel.get('Высота') || '' },
+    { label: 'Нагрузка', value: byLabel.get('Нагрузка') || '' },
+    { label: 'Жесткость', value: byLabel.get('Жесткость') || '' },
+    { label: 'Тип матраса', value: byLabel.get('Тип матраса') || '' },
+    { label: 'Размер', value: byLabel.get('Размер') || '' },
+    { label: 'Наполнители', value: byLabel.get('Наполнители') || '' },
+    { label: 'Особенности', value: byLabel.get('Особенности') || '' },
+  ].filter((spec) => spec.value)
+  const lines = orderedSpecs.map(
+    (spec) =>
+      `<span class="catalogue-new-meta-line">${escapeHtmlLite(spec.label)}: <span class="catalogue-new-meta-value">${escapeHtmlLite(spec.value)}</span></span>`,
+  )
   if (!lines.length) return ''
   return `<p class="catalogue-new-meta">${lines.join('')}</p>`
 }

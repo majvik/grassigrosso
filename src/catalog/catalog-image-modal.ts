@@ -26,6 +26,8 @@ export type CatalogImageModalElements = {
   title: HTMLElement
   specs: HTMLElement
   specsEmpty: HTMLElement
+  tagsRow: HTMLElement | null
+  tagsRoot: HTMLElement | null
   contactBtn: HTMLButtonElement
   shareBtn: HTMLButtonElement
   favouriteBtn: HTMLButtonElement
@@ -199,6 +201,14 @@ function appendCatalogModalPositionTagsFromCard(body: HTMLElement, card: HTMLEle
   body.appendChild(row)
 }
 
+function readCatalogTagLabelsFromCard(card: HTMLElement): string[] {
+  const tagsRoot = card.querySelector('.catalogue-new-tags')
+  if (!tagsRoot) return []
+  return [...tagsRoot.querySelectorAll(':scope > .catalogue-new-tag')]
+    .map((el) => el.textContent?.trim())
+    .filter((t): t is string => Boolean(t))
+}
+
 export function initCatalogImageModal(
   elements: CatalogImageModalElements,
   options: CatalogImageModalOptions = {},
@@ -211,6 +221,25 @@ export function initCatalogImageModal(
   const clearModalSpecs = (): void => {
     elements.specs.replaceChildren()
     elements.specsEmpty.hidden = true
+    elements.tagsRoot?.replaceChildren()
+    if (elements.tagsRow) elements.tagsRow.hidden = true
+  }
+
+  const renderPreviewTags = (card: HTMLElement): void => {
+    if (!elements.tagsRow || !elements.tagsRoot) return
+    const labels = readCatalogTagLabelsFromCard(card)
+    elements.tagsRoot.replaceChildren()
+    if (!labels.length) {
+      elements.tagsRow.hidden = true
+      return
+    }
+    labels.forEach((label) => {
+      const tag = document.createElement('span')
+      tag.className = 'catalogue-new-tag'
+      tag.textContent = label
+      elements.tagsRoot?.appendChild(tag)
+    })
+    elements.tagsRow.hidden = false
   }
 
   const syncModalFavouriteState = (): void => {
@@ -451,6 +480,7 @@ export function initCatalogImageModal(
     buildCatalogModalSpecs(cardDatasetToSpecDataset(dataset)).forEach((spec) => {
       appendModalSpec(elements.specs, spec.label, spec.value)
     })
+    renderPreviewTags(card)
     if (!elements.specs.childElementCount) {
       elements.specsEmpty.hidden = false
     }
