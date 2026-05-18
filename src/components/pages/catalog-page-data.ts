@@ -261,8 +261,8 @@ export const CATALOG_FILTER_GROUPS: CatalogFilterGroupData[] = [
     options: [
       { kind: 'chip', label: 'Любая', value: 'all' },
       { kind: 'chip', label: 'Компактные до 16 см', value: 'low' },
-      { kind: 'chip', label: 'Средние 16-20 см', value: 'mid' },
-      { kind: 'chip', label: 'Высокие свыше 20 см', value: 'high' },
+      { kind: 'chip', label: 'Средние 16-22 см', value: 'mid' },
+      { kind: 'chip', label: 'Высокие от 23 см', value: 'high' },
     ],
     title: 'Высота матраса',
   },

@@ -45,8 +45,8 @@ const modalLabelMaps = {
   },
   heightRange: {
     low: 'Компактные до 16 см',
-    mid: 'Средние 16-20 см',
-    high: 'Высокие свыше 20 см',
+    mid: 'Средние 16-22 см',
+    high: 'Высокие от 23 см',
   },
   fillings: {
     orthoFoam: 'Орто-пена',

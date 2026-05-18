@@ -4,8 +4,8 @@ import type { NormalizedCatalogFilterOption } from './catalog-filter-options'
 import {
   type CatalogAvailableFilterSets,
   type CatalogFilterState,
-  CANONICAL_CATALOG_FIRMNESS_SLUGS,
-  CANONICAL_LOAD_RANGE_SLUGS,
+  FALLBACK_CATALOG_FIRMNESS_OPTIONS,
+  FALLBACK_LOAD_RANGE_OPTIONS,
 } from './catalog-filtering'
 import {
   STANDARD_MATTRESS_SIZES,
@@ -38,28 +38,10 @@ function mergeSizeOptionsWithStandard(apiOptions: unknown): NormalizedCatalogFil
   }))
 }
 
-/** Канон жёсткости из кода; подписи из API при совпадении slug (как у размеров). */
-const STANDARD_FIRMNESS_SET = new Set<string>(CANONICAL_CATALOG_FIRMNESS_SLUGS)
-const DEFAULT_FIRMNESS_LABELS: Record<string, string> = {
-  soft: 'Мягкий',
-  medium: 'Средний',
-  hard: 'Жесткий',
-  dualFirmness: 'Разная жесткость сторон',
-}
-
 function mergeFirmnessOptionsWithStandard(apiOptions: unknown): NormalizedCatalogFilterOption[] {
   const normalized = normalizeCatalogFilterOptions(apiOptions)
-  const labelBySlug = new Map<string, string>()
-  for (const row of normalized) {
-    const slug = String(row.value || '').trim()
-    if (!slug || !STANDARD_FIRMNESS_SET.has(slug)) continue
-    if (row.label) labelBySlug.set(slug, row.label)
-  }
-  return CANONICAL_CATALOG_FIRMNESS_SLUGS.map((slug, i) => ({
-    value: slug,
-    label: labelBySlug.get(slug) ?? DEFAULT_FIRMNESS_LABELS[slug] ?? slug,
-    sortOrder: i,
-  }))
+  if (normalized.length) return normalized
+  return FALLBACK_CATALOG_FIRMNESS_OPTIONS.map((option, i) => ({ ...option, sortOrder: i }))
 }
 
 function renderCatalogueFirmnessChips(root: Element, options: unknown): boolean {
@@ -83,27 +65,10 @@ function renderCatalogueFirmnessChips(root: Element, options: unknown): boolean 
   return true
 }
 
-const LOAD_RANGE_SLUG_SET = new Set<string>(CANONICAL_LOAD_RANGE_SLUGS)
-const DEFAULT_LOAD_RANGE_LABELS: Record<string, string> = {
-  upTo120: 'до 120кг',
-  upTo160: 'до 160кг',
-  upTo180: 'до 180кг',
-  over160: 'Без ограничений',
-}
-
 function mergeLoadRangeOptionsWithStandard(apiOptions: unknown): NormalizedCatalogFilterOption[] {
   const normalized = normalizeCatalogFilterOptions(apiOptions)
-  const labelBySlug = new Map<string, string>()
-  for (const row of normalized) {
-    const slug = String(row.value || '').trim()
-    if (!slug || !LOAD_RANGE_SLUG_SET.has(slug)) continue
-    if (row.label) labelBySlug.set(slug, row.label)
-  }
-  return CANONICAL_LOAD_RANGE_SLUGS.map((slug, i) => ({
-    value: slug,
-    label: labelBySlug.get(slug) ?? DEFAULT_LOAD_RANGE_LABELS[slug] ?? slug,
-    sortOrder: i,
-  }))
+  if (normalized.length) return normalized
+  return FALLBACK_LOAD_RANGE_OPTIONS.map((option, i) => ({ ...option, sortOrder: i }))
 }
 
 function renderCatalogueLoadRangeOptions(root: Element, options: unknown): boolean {
@@ -372,6 +337,22 @@ export function applyAvailableFilterOptions(
   state: CatalogFilterState,
   available: CatalogAvailableFilterSets,
 ): void {
+  const preserveRenderedOptions = (selector: string, targetSet: Set<string>) => {
+    root.querySelectorAll<HTMLElement>(selector).forEach((el) => {
+      const value = String(el.dataset.value || '').trim()
+      if (value && value !== 'all') targetSet.add(value)
+    })
+  }
+
+  preserveRenderedOptions('.catalogue-new-chip[data-filter-group="collection"]', available.collection)
+  preserveRenderedOptions('.catalogue-new-chip[data-filter-group="firmness"]', available.firmness)
+  preserveRenderedOptions('.catalogue-new-chip[data-filter-group="type"]', available.type)
+  preserveRenderedOptions('.catalogue-new-chip[data-filter-group="heightRange"]', available.heightRange)
+  preserveRenderedOptions('.catalogue-new-chip[data-filter-group="fillings"]', available.fillings)
+  preserveRenderedOptions('.catalogue-new-chip[data-filter-group="features"]', available.features)
+  preserveRenderedOptions('.catalogue-new-size-select[data-catalog-select="size"] .catalogue-new-size-select-option', available.size)
+  preserveRenderedOptions('.catalogue-new-size-select[data-catalog-select="loadRange"] .catalogue-new-size-select-option', available.loadRange)
+
   const toggleBySet = (selector: string, allowedSet: Set<string>) => {
     root.querySelectorAll<HTMLElement>(selector).forEach((el) => {
       const value = String(el.dataset.value || '')

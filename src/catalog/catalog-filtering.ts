@@ -64,11 +64,19 @@ const firmnessRank: Record<string, number> = {
   dualFirmness: 4,
 }
 
-/** Все пункты фильтра «Жёсткость» остаются в разметке (как канон размеров); отбор карточек по-прежнему по data-firmness. */
-export const CANONICAL_CATALOG_FIRMNESS_SLUGS = ['soft', 'medium', 'hard', 'dualFirmness'] as const
+export const FALLBACK_CATALOG_FIRMNESS_OPTIONS = [
+  { value: 'soft', label: 'Мягкий' },
+  { value: 'medium', label: 'Средний' },
+  { value: 'hard', label: 'Жесткий' },
+  { value: 'dualFirmness', label: 'Разная жесткость сторон' },
+] as const
 
-/** Канон диапазонов нагрузки в UI (селект «Нагрузка»). `over160` — «Без ограничений», по числу max load: >180 кг. */
-export const CANONICAL_LOAD_RANGE_SLUGS = ['upTo120', 'upTo160', 'upTo180', 'over160'] as const
+export const FALLBACK_LOAD_RANGE_OPTIONS = [
+  { value: 'upTo120', label: 'до 120 кг' },
+  { value: 'upTo160', label: 'до 160 кг' },
+  { value: 'upTo180', label: 'до 180 кг' },
+  { value: 'over160', label: 'Без ограничений' },
+] as const
 
 const knownTypeOptions = ['spring', 'nospring', 'topper', 'doubleSided', 'singleSided']
 const knownHeightRangeOptions = ['low', 'mid', 'high']
@@ -103,8 +111,8 @@ export function matchLoadRange(load: number, range: string): boolean {
 export function matchHeightRange(height: number, range: string): boolean {
   if (range === 'all') return true
   if (range === 'low') return height <= 16
-  if (range === 'mid') return height >= 16 && height <= 20
-  if (range === 'high') return height > 20
+  if (range === 'mid') return height > 16 && height <= 22
+  if (range === 'high') return height >= 23
   return true
 }
 
@@ -117,7 +125,7 @@ export function getLoadRangeBucket(load: number): string {
 
 export function getHeightRangeBucket(height: number): string {
   if (height <= 16) return 'low'
-  if (height <= 20) return 'mid'
+  if (height <= 22) return 'mid'
   return 'high'
 }
 
@@ -202,7 +210,7 @@ export function collectAvailableCatalogFilters<TCard>(cardMeta: CatalogCardMeta<
   })
 
   knownTypeOptions.forEach((value) => available.type.add(value))
-  CANONICAL_LOAD_RANGE_SLUGS.forEach((value) => available.loadRange.add(value))
+  FALLBACK_LOAD_RANGE_OPTIONS.forEach((option) => available.loadRange.add(option.value))
   knownHeightRangeOptions.forEach((value) => available.heightRange.add(value))
   knownFillingOptions.forEach((value) => available.fillings.add(value))
   knownFeatureOptions.forEach((value) => available.features.add(value))
@@ -211,7 +219,7 @@ export function collectAvailableCatalogFilters<TCard>(cardMeta: CatalogCardMeta<
   // отбор товаров по-прежнему по data-sizes на карточках (см. matchesCatalogCardMeta).
   STANDARD_MATTRESS_SIZES.forEach((value) => available.size.add(value))
 
-  CANONICAL_CATALOG_FIRMNESS_SLUGS.forEach((value) => available.firmness.add(value))
+  FALLBACK_CATALOG_FIRMNESS_OPTIONS.forEach((option) => available.firmness.add(option.value))
 
   return available
 }

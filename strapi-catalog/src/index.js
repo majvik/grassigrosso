@@ -117,8 +117,8 @@ module.exports = {
     ]);
     const heightRangeOptions = await ensureRows('api::height-range-option.height-range-option', [
       { name: 'Компактные до 16 см', slug: 'low', is_active: true },
-      { name: 'Средние 16-20 см', slug: 'mid', is_active: true },
-      { name: 'Высокие свыше 20 см', slug: 'high', is_active: true },
+      { name: 'Средние 16-22 см', slug: 'mid', is_active: true },
+      { name: 'Высокие от 23 см', slug: 'high', is_active: true },
     ]);
     const fillingOptions = await ensureRows('api::filling-option.filling-option', [
       { name: 'Кокосовая койра', slug: 'coir', is_active: true },
@@ -162,8 +162,14 @@ module.exports = {
       'высокий': 'high',
       'компактные_до_16_см': 'low',
       'средние_16_20_см': 'mid',
+      'средние_16_22_см': 'mid',
       'высокие_свыше_20_см': 'high',
+      'высокие_от_23_см': 'high',
     }[normalize(value)] || String(value || '').trim());
+    const normalizeHeightRangeEnum = (value) => ({
+      'средние_16_20_см': 'средние_16_22_см',
+      'высокие_свыше_20_см': 'высокие_от_23_см',
+    }[normalize(value)] || '');
     const mapFilling = (value) => ({
       'кокос': 'coir',
       'кокосовая койра': 'coir',
@@ -208,6 +214,8 @@ module.exports = {
 
       const heightRange = heightRangeOptions.get(mapHeightRange(product.height_range));
       if (!product.height_range_option && heightRange) data.height_range_option = heightRange.id;
+      const normalizedHeightRangeEnum = normalizeHeightRangeEnum(product.height_range);
+      if (normalizedHeightRangeEnum) data.height_range = normalizedHeightRangeEnum;
 
       const hasFillingRelations = Array.isArray(product.filling_options) && product.filling_options.length > 0;
       if (!hasFillingRelations) {

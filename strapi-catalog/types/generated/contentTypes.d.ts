@@ -838,8 +838,8 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     height_range: Schema.Attribute.Enumeration<
       [
         '\u043A\u043E\u043C\u043F\u0430\u043A\u0442\u043D\u044B\u0435_\u0434\u043E_16_\u0441\u043C',
-        '\u0441\u0440\u0435\u0434\u043D\u0438\u0435_16_20_\u0441\u043C',
-        '\u0432\u044B\u0441\u043E\u043A\u0438\u0435_\u0441\u0432\u044B\u0448\u0435_20_\u0441\u043C',
+        '\u0441\u0440\u0435\u0434\u043D\u0438\u0435_16_22_\u0441\u043C',
+        '\u0432\u044B\u0441\u043E\u043A\u0438\u0435_\u043E\u0442_23_\u0441\u043C',
       ]
     >;
     height_range_option: Schema.Attribute.Relation<
