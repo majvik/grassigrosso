@@ -1278,8 +1278,8 @@
   }
 }
 
-/* 431–768: две строки — «Найдено» + вид | фильтры + сортировка */
-@media (max-width: 768px) and (min-width: 431px) {
+/* 531–768: две строки — «Найдено» + вид | фильтры + сортировка */
+@media (max-width: 768px) and (min-width: 531px) {
   .catalogue-new-toolbar {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-rows: auto auto;
@@ -1330,7 +1330,8 @@
   }
 }
 
-@media (max-width: 430px) {
+/* ≤530: три строки — «Найдено» + вид | фильтры | сортировка */
+@media (max-width: 530px) {
   .catalogue-new-toolbar {
     grid-template-columns: 1fr auto;
     grid-template-rows: auto auto auto;
