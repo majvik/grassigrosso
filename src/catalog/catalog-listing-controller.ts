@@ -407,6 +407,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       const sizeHelpLink = target.closest('.catalogue-new-size-help-link[data-action="size-help"]')
       if (sizeHelpLink) {
         event.preventDefault()
+        window.dispatchEvent(new CustomEvent('catalogue:size-help-request'))
         return
       }
       const chip = target.closest('.catalogue-new-chip') as HTMLElement | null

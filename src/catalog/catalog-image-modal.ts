@@ -203,7 +203,7 @@ export function initCatalogImageModal(
 ): void {
   let activeModalProductSlug = ''
   let activeModalProductTitle = ''
-  let contactEntry: 'preview' | 'favourites' | null = null
+  let contactEntry: 'preview' | 'favourites' | 'size-help' | null = null
   let pendingContactSlugs: string[] = []
 
   const clearModalSpecs = (): void => {
@@ -251,6 +251,16 @@ export function initCatalogImageModal(
     })
   }
 
+  const setPositionsSectionVisible = (visible: boolean): void => {
+    const positionsHead = elements.positionsCount.closest<HTMLElement>('.catalogue-new-image-modal-positions-head')
+    const positionsRule = positionsHead?.previousElementSibling
+    if (positionsRule instanceof HTMLElement && positionsRule.classList.contains('catalogue-new-image-modal-positions-rule')) {
+      positionsRule.hidden = !visible
+    }
+    if (positionsHead) positionsHead.hidden = !visible
+    elements.positionsList.hidden = !visible
+  }
+
   const setContactViewVisible = (visible: boolean): void => {
     elements.dialog.classList.toggle('is-contact-view', visible)
     elements.contactRoot.hidden = !visible
@@ -261,8 +271,12 @@ export function initCatalogImageModal(
       elements.contactBackBtn.hidden = contactEntry !== 'preview'
     }
     if (visible) {
-      const n = pendingContactSlugs.length
-      elements.contactHeading.textContent = n === 1 ? 'Связаться по позиции' : 'Связаться по позициям'
+      if (contactEntry === 'size-help') {
+        elements.contactHeading.textContent = 'Нужен другой размер?'
+      } else {
+        const n = pendingContactSlugs.length
+        elements.contactHeading.textContent = n === 1 ? 'Связаться по позиции' : 'Связаться по позициям'
+      }
     }
   }
 
@@ -357,7 +371,24 @@ export function initCatalogImageModal(
     pendingContactSlugs = unique
     contactEntry = entry
     resetContactForm()
+    setPositionsSectionVisible(true)
     renderPositionsList()
+    const wasHidden = elements.modal.hasAttribute('hidden')
+    setContactViewVisible(true)
+    elements.modal.removeAttribute('hidden')
+    if (wasHidden) {
+      options.lockScroll?.()
+      document.body.classList.add('modal-open')
+    }
+  }
+
+  const openSizeHelpContactView = (): void => {
+    pendingContactSlugs = []
+    contactEntry = 'size-help'
+    resetContactForm()
+    elements.positionsList.replaceChildren()
+    elements.positionsCount.textContent = '0'
+    setPositionsSectionVisible(false)
     const wasHidden = elements.modal.hasAttribute('hidden')
     setContactViewVisible(true)
     elements.modal.removeAttribute('hidden')
@@ -386,6 +417,7 @@ export function initCatalogImageModal(
     activeModalProductTitle = ''
     contactEntry = null
     pendingContactSlugs = []
+    setPositionsSectionVisible(true)
     setContactViewVisible(false)
     elements.previewRoot.hidden = false
     elements.contactRoot.hidden = true
@@ -482,8 +514,9 @@ export function initCatalogImageModal(
     })
 
     const commentParts = [
+      contactEntry === 'size-help' && 'Запрос: нужен размер, которого нет в списке фильтра.',
       message && `Сообщение:\n${message}`,
-      `Интересующие позиции (${positionTitles.length}):\n${positionTitles.join('\n')}`,
+      positionTitles.length > 0 && `Интересующие позиции (${positionTitles.length}):\n${positionTitles.join('\n')}`,
     ].filter(Boolean)
 
     const payload = {
@@ -584,6 +617,8 @@ export function initCatalogImageModal(
     openContactView(slugs, 'favourites')
   }
   window.addEventListener('catalogue:contact-manager', onContactManager as EventListener)
+
+  window.addEventListener('catalogue:size-help-request', openSizeHelpContactView)
 
   elements.cardsRoot.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return
