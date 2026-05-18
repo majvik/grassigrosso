@@ -172,7 +172,8 @@ export function initCommercialOfferModal({ lockScroll, unlockScroll }) {
       showCONotification(commercialOfferForm, 'Не удалось отправить заявку. Проверьте подключение к интернету.', 'error')
     } finally {
       if (submitBtn) {
-        submitBtn.disabled = false
+        const privacyCheck = commercialOfferForm.querySelector('#co-privacy')
+        submitBtn.disabled = Boolean(privacyCheck && !privacyCheck.checked)
         submitBtn.textContent = originalText
       }
     }

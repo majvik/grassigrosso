@@ -100,8 +100,9 @@ function validateForm(form) {
 
   const privacyCheckbox = form.querySelector('#privacy')
   if (privacyCheckbox && !privacyCheckbox.checked) {
-    const submitBtn = form.querySelector('button[type="submit"]')
-    showNotification('Необходимо согласие на обработку персональных данных', 'error', submitBtn)
+    window.dispatchEvent(new CustomEvent('app:toast', {
+      detail: { message: 'Согласитесь на обработку данных', tone: 'warning' },
+    }))
     isValid = false
   }
 
@@ -226,7 +227,7 @@ export function initContactForms() {
         )
       } finally {
         if (submitBtn) {
-          submitBtn.disabled = false
+          submitBtn.disabled = Boolean(form.querySelector('#privacy') && !form.querySelector('#privacy')?.checked)
           submitBtn.textContent = originalText
         }
       }

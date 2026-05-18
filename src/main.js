@@ -13,6 +13,7 @@ import { initCommercialOfferModal } from './commercial-offer'
 import { initCollectionsSlider } from './collections-slider'
 import { initContactForms } from './contact-forms'
 import { initContactsMaps } from './contacts-maps'
+import { initPrivacyConsentGuards } from './privacy-consent'
 import { initGeographyEffects } from './geography-effects'
 import {
   applyWidowFix,
@@ -55,6 +56,7 @@ function initApp() {
   initTestimonialsSlider()
   initPageLayout()
   initContactsMaps()
+  initPrivacyConsentGuards()
   initContactForms()
   initDealersPackagePreset()
   initResourceModals({ lockScroll, unlockScroll, ensureVideoSource })

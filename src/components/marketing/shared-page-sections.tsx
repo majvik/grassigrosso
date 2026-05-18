@@ -53,7 +53,7 @@ interface FaqSectionProps {
 function PrivacyCheckbox() {
   return (
     <div className="form-checkbox">
-      <input type="checkbox" id="privacy" defaultChecked />
+      <input type="checkbox" id="privacy" name="privacy" />
       <label htmlFor="privacy">
         <span className="checkbox-custom">
           <svg
@@ -142,7 +142,7 @@ export function ContactSection({
             ))}
             <div className="form-submit-group">
               <PrivacyCheckbox />
-              <button type="submit" className="btn-primary">
+              <button type="submit" className="btn-primary" disabled>
                 {submitLabel}
               </button>
             </div>

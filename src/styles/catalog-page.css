@@ -519,8 +519,8 @@
 .catalogue-new-size-select-menu {
   --catalogue-new-size-option-height: 44px;
   --catalogue-new-size-scrollbar-size: 0px;
-  --catalogue-new-filter-scrollbar-thumb: rgba(61, 78, 72, 0.55);
-  --catalogue-new-filter-scrollbar-thumb-hover: rgba(40, 62, 55, 0.72);
+  --catalogue-new-filter-scrollbar-thumb: rgba(0, 0, 0, 0.35);
+  --catalogue-new-filter-scrollbar-thumb-hover: rgba(0, 0, 0, 0.5);
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
@@ -1705,8 +1705,8 @@ html.catalogue-shared-favourites-view .catalogue-new-card .catalogue-new-meta-li
 }
 
 .catalogue-new-image-modal {
-  --catalogue-new-filter-scrollbar-thumb: rgba(61, 78, 72, 0.55);
-  --catalogue-new-filter-scrollbar-thumb-hover: rgba(40, 62, 55, 0.72);
+  --catalogue-new-filter-scrollbar-thumb: rgba(0, 0, 0, 0.35);
+  --catalogue-new-filter-scrollbar-thumb-hover: rgba(0, 0, 0, 0.5);
   position: fixed;
   inset: 0;
   z-index: var(--z-modal);

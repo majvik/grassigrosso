@@ -130,8 +130,9 @@ function validateCatalogImageContactForm(form: HTMLFormElement): boolean {
 
   const privacy = form.querySelector<HTMLInputElement>('#cim-privacy')
   if (privacy && !privacy.checked) {
-    const submitBtn = form.querySelector('button[type="submit"]')
-    showFormNotification(form, 'Необходимо согласие на обработку персональных данных', 'error', submitBtn)
+    window.dispatchEvent(new CustomEvent('app:toast', {
+      detail: { message: 'Согласитесь на обработку данных', tone: 'warning' },
+    }))
     ok = false
   }
 
@@ -389,7 +390,7 @@ export function initCatalogImageModal(
   const resetContactForm = (options?: { preserveNotifications?: boolean }): void => {
     elements.contactForm.reset()
     const privacy = elements.contactForm.querySelector<HTMLInputElement>('#cim-privacy')
-    if (privacy) privacy.checked = true
+    if (privacy) privacy.checked = false
     clearFormErrors(elements.contactForm)
     if (!options?.preserveNotifications) {
       elements.contactForm.querySelectorAll('.form-notification').forEach((n) => n.remove())
@@ -620,7 +621,8 @@ export function initCatalogImageModal(
       )
     } finally {
       if (submitBtn) {
-        submitBtn.disabled = false
+        const privacy = elements.contactForm.querySelector<HTMLInputElement>('#cim-privacy')
+        submitBtn.disabled = Boolean(privacy && !privacy.checked)
         submitBtn.textContent = originalText || 'Отправить'
       }
     }

@@ -102,7 +102,8 @@ async function submitLead({ payload, submitBtn, onSuccess, errorContainer, succe
     )
   } finally {
     if (submitBtn) {
-      submitBtn.disabled = false
+      const privacyCheck = submitBtn.closest('form')?.querySelector('input[type="checkbox"][name="privacy"]')
+      submitBtn.disabled = Boolean(privacyCheck && !privacyCheck.checked)
       submitBtn.textContent = originalText
     }
   }
