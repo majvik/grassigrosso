@@ -18,6 +18,7 @@ import {
   applyAvailableFilterOptions,
   renderCatalogueFilterGroups as renderCatalogueFilterGroupsInto,
   syncCatalogFilterDependencies,
+  syncCatalogZeroResultsHint,
   syncCatalogueFilterUi,
 } from './catalog-filter-dom'
 import {
@@ -56,6 +57,18 @@ import {
 } from './catalog-share'
 
 const CATALOGUE_PAGE_SIZE = 6
+const ZERO_RESULTS_FILTER_GROUPS = [
+  'collection',
+  'size',
+  'firmness',
+  'type',
+  'loadRange',
+  'heightRange',
+  'fillings',
+  'features',
+] as const
+
+type ZeroResultsFilterGroup = typeof ZERO_RESULTS_FILTER_GROUPS[number]
 
 interface ScrollOptions {
   lockScroll?: () => void
@@ -132,6 +145,13 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   infiniteSentinel.className = 'catalogue-new-infinite-sentinel'
   infiniteSentinel.setAttribute('aria-hidden', 'true')
   catalogueNewCardsRoot.insertAdjacentElement('afterend', infiniteSentinel)
+  const emptyStateEl = documentRef.createElement('div')
+  emptyStateEl.className = 'catalogue-new-empty-state'
+  emptyStateEl.hidden = true
+  emptyStateEl.innerHTML =
+    '<img src="/icons/catalog-empty-monogram.png" alt="" aria-hidden="true" />' +
+    '<p>Выбрано слишком много фильтров.<br />Сбросьте некоторые для обновления выдачи.</p>'
+  catalogueNewCardsRoot.insertAdjacentElement('afterend', emptyStateEl)
   const state: CatalogFilterState = {
     collection: new Set<string>(),
     firmness: new Set<string>(),
@@ -230,6 +250,54 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   function updateResultsCount() {
     if (!catalogueNewResultsValue) return
     catalogueNewResultsValue.textContent = String(matchedCards.length)
+  }
+
+  function cloneFilterState(source: CatalogFilterState): CatalogFilterState {
+    return {
+      collection: new Set(source.collection),
+      firmness: new Set(source.firmness),
+      type: new Set(source.type),
+      size: new Set(source.size),
+      loadRange: new Set(source.loadRange),
+      heightRange: new Set(source.heightRange),
+      fillings: new Set(source.fillings),
+      features: new Set(source.features),
+      sort: source.sort,
+      favouritesOnly: source.favouritesOnly,
+    }
+  }
+
+  function clearFilterGroup(target: CatalogFilterState, group: ZeroResultsFilterGroup): void {
+    target[group].clear()
+  }
+
+  function hasActiveFilterGroup(group: ZeroResultsFilterGroup): boolean {
+    return state[group].size > 0
+  }
+
+  function countMatchesWithState(candidateState: CatalogFilterState, favSet: Set<string>): number {
+    let count = 0
+    cardMeta.forEach((meta) => {
+      if (matchesCatalogCardMeta(meta, candidateState, favSet)) count += 1
+    })
+    return count
+  }
+
+  function getBestZeroResultsResetGroup(favSet: Set<string>): string | null {
+    if (isSharedFavouritesView || isSharedProductView || matchedCards.length > 0) return null
+    let bestGroup: ZeroResultsFilterGroup | null = null
+    let bestCount = -1
+    ZERO_RESULTS_FILTER_GROUPS.forEach((group) => {
+      if (!hasActiveFilterGroup(group)) return
+      const candidateState = cloneFilterState(state)
+      clearFilterGroup(candidateState, group)
+      const count = countMatchesWithState(candidateState, favSet)
+      if (count > bestCount) {
+        bestGroup = group
+        bestCount = count
+      }
+    })
+    return bestGroup
   }
 
   function scrollToCatalogueToolbar() {
@@ -412,6 +480,10 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       if (catalogueNewFavouritesShareBtn) catalogueNewFavouritesShareBtn.disabled = matchedCards.length === 0
     }
 
+    const isEmptyNormalCatalogue = !isSharedFavouritesView && !isSharedProductView && matchedCards.length === 0
+    emptyStateEl.hidden = !isEmptyNormalCatalogue
+    cardsRootEl.classList.toggle('is-empty', isEmptyNormalCatalogue)
+    syncCatalogZeroResultsHint(sidebarEl, isEmptyNormalCatalogue ? getBestZeroResultsResetGroup(favSet) : null)
     infiniteSentinel.hidden = isSharedFavouritesView || isSharedProductView || matchedCards.length <= visibleCardsLimit
     updateResultsCount()
     renderSharedProductView()
@@ -449,6 +521,18 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   const runCatalogLoadRangeReset = () => {
     applyCatalogLoadRangeSelect(state, 'all')
     syncUiFromState()
+    visibleCardsLimit = CATALOGUE_PAGE_SIZE
+    applyFilters()
+    scrollToCatalogueToolbar()
+  }
+
+  const runCatalogFilterGroupReset = (groupName: string) => {
+    const group = ZERO_RESULTS_FILTER_GROUPS.find((item) => item === groupName)
+    if (!group) return
+    clearFilterGroup(state, group)
+    syncUiFromState()
+    syncFilterDependencies()
+    sizeSelectController.closeMenus()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
     applyFilters()
     scrollToCatalogueToolbar()
@@ -603,6 +687,16 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     (event) => {
       const target = event.target instanceof Element ? event.target : null
       if (!target) return
+      const zeroResultsHint = target.closest('.catalogue-new-zero-results-hint')
+      if (zeroResultsHint) {
+        const groupEl = zeroResultsHint.closest<HTMLElement>('.catalogue-new-filter-group[data-filter-group]')
+        const groupName = String(groupEl?.dataset.filterGroup || '')
+        event.preventDefault()
+        event.stopPropagation()
+        event.stopImmediatePropagation()
+        runCatalogFilterGroupReset(groupName)
+        return
+      }
       const loadRangeResetMark = target.closest('[data-action="load-range-reset"]')
       if (loadRangeResetMark) {
         event.preventDefault()

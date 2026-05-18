@@ -250,6 +250,28 @@ function syncCatalogFilterAccordionBadges(root: Element, state: CatalogFilterSta
   })
 }
 
+const zeroResultsHintIcon =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">' +
+  '<path d="M12 3L10.3536 4.64645C10.1583 4.84171 10.1583 5.15829 10.3536 5.35355L12 7" stroke="#D22630" stroke-width="1.5" stroke-linecap="round"/>' +
+  '<path d="M11.4087 5.02502C12.7882 4.90807 14.1715 5.20283 15.3835 5.87202C16.5955 6.5412 17.5818 7.55476 18.2178 8.78452C18.8537 10.0143 19.1107 11.405 18.9563 12.7808C18.8019 14.1567 18.2429 15.4558 17.3502 16.514C16.4574 17.5721 15.2709 18.3418 13.9407 18.7256C12.6105 19.1094 11.1963 19.0902 9.87705 18.6703C8.55779 18.2504 7.39266 17.4488 6.529 16.3667C5.66535 15.2847 5.14196 13.9708 5.02502 12.5913" stroke="#D22630" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+  '</svg>'
+
+export function syncCatalogZeroResultsHint(root: Element, groupKey: string | null): void {
+  root.querySelectorAll<HTMLElement>('.catalogue-new-filter-group[data-filter-group]').forEach((group) => {
+    let hint = group.querySelector<HTMLElement>('.catalogue-new-zero-results-hint')
+    if (!hint) {
+      hint = document.createElement('span')
+      hint.className = 'catalogue-new-zero-results-hint'
+      hint.setAttribute('aria-hidden', 'true')
+      hint.innerHTML = zeroResultsHintIcon
+      group.querySelector('.catalogue-new-filter-accordion-trigger')?.appendChild(hint)
+    }
+    const isActive = Boolean(groupKey && group.dataset.filterGroup === groupKey)
+    hint.hidden = !isActive
+    group.classList.toggle('is-zero-results-hint', isActive)
+  })
+}
+
 export function syncCatalogueFilterUi(root: Element, state: CatalogFilterState, resolveSizeSelectMenu: ResolveSizeMenu): void {
   const setMultiChipSelection = (groupName: string, targetSet: Set<string>) => {
     root.querySelectorAll<HTMLElement>(`.catalogue-new-chip[data-filter-group="${groupName}"]`).forEach((chip) => {
