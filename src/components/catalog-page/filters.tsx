@@ -111,39 +111,41 @@ function CatalogFilterGroup({ group }: { group: CatalogFilterGroupData }) {
 export function CatalogSidebarFilters() {
   return (
     <aside className="catalogue-new-sidebar" id="catalogue-new-sidebar">
-      <div className="catalogue-new-sidebar-head">
-        <h2 className="catalogue-new-sidebar-title">Фильтры</h2>
-        <button type="button" className="catalogue-new-mobile-filters-close" id="catalogue-new-mobile-filters-close" aria-label="Закрыть фильтры">
-          ×
-        </button>
-        <button type="button" className="catalogue-new-reset">
-          Сбросить
-        </button>
-      </div>
-
-      <div className="catalogue-new-favourites-only-row">
-        <div className="catalogue-new-favourites-only-text">
-          <span className="catalogue-new-favourites-only-label" id="catalogue-new-favourites-only-label">
-            Показывать только{' '}
-            <a href="#catalogue-new-products" className="catalogue-new-favourites-link" id="catalogue-new-favourites-link">
-              избранное
-            </a>
-          </span>
-          <span className="catalogue-new-tag catalogue-new-favourites-only-count" id="catalogue-new-favourites-count" hidden>
-            0
-          </span>
+      <div className="catalogue-new-sidebar-sticky">
+        <div className="catalogue-new-sidebar-head">
+          <h2 className="catalogue-new-sidebar-title">Фильтры</h2>
+          <button type="button" className="catalogue-new-mobile-filters-close" id="catalogue-new-mobile-filters-close" aria-label="Закрыть фильтры">
+            ×
+          </button>
+          <button type="button" className="catalogue-new-reset">
+            Сбросить
+          </button>
         </div>
-        <button
-          type="button"
-          className="catalogue-new-switch"
-          id="catalogue-new-favourites-only-switch"
-          role="switch"
-          aria-checked="false"
-          disabled
-          aria-labelledby="catalogue-new-favourites-only-label"
-        >
-          <span className="catalogue-new-switch-thumb" aria-hidden="true" />
-        </button>
+
+        <div className="catalogue-new-favourites-only-row">
+          <div className="catalogue-new-favourites-only-text">
+            <span className="catalogue-new-favourites-only-label" id="catalogue-new-favourites-only-label">
+              Показывать только{' '}
+              <a href="#catalogue-new-products" className="catalogue-new-favourites-link" id="catalogue-new-favourites-link">
+                избранное
+              </a>
+            </span>
+            <span className="catalogue-new-tag catalogue-new-favourites-only-count" id="catalogue-new-favourites-count" hidden>
+              0
+            </span>
+          </div>
+          <button
+            type="button"
+            className="catalogue-new-switch"
+            id="catalogue-new-favourites-only-switch"
+            role="switch"
+            aria-checked="false"
+            disabled
+            aria-labelledby="catalogue-new-favourites-only-label"
+          >
+            <span className="catalogue-new-switch-thumb" aria-hidden="true" />
+          </button>
+        </div>
       </div>
 
       {CATALOG_FILTER_GROUPS.map((group) => (

@@ -37,8 +37,13 @@ export function initCatalogStickySidebar(
   const stickyTopOffset = 16
   const desktopMedia = window.matchMedia('(min-width: 1025px)')
 
+  const syncSidebarInternalScrollState = (): void => {
+    sidebar.classList.toggle('is-filter-scrolled', sidebar.scrollTop > 0)
+  }
+
   const syncStickySidebar = (): void => {
     const isDesktop = desktopMedia.matches
+    syncSidebarInternalScrollState()
     if (!isDesktop) {
       placeholder.classList.remove('is-active')
       placeholder.style.height = ''
@@ -89,6 +94,7 @@ export function initCatalogStickySidebar(
 
   scheduleSync()
   window.addEventListener('scroll', scheduleSync, { passive: true })
+  sidebar.addEventListener('scroll', syncSidebarInternalScrollState, { passive: true })
   window.addEventListener('resize', scheduleSync)
   desktopMedia.addEventListener('change', scheduleSync)
 
