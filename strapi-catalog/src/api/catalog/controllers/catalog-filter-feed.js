@@ -4,21 +4,6 @@ const { preferAvifVariant } = require('../utils/prefer-avif');
 
 module.exports = {
   async index(ctx) {
-    // Синхронно с src/catalog/catalog-sizes.ts
-    const STANDARD_MATTRESS_SIZE_SLUGS = new Set([
-      '80x190',
-      '80x200',
-      '90x190',
-      '90x200',
-      '120x190',
-      '120x200',
-      '140x190',
-      '140x200',
-      '160x190',
-      '180x190',
-      '160x200',
-      '180x200',
-    ])
     const normalizeRows = (rows) => (Array.isArray(rows) ? rows : [])
       .map((row) => ({
         slug: String(row?.slug || '').trim(),
@@ -92,7 +77,7 @@ module.exports = {
     ctx.body = {
       groups: {
         collection: normalizeRows(collections),
-        size: normalizeRows(sizes).filter((row) => STANDARD_MATTRESS_SIZE_SLUGS.has(row.slug)),
+        size: normalizeRows(sizes),
         firmness: normalizeRows(firmness),
         type: normalizeRows(type),
         loadRange: normalizeRows(loadRange),

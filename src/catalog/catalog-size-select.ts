@@ -151,10 +151,11 @@ export function initCatalogSizeSelect(
     const viewportPadding = 8
     const nextLeft = Math.max(viewportPadding, Math.round(rect.left))
     const nextTop = Math.max(viewportPadding, Math.round(rect.bottom + 6))
+    const availableHeight = Math.max(120, Math.floor(window.innerHeight - nextTop - viewportPadding))
     activeSizeSelectMenu.style.left = `${nextLeft}px`
     activeSizeSelectMenu.style.top = `${nextTop}px`
     activeSizeSelectMenu.style.setProperty('--catalogue-new-size-menu-width', `${Math.round(rect.width)}px`)
-    activeSizeSelectMenu.style.setProperty('--catalogue-new-size-menu-max-height', 'calc(var(--catalogue-new-size-option-height) * 8)')
+    activeSizeSelectMenu.style.setProperty('--catalogue-new-size-menu-max-height', `${availableHeight}px`)
   }
 
   const applySizeSelectOption = (option: Element | null): boolean => {

@@ -9,26 +9,31 @@ import {
 } from './catalog-filtering'
 import {
   STANDARD_MATTRESS_SIZES,
-  STANDARD_MATTRESS_SIZE_SET,
   normalizeCatalogSizeValue,
 } from './catalog-sizes'
 
 /**
- * Меню размеров всегда = канон из кода (никогда не подмешиваем «лишнее» из Strapi и не опускаем slug,
- * которого ещё нет ни на одной карточке — иначе после syncFilterOptionsFromCards пункт скрывался бы).
- * Подписи подтягиваем из API, если slug совпал.
+ * Strapi — источник истины для размеров. Кодовый список нужен только как fallback,
+ * если feed справочников недоступен.
  */
 function mergeSizeOptionsWithStandard(apiOptions: unknown): NormalizedCatalogFilterOption[] {
   const normalized = normalizeCatalogFilterOptions(apiOptions)
-  const labelBySlug = new Map<string, string>()
-  for (const row of normalized) {
-    const slug = normalizeCatalogSizeValue(row.value) || String(row.value || '').trim()
-    if (!slug || !STANDARD_MATTRESS_SIZE_SET.has(slug)) continue
-    if (row.label) labelBySlug.set(slug, row.label)
-  }
+  const apiSizeOptions = normalized
+    .map((row, i) => {
+      const slug = normalizeCatalogSizeValue(row.value) || normalizeCatalogSizeValue(row.label)
+      if (!slug) return null
+      return {
+        value: slug,
+        label: row.label || slug.replace('x', ' × '),
+        sortOrder: Number.isFinite(row.sortOrder) ? row.sortOrder : i,
+      }
+    })
+    .filter((row): row is NormalizedCatalogFilterOption => Boolean(row))
+  if (apiSizeOptions.length) return apiSizeOptions
+
   return STANDARD_MATTRESS_SIZES.map((slug, i) => ({
     value: slug,
-    label: labelBySlug.get(slug) ?? slug.replace('x', ' × '),
+    label: slug.replace('x', ' × '),
     sortOrder: i,
   }))
 }

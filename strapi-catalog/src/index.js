@@ -48,17 +48,11 @@ module.exports = {
 
     // Синхронно с src/catalog/catalog-sizes.ts (порядок важен для sort_order).
     const standardSizes = [
-      '80 × 190',
-      '80 × 200',
-      '90 × 190',
-      '90 × 200',
-      '120 × 190',
-      '120 × 200',
       '140 × 190',
       '140 × 200',
       '160 × 190',
-      '180 × 190',
       '160 × 200',
+      '180 × 190',
       '180 × 200',
     ];
 
@@ -70,13 +64,29 @@ module.exports = {
       standardSizes.map((name) => ({ name, slug: name.replace(/\s*×\s*/g, 'x') }))
     );
     const existingSizes = await sizeRepo.findMany({ orderBy: [{ id: 'asc' }] });
-    const obsoleteSizeSlugs = existingSizes
-      .map((row) => String(row.slug || '').trim())
-      .filter((slug) => slug && !allowedSlugs.has(slug));
-    if (obsoleteSizeSlugs.length) {
-      strapi.log.warn(
-        `Catalog bootstrap: obsolete mattress-size rows remain in DB and are ignored by storefront feed: ${obsoleteSizeSlugs.join(', ')}`
-      );
+    const cleanupKey = 'catalog.mattress-size.current-list-cleanup.v1';
+    const coreStore = strapi.db.connection('strapi_core_store_settings');
+    const cleanupDone = await coreStore.where({ key: cleanupKey }).first();
+    if (!cleanupDone) {
+      const previousSeedSizeSlugs = new Set(['80x190', '80x200', '90x190', '90x200', '120x190', '120x200']);
+      const obsoleteSizeSlugs = existingSizes
+        .map((row) => ({ id: row.id, slug: String(row.slug || '').trim() }))
+        .filter((row) => row.slug && previousSeedSizeSlugs.has(row.slug) && !allowedSlugs.has(row.slug));
+      for (const row of obsoleteSizeSlugs) {
+        await sizeRepo.delete({ where: { id: row.id } });
+      }
+      await coreStore.insert({
+        key: cleanupKey,
+        value: JSON.stringify({ completedAt: new Date().toISOString() }),
+        type: 'object',
+        environment: '',
+        tag: '',
+      });
+      if (obsoleteSizeSlugs.length) {
+        strapi.log.info(
+          `Catalog bootstrap: removed previous seed mattress-size rows: ${obsoleteSizeSlugs.map((row) => row.slug).join(', ')}`
+        );
+      }
     }
 
     const standardFeatures = [

@@ -1,7 +1,6 @@
 import type { CatalogCardMeta } from './catalog-filtering'
 import {
   STANDARD_MATTRESS_SIZES,
-  STANDARD_MATTRESS_SIZE_SET,
   buildStandardMattressSizesFromLegacy,
   normalizeCatalogSizeValue,
 } from './catalog-sizes'
@@ -17,7 +16,7 @@ function parseSizesToSet(value: unknown): Set<string> {
   return new Set(
     parseCsvDataset(value)
       .map(normalizeCatalogSizeValue)
-      .filter((size) => STANDARD_MATTRESS_SIZE_SET.has(size)),
+      .filter(Boolean),
   )
 }
 

@@ -22,26 +22,11 @@ module.exports = {
       if (!match) return ''
       return `${match[1]}x${match[2]}`
     }
-    // Синхронно с src/catalog/catalog-sizes.ts
-    const STANDARD_MATTRESS_SIZE_SLUGS = new Set([
-      '80x190',
-      '80x200',
-      '90x190',
-      '90x200',
-      '120x190',
-      '120x200',
-      '140x190',
-      '140x200',
-      '160x190',
-      '180x190',
-      '160x200',
-      '180x200',
-    ])
-    const filterToStandardSizes = (list) => {
+    const filterToAllowedSizes = (list, allowedSizeSlugs) => {
       const out = []
       for (const slug of list) {
         const s = normalizeSizeValue(slug)
-        if (s && STANDARD_MATTRESS_SIZE_SLUGS.has(s)) out.push(s)
+        if (s && allowedSizeSlugs.has(s)) out.push(s)
       }
       return [...new Set(out)]
     }
@@ -118,22 +103,32 @@ module.exports = {
       return dict[raw] || raw
     }
 
-    const rows = await strapi.db.query('api::product.product').findMany({
-      where: { is_active: true },
-      populate: {
-        collection: true,
-        tags: true,
-        media: true,
-        features: true,
-        sizes: true,
-        firmness_option: true,
-        mattress_type_option: true,
-        load_range_option: true,
-        height_range_option: true,
-        filling_options: true,
-      },
-      orderBy: [{ sort_order: 'asc' }, { id: 'asc' }]
-    });
+    const [rows, mattressSizeRows] = await Promise.all([
+      strapi.db.query('api::product.product').findMany({
+        where: { is_active: true },
+        populate: {
+          collection: true,
+          tags: true,
+          media: true,
+          features: true,
+          sizes: true,
+          firmness_option: true,
+          mattress_type_option: true,
+          load_range_option: true,
+          height_range_option: true,
+          filling_options: true,
+        },
+        orderBy: [{ sort_order: 'asc' }, { id: 'asc' }]
+      }),
+      strapi.db.query('api::mattress-size.mattress-size').findMany({
+        orderBy: [{ sort_order: 'asc' }, { id: 'asc' }],
+      }),
+    ]);
+    const allowedSizeSlugs = new Set(
+      (Array.isArray(mattressSizeRows) ? mattressSizeRows : [])
+        .map((row) => normalizeSizeValue(row?.slug || row?.name || ''))
+        .filter(Boolean),
+    )
 
     const normalizeFeatures = (value) => {
       const rows = Array.isArray(value) ? value : []
@@ -159,8 +154,7 @@ module.exports = {
       widths.forEach((width) => {
         lengths.forEach((length) => {
           const size = normalizeSizeValue(`${width}x${length}`)
-          const mapped = mapObsoleteMattressSizeSlug(size)
-          if (mapped && STANDARD_MATTRESS_SIZE_SLUGS.has(mapped)) result.push(mapped)
+          if (size && allowedSizeSlugs.has(size)) result.push(size)
         })
       })
       return [...new Set(result)]
@@ -182,13 +176,14 @@ module.exports = {
       heightRange: row.height_range_option?.slug || mapHeightRange(row.height_range || ''),
       sizes: (() => {
         const relationSizes = Array.isArray(row.sizes)
-          ? filterToStandardSizes(
+          ? filterToAllowedSizes(
             row.sizes.map((sizeRow) =>
               normalizeSizeValue(sizeRow?.name || sizeRow?.slug || ''),
             ),
+            allowedSizeSlugs,
           )
           : []
-        const legacy = filterToStandardSizes(buildSizesFromLegacy(row))
+        const legacy = filterToAllowedSizes(buildSizesFromLegacy(row), allowedSizeSlugs)
         const merged = [...new Set([...relationSizes, ...legacy])]
         if (merged.length) return merged
         if (legacy.length) return legacy
