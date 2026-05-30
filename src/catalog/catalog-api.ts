@@ -24,7 +24,9 @@ export type CatalogFilterHelpEntry = {
   segments: CatalogFilterHelpSegment[]
 }
 
-export type CatalogFilterHelp = Partial<Record<CatalogFilterGroupKey, CatalogFilterHelpEntry>>
+export type CatalogFilterHelpKey = CatalogFilterGroupKey | 'favouritesShare' | 'productShare'
+
+export type CatalogFilterHelp = Partial<Record<CatalogFilterHelpKey, CatalogFilterHelpEntry>>
 
 export type CatalogFiltersPayload = {
   groups: CatalogFilterGroups

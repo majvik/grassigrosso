@@ -455,6 +455,8 @@ export interface ApiCatalogFilterHelpCatalogFilterHelp
         'heightRange',
         'fillings',
         'features',
+        'favouritesShare',
+        'productShare',
       ]
     > &
       Schema.Attribute.Required &

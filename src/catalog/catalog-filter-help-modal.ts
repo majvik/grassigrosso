@@ -1,4 +1,4 @@
-import type { CatalogFilterGroupKey, CatalogFilterHelp, CatalogFilterHelpEntry } from './catalog-api'
+import type { CatalogFilterHelp, CatalogFilterHelpEntry, CatalogFilterHelpKey } from './catalog-api'
 
 export type CatalogFilterHelpModalElements = {
   modal: HTMLElement
@@ -13,7 +13,7 @@ export type CatalogFilterHelpModalOptions = {
   unlockScroll?: () => void
 }
 
-const FILTER_HELP_KEYS: CatalogFilterGroupKey[] = [
+const FILTER_HELP_KEYS: CatalogFilterHelpKey[] = [
   'collection',
   'size',
   'firmness',
@@ -22,7 +22,15 @@ const FILTER_HELP_KEYS: CatalogFilterGroupKey[] = [
   'heightRange',
   'fillings',
   'features',
+  'favouritesShare',
+  'productShare',
 ]
+
+const FAVOURITES_SHARE_HELP_TEXT =
+  'Вы можете отправить эту ссылку менеджеру или своему другу — так будет легче согласовать нужные позиции из каталога.'
+
+const PRODUCT_SHARE_HELP_TEXT =
+  'Вы можете отправить ссылку на эту позицию менеджеру или коллеге — так проще обсудить модель и параметры до заказа.'
 
 const DEFAULT_LOREM_P1 =
   'Этот абзац — временный текст для проверки вёрстки модального окна. Редактор заменит его в Strapi на пояснение, как выбрать значение фильтра в каталоге.'
@@ -62,6 +70,14 @@ const DEFAULT_FILTER_HELP: CatalogFilterHelp = {
   features: {
     modalTitle: 'Как выбрать особенности',
     segments: [{ text: DEFAULT_LOREM_P1 }, { text: DEFAULT_LOREM_P2 }],
+  },
+  favouritesShare: {
+    modalTitle: 'Ссылка на подборку',
+    segments: [{ text: FAVOURITES_SHARE_HELP_TEXT }],
+  },
+  productShare: {
+    modalTitle: 'Ссылка на позицию',
+    segments: [{ text: PRODUCT_SHARE_HELP_TEXT }],
   },
 }
 
@@ -135,7 +151,7 @@ export function initCatalogFilterHelpModal(
     document.body.classList.remove('modal-open')
   }
 
-  const open = (key: CatalogFilterGroupKey): void => {
+  const open = (key: CatalogFilterHelpKey): void => {
     const entry = mergedHelpState[key]
     if (!entry) return
     elements.title.textContent = entry.modalTitle
@@ -145,14 +161,16 @@ export function initCatalogFilterHelpModal(
     document.body.classList.add('modal-open')
   }
 
-  root.querySelectorAll<HTMLElement>('[data-filter-help-open]').forEach((btn) => {
-    btn.addEventListener('click', (event) => {
-      event.preventDefault()
-      event.stopPropagation()
-      const key = String(btn.dataset.filterHelpOpen || '').trim() as CatalogFilterGroupKey
-      if (!FILTER_HELP_KEYS.includes(key)) return
-      open(key)
-    })
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null
+    if (!target) return
+    const btn = target.closest<HTMLElement>('[data-filter-help-open]')
+    if (!btn) return
+    event.preventDefault()
+    event.stopPropagation()
+    const key = String(btn.dataset.filterHelpOpen || '').trim() as CatalogFilterHelpKey
+    if (!FILTER_HELP_KEYS.includes(key)) return
+    open(key)
   })
 
   elements.overlay.addEventListener('click', close)

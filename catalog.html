@@ -676,11 +676,29 @@
           </div>
           <div class="catalogue-new-favourites-actions" id="catalogue-new-favourites-actions" hidden>
             <button type="button" class="catalogue-new-manager-contact-btn" id="catalogue-new-favourites-contact" disabled>Связаться с менеджером по позициям</button>
-            <button type="button" class="catalogue-new-share-btn" id="catalogue-new-favourites-share" aria-label="Поделиться избранным" disabled>
-              <img class="catalogue-new-share-icon--default" src="/icons/share-default.svg" alt="" aria-hidden="true" />
-              <img class="catalogue-new-share-icon--hover" src="/icons/share-hover.svg" alt="" aria-hidden="true" />
-              <span class="catalogue-new-share-label">Поделиться</span>
-            </button>
+            <div class="catalogue-new-favourites-share-cluster">
+              <button type="button" class="catalogue-new-favourites-share-link-btn" id="catalogue-new-favourites-share" aria-label="Скопировать ссылку" disabled>
+                <span class="catalogue-new-favourites-share-link-label">Скопировать ссылку</span>
+                <span class="catalogue-new-favourites-share-link-icon" aria-hidden="true">
+                  <img class="catalogue-new-favourites-share-icon--default" src="/icons/share-default.svg" alt="" />
+                  <img class="catalogue-new-favourites-share-icon--hover" src="/icons/share-hover.svg" alt="" />
+                </span>
+              </button>
+              <button
+                type="button"
+                class="catalogue-new-favourites-share-help-trigger"
+                data-filter-help-open="favouritesShare"
+                aria-haspopup="dialog"
+                aria-label="Подсказка про ссылку на подборку"
+              >
+                <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"></circle>
+                    <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                  </svg>
+                </span>
+              </button>
+            </div>
           </div>
         </section>
       </div>
@@ -715,16 +733,34 @@
               <div class="catalogue-new-tags" id="catalogueImageModalTags"></div>
             </div>
             <div class="catalogue-new-image-modal-actions">
-              <button type="button" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" id="catalogueImageModalContactBtn">Связаться с менеджером по позиции</button>
-              <div class="catalogue-new-image-modal-side-actions">
-                <button type="button" class="catalogue-new-image-modal-share" id="catalogueImageModalShareBtn" aria-label="Поделиться">
-                  <img class="catalogue-new-image-modal-share-icon--default" src="/icons/share-default.svg" alt="" aria-hidden="true" />
-                  <img class="catalogue-new-image-modal-share-icon--hover" src="/icons/share-hover.svg" alt="" aria-hidden="true" />
-                  <span class="catalogue-new-image-modal-share-label">Поделиться</span>
-                </button>
+              <div class="catalogue-new-image-modal-actions-row">
+                <button type="button" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" id="catalogueImageModalContactBtn">Связаться с менеджером по позиции</button>
                 <button type="button" class="catalogue-new-image-modal-favourite" id="catalogueImageModalFavouriteBtn" aria-pressed="false" aria-label="Добавить в избранное">
                   <img class="catalogue-new-image-modal-favourite-icon--empty" src="/icons/favourite-empty.svg" alt="" aria-hidden="true" />
                   <img class="catalogue-new-image-modal-favourite-icon--full" src="/icons/favourite-full.svg" alt="" aria-hidden="true" />
+                </button>
+              </div>
+              <div class="catalogue-new-favourites-share-cluster catalogue-new-image-modal-share-row">
+                <button type="button" class="catalogue-new-favourites-share-link-btn" id="catalogueImageModalShareBtn" aria-label="Скопировать ссылку">
+                  <span class="catalogue-new-favourites-share-link-label">Скопировать ссылку</span>
+                  <span class="catalogue-new-favourites-share-link-icon" aria-hidden="true">
+                    <img class="catalogue-new-favourites-share-icon--default" src="/icons/share-default.svg" alt="" />
+                    <img class="catalogue-new-favourites-share-icon--hover" src="/icons/share-hover.svg" alt="" />
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  class="catalogue-new-favourites-share-help-trigger"
+                  data-filter-help-open="productShare"
+                  aria-haspopup="dialog"
+                  aria-label="Подсказка про ссылку на позицию"
+                >
+                  <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"></circle>
+                      <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    </svg>
+                  </span>
                 </button>
               </div>
             </div>

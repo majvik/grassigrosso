@@ -1,4 +1,4 @@
-import { GridViewIcon, ListViewIcon } from '@/components/catalog-page/icons'
+import { GridViewIcon, HelpIcon, ListViewIcon } from '@/components/catalog-page/icons'
 import { CATALOG_SORT_OPTIONS } from '@/components/pages/catalog-page-data'
 
 export function CatalogToolbar() {
@@ -75,11 +75,32 @@ export function CatalogFavouritesActions() {
       <button type="button" className="catalogue-new-manager-contact-btn" id="catalogue-new-favourites-contact" disabled>
         Связаться с менеджером по позициям
       </button>
-      <button type="button" className="catalogue-new-share-btn" id="catalogue-new-favourites-share" aria-label="Поделиться избранным" disabled>
-        <img className="catalogue-new-share-icon--default" src="/icons/share-default.svg" alt="" aria-hidden="true" />
-        <img className="catalogue-new-share-icon--hover" src="/icons/share-hover.svg" alt="" aria-hidden="true" />
-        <span className="catalogue-new-share-label">Поделиться</span>
-      </button>
+      <div className="catalogue-new-favourites-share-cluster">
+        <button
+          type="button"
+          className="catalogue-new-favourites-share-link-btn"
+          id="catalogue-new-favourites-share"
+          aria-label="Скопировать ссылку"
+          disabled
+        >
+          <span className="catalogue-new-favourites-share-link-label">Скопировать ссылку</span>
+          <span className="catalogue-new-favourites-share-link-icon" aria-hidden="true">
+            <img className="catalogue-new-favourites-share-icon--default" src="/icons/share-default.svg" alt="" />
+            <img className="catalogue-new-favourites-share-icon--hover" src="/icons/share-hover.svg" alt="" />
+          </span>
+        </button>
+        <button
+          type="button"
+          className="catalogue-new-favourites-share-help-trigger"
+          data-filter-help-open="favouritesShare"
+          aria-haspopup="dialog"
+          aria-label="Подсказка про ссылку на подборку"
+        >
+          <span className="catalogue-new-filter-help-icon" aria-hidden="true">
+            <HelpIcon />
+          </span>
+        </button>
+      </div>
     </div>
   )
 }

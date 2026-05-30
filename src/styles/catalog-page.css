@@ -2075,6 +2075,38 @@ html.catalogue-shared-favourites-view .catalogue-new-card .catalogue-new-meta-li
   line-height: 1.2;
   color: var(--color-primary);
 }
+/* Модалка на documentElement — дублируем раскладку actions без html[data-page]. */
+#catalogueImageModal .catalogue-new-image-modal-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+#catalogueImageModal .catalogue-new-image-modal-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+#catalogueImageModal .catalogue-new-image-modal-actions-row .catalogue-new-manager-contact-btn {
+  flex: 0 0 auto;
+  width: max-content;
+  max-width: 100%;
+}
+#catalogueImageModal .catalogue-new-image-modal-actions-row .catalogue-new-image-modal-favourite {
+  flex-shrink: 0;
+}
+#catalogueImageModal .catalogue-new-image-modal-share-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: flex-start;
+  gap: 16px;
+  max-width: 100%;
+}
+
 /* Та же кнопка «Назад», что в избранном; не зависит только от html[data-page="catalog"] (модалка на documentElement). */
 #catalogueImageModal .catalogue-new-favourites-back {
   align-self: flex-start;
@@ -2420,6 +2452,18 @@ html.catalogue-shared-favourites-view .catalogue-new-card .catalogue-new-meta-li
     max-height: none;
     overflow: visible;
     padding: 20px 16px;
+  }
+  #catalogueImageModal .catalogue-new-image-modal-actions-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  #catalogueImageModal .catalogue-new-image-modal-actions-row .catalogue-new-image-modal-favourite {
+    align-self: flex-start;
+  }
+  #catalogueImageModal .catalogue-new-image-modal-share-row {
+    align-self: flex-start;
+    justify-content: flex-start;
   }
 }
 

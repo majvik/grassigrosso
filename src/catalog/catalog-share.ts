@@ -95,6 +95,29 @@ export function copyTextWithToast(text: string): void {
   window.dispatchEvent(new CustomEvent('app:copy-text', { detail: { text } }))
 }
 
+const SHARE_LINK_LABEL_DEFAULT = 'Скопировать ссылку'
+const SHARE_LINK_LABEL_COPIED = 'Скопировано'
+const shareLinkLabelTimers = new WeakMap<HTMLButtonElement, ReturnType<typeof setTimeout>>()
+
+export function flashCatalogShareLinkCopiedLabel(
+  btn: HTMLButtonElement | null,
+  durationMs = 2000,
+): void {
+  if (!btn) return
+  const labelEl = btn.querySelector<HTMLElement>('.catalogue-new-favourites-share-link-label')
+  if (!labelEl) return
+  const previousTimer = shareLinkLabelTimers.get(btn)
+  if (previousTimer) clearTimeout(previousTimer)
+  labelEl.textContent = SHARE_LINK_LABEL_COPIED
+  btn.setAttribute('aria-label', SHARE_LINK_LABEL_COPIED)
+  const timer = window.setTimeout(() => {
+    labelEl.textContent = SHARE_LINK_LABEL_DEFAULT
+    btn.setAttribute('aria-label', SHARE_LINK_LABEL_DEFAULT)
+    shareLinkLabelTimers.delete(btn)
+  }, durationMs)
+  shareLinkLabelTimers.set(btn, timer)
+}
+
 export function showCatalogShareWarningToast(): void {
   window.dispatchEvent(new CustomEvent('app:toast', {
     detail: {

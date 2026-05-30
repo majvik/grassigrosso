@@ -50,6 +50,7 @@ import { setCatalogFilterHelpFromApi } from './catalog-filter-help-modal'
 import {
   buildCatalogFavouritesShareMeta,
   buildCatalogFavouritesShareUrl,
+  flashCatalogShareLinkCopiedLabel,
   buildCatalogProductShareUrl,
   copyTextWithToast,
   readCatalogSharedState,
@@ -417,16 +418,34 @@ export function initCatalogListingController(documentRef: Document, scrollOption
           <div class="catalogue-new-shared-product-specs">${specsHtml}</div>
           ${tagsHtml}
           <div class="catalogue-new-shared-product-actions catalogue-new-image-modal-actions">
-            <button type="button" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" data-shared-product-contact>Связаться с менеджером по позиции</button>
-            <div class="catalogue-new-image-modal-side-actions">
-              <button type="button" class="catalogue-new-image-modal-share" data-shared-product-share aria-label="Поделиться">
-                <img class="catalogue-new-image-modal-share-icon--default" src="/icons/share-default.svg" alt="" aria-hidden="true" />
-                <img class="catalogue-new-image-modal-share-icon--hover" src="/icons/share-hover.svg" alt="" aria-hidden="true" />
-                <span class="catalogue-new-image-modal-share-label">Поделиться</span>
-              </button>
+            <div class="catalogue-new-image-modal-actions-row">
+              <button type="button" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" data-shared-product-contact>Связаться с менеджером по позиции</button>
               <button type="button" class="catalogue-new-image-modal-favourite" data-shared-product-favourite aria-pressed="false" aria-label="Добавить в избранное">
                 <img class="catalogue-new-image-modal-favourite-icon--empty" src="/icons/favourite-empty.svg" alt="" aria-hidden="true" />
                 <img class="catalogue-new-image-modal-favourite-icon--full" src="/icons/favourite-full.svg" alt="" aria-hidden="true" />
+              </button>
+            </div>
+            <div class="catalogue-new-favourites-share-cluster catalogue-new-image-modal-share-row">
+              <button type="button" class="catalogue-new-favourites-share-link-btn" data-shared-product-share aria-label="Скопировать ссылку">
+                <span class="catalogue-new-favourites-share-link-label">Скопировать ссылку</span>
+                <span class="catalogue-new-favourites-share-link-icon" aria-hidden="true">
+                  <img class="catalogue-new-favourites-share-icon--default" src="/icons/share-default.svg" alt="" />
+                  <img class="catalogue-new-favourites-share-icon--hover" src="/icons/share-hover.svg" alt="" />
+                </span>
+              </button>
+              <button
+                type="button"
+                class="catalogue-new-favourites-share-help-trigger"
+                data-filter-help-open="productShare"
+                aria-haspopup="dialog"
+                aria-label="Подсказка про ссылку на позицию"
+              >
+                <span class="catalogue-new-filter-help-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"></circle>
+                    <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                  </svg>
+                </span>
               </button>
             </div>
           </div>
@@ -690,6 +709,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       const fav = getSharedOrLocalFavouriteSlugs()
       if (!fav.length) return
       copyTextWithToast(isSharedFavouritesView ? window.location.href : buildCatalogFavouritesShareUrl(fav))
+      flashCatalogShareLinkCopiedLabel(catalogueNewFavouritesShareBtn)
     })
   }
 
@@ -706,8 +726,10 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       })
       return
     }
-    if (target.closest('[data-shared-product-share]')) {
+    const sharedProductShareBtn = target.closest<HTMLButtonElement>('[data-shared-product-share]')
+    if (sharedProductShareBtn) {
       copyTextWithToast(buildCatalogProductShareUrl(slug))
+      flashCatalogShareLinkCopiedLabel(sharedProductShareBtn)
       return
     }
     const favBtn = target.closest<HTMLButtonElement>('[data-shared-product-favourite]')

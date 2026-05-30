@@ -245,6 +245,8 @@ module.exports = {
         ['heightRange', 'Как выбрать высоту матраса'],
         ['fillings', 'Как выбрать наполнитель'],
         ['features', 'Как выбрать особенности'],
+        ['favouritesShare', 'Ссылка на подборку'],
+        ['productShare', 'Ссылка на позицию'],
       ];
       for (const [filter_key, modal_title] of catalogueFilterHelpSeeds) {
         const existing = await helpRepo.findOne({ where: { filter_key } });

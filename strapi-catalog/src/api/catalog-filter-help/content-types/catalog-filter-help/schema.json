@@ -20,7 +20,9 @@
         "loadRange",
         "heightRange",
         "fillings",
-        "features"
+        "features",
+        "favouritesShare",
+        "productShare"
       ],
       "required": true,
       "unique": true

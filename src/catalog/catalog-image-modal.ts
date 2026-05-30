@@ -1,6 +1,6 @@
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
 import { buildCatalogCardMetaHtmlFromDataset, buildCatalogModalSpecs } from './catalog-modal'
-import { buildCatalogProductShareUrl, copyTextWithToast } from './catalog-share'
+import { buildCatalogProductShareUrl, copyTextWithToast, flashCatalogShareLinkCopiedLabel } from './catalog-share'
 
 const CATALOG_PAGE_NAME = 'Страница "Каталог"'
 
@@ -503,6 +503,7 @@ export function initCatalogImageModal(
   elements.shareBtn.addEventListener('click', () => {
     if (!activeModalProductSlug) return
     copyTextWithToast(buildCatalogProductShareUrl(activeModalProductSlug))
+    flashCatalogShareLinkCopiedLabel(elements.shareBtn)
   })
 
   elements.contactBackBtn.addEventListener('click', () => {
