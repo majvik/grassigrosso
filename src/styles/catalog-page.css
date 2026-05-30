@@ -2078,6 +2078,11 @@ html.catalogue-shared-favourites-view .catalogue-new-card .catalogue-new-meta-li
   flex-direction: column;
   align-items: flex-start;
   gap: 12px;
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid rgba(var(--color-primary-rgb), 0.12);
+  width: 100%;
+  box-sizing: border-box;
 }
 #catalogueImageModal .catalogue-new-image-modal-actions-row {
   display: flex;
@@ -2450,6 +2455,9 @@ html.catalogue-shared-favourites-view .catalogue-new-card .catalogue-new-meta-li
     max-height: none;
     overflow: visible;
     padding: 20px 16px;
+  }
+  #catalogueImageModal .catalogue-new-image-modal-actions {
+    margin-top: 24px;
   }
 }
 

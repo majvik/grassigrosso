@@ -8034,3 +8034,8 @@ html[data-page="catalog"] .catalogue-new-share-label {
   color: var(--color-primary);
 }
 
+@media (max-width: 900px) {
+  html[data-page="catalog"] .catalogue-new-image-modal-actions {
+    margin-top: 24px;
+  }
+}
