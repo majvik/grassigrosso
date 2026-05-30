@@ -150,8 +150,11 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   emptyStateEl.hidden = true
   emptyStateEl.innerHTML =
     '<img src="/icons/catalog-empty-monogram.png" alt="" aria-hidden="true" />' +
-    '<p>Выбрано слишком много фильтров.<br />Сбросьте некоторые для обновления выдачи.</p>'
+    '<p>Выбрано слишком много фильтров.<br />Сбросьте некоторые для обновления выдачи.</p>' +
+    '<button type="button" class="catalogue-new-empty-reset-btn" data-catalog-empty-reset hidden>Сбросить фильтр</button>'
   catalogueNewCardsRoot.insertAdjacentElement('afterend', emptyStateEl)
+  const emptyStateResetBtn = queryElement<HTMLButtonElement>(emptyStateEl, '[data-catalog-empty-reset]')
+  let emptyStateResetClickCount = 0
   const state: CatalogFilterState = {
     collection: new Set<string>(),
     firmness: new Set<string>(),
@@ -298,6 +301,21 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       }
     })
     return bestGroup
+  }
+
+  function syncEmptyStateResetButton(favSet: Set<string>): void {
+    if (!emptyStateResetBtn) return
+    const group = getBestZeroResultsResetGroup(favSet)
+    if (!group) {
+      emptyStateResetBtn.hidden = true
+      emptyStateResetBtn.removeAttribute('data-filter-group')
+      return
+    }
+    emptyStateResetBtn.hidden = false
+    emptyStateResetBtn.dataset.filterGroup = group
+    const label = emptyStateResetClickCount > 0 ? 'Сбросить ещё' : 'Сбросить фильтр'
+    emptyStateResetBtn.textContent = label
+    emptyStateResetBtn.setAttribute('aria-label', label)
   }
 
   function scrollToCatalogueToolbar() {
@@ -481,9 +499,14 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     }
 
     const isEmptyNormalCatalogue = !isSharedFavouritesView && !isSharedProductView && matchedCards.length === 0
+    if (!isEmptyNormalCatalogue) {
+      emptyStateResetClickCount = 0
+    }
     emptyStateEl.hidden = !isEmptyNormalCatalogue
     cardsRootEl.classList.toggle('is-empty', isEmptyNormalCatalogue)
-    syncCatalogZeroResultsHint(sidebarEl, isEmptyNormalCatalogue ? getBestZeroResultsResetGroup(favSet) : null)
+    const zeroResultsResetGroup = isEmptyNormalCatalogue ? getBestZeroResultsResetGroup(favSet) : null
+    syncCatalogZeroResultsHint(sidebarEl, zeroResultsResetGroup)
+    syncEmptyStateResetButton(favSet)
     infiniteSentinel.hidden = isSharedFavouritesView || isSharedProductView || matchedCards.length <= visibleCardsLimit
     updateResultsCount()
     renderSharedProductView()
@@ -529,14 +552,30 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   const runCatalogFilterGroupReset = (groupName: string) => {
     const group = ZERO_RESULTS_FILTER_GROUPS.find((item) => item === groupName)
     if (!group) return
+    const wasEmptyCatalogue =
+      !isSharedFavouritesView && !isSharedProductView && matchedCards.length === 0
     clearFilterGroup(state, group)
     syncUiFromState()
     syncFilterDependencies()
     sizeSelectController.closeMenus()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
     applyFilters()
+    if (wasEmptyCatalogue && matchedCards.length === 0) {
+      emptyStateResetClickCount += 1
+      syncEmptyStateResetButton(readCatalogFavourites())
+    }
     scrollToCatalogueToolbar()
   }
+
+  emptyStateEl.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null
+    const resetBtn = target?.closest<HTMLButtonElement>('[data-catalog-empty-reset]')
+    if (!resetBtn || resetBtn.hidden) return
+    const groupName = String(resetBtn.dataset.filterGroup || '')
+    if (!groupName) return
+    event.preventDefault()
+    runCatalogFilterGroupReset(groupName)
+  })
 
   const sizeSelectController = initCatalogSizeSelect(sidebarEl, {
     onOptionSelected: (group, value) => {
