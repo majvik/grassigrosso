@@ -1,27 +1,18 @@
 {
   "kind": "collectionType",
-  "collectionName": "catalog_filter_helps",
+  "collectionName": "catalog_share_helps",
   "info": {
-    "singularName": "catalog-filter-help",
-    "pluralName": "catalog-filter-helps",
-    "displayName": "Подсказка к фильтру каталога"
+    "singularName": "catalog-share-help",
+    "pluralName": "catalog-share-helps",
+    "displayName": "Подсказка к share"
   },
   "options": {
     "draftAndPublish": false
   },
   "attributes": {
-    "filter_key": {
+    "share_key": {
       "type": "enumeration",
-      "enum": [
-        "collection",
-        "size",
-        "firmness",
-        "type",
-        "loadRange",
-        "heightRange",
-        "fillings",
-        "features"
-      ],
+      "enum": ["favouritesShare", "productShare"],
       "required": true,
       "unique": true
     },

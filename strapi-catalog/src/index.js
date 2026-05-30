@@ -245,8 +245,6 @@ module.exports = {
         ['heightRange', 'Как выбрать высоту матраса'],
         ['fillings', 'Как выбрать наполнитель'],
         ['features', 'Как выбрать особенности'],
-        ['favouritesShare', 'Ссылка на подборку'],
-        ['productShare', 'Ссылка на позицию'],
       ];
       for (const [filter_key, modal_title] of catalogueFilterHelpSeeds) {
         const existing = await helpRepo.findOne({ where: { filter_key } });
@@ -257,6 +255,51 @@ module.exports = {
       }
     } catch (e) {
       strapi.log.warn(`Catalog bootstrap: catalog-filter-help seed skipped: ${e.message}`);
+    }
+
+    try {
+      const shareHelpRepo = strapi.db.query('api::catalog-share-help.catalog-share-help');
+      const filterHelpRepo = strapi.db.query('api::catalog-filter-help.catalog-filter-help');
+      const catalogueShareHelpSeeds = [
+        ['favouritesShare', 'Ссылка на подборку'],
+        ['productShare', 'Ссылка на позицию'],
+      ];
+      const legacyShareKeys = new Set(['favouritesShare', 'productShare']);
+
+      for (const [share_key, modal_title] of catalogueShareHelpSeeds) {
+        const existingShare = await shareHelpRepo.findOne({ where: { share_key } });
+        if (existingShare) continue;
+
+        const legacy = await filterHelpRepo.findOne({
+          where: { filter_key: share_key },
+          populate: { segments: true },
+        });
+
+        await shareHelpRepo.create({
+          data: legacy
+            ? {
+                share_key,
+                modal_title: legacy.modal_title || modal_title,
+                segments: legacy.segments,
+                is_active: legacy.is_active ?? true,
+              }
+            : { share_key, modal_title, is_active: true },
+        });
+
+        if (legacy?.id) {
+          await filterHelpRepo.delete({ where: { id: legacy.id } });
+        }
+      }
+
+      const staleShareRows = await filterHelpRepo.findMany({
+        where: { filter_key: { $in: [...legacyShareKeys] } },
+      });
+      for (const row of Array.isArray(staleShareRows) ? staleShareRows : []) {
+        if (!row?.id) continue;
+        await filterHelpRepo.delete({ where: { id: row.id } });
+      }
+    } catch (e) {
+      strapi.log.warn(`Catalog bootstrap: catalog-share-help seed skipped: ${e.message}`);
     }
 
     strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products`);

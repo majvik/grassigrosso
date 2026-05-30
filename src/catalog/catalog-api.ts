@@ -24,13 +24,18 @@ export type CatalogFilterHelpEntry = {
   segments: CatalogFilterHelpSegment[]
 }
 
-export type CatalogFilterHelpKey = CatalogFilterGroupKey | 'favouritesShare' | 'productShare'
+export type CatalogFilterHelp = Partial<Record<CatalogFilterGroupKey, CatalogFilterHelpEntry>>
 
-export type CatalogFilterHelp = Partial<Record<CatalogFilterHelpKey, CatalogFilterHelpEntry>>
+export type CatalogShareHelpKey = 'favouritesShare' | 'productShare'
+
+export type CatalogShareHelp = Partial<Record<CatalogShareHelpKey, CatalogFilterHelpEntry>>
+
+export type CatalogHelpKey = CatalogFilterGroupKey | CatalogShareHelpKey
 
 export type CatalogFiltersPayload = {
   groups: CatalogFilterGroups
   filterHelp: CatalogFilterHelp
+  shareHelp: CatalogShareHelp
 }
 
 export type CatalogProduct = {
@@ -79,14 +84,20 @@ export async function fetchCatalogFilters(): Promise<CatalogFiltersPayload> {
   const payload = await fetchJson<{
     groups?: CatalogFilterGroups
     filterHelp?: CatalogFilterHelp
+    shareHelp?: CatalogShareHelp
   }>('/api/catalog/filters')
   const filterHelp =
     payload.filterHelp && typeof payload.filterHelp === 'object' && !Array.isArray(payload.filterHelp)
       ? payload.filterHelp
       : {}
+  const shareHelp =
+    payload.shareHelp && typeof payload.shareHelp === 'object' && !Array.isArray(payload.shareHelp)
+      ? payload.shareHelp
+      : {}
   return {
     groups: payload.groups && typeof payload.groups === 'object' ? payload.groups : {},
     filterHelp,
+    shareHelp,
   }
 }
 

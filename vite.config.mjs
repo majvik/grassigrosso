@@ -71,6 +71,8 @@ function siteOriginPlugin(origin) {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const siteOrigin = (env.SITE_URL || 'https://grassigrosso.com').replace(/\/+$/, '')
+  // PORT в .env — порт Strapi (1337). Прокси /api всегда на Node server.cjs (dev:api → 3000).
+  const devApiPort = env.DEV_API_PORT || '3000'
 
   return {
     root: '.',
@@ -106,12 +108,12 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       proxy: {
         '/api': {
-          target: `http://127.0.0.1:${env.PORT || 3000}`,
+          target: `http://127.0.0.1:${devApiPort}`,
           changeOrigin: true,
         },
         // Strapi media: hero и карточки каталога ссылаются на /uploads/… — без прокси Vite отдаёт HTML-фолбэк.
         '/uploads': {
-          target: `http://127.0.0.1:${env.PORT || 3000}`,
+          target: `http://127.0.0.1:${devApiPort}`,
           changeOrigin: true,
         },
       }

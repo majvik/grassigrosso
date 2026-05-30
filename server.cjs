@@ -1010,19 +1010,31 @@ app.get('/api/catalog/filters', async (req, res) => {
   }
 
   try {
-    const feedUrl = `${STRAPI_URL}/api/catalog-filter-feed`;
-    const response = await axios.get(feedUrl, { timeout: 10000 });
-    const groups = response.data?.groups && typeof response.data.groups === 'object'
-      ? response.data.groups
+    const filterFeedUrl = `${STRAPI_URL}/api/catalog-filter-feed`;
+    const shareHelpFeedUrl = `${STRAPI_URL}/api/catalog-share-help-feed`;
+    const [filterResponse, shareHelpResponse] = await Promise.all([
+      axios.get(filterFeedUrl, { timeout: 10000 }),
+      axios.get(shareHelpFeedUrl, { timeout: 10000 }).catch((error) => {
+        console.warn('⚠️ catalog-share-help-feed unavailable:', extractAxiosErrorDetails(error));
+        return { data: { shareHelp: {} } };
+      }),
+    ]);
+    const groups = filterResponse.data?.groups && typeof filterResponse.data.groups === 'object'
+      ? filterResponse.data.groups
       : {};
     const filterHelp =
-      response.data?.filterHelp && typeof response.data.filterHelp === 'object' && !Array.isArray(response.data.filterHelp)
-        ? response.data.filterHelp
+      filterResponse.data?.filterHelp && typeof filterResponse.data.filterHelp === 'object' && !Array.isArray(filterResponse.data.filterHelp)
+        ? filterResponse.data.filterHelp
+        : {};
+    const shareHelp =
+      shareHelpResponse.data?.shareHelp && typeof shareHelpResponse.data.shareHelp === 'object' && !Array.isArray(shareHelpResponse.data.shareHelp)
+        ? shareHelpResponse.data.shareHelp
         : {};
     const payload = {
       groups,
       filterHelp,
-      source: response.data?.source || 'strapi-catalog-filter-feed',
+      shareHelp,
+      source: filterResponse.data?.source || 'strapi-catalog-filter-feed',
     };
     setCatalogStrapiCache(cacheKey, payload);
     attachCatalogApiCacheHeaders(res);

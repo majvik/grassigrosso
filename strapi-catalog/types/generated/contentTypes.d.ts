@@ -455,8 +455,6 @@ export interface ApiCatalogFilterHelpCatalogFilterHelp
         'heightRange',
         'fillings',
         'features',
-        'favouritesShare',
-        'productShare',
       ]
     > &
       Schema.Attribute.Required &
@@ -508,6 +506,42 @@ export interface ApiCatalogNewHeroCatalogNewHero
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     slides: Schema.Attribute.Component<'catalog.hero-slide', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCatalogShareHelpCatalogShareHelp
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'catalog_share_helps';
+  info: {
+    displayName: '\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u043A share';
+    pluralName: 'catalog-share-helps';
+    singularName: 'catalog-share-help';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::catalog-share-help.catalog-share-help'
+    > &
+      Schema.Attribute.Private;
+    modal_title: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    segments: Schema.Attribute.Component<'catalog.filter-help-segment', true>;
+    share_key: Schema.Attribute.Enumeration<
+      ['favouritesShare', 'productShare']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1444,6 +1478,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::catalog-filter-help.catalog-filter-help': ApiCatalogFilterHelpCatalogFilterHelp;
       'api::catalog-new-hero.catalog-new-hero': ApiCatalogNewHeroCatalogNewHero;
+      'api::catalog-share-help.catalog-share-help': ApiCatalogShareHelpCatalogShareHelp;
       'api::collection.collection': ApiCollectionCollection;
       'api::feature-option.feature-option': ApiFeatureOptionFeatureOption;
       'api::filling-option.filling-option': ApiFillingOptionFillingOption;

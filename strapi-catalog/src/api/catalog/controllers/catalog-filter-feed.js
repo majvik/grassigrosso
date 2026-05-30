@@ -1,6 +1,7 @@
 'use strict';
 
 const { preferAvifVariant } = require('../utils/prefer-avif');
+const { mapFilterHelpRows } = require('../utils/map-help-rows');
 
 module.exports = {
   async index(ctx) {
@@ -58,21 +59,7 @@ module.exports = {
       findMany('api::feature-option.feature-option'),
     ])
 
-    const filterHelp = {}
-    for (const row of Array.isArray(filterHelpRows) ? filterHelpRows : []) {
-      const key = String(row?.filter_key || '').trim()
-      if (!key) continue
-      const segments = (Array.isArray(row.segments) ? row.segments : [])
-        .map((seg) => ({
-          text: String(seg?.body || '').trim(),
-          imageUrl: mediaUrl(seg?.photo) || undefined,
-          imageAlt: mediaAlt(seg?.photo, '') || undefined,
-        }))
-        .filter((s) => s.text || s.imageUrl)
-      const modalTitle = String(row?.modal_title || '').trim()
-      if (!modalTitle && segments.length === 0) continue
-      filterHelp[key] = { modalTitle, segments }
-    }
+    const filterHelp = mapFilterHelpRows(filterHelpRows)
 
     ctx.body = {
       groups: {

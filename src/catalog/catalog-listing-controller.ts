@@ -630,12 +630,12 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   async function loadCatalogueFiltersFromStrapi() {
     try {
-      const { groups, filterHelp } = await fetchCatalogFilters()
-      setCatalogFilterHelpFromApi(filterHelp)
+      const { groups, filterHelp, shareHelp } = await fetchCatalogFilters()
+      setCatalogFilterHelpFromApi(filterHelp, shareHelp)
       renderCatalogueFilterGroups(groups)
     } catch (err) {
       console.warn('Catalogue filter feed failed, using static filter controls:', err)
-      setCatalogFilterHelpFromApi(undefined)
+      setCatalogFilterHelpFromApi(undefined, undefined)
       renderCatalogueFilterGroups({ size: [] })
     }
   }

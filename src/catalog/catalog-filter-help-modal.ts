@@ -1,4 +1,12 @@
-import type { CatalogFilterHelp, CatalogFilterHelpEntry, CatalogFilterHelpKey } from './catalog-api'
+import { fetchCatalogFilters } from './catalog-api'
+import type {
+  CatalogFilterGroupKey,
+  CatalogFilterHelp,
+  CatalogFilterHelpEntry,
+  CatalogHelpKey,
+  CatalogShareHelp,
+  CatalogShareHelpKey,
+} from './catalog-api'
 
 export type CatalogFilterHelpModalElements = {
   modal: HTMLElement
@@ -13,7 +21,7 @@ export type CatalogFilterHelpModalOptions = {
   unlockScroll?: () => void
 }
 
-const FILTER_HELP_KEYS: CatalogFilterHelpKey[] = [
+const FILTER_HELP_KEYS: CatalogFilterGroupKey[] = [
   'collection',
   'size',
   'firmness',
@@ -22,9 +30,11 @@ const FILTER_HELP_KEYS: CatalogFilterHelpKey[] = [
   'heightRange',
   'fillings',
   'features',
-  'favouritesShare',
-  'productShare',
 ]
+
+const SHARE_HELP_KEYS: CatalogShareHelpKey[] = ['favouritesShare', 'productShare']
+
+const HELP_KEYS: CatalogHelpKey[] = [...FILTER_HELP_KEYS, ...SHARE_HELP_KEYS]
 
 const FAVOURITES_SHARE_HELP_TEXT =
   'Вы можете отправить эту ссылку менеджеру или своему другу — так будет легче согласовать нужные позиции из каталога.'
@@ -71,6 +81,9 @@ const DEFAULT_FILTER_HELP: CatalogFilterHelp = {
     modalTitle: 'Как выбрать особенности',
     segments: [{ text: DEFAULT_LOREM_P1 }, { text: DEFAULT_LOREM_P2 }],
   },
+}
+
+const DEFAULT_SHARE_HELP: CatalogShareHelp = {
   favouritesShare: {
     modalTitle: 'Ссылка на подборку',
     segments: [{ text: FAVOURITES_SHARE_HELP_TEXT }],
@@ -81,10 +94,14 @@ const DEFAULT_FILTER_HELP: CatalogFilterHelp = {
   },
 }
 
-export function mergeCatalogFilterHelpFromApi(api: CatalogFilterHelp | undefined): CatalogFilterHelp {
-  const out: CatalogFilterHelp = { ...DEFAULT_FILTER_HELP }
+function mergeHelpEntriesFromApi<T extends string>(
+  defaults: Partial<Record<T, CatalogFilterHelpEntry>>,
+  allowedKeys: readonly T[],
+  api: Partial<Record<T, CatalogFilterHelpEntry>> | undefined,
+): Partial<Record<T, CatalogFilterHelpEntry>> {
+  const out: Partial<Record<T, CatalogFilterHelpEntry>> = { ...defaults }
   if (!api || typeof api !== 'object') return out
-  for (const key of FILTER_HELP_KEYS) {
+  for (const key of allowedKeys) {
     const row = api[key]
     if (!row || typeof row !== 'object') continue
     const modalTitle = String(row.modalTitle || '').trim()
@@ -99,17 +116,24 @@ export function mergeCatalogFilterHelpFromApi(api: CatalogFilterHelp | undefined
       : []
     if (!modalTitle && segments.length === 0) continue
     out[key] = {
-      modalTitle: modalTitle || (DEFAULT_FILTER_HELP[key]?.modalTitle ?? ''),
-      segments: segments.length ? segments : (DEFAULT_FILTER_HELP[key]?.segments ?? []),
+      modalTitle: modalTitle || (defaults[key]?.modalTitle ?? ''),
+      segments: segments.length ? segments : (defaults[key]?.segments ?? []),
     }
   }
   return out
 }
 
-let mergedHelpState: CatalogFilterHelp = mergeCatalogFilterHelpFromApi(undefined)
+function mergeCatalogHelpState(filterHelp?: CatalogFilterHelp, shareHelp?: CatalogShareHelp): Partial<Record<CatalogHelpKey, CatalogFilterHelpEntry>> {
+  return {
+    ...mergeHelpEntriesFromApi(DEFAULT_FILTER_HELP, FILTER_HELP_KEYS, filterHelp),
+    ...mergeHelpEntriesFromApi(DEFAULT_SHARE_HELP, SHARE_HELP_KEYS, shareHelp),
+  }
+}
 
-export function setCatalogFilterHelpFromApi(api: CatalogFilterHelp | undefined): void {
-  mergedHelpState = mergeCatalogFilterHelpFromApi(api)
+let mergedHelpState: Partial<Record<CatalogHelpKey, CatalogFilterHelpEntry>> = mergeCatalogHelpState()
+
+export function setCatalogFilterHelpFromApi(filterHelp?: CatalogFilterHelp, shareHelp?: CatalogShareHelp): void {
+  mergedHelpState = mergeCatalogHelpState(filterHelp, shareHelp)
 }
 
 function renderHelpBody(root: HTMLElement, entry: CatalogFilterHelpEntry): void {
@@ -151,7 +175,7 @@ export function initCatalogFilterHelpModal(
     document.body.classList.remove('modal-open')
   }
 
-  const open = (key: CatalogFilterHelpKey): void => {
+  const open = (key: CatalogHelpKey): void => {
     const entry = mergedHelpState[key]
     if (!entry) return
     elements.title.textContent = entry.modalTitle
@@ -168,9 +192,16 @@ export function initCatalogFilterHelpModal(
     if (!btn) return
     event.preventDefault()
     event.stopPropagation()
-    const key = String(btn.dataset.filterHelpOpen || '').trim() as CatalogFilterHelpKey
-    if (!FILTER_HELP_KEYS.includes(key)) return
-    open(key)
+    const key = String(btn.dataset.filterHelpOpen || '').trim() as CatalogHelpKey
+    if (!HELP_KEYS.includes(key)) return
+    void fetchCatalogFilters()
+      .then(({ filterHelp, shareHelp }) => {
+        mergedHelpState = mergeCatalogHelpState(filterHelp, shareHelp)
+        open(key)
+      })
+      .catch(() => {
+        open(key)
+      })
   })
 
   elements.overlay.addEventListener('click', close)
