@@ -30,7 +30,10 @@ if [[ ! -f "$STRAPI_BUILD_SENTINEL" ]]; then
   npm run build --prefix strapi-catalog
 fi
 
-if [[ ! -s "$STRAPI_DB_FILE" && -f "$STRAPI_SEED_DB_FILE" ]]; then
+if [[ "${STRAPI_RESEED_ON_START:-}" == "1" && -f "$STRAPI_SEED_DB_FILE" ]]; then
+  echo "[boot] STRAPI_RESEED_ON_START=1 — overwriting runtime DB from ${STRAPI_SEED_DB_FILE}"
+  cp "$STRAPI_SEED_DB_FILE" "$STRAPI_DB_FILE"
+elif [[ ! -s "$STRAPI_DB_FILE" && -f "$STRAPI_SEED_DB_FILE" ]]; then
   echo "[boot] Seeding Strapi database from ${STRAPI_SEED_DB_FILE}"
   cp "$STRAPI_SEED_DB_FILE" "$STRAPI_DB_FILE"
 fi

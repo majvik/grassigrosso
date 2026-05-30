@@ -135,6 +135,7 @@ const pageNames = {
 
 - Медиа каталога лежат в **`strapi-catalog/public/uploads/`** и **входят в репозиторий**: после `git push` образ собирается из clone, `COPY . .` в [Dockerfile](Dockerfile) кладёт те же файлы в контейнер — **`/uploads/…`** начинает отдаваться без ручного rsync.
 - Добавили файл в админке локально — **`git add strapi-catalog/public/uploads/`** и коммит вместе с при необходимости обновлённым `database/seed/data.db` (если сидом пользуетесь для первого старта).
+- **Контент из локальной админки на dev/prod не попадает сам.** Рабочая БД — `strapi-catalog/.tmp/data.db` (в git нет). В git — только `strapi-catalog/database/seed/data.db` + `public/uploads/`. После правок в Strapi: остановить Strapi → `npm run strapi:sync-seed` → закоммитить seed и новые uploads → push → на сервере **один раз** `STRAPI_RESEED_ON_START=1` и redeploy (или вручную скопировать seed в `/app/data/strapi/data.db`), затем переменную убрать. Повторный деплой без reseed **не перезаписывает** уже существующую runtime БД на volume.
 - Очень большие ролики при нехватке лимитов git — **Git LFS** или внешнее хранилище (отдельная задача).
 
 ### Публичный путь и 404
