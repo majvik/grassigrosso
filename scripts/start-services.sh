@@ -17,8 +17,51 @@ STRAPI_TELEMETRY_DISABLED_VALUE="${STRAPI_TELEMETRY_DISABLED:-true}"
 STRAPI_LOG_FILE="/tmp/strapi.log"
 STRAPI_NODE_MODULES_SENTINEL="strapi-catalog/node_modules/@strapi/strapi/package.json"
 STRAPI_BUILD_SENTINEL="strapi-catalog/dist/build/index.html"
+STRAPI_SEED_MANIFEST_FILE="${STRAPI_SEED_MANIFEST_FILE:-/app/strapi-catalog/database/seed/seed-manifest.json}"
+STRAPI_APPLIED_SEED_MARKER="${STRAPI_APPLIED_SEED_MARKER:-/app/data/strapi/.applied-seed-sha256}"
 
 mkdir -p "$(dirname "$STRAPI_DB_FILE")"
+
+apply_seed_to_runtime() {
+  local reason="$1"
+  if [[ ! -f "$STRAPI_SEED_DB_FILE" ]]; then
+    echo "[boot] WARN: seed DB not found at ${STRAPI_SEED_DB_FILE} (${reason})"
+    return 1
+  fi
+  echo "[boot] ${reason} — copying ${STRAPI_SEED_DB_FILE} → ${STRAPI_DB_FILE}"
+  cp "$STRAPI_SEED_DB_FILE" "$STRAPI_DB_FILE"
+  if [[ -f "$STRAPI_SEED_MANIFEST_FILE" ]]; then
+    node -e "
+      const fs = require('fs');
+      const manifest = JSON.parse(fs.readFileSync(process.argv[1], 'utf8'));
+      fs.writeFileSync(process.argv[2], String(manifest.sha256 || '') + '\n', 'utf8');
+    " "$STRAPI_SEED_MANIFEST_FILE" "$STRAPI_APPLIED_SEED_MARKER"
+  fi
+  return 0
+}
+
+maybe_apply_seed_from_manifest() {
+  if [[ "${STRAPI_AUTO_APPLY_SEED:-1}" == "0" ]]; then
+    return 0
+  fi
+  if [[ ! -f "$STRAPI_SEED_MANIFEST_FILE" || ! -f "$STRAPI_SEED_DB_FILE" ]]; then
+    return 0
+  fi
+  local seed_sha applied_sha
+  seed_sha="$(node -e "const fs=require('fs');const m=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));process.stdout.write(String(m.sha256||''));" "$STRAPI_SEED_MANIFEST_FILE")"
+  if [[ -z "$seed_sha" ]]; then
+    return 0
+  fi
+  applied_sha=""
+  if [[ -f "$STRAPI_APPLIED_SEED_MARKER" ]]; then
+    applied_sha="$(tr -d '[:space:]' < "$STRAPI_APPLIED_SEED_MARKER")"
+  fi
+  if [[ "$seed_sha" == "$applied_sha" ]]; then
+    echo "[boot] Strapi seed unchanged (manifest ${seed_sha:0:12}…)"
+    return 0
+  fi
+  apply_seed_to_runtime "New seed manifest (${seed_sha:0:12}…, was ${applied_sha:-empty})"
+}
 
 if [[ ! -f "$STRAPI_NODE_MODULES_SENTINEL" ]]; then
   echo "[boot] Installing Strapi dependencies"
@@ -30,12 +73,12 @@ if [[ ! -f "$STRAPI_BUILD_SENTINEL" ]]; then
   npm run build --prefix strapi-catalog
 fi
 
-if [[ "${STRAPI_RESEED_ON_START:-}" == "1" && -f "$STRAPI_SEED_DB_FILE" ]]; then
-  echo "[boot] STRAPI_RESEED_ON_START=1 — overwriting runtime DB from ${STRAPI_SEED_DB_FILE}"
-  cp "$STRAPI_SEED_DB_FILE" "$STRAPI_DB_FILE"
-elif [[ ! -s "$STRAPI_DB_FILE" && -f "$STRAPI_SEED_DB_FILE" ]]; then
-  echo "[boot] Seeding Strapi database from ${STRAPI_SEED_DB_FILE}"
-  cp "$STRAPI_SEED_DB_FILE" "$STRAPI_DB_FILE"
+if [[ "${STRAPI_RESEED_ON_START:-}" == "1" ]]; then
+  apply_seed_to_runtime "STRAPI_RESEED_ON_START=1"
+elif [[ ! -s "$STRAPI_DB_FILE" ]]; then
+  apply_seed_to_runtime "Empty runtime Strapi database"
+else
+  maybe_apply_seed_from_manifest
 fi
 
 cleanup() {

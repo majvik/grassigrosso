@@ -7,6 +7,7 @@
  * Остановите Strapi (npm run dev:stop), чтобы файл не был заблокирован.
  */
 
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -16,6 +17,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const strapiRoot = path.join(repoRoot, 'strapi-catalog');
 const sourceDb = path.join(strapiRoot, '.tmp', 'data.db');
 const targetDb = path.join(strapiRoot, 'database', 'seed', 'data.db');
+const manifestPath = path.join(strapiRoot, 'database', 'seed', 'seed-manifest.json');
 
 function fail(message) {
   console.error(`[sync-strapi-seed] ${message}`);
@@ -54,12 +56,23 @@ if (sqlite3.status === 0) {
 fs.mkdirSync(path.dirname(targetDb), { recursive: true });
 fs.copyFileSync(sourceDb, targetDb);
 
+const dbBuffer = fs.readFileSync(targetDb);
+const sha256 = crypto.createHash('sha256').update(dbBuffer).digest('hex');
+const syncedAt = new Date().toISOString();
+const manifest = {
+  sha256,
+  bytes: dbBuffer.length,
+  syncedAt,
+};
+fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+
 const targetStat = fs.statSync(targetDb);
 console.log(`[sync-strapi-seed] OK: ${path.relative(repoRoot, sourceDb)} → ${path.relative(repoRoot, targetDb)}`);
 console.log(`[sync-strapi-seed] Размер seed: ${(targetStat.size / 1024).toFixed(1)} KiB`);
+console.log(`[sync-strapi-seed] Manifest: ${path.relative(repoRoot, manifestPath)} (${sha256.slice(0, 12)}…)`);
 console.log('');
 console.log('Дальше:');
-console.log('  1. git add strapi-catalog/database/seed/data.db strapi-catalog/public/uploads/');
-console.log('  2. git commit && git push');
-console.log('  3. На dev/prod один раз: STRAPI_RESEED_ON_START=1 → redeploy → убрать переменную');
-console.log('     (или в контейнере: cp strapi-catalog/database/seed/data.db /app/data/strapi/data.db && restart)');
+console.log('  1. git add strapi-catalog/database/seed/data.db strapi-catalog/database/seed/seed-manifest.json');
+console.log('     и при новых файлах: strapi-catalog/public/uploads/');
+console.log('  2. git commit && git push — на Timeweb достаточно одного деплоя (seed подхватится сам)');
+console.log('  Принудительно: STRAPI_RESEED_ON_START=1 (тоже вызовет redeploy при смене env)');
