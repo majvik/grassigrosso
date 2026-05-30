@@ -22,7 +22,7 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
   const catalogueImageModalContactBack = queryElement<HTMLButtonElement>(documentRef, 'catalogueImageModalContactBack')
   const catalogueImageModalPositionsList = queryElement<HTMLElement>(documentRef, 'catalogueImageModalPositionsList')
   const catalogueImageModalPositionsCount = queryElement<HTMLElement>(documentRef, 'catalogueImageModalPositionsCount')
-  const catalogueImageModalImg = queryElement<HTMLImageElement>(documentRef, 'catalogueImageModalImg')
+  const catalogueImageModalMedia = queryElement<HTMLElement>(documentRef, 'catalogueImageModalMedia')
   const catalogueImageModalTitle = queryElement<HTMLElement>(documentRef, 'catalogueImageModalTitle')
   const catalogueImageModalSpecs = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecs')
   const catalogueImageModalSpecsEmpty = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecsEmpty')
@@ -44,7 +44,7 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
     catalogueImageModalContactBack &&
     catalogueImageModalPositionsList &&
     catalogueImageModalPositionsCount &&
-    catalogueImageModalImg &&
+    catalogueImageModalMedia &&
     catalogueImageModalTitle &&
     catalogueImageModalSpecs &&
     catalogueImageModalSpecsEmpty &&
@@ -64,7 +64,7 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
         contactBackBtn: catalogueImageModalContactBack,
         positionsList: catalogueImageModalPositionsList,
         positionsCount: catalogueImageModalPositionsCount,
-        image: catalogueImageModalImg,
+        imageMedia: catalogueImageModalMedia,
         title: catalogueImageModalTitle,
         specs: catalogueImageModalSpecs,
         specsEmpty: catalogueImageModalSpecsEmpty,

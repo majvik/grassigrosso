@@ -1,6 +1,6 @@
 'use strict';
 
-const { preferAvifVariant } = require('../utils/prefer-avif');
+const { buildProductGallery } = require('../utils/build-product-gallery');
 
 module.exports = {
   async index(ctx) {
@@ -112,6 +112,9 @@ module.exports = {
           collection: true,
           tags: true,
           media: true,
+          gallery: {
+            populate: ['slide_image', 'slide_video', 'poster'],
+          },
           features: true,
           sizes: true,
           firmness_option: true,
@@ -162,7 +165,9 @@ module.exports = {
       return [...new Set(result)]
     }
 
-    const items = rows.map((row) => ({
+    const items = rows.map((row) => {
+      const { gallery, imageUrl, imageAlt } = buildProductGallery(row);
+      return {
       name: row.name || '',
       slug: row.slug || '',
       collectionName: row.collection?.name || '',
@@ -195,11 +200,13 @@ module.exports = {
         ? row.filling_options.map((item) => item.slug).filter(Boolean)
         : normalizeStringList(row.fillings).map(mapFilling),
       features: Array.isArray(row.features) ? normalizeFeatures(row.features) : normalizeStringList(row.features).map(mapFeature),
-      imageUrl: preferAvifVariant(row.media?.url || row.image_url || ''),
-      imageAlt: row.media?.alternativeText || (row.name ? `Коллекция ${row.name}` : 'Изображение товара'),
+      gallery,
+      imageUrl,
+      imageAlt,
       tags: Array.isArray(row.tags) ? row.tags.map((tag) => tag.name).filter(Boolean) : [],
       isActive: row.is_active !== false
-    }));
+    };
+    });
 
     ctx.body = { items, source: 'strapi-catalog-feed' };
   }

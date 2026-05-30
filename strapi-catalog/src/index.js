@@ -302,6 +302,45 @@ module.exports = {
       strapi.log.warn(`Catalog bootstrap: catalog-share-help seed skipped: ${e.message}`);
     }
 
+    try {
+      const productsForGallery = await productRepo.findMany({
+        populate: {
+          media: true,
+          gallery: {
+            populate: ['slide_image', 'slide_video', 'poster'],
+          },
+        },
+      });
+      let galleryBackfilled = 0;
+      for (const product of Array.isArray(productsForGallery) ? productsForGallery : []) {
+        const galleryRows = Array.isArray(product.gallery) ? product.gallery : [];
+        const hasGalleryMedia = galleryRows.some((row) => row?.slide_image || row?.slide_video);
+        if (hasGalleryMedia) continue;
+        const mediaId = product.media?.id;
+        if (!mediaId) continue;
+        const altText =
+          String(product.media?.alternativeText || '').trim() ||
+          (product.name ? `Коллекция ${product.name}` : 'Изображение товара');
+        await productRepo.update({
+          where: { id: product.id },
+          data: {
+            gallery: [
+              {
+                slide_image: mediaId,
+                alt_text: altText,
+              },
+            ],
+          },
+        });
+        galleryBackfilled += 1;
+      }
+      if (galleryBackfilled) {
+        strapi.log.info(`Catalog bootstrap: backfilled product gallery from legacy media for ${galleryBackfilled} products`);
+      }
+    } catch (e) {
+      strapi.log.warn(`Catalog bootstrap: product gallery backfill skipped: ${e.message}`);
+    }
+
     strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products`);
   },
 };

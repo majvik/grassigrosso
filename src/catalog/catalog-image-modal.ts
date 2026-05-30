@@ -1,5 +1,15 @@
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
 import { buildCatalogCardMetaHtmlFromDataset, buildCatalogModalSpecs } from './catalog-modal'
+import {
+  destroyCatalogProductGalleries,
+  mountCatalogProductMedia,
+  getActiveSlideSnapshot,
+  getCatalogGalleryActiveIndex,
+  initCatalogProductGalleries,
+  readGalleryFromElement,
+  setCatalogGalleryActiveIndex,
+  wasCatalogGalleryInteracted,
+} from './catalog-product-gallery'
 import { buildCatalogProductShareUrl, copyTextWithToast, flashCatalogShareLinkCopiedLabel } from './catalog-share'
 
 const CATALOG_PAGE_NAME = 'Страница "Каталог"'
@@ -22,7 +32,7 @@ export type CatalogImageModalElements = {
   contactBackBtn: HTMLButtonElement
   positionsList: HTMLElement
   positionsCount: HTMLElement
-  image: HTMLImageElement
+  imageMedia: HTMLElement
   title: HTMLElement
   specs: HTMLElement
   specsEmpty: HTMLElement
@@ -329,8 +339,13 @@ export function initCatalogImageModal(
       img.className = 'catalogue-new-modal-position-img'
       img.alt = ''
       if (card) {
-        const src = card.querySelector('picture img')?.getAttribute('src') || ''
-        const alt = card.querySelector('picture img')?.getAttribute('alt') || ''
+        const cardMedia = card.querySelector<HTMLElement>('[data-catalog-card-media]')
+        const snapshot = getActiveSlideSnapshot(cardMedia)
+        const src =
+          snapshot?.type === 'image'
+            ? snapshot.src
+            : snapshot?.poster || snapshot?.src || ''
+        const alt = snapshot?.alt || ''
         if (src) img.setAttribute('src', src)
         img.alt = alt || ''
       }
@@ -442,8 +457,8 @@ export function initCatalogImageModal(
 
   const closeCatalogueImageModal = (): void => {
     elements.modal.setAttribute('hidden', '')
-    elements.image.setAttribute('src', '')
-    elements.image.setAttribute('alt', '')
+    destroyCatalogProductGalleries(elements.imageMedia)
+    elements.imageMedia.replaceChildren()
     elements.title.textContent = ''
     activeModalProductSlug = ''
     activeModalProductTitle = ''
@@ -463,19 +478,27 @@ export function initCatalogImageModal(
 
   const openCatalogueImageModal = (card: Element | null): void => {
     if (!card || !(card instanceof HTMLElement)) return
-    const image = card.querySelector('picture img')
-    const src = image?.getAttribute('src') || ''
-    const alt = image?.getAttribute('alt') || ''
-    const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || alt
-    if (!src) return
+    const cardMedia = card.querySelector<HTMLElement>('[data-catalog-card-media]')
+    const gallery = readGalleryFromElement(cardMedia)
+    const snapshot = getActiveSlideSnapshot(cardMedia)
+    const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || snapshot?.alt || ''
+    if (!gallery.length && !snapshot?.src) return
 
     const dataset = card.dataset || {}
     activeModalProductSlug = String(dataset.productSlug || '').trim()
     activeModalProductTitle = title || 'Матрас'
     syncModalFavouriteState()
 
-    elements.image.setAttribute('src', src)
-    elements.image.setAttribute('alt', alt || '')
+    destroyCatalogProductGalleries(elements.imageMedia)
+    elements.imageMedia.removeAttribute('data-catalog-gallery-did-interact')
+    elements.imageMedia.removeAttribute('data-catalog-gallery-init')
+    mountCatalogProductMedia(elements.imageMedia, gallery, {
+      rootClass: 'catalogue-new-image-modal-media catalogue-new-card-media',
+      productSlug: activeModalProductSlug,
+    })
+    const activeIndex = getCatalogGalleryActiveIndex(cardMedia)
+    setCatalogGalleryActiveIndex(elements.imageMedia, activeIndex)
+    initCatalogProductGalleries(elements.imageMedia)
     elements.title.textContent = title || 'Матрас'
     clearModalSpecs()
     buildCatalogModalSpecs(cardDatasetToSpecDataset(dataset)).forEach((spec) => {
@@ -663,6 +686,9 @@ export function initCatalogImageModal(
   elements.cardsRoot.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return
     if (event.target.closest('.catalogue-new-favourite, .catalogue-new-shared-remove')) return
+    if (event.target.closest('[data-catalog-gallery-dot]')) return
+    const cardMedia = event.target.closest<HTMLElement>('[data-catalog-card-media]')
+    if (cardMedia && wasCatalogGalleryInteracted(event.target)) return
     const card = event.target.closest('.catalogue-new-card')
     if (!card) return
     openCatalogueImageModal(card)

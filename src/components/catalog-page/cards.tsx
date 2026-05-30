@@ -1,5 +1,6 @@
 import { FavouriteFullIcon, FavouriteOutlineIcon } from '@/components/catalog-page/icons'
 import { CATALOG_FALLBACK_CARDS, type CatalogFallbackCardData } from '@/components/pages/catalog-page-data'
+import { buildCatalogProductMediaHtml } from '@/catalog/catalog-product-gallery'
 
 const HEIGHT_RANGE_LABELS: Record<string, string> = {
   low: 'Компактные до 16 см',
@@ -54,11 +55,14 @@ function CatalogFallbackCard({ card }: { card: CatalogFallbackCardData }) {
       data-height-range={card.heightRange}
       data-sizes={card.sizes}
     >
-      <picture>
-        <source type="image/avif" srcSet={card.image.sources.avif} />
-        <source type="image/webp" srcSet={card.image.sources.webp} />
-        <img src={card.image.src} alt={card.image.alt} />
-      </picture>
+      <div
+        dangerouslySetInnerHTML={{
+          __html: buildCatalogProductMediaHtml(card.gallery, { productSlug: card.slug }, {
+            imageUrl: card.image.src,
+            imageAlt: card.image.alt,
+          }),
+        }}
+      />
       <div className="catalogue-new-card-body">
         <h3>{card.title}</h3>
         <p className="catalogue-new-meta">

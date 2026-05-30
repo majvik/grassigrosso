@@ -90,7 +90,7 @@ initPageLoad({
   })
   .finally(() => {
     void reactEntryPromise.finally(() => {
-      initApp()
+    initApp()
       // Initialize hero slider AFTER React has rendered the catalog DOM.
       // prefetchCatalogHeroFeed() already started the network request above.
       if (document.body.dataset.page === 'catalog') {

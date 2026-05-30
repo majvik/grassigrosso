@@ -97,7 +97,7 @@ export function copyTextWithToast(text: string): void {
 
 const SHARE_LINK_LABEL_DEFAULT = 'Скопировать ссылку'
 const SHARE_LINK_LABEL_COPIED = 'Скопировано'
-const shareLinkLabelTimers = new WeakMap<HTMLButtonElement, ReturnType<typeof setTimeout>>()
+const shareLinkLabelTimers = new WeakMap<HTMLButtonElement, number>()
 
 export function flashCatalogShareLinkCopiedLabel(
   btn: HTMLButtonElement | null,

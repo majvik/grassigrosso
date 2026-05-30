@@ -38,6 +38,14 @@ export type CatalogFiltersPayload = {
   shareHelp: CatalogShareHelp
 }
 
+export type CatalogProductMediaItem = {
+  type: 'image' | 'video'
+  src: string
+  poster?: string
+  alt?: string
+  mime?: string
+}
+
 export type CatalogProduct = {
   name?: string | null
   slug?: string | null
@@ -56,6 +64,7 @@ export type CatalogProduct = {
   features?: unknown[]
   imageUrl?: string | null
   imageAlt?: string | null
+  gallery?: CatalogProductMediaItem[]
   tags?: unknown[]
   isActive?: boolean | null
 }

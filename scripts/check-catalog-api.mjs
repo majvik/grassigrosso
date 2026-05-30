@@ -142,6 +142,32 @@ if (products) {
     if (!Array.isArray(product.fillings)) {
       failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} fillings must be an array`)
     }
+    if (!Array.isArray(product.gallery)) {
+      failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery must be an array`)
+    } else {
+      if (product.gallery.length > 5) {
+        failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery exceeds 5 items`)
+      }
+      const seenGallery = new Set()
+      for (const item of product.gallery) {
+        if (!item || typeof item !== 'object') {
+          failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery item must be an object`)
+          continue
+        }
+        if (!item.type || !['image', 'video'].includes(item.type)) {
+          failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery item has invalid type`)
+        }
+        if (!item.src || typeof item.src !== 'string') {
+          failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery item missing src`)
+        } else {
+          const key = `${item.type}|${item.src}`
+          if (seenGallery.has(key)) {
+            failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery has duplicate src`)
+          }
+          seenGallery.add(key)
+        }
+      }
+    }
     if (catalogFilterSlugSets) {
       if (!catalogFilterSlugSets.collection.has(product.collectionSlug)) {
         failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has unknown collectionSlug ${product.collectionSlug}`)

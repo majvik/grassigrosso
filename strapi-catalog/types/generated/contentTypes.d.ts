@@ -870,6 +870,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::firmness-option.firmness-option'
     >;
+    gallery: Schema.Attribute.Component<'catalog.product-gallery-item', true>;
     height_cm: Schema.Attribute.Decimal & Schema.Attribute.Required;
     height_range: Schema.Attribute.Enumeration<
       [

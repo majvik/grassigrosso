@@ -1,4 +1,5 @@
 import type { CatalogProduct } from './catalog-api'
+import { buildCatalogProductMediaHtml } from './catalog-product-gallery'
 import {
   STANDARD_MATTRESS_SIZES,
   buildStandardMattressSizesFromLegacy,
@@ -41,8 +42,11 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
   const productSlug = String(item.slug || collectionSlug || '').trim() || 'product'
   const firmness = item.firmness || 'medium'
   const mattressType = item.mattressType || 'nospring'
-  const imageUrl = escapeHtml(item.imageUrl || '')
-  const imageAlt = escapeHtml(item.imageAlt || `Коллекция ${item.name || ''}`)
+  const gallery = Array.isArray(item.gallery) ? item.gallery : []
+  const mediaHtml = buildCatalogProductMediaHtml(gallery, { productSlug }, {
+    imageUrl: item.imageUrl,
+    imageAlt: item.imageAlt || `Коллекция ${item.name || ''}`,
+  })
   const tags = Array.isArray(item.tags) ? item.tags.filter(Boolean).slice(0, 3) : []
   const loadRange = String(item.loadRange || '').trim()
   const heightRange = String(item.heightRange || '').trim()
@@ -81,9 +85,7 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
         data-sizes="${escapeHtml(sizes.join(','))}"
         data-fillings="${escapeHtml(fillings.join(','))}"
         data-features="${escapeHtml(features.join(','))}">
-        <picture>
-          <img src="${imageUrl}" alt="${imageAlt}" />
-        </picture>
+        ${mediaHtml}
         <div class="catalogue-new-card-body">
           <h3>${name}</h3>
           ${cardMetaHtml}

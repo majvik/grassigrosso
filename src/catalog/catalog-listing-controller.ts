@@ -5,6 +5,15 @@ import {
 } from './catalog-accordion'
 import { fetchCatalogFilters, fetchCatalogProducts, type CatalogFilterGroups } from './catalog-api'
 import { buildCatalogueCardHtml } from './catalog-card'
+import {
+  buildCatalogProductMediaHtml,
+  destroyCatalogProductGalleries,
+  getActiveSlideSnapshot,
+  getCatalogGalleryActiveIndex,
+  initCatalogProductGalleries,
+  readGalleryFromElement,
+  setCatalogGalleryActiveIndex,
+} from './catalog-product-gallery'
 import { readCatalogueCardMeta } from './catalog-card-meta'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
 import { buildCatalogModalSpecs } from './catalog-modal'
@@ -390,8 +399,10 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       return
     }
 
-    const image = card.querySelector<HTMLImageElement>('picture img')
-    const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || image?.alt || 'Матрас'
+    const cardMedia = card.querySelector<HTMLElement>('[data-catalog-card-media]')
+    const snapshot = getActiveSlideSnapshot(cardMedia)
+    const gallery = readGalleryFromElement(cardMedia)
+    const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || snapshot?.alt || 'Матрас'
     const specs = buildCatalogModalSpecs(card.dataset)
     const tags = [...card.querySelectorAll('.catalogue-new-tags > .catalogue-new-tag')]
       .map((tag) => tag.textContent?.trim())
@@ -413,9 +424,10 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     sharedProductSection.innerHTML = `
       <a class="catalogue-new-shared-back" href="/catalog">Назад в каталог</a>
       <div class="catalogue-new-shared-product-shell">
-        <div class="catalogue-new-shared-product-media">
-          <img src="${escapeHtml(image?.getAttribute('src') || '')}" alt="${escapeHtml(image?.getAttribute('alt') || '')}" />
-        </div>
+        ${buildCatalogProductMediaHtml(gallery, {
+          rootClass: 'catalogue-new-shared-product-media catalogue-new-card-media',
+          productSlug: slug,
+        })}
         <div class="catalogue-new-shared-product-info">
           <h1 class="catalogue-new-shared-product-title">${escapeHtml(title)}</h1>
           <div class="catalogue-new-shared-product-specs">${specsHtml}</div>
@@ -458,6 +470,14 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
     const favBtn = sharedProductSection.querySelector<HTMLButtonElement>('[data-shared-product-favourite]')
     if (favBtn) syncSharedProductFavouriteButton(favBtn, slug)
+    if (sharedProductSection) {
+      initCatalogProductGalleries(sharedProductSection)
+      const sharedMedia = sharedProductSection.querySelector<HTMLElement>('[data-catalog-card-media]')
+      const cardMediaEl = card.querySelector<HTMLElement>('[data-catalog-card-media]')
+      if (sharedMedia && cardMediaEl) {
+        setCatalogGalleryActiveIndex(sharedMedia, getCatalogGalleryActiveIndex(cardMediaEl))
+      }
+    }
   }
 
   function applySorting() {
@@ -646,8 +666,10 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       if (items.length === 0) return
 
       const html = items.map((item) => buildCatalogueCardHtml(item)).join('')
+      destroyCatalogProductGalleries(cardsRootEl)
       cardsRootEl.innerHTML = html
       updateCardsCache()
+      initCatalogProductGalleries(cardsRootEl)
       syncCatalogueFavouritesUi()
       syncFilterOptionsFromCards()
       applySorting()
@@ -659,6 +681,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   updateCardsCache()
+  initCatalogProductGalleries(cardsRootEl)
   syncCatalogueFavouritesUi()
 
   window.addEventListener('catalogue:favourites-updated', () => {

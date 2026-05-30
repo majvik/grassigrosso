@@ -68,6 +68,13 @@ export interface CatalogFallbackCardData {
   height: string
   heightRange: string
   image: CatalogPictureImage
+  gallery?: Array<{
+    type: 'image' | 'video'
+    src: string
+    poster?: string
+    alt?: string
+    mime?: string
+  }>
   load: string
   loadRange: string
   metaHeightLabel: string
@@ -336,6 +343,10 @@ export const CATALOG_FALLBACK_CARDS: CatalogFallbackCardData[] = [
     metaLoadLabel: 'до 160 кг',
     sizes: '140x190,140x200,160x190,160x200,180x190,180x200',
     slug: 'classic',
+    gallery: [
+      { type: 'image', src: '/collection-Classic.png', alt: 'Коллекция Classic' },
+      { type: 'image', src: '/collection-Flexi.png', alt: 'Коллекция Flexi (демо второго слайда)' },
+    ],
     tags: ['Пружинный', 'Средняя жесткость'],
     title: 'Classic',
     type: 'spring',

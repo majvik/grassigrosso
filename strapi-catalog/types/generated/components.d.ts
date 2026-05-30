@@ -26,11 +26,26 @@ export interface CatalogHeroSlide extends Struct.ComponentSchema {
   };
 }
 
+export interface CatalogProductGalleryItem extends Struct.ComponentSchema {
+  collectionName: 'components_catalog_product_gallery_items';
+  info: {
+    displayName: 'Product gallery item';
+    icon: 'picture';
+  };
+  attributes: {
+    alt_text: Schema.Attribute.String;
+    poster: Schema.Attribute.Media<'images'>;
+    slide_image: Schema.Attribute.Media<'images'>;
+    slide_video: Schema.Attribute.Media<'videos' | 'files'>;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'catalog.filter-help-segment': CatalogFilterHelpSegment;
       'catalog.hero-slide': CatalogHeroSlide;
+      'catalog.product-gallery-item': CatalogProductGalleryItem;
     }
   }
 }
