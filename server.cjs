@@ -550,6 +550,19 @@ function applyMediaResponseHeaders(res, urlPath) {
   }
 }
 
+function isStrapiAdminShellPath(urlPath) {
+  if (!urlPath || !urlPath.startsWith('/admin')) return false;
+  const pathOnly = urlPath.split('?')[0];
+  if (/\.(js|mjs|css|map|woff2?|ttf|otf|ico|svg|png|jpe?g|gif|webp|avif)(\?|$)/i.test(pathOnly)) {
+    return false;
+  }
+  return true;
+}
+
+function isStrapiAdminHashedAssetPath(urlPath) {
+  return /^\/admin\/[^/?#]+\.(js|mjs|css)(\?|$)/i.test(String(urlPath || ''));
+}
+
 function createStrapiProxy() {
   return createProxyMiddleware({
     target: STRAPI_URL,
@@ -566,11 +579,29 @@ function createStrapiProxy() {
     on: {
       proxyRes(proxyRes, req) {
         const originalUrl = String(req.originalUrl || '');
+        const pathOnly = originalUrl.split('?')[0];
+
         if (originalUrl.startsWith('/uploads/')) {
           if (/\.avif(\?|$)/i.test(originalUrl)) {
             proxyRes.headers['content-type'] = 'image/avif';
           }
           proxyRes.headers['cache-control'] = CACHE_LONG_MEDIA;
+        }
+
+        // После деплоя хеши чанков меняются; shell админки не кешируем (иначе браузер тянет старые *.js).
+        if (isStrapiAdminShellPath(pathOnly)) {
+          proxyRes.headers['cache-control'] = CACHE_HTML_REVALIDATE;
+          proxyRes.headers.pragma = 'no-cache';
+        }
+
+        // Strapi SPA отдаёт index.html на несуществующий chunk → dynamic import падает с MIME text/html.
+        if (isStrapiAdminHashedAssetPath(pathOnly)) {
+          const contentType = String(proxyRes.headers['content-type'] || '').toLowerCase();
+          if (contentType.includes('text/html')) {
+            proxyRes.statusCode = 404;
+            proxyRes.headers['content-type'] = 'text/plain; charset=utf-8';
+            proxyRes.headers['cache-control'] = 'no-store';
+          }
         }
       },
       error(err, req, res) {
