@@ -7927,6 +7927,7 @@ html[data-page="catalog"] .catalogue-new-image-modal-actions {
 
 html[data-page="catalog"] .catalogue-new-image-modal-actions-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
@@ -7935,13 +7936,13 @@ html[data-page="catalog"] .catalogue-new-image-modal-actions-row {
 }
 
 html[data-page="catalog"] .catalogue-new-image-modal-actions-row .catalogue-new-manager-contact-btn {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
   width: max-content;
   max-width: 100%;
 }
 
 html[data-page="catalog"] .catalogue-new-image-modal-actions-row .catalogue-new-image-modal-favourite {
-  flex-shrink: 0;
+  flex: 0 0 auto;
 }
 
 html[data-page="catalog"] .catalogue-new-image-modal-share-row {
@@ -8033,19 +8034,3 @@ html[data-page="catalog"] .catalogue-new-share-label {
   color: var(--color-primary);
 }
 
-@media (max-width: 900px) {
-  html[data-page="catalog"] .catalogue-new-image-modal-actions-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  html[data-page="catalog"] .catalogue-new-image-modal-actions-row .catalogue-new-image-modal-favourite {
-    align-self: flex-start;
-  }
-
-  html[data-page="catalog"] .catalogue-new-image-modal-share-row {
-    align-self: flex-start;
-    justify-content: flex-start;
-  }
-}

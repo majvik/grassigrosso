@@ -413,6 +413,9 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     sharedProductSection.innerHTML = `
       <a class="catalogue-new-shared-back" href="/catalog">Назад в каталог</a>
       <div class="catalogue-new-shared-product-shell">
+        <div class="catalogue-new-shared-product-media">
+          <img src="${escapeHtml(image?.getAttribute('src') || '')}" alt="${escapeHtml(image?.getAttribute('alt') || '')}" />
+        </div>
         <div class="catalogue-new-shared-product-info">
           <h1 class="catalogue-new-shared-product-title">${escapeHtml(title)}</h1>
           <div class="catalogue-new-shared-product-specs">${specsHtml}</div>
@@ -449,9 +452,6 @@ export function initCatalogListingController(documentRef: Document, scrollOption
               </button>
             </div>
           </div>
-        </div>
-        <div class="catalogue-new-shared-product-media">
-          <img src="${escapeHtml(image?.getAttribute('src') || '')}" alt="${escapeHtml(image?.getAttribute('alt') || '')}" />
         </div>
       </div>
     `
