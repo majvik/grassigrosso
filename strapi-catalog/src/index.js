@@ -134,9 +134,9 @@ module.exports = {
     const fillingOptions = await ensureRows('api::filling-option.filling-option', [
       { name: 'Кокосовая койра', slug: 'coir', is_active: true },
       { name: 'Латекс', slug: 'latex', is_active: true },
-      { name: 'Высокоэластичная пена', slug: 'orthoFoam', is_active: true },
+      { name: 'Орто-пена', slug: 'orthoFoam', is_active: true },
       { name: 'С эффектом памяти', slug: 'memoryEffect', is_active: true },
-      { name: 'Пена повышенной плотности', slug: 'nanoFoam', is_active: true },
+      { name: 'Нано-пена', slug: 'nanoFoam', is_active: true },
       { name: 'Форплит', slug: 'forplit', is_active: true },
     ]);
 

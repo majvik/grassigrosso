@@ -206,10 +206,16 @@ if (products) {
       `/api/catalog/products: expected at least 5 products with nanoFoam filling, got ${nanoFoamProducts.length} (${nanoFoamProducts.map((p) => p.slug).join(', ')})`,
     )
   }
-  const nanoFoamLabel = (filters?.groups?.fillings || []).find((option) => option.slug === 'nanoFoam')
-  if (nanoFoamLabel?.name !== 'Пена повышенной плотности') {
+  const orthoFoamLabel = (filters?.groups?.fillings || []).find((option) => option.slug === 'orthoFoam')
+  if (orthoFoamLabel?.name !== 'Орто-пена') {
     failures.push(
-      `/api/catalog/filters: nanoFoam label expected "Пена повышенной плотности", got ${nanoFoamLabel?.name || '(missing)'}`,
+      `/api/catalog/filters: orthoFoam label expected "Орто-пена", got ${orthoFoamLabel?.name || '(missing)'}`,
+    )
+  }
+  const nanoFoamLabel = (filters?.groups?.fillings || []).find((option) => option.slug === 'nanoFoam')
+  if (nanoFoamLabel?.name !== 'Нано-пена') {
+    failures.push(
+      `/api/catalog/filters: nanoFoam label expected "Нано-пена", got ${nanoFoamLabel?.name || '(missing)'}`,
     )
   }
 }

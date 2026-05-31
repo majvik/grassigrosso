@@ -51,11 +51,11 @@ const modalLabelMaps = {
     high: 'Высокие от 23 см',
   },
   fillings: {
-    orthoFoam: 'Высокоэластичная пена',
+    orthoFoam: 'Орто-пена',
     memoryEffect: 'С эффектом памяти',
     latex: 'Латекс',
     coir: 'Кокосовая койра',
-    nanoFoam: 'Пена повышенной плотности',
+    nanoFoam: 'Нано-пена',
     forplit: 'Форплит',
   },
   features: {

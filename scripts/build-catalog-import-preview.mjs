@@ -44,9 +44,9 @@ const LABELS = {
   fillings: {
     coir: 'Кокосовая койра',
     latex: 'Латекс',
-    orthoFoam: 'Высокоэластичная пена',
+    orthoFoam: 'Орто-пена',
     memoryEffect: 'С эффектом памяти',
-    nanoFoam: 'Пена повышенной плотности',
+    nanoFoam: 'Нано-пена',
     forplit: 'Форплит',
   },
   features: {
