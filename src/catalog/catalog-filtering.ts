@@ -81,7 +81,7 @@ export const FALLBACK_LOAD_RANGE_OPTIONS = [
 const knownTypeOptions = ['spring', 'nospring', 'topper', 'doubleSided', 'singleSided']
 const knownHeightRangeOptions = ['low', 'mid', 'high']
 const knownFillingOptions = ['coir', 'latex', 'orthoFoam', 'memoryEffect', 'nanoFoam', 'forplit']
-const knownFeatureOptions = ['removableCover', 'winterSummer', 'edgeSupport']
+const knownFeatureOptions = ['removableCover', 'winterSummer', 'edgeSupport', 'dualFirmness']
 
 function intersectsSet(sourceSet: Set<string>, selectedSet: Set<string>): boolean {
   if (!selectedSet.size) return true

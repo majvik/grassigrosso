@@ -39,6 +39,8 @@ module.exports = {
       strapi.log.warn(`catalog-filter-feed: catalog-filter-help unavailable: ${error.message}`)
     }
 
+    const allowedFeatureSlugs = new Set(['removableCover', 'winterSummer', 'edgeSupport', 'dualFirmness']);
+
     const [
       collections,
       sizes,
@@ -70,7 +72,7 @@ module.exports = {
         loadRange: normalizeRows(loadRange),
         heightRange: normalizeRows(heightRange),
         fillings: normalizeRows(fillings),
-        features: normalizeRows(features),
+        features: normalizeRows(features).filter((row) => allowedFeatureSlugs.has(row.slug)),
       },
       filterHelp,
       source: 'strapi-catalog-filter-feed',

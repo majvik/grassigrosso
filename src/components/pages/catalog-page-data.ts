@@ -308,6 +308,7 @@ export const CATALOG_FILTER_GROUPS: CatalogFilterGroupData[] = [
       { kind: 'chip', label: 'Съемный чехол', value: 'removableCover' },
       { kind: 'chip', label: 'Эффект зима-лето', value: 'winterSummer' },
       { kind: 'chip', label: 'Усиленный периметр', value: 'edgeSupport' },
+      { kind: 'chip', label: 'Разная жесткость сторон', value: 'dualFirmness' },
     ],
     title: 'Доп. особенности',
   },

@@ -93,8 +93,19 @@ module.exports = {
       { name: 'Съемный чехол', slug: 'removableCover' },
       { name: 'Эффект зима-лето', slug: 'winterSummer' },
       { name: 'Усиленный периметр', slug: 'edgeSupport' },
+      { name: 'Разная жесткость сторон', slug: 'dualFirmness' },
     ];
-    await ensureRows('api::feature-option.feature-option', standardFeatures);
+    const featureOptionsBySlug = await ensureRows('api::feature-option.feature-option', standardFeatures);
+
+    const featureRepo = strapi.db.query('api::feature-option.feature-option');
+    const allowedFeatureSlugs = new Set(standardFeatures.map((row) => row.slug));
+    const obsoleteFeatureRows = await featureRepo.findMany({ orderBy: [{ id: 'asc' }] });
+    for (const row of obsoleteFeatureRows) {
+      const slug = String(row.slug || '').trim();
+      if (!slug || allowedFeatureSlugs.has(slug)) continue;
+      await featureRepo.delete({ where: { id: row.id } });
+      strapi.log.info(`Catalog bootstrap: removed obsolete feature-option slug ${slug}`);
+    }
 
     const firmnessOptions = await ensureRows('api::firmness-option.firmness-option', [
       { name: 'Мягкий', slug: 'soft', is_active: true },
@@ -197,10 +208,14 @@ module.exports = {
         load_range_option: true,
         height_range_option: true,
         filling_options: true,
+        features: true,
       },
     });
 
+    const dualFirmnessFeature = featureOptionsBySlug.get('dualFirmness');
+
     let linkedProducts = 0;
+    let dualFirmnessFeatureLinked = 0;
     for (const product of products) {
       const data = {};
       const firmness = firmnessOptions.get(mapFirmness(product.firmness));
@@ -223,6 +238,19 @@ module.exports = {
           .map((value) => fillingOptions.get(mapFilling(value))?.id)
           .filter(Boolean);
         if (fillingIds.length) data.filling_options = fillingIds;
+      }
+
+      const firmnessSlug =
+        product.firmness_option?.slug
+        || mapFirmness(product.firmness);
+      if (firmnessSlug === 'dualFirmness' && dualFirmnessFeature?.id) {
+        const featureRows = Array.isArray(product.features) ? product.features : [];
+        const hasDualFirmnessFeature = featureRows.some((row) => row?.slug === 'dualFirmness');
+        if (!hasDualFirmnessFeature) {
+          const featureIds = featureRows.map((row) => row.id).filter(Boolean);
+          data.features = [...featureIds, dualFirmnessFeature.id];
+          dualFirmnessFeatureLinked += 1;
+        }
       }
 
       if (Object.keys(data).length) {
@@ -341,6 +369,6 @@ module.exports = {
       strapi.log.warn(`Catalog bootstrap: product gallery backfill skipped: ${e.message}`);
     }
 
-    strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products`);
+    strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products (${dualFirmnessFeatureLinked} dual-firmness feature links)`);
   },
 };

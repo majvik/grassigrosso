@@ -62,6 +62,7 @@ const modalLabelMaps = {
     removableCover: 'Съемный чехол',
     winterSummer: 'Эффект зима-лето',
     edgeSupport: 'Усиленный периметр',
+    dualFirmness: 'Разная жесткость сторон',
   },
 } as const
 

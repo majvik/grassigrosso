@@ -262,7 +262,10 @@ async function buildProductData(strapi, product, lookups, dryRun = false) {
     return row.id;
   });
 
-  const featureSlugs = Array.isArray(product.features) ? product.features : [];
+  const featureSlugs = Array.isArray(product.features) ? [...product.features] : [];
+  if (firmnessSlug === 'dualFirmness' && !featureSlugs.includes('dualFirmness')) {
+    featureSlugs.push('dualFirmness');
+  }
   const featureIds = featureSlugs.map((slug) => {
     const row = featureOptions.get(String(slug).trim());
     if (!row) throw new Error(`${product.slug}: unknown feature ${slug}`);
