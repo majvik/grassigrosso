@@ -66,6 +66,8 @@ export type CatalogProduct = {
   imageAlt?: string | null
   gallery?: CatalogProductMediaItem[]
   tags?: unknown[]
+  coverDescription?: string | null
+  layersCatalog?: string | null
   isActive?: boolean | null
 }
 

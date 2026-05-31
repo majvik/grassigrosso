@@ -34,6 +34,38 @@ function criticalPreloaderPlugin() {
   }
 }
 
+function catalogImportPreviewPlugin() {
+  const catalogImportDir = path.resolve(__dirname, 'docs/catalog-import')
+  const mimeByExt = {
+    '.html': 'text/html; charset=utf-8',
+    '.png': 'image/png',
+    '.md': 'text/markdown; charset=utf-8',
+    '.json': 'application/json; charset=utf-8',
+  }
+
+  return {
+    name: 'grassigrosso-catalog-import-preview',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (!req.url || req.method !== 'GET') return next()
+
+        const url = new URL(req.url, 'http://localhost')
+        if (!url.pathname.startsWith('/docs/catalog-import')) return next()
+
+        const relative = decodeURIComponent(url.pathname.replace(/^\/docs\/catalog-import\/?/, '')) || 'preview.html'
+        const filePath = path.resolve(catalogImportDir, relative)
+        if (!filePath.startsWith(catalogImportDir)) return next()
+        if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) return next()
+
+        const ext = path.extname(filePath).toLowerCase()
+        res.statusCode = 200
+        res.setHeader('Content-Type', mimeByExt[ext] || 'application/octet-stream')
+        fs.createReadStream(filePath).on('error', next).pipe(res)
+      })
+    },
+  }
+}
+
 function cleanUrlDevPlugin() {
   return {
     name: 'grassigrosso-clean-url-dev',
@@ -77,7 +109,7 @@ export default defineConfig(({ mode }) => {
   return {
     root: '.',
     base: './',
-    plugins: [react(), cleanUrlDevPlugin(), criticalPreloaderPlugin(), siteOriginPlugin(siteOrigin)],
+    plugins: [react(), catalogImportPreviewPlugin(), cleanUrlDevPlugin(), criticalPreloaderPlugin(), siteOriginPlugin(siteOrigin)],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),

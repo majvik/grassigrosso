@@ -22,6 +22,37 @@ python3 -m venv .venv-catalog
 node scripts/validate-catalog-import.mjs
 ```
 
+## Тестовый каталог для ручной валидации
+
+Перед загрузкой в Strapi соберите preview:
+
+```bash
+npm run catalog-import:preview
+```
+
+### Через Vite dev (если уже запущен `npm run dev`)
+
+[http://127.0.0.1:5174/docs/catalog-import/preview.html](http://127.0.0.1:5174/docs/catalog-import/preview.html)
+
+После правок MD пересоберите preview (`npm run catalog-import:preview`) и обновите страницу в браузере.
+
+### Отдельный static-сервер (без Vite)
+
+```bash
+npm run catalog-import:preview:serve
+```
+
+→ [http://127.0.0.1:8765/preview.html](http://127.0.0.1:8765/preview.html)
+
+На странице для каждого товара:
+- изображение 1034×1034;
+- slug'и фильтров и их человекочитаемые лейблы;
+- **полный список слоёв** (как должно быть в модалке);
+- блок «Как в модалке каталога» — текущие slug-лейблы;
+- чехол и примечания маппинга.
+
+Фильтр по коллекции и поиск по названию/slug в шапке preview.
+
 ## Формат MD
 
 Каждый файл в `products/` содержит:
@@ -47,11 +78,46 @@ node scripts/validate-catalog-import.mjs
 | `sizes` | `sizes` (все 6 стандартных) |
 | `filling_slugs` | `filling_options` |
 | `features` | `features` |
-| `image` | `media` / `gallery` (загрузить PNG в uploads) |
+| `image` | `media` (PNG в `public/uploads/`) |
 | `tags` | `tags` |
 | `sort_order` | `sort_order` |
+| секция «Чехол» | `cover_description` |
+| секция «Наполнение» | `layers_catalog` |
 
-Секция «Наполнение» — текст для модалки; отдельного поля в Strapi пока нет (следующий шаг миграции).
+## Импорт в Strapi
+
+После проверки preview загрузите товары в локальную Strapi:
+
+```bash
+# рабочая БД (если пустая — скопируйте seed)
+cp strapi-catalog/database/seed/data.db strapi-catalog/.tmp/data.db
+
+npm run catalog-import:strapi -- --deactivate-others
+```
+
+Команда собирает Strapi, upsert'ит 43 товара по `slug` из `products/*.md`, загружает PNG в uploads и (с флагом `--deactivate-others`) отключает старые placeholder-карточки.
+
+**Флаги:**
+
+| Флаг | Действие |
+|------|----------|
+| `--dry-run` | только лог, без записи в БД |
+| `--deactivate-others` | `is_active: false` для Product вне import-set |
+| `--force-media` | перезалить PNG даже если `media` уже есть |
+
+Повторный запуск обновляет scalars, relations и текстовые поля из MD; без `--force-media` существующие картинки в админке не трогаются.
+
+**После импорта** (Strapi остановлен):
+
+```bash
+npm run strapi:sync-seed
+git add strapi-catalog/database/seed/data.db \
+        strapi-catalog/database/seed/seed-manifest.json \
+        strapi-catalog/public/uploads/
+npm run check:catalog-api
+```
+
+На prod контент редактируется в админке Strapi; для выкладки изменений — снова `strapi:sync-seed` и commit seed + uploads.
 
 ## Изображения
 

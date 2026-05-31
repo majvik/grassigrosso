@@ -90,17 +90,11 @@ if (filters) {
     }
 
     const expectedMattressSizeSlugs = [
-      '80x190',
-      '80x200',
-      '90x190',
-      '90x200',
-      '120x190',
-      '120x200',
       '140x190',
       '140x200',
       '160x190',
-      '180x190',
       '160x200',
+      '180x190',
       '180x200',
     ]
     const sizeSlugsFromFeed = (groups.size || []).map((option) => option.slug)
@@ -169,7 +163,11 @@ if (products) {
       }
     }
     if (catalogFilterSlugSets) {
-      if (!catalogFilterSlugSets.collection.has(product.collectionSlug)) {
+      const collectionSlug = String(product.collectionSlug || '')
+      const collectionOk =
+        collectionSlug === 'topper'
+        || catalogFilterSlugSets.collection.has(collectionSlug)
+      if (!collectionOk) {
         failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has unknown collectionSlug ${product.collectionSlug}`)
       }
       if (!catalogFilterSlugSets.firmness.has(product.firmness)) {

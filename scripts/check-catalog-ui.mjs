@@ -8,6 +8,16 @@ const baseUrl = String(process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5177
 const chromePath = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const port = Number(process.env.CHROME_DEBUG_PORT || (9200 + Math.floor(Math.random() * 400)))
 const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grass-catalog-chrome-'))
+const EXPECTED_PRODUCT_COUNT = 43
+const EXPECTED_CLASSIC_FILTER_COUNT = '6'
+const EXPECTED_SIZE_SLUGS = [
+  '140x190',
+  '140x200',
+  '160x190',
+  '160x200',
+  '180x190',
+  '180x200',
+]
 const failures = []
 const OVERALL_TIMEOUT_MS = Number(process.env.CATALOG_UI_TIMEOUT_MS || 45000)
 
@@ -168,7 +178,7 @@ try {
   await connect(await waitForDevtools())
   await send('Runtime.enable')
   await send('Page.enable')
-  await waitFor('catalog cards loaded', 'document.querySelectorAll(".catalogue-new-card").length >= 100')
+  await waitFor('catalog cards loaded', `document.querySelectorAll(".catalogue-new-card").length >= ${EXPECTED_PRODUCT_COUNT}`)
 
   const initial = await evaluate(`(() => ({
     url: location.pathname,
@@ -178,7 +188,7 @@ try {
     consoleErrors: window.__catalogSmokeErrors || 0,
   }))()`)
   if (initial.url !== '/catalog') failures.push(`expected /catalog, got ${initial.url}`)
-  if (initial.cards < 100) failures.push(`expected at least 100 cards, got ${initial.cards}`)
+  if (initial.cards < EXPECTED_PRODUCT_COUNT) failures.push(`expected at least ${EXPECTED_PRODUCT_COUNT} cards, got ${initial.cards}`)
   if (initial.visible !== 6) failures.push(`expected first page to show 6 cards, got ${initial.visible}`)
 
   await evaluate(`(() => {
@@ -189,25 +199,33 @@ try {
   })()`)
   const classic = await waitFor('classic filter applied', `(() => {
     const result = document.querySelector('.catalogue-new-results strong')?.textContent?.trim()
-    return result === '26' ? { result } : false
+    return result === '${EXPECTED_CLASSIC_FILTER_COUNT}' ? { result } : false
   })()`)
-  if (!classic) failures.push('classic filter did not produce 26 results')
+  if (!classic) failures.push(`classic filter did not produce ${EXPECTED_CLASSIC_FILTER_COUNT} results`)
 
   const sizeMenuOk = await waitFor('catalog size menu slugs', `(() => {
-    const trigger = document.querySelector('.catalogue-new-size-select-trigger')
+    const sizeSelect = document.querySelector('.catalogue-new-size-select[data-catalog-select="size"]')
+    if (!sizeSelect) return false
+    const trigger = sizeSelect.querySelector('.catalogue-new-size-select-trigger')
     if (!trigger) return false
-    trigger.click()
-    const slugs = [...document.querySelectorAll('.catalogue-new-size-select-option')]
+    if (!sizeSelect.classList.contains('is-open')) {
+      trigger.click()
+    }
+    const menu =
+      document.querySelector('.catalogue-new-size-select-menu.is-portal-open')
+      || sizeSelect.querySelector('.catalogue-new-size-select-menu')
+    if (!menu || menu.hidden) return false
+    const slugs = [...menu.querySelectorAll('.catalogue-new-size-select-option')]
+      .filter((item) => !item.hidden && item.dataset.value && item.dataset.value !== 'all')
       .map((item) => item.dataset.value)
-      .filter((v) => v && v !== 'all')
-    const expected = ['80x190','80x200','90x190','90x200','120x190','120x200','140x190','140x200','160x190','180x190','160x200','180x200']
+    const expected = ${JSON.stringify(EXPECTED_SIZE_SLUGS)}
     const banned = ['200x200','140x220','160x220','180x220','200x220','220x220']
-    if (slugs.length !== 12) return false
-    for (let i = 0; i < 12; i++) if (slugs[i] !== expected[i]) return false
+    if (slugs.length !== expected.length) return false
+    for (let i = 0; i < expected.length; i++) if (slugs[i] !== expected[i]) return false
     if (banned.some((b) => slugs.includes(b))) return false
     return { slugs: slugs.join(',') }
   })()`)
-  if (!sizeMenuOk) failures.push('catalog size menu: expected 12 slugs in order, 180x190 after 160x190, no removed 220/200x200 line')
+  if (!sizeMenuOk) failures.push(`catalog size menu: expected ${EXPECTED_SIZE_SLUGS.length} standard slugs in order`)
 
   await evaluate(`(() => {
     const option = document.querySelector('.catalogue-new-sort-option[data-value="height-desc"]')

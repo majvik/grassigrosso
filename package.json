@@ -21,7 +21,12 @@
     "new-page": "node scripts/new-page.mjs",
     "start": "bash scripts/start-services.sh",
     "check:catalog-api": "node scripts/check-catalog-api.mjs",
-    "check:catalog-ui": "node scripts/check-catalog-ui.mjs"
+    "check:catalog-ui": "node scripts/check-catalog-ui.mjs",
+    "catalog-import:build": "python3 scripts/build-catalog-import.py",
+    "catalog-import:validate": "node scripts/validate-catalog-import.mjs",
+    "catalog-import:preview": "node scripts/build-catalog-import-preview.mjs",
+    "catalog-import:preview:serve": "node scripts/build-catalog-import-preview.mjs && npx --yes serve docs/catalog-import -p 8765",
+    "catalog-import:strapi": "npm run build --prefix strapi-catalog && node strapi-catalog/scripts/import-catalog-import.cjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

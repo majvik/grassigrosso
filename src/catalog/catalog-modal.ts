@@ -16,6 +16,8 @@ export type CatalogCardDataset = {
   lengths?: string
   fillings?: string
   features?: string
+  coverDescription?: string
+  layersCatalog?: string
 }
 
 export type CatalogModalSpec = {
@@ -86,22 +88,35 @@ function readSizes(dataset: CatalogCardDataset): string[] {
 
 export function buildCatalogModalSpecs(dataset: CatalogCardDataset): CatalogModalSpec[] {
   const sizes = readSizes(dataset)
-  const fillings = parseCsv(dataset.fillings).map((value) => mapValue(value, modalLabelMaps.fillings)).join(', ')
+  const layersCatalog = String(dataset.layersCatalog || '').trim()
+  const coverDescription = String(dataset.coverDescription || '').trim()
+  const fillings = layersCatalog
+    ? layersCatalog
+    : parseCsv(dataset.fillings).map((value) => mapValue(value, modalLabelMaps.fillings)).join(', ')
   const features = parseCsv(dataset.features).map((value) => mapValue(value, modalLabelMaps.features)).join(', ')
   const height = dataset.height ? `${dataset.height} см` : ''
   const heightRange = mapValue(dataset.heightRange, modalLabelMaps.heightRange)
   const heightLabel = height && heightRange ? `${height} (${heightRange})` : height || heightRange
   const loadLabel = mapValue(dataset.loadRange, modalLabelMaps.loadRange)
 
-  return [
+  const specs: CatalogModalSpec[] = [
     { label: 'Жесткость', value: mapValue(dataset.firmness, modalLabelMaps.firmness) },
     { label: 'Тип матраса', value: mapValue(dataset.type, modalLabelMaps.type) },
     { label: 'Высота', value: heightLabel },
     { label: 'Нагрузка', value: loadLabel },
     { label: 'Размер', value: sizes.length ? formatCatalogSizeList(sizes) : '' },
-    { label: 'Наполнители', value: fillings },
+  ]
+
+  if (coverDescription) {
+    specs.push({ label: 'Чехол', value: coverDescription })
+  }
+
+  specs.push(
+    { label: layersCatalog ? 'Наполнение' : 'Наполнители', value: fillings },
     { label: 'Особенности', value: features },
-  ].filter((spec) => spec.value)
+  )
+
+  return specs.filter((spec) => spec.value)
 }
 
 function escapeHtmlLite(value: unknown): string {
@@ -121,7 +136,8 @@ export function buildCatalogCardMetaHtmlFromDataset(dataset: CatalogCardDataset)
     { label: 'Жесткость', value: byLabel.get('Жесткость') || '' },
     { label: 'Тип матраса', value: byLabel.get('Тип матраса') || '' },
     { label: 'Размер', value: byLabel.get('Размер') || '' },
-    { label: 'Наполнители', value: byLabel.get('Наполнители') || '' },
+    { label: 'Чехол', value: byLabel.get('Чехол') || '' },
+    { label: 'Наполнение', value: byLabel.get('Наполнение') || byLabel.get('Наполнители') || '' },
     { label: 'Особенности', value: byLabel.get('Особенности') || '' },
   ].filter((spec) => spec.value)
   const lines = orderedSpecs.map(

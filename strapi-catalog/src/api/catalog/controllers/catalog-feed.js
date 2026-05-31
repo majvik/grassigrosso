@@ -167,13 +167,17 @@ module.exports = {
 
     const items = rows.map((row) => {
       const { gallery, imageUrl, imageAlt } = buildProductGallery(row);
+      const mattressType = row.mattress_type_option?.slug || mapMattressType(row.mattress_type || '');
+      const collectionSlugFromRelation = row.collection?.slug || '';
+      const collectionSlug = collectionSlugFromRelation
+        || (mattressType === 'topper' ? 'topper' : '');
       return {
       name: row.name || '',
       slug: row.slug || '',
       collectionName: row.collection?.name || '',
-      collectionSlug: row.collection?.slug || '',
+      collectionSlug,
       firmness: row.firmness_option?.slug || mapFirmness(row.firmness || ''),
-      mattressType: row.mattress_type_option?.slug || mapMattressType(row.mattress_type || ''),
+      mattressType,
       heightCm: Number(row.height_cm || 0),
       maxLoadKg: Number(row.max_load_kg || 0),
       loadRange: normalizeProductLoadRangeSlug(
@@ -203,6 +207,8 @@ module.exports = {
       gallery,
       imageUrl,
       imageAlt,
+      coverDescription: String(row.cover_description || '').trim(),
+      layersCatalog: String(row.layers_catalog || '').trim(),
       tags: Array.isArray(row.tags) ? row.tags.map((tag) => tag.name).filter(Boolean) : [],
       isActive: row.is_active !== false
     };

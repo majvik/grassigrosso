@@ -39,5 +39,11 @@
   "Tag": "Тег",
   "Дополнительная особенность": "Дополнительная особенность",
   "Стандартизированный размер": "Стандартизированный размер",
-  "Catalog (new) hero slider": "Hero-слайдер каталога"
+  "Catalog (new) hero slider": "Hero-слайдер каталога",
+  "api::product.product.cover_description": "Чехол",
+  "api::product.product.layers_catalog": "Наполнение (полный список)",
+  "content-manager.content-types.api::product.product.cover_description": "Чехол",
+  "content-manager.content-types.api::product.product.layers_catalog": "Наполнение (полный список)",
+  "content-type-builder.content-types.api::product.product.attributes.cover_description": "Чехол",
+  "content-type-builder.content-types.api::product.product.attributes.layers_catalog": "Наполнение (полный список)"
 }

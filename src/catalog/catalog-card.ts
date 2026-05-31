@@ -61,6 +61,8 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
     : (sizesFromLegacy.length ? sizesFromLegacy : [...STANDARD_MATTRESS_SIZES])
   const fillings = Array.isArray(item.fillings) ? item.fillings.map((value) => String(value)) : []
   const features = Array.isArray(item.features) ? item.features.map((value) => String(value)) : []
+  const coverDescription = String(item.coverDescription || '').trim()
+  const layersCatalog = String(item.layersCatalog || '').trim()
   const cardMetaHtml = buildCatalogCardMetaHtmlFromDataset({
     firmness,
     type: mattressType,
@@ -70,6 +72,8 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
     sizes: sizes.join(','),
     fillings: fillings.join(','),
     features: features.join(','),
+    coverDescription,
+    layersCatalog,
   })
 
   return `
@@ -84,7 +88,9 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
         data-height-range="${escapeHtml(heightRange)}"
         data-sizes="${escapeHtml(sizes.join(','))}"
         data-fillings="${escapeHtml(fillings.join(','))}"
-        data-features="${escapeHtml(features.join(','))}">
+        data-features="${escapeHtml(features.join(','))}"
+        data-cover-description="${escapeHtml(coverDescription)}"
+        data-layers-catalog="${escapeHtml(layersCatalog)}">
         ${mediaHtml}
         <div class="catalogue-new-card-body">
           <h3>${name}</h3>

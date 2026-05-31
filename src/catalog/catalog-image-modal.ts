@@ -163,6 +163,9 @@ function appendModalSpec(specsRoot: HTMLElement, label: string, value: string): 
   const valueEl = document.createElement('span')
   valueEl.className = 'catalogue-new-image-modal-spec-value'
   valueEl.textContent = value
+  if (value.includes('\n')) {
+    valueEl.style.whiteSpace = 'pre-line'
+  }
   row.append(labelEl, valueEl)
   specsRoot.appendChild(row)
 }
@@ -180,6 +183,8 @@ function cardDatasetToSpecDataset(ds: DOMStringMap): Parameters<typeof buildCata
     lengths: ds.lengths,
     fillings: ds.fillings,
     features: ds.features,
+    coverDescription: ds.coverDescription,
+    layersCatalog: ds.layersCatalog,
   }
 }
 

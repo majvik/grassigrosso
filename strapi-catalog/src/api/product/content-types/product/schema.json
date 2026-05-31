@@ -130,6 +130,14 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::tag.tag"
+    },
+    "cover_description": {
+      "displayName": "Чехол",
+      "type": "text"
+    },
+    "layers_catalog": {
+      "displayName": "Наполнение (полный список)",
+      "type": "text"
     }
   }
 }
