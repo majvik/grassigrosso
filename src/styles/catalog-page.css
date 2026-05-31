@@ -1296,7 +1296,6 @@ html.catalogue-shared-product-view .catalogue-new-content {
   color: var(--color-primary);
 }
 .catalogue-new-shared-product-specs {
-  margin-top: var(--space-6);
   display: grid;
   gap: 10px;
 }
@@ -1310,6 +1309,9 @@ html.catalogue-shared-product-view .catalogue-new-content {
 }
 .catalogue-new-shared-product-spec-value {
   color: var(--color-text);
+}
+.catalogue-new-shared-product .catalogue-new-spec-segments {
+  margin-top: var(--space-6);
 }
 .catalogue-new-shared-product-tags {
   margin-top: var(--space-5);
@@ -2460,10 +2462,60 @@ html.catalogue-shared-favourites-view .catalogue-new-card .catalogue-new-meta-li
   line-height: 1.12;
   color: var(--color-primary);
 }
+.catalogue-new-spec-segments {
+  margin-top: 16px;
+}
+.catalogue-new-spec-segments[hidden] {
+  display: none !important;
+}
+.catalogue-new-spec-segments-control {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--color-surface-muted);
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+.catalogue-new-spec-segments-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 1.2;
+  background: transparent;
+  color: var(--color-text-gray);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.catalogue-new-spec-segments-btn.is-active {
+  background: #fff;
+  color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.catalogue-new-spec-segments-btn:focus-visible {
+  outline: 2px solid rgba(var(--color-primary-rgb), 0.35);
+  outline-offset: 2px;
+}
+.catalogue-new-spec-segments-panels {
+  margin-top: 12px;
+}
+.catalogue-new-spec-segments-panel[hidden] {
+  display: none !important;
+}
+.catalogue-new-shared-product-specs.catalogue-new-spec-segments-panel-inner {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
 .catalogue-new-image-modal-specs {
-  margin: 16px 0 0;
+  margin: 0;
   display: grid;
   gap: 8px;
+}
+.catalogue-new-shared-product .catalogue-new-spec-segments {
+  margin-top: var(--space-6);
 }
 .catalogue-new-image-modal-spec {
   display: grid;

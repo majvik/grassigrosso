@@ -16,7 +16,8 @@ import {
 } from './catalog-product-gallery'
 import { readCatalogueCardMeta } from './catalog-card-meta'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
-import { buildCatalogModalSpecs } from './catalog-modal'
+import { buildCatalogModalSpecGroups } from './catalog-modal'
+import { buildSharedProductSpecSegmentsHtml, initCatalogSpecSegments } from './catalog-spec-segments'
 import {
   emitCatalogManagerContactIntent,
   setCatalogFavouritesSwitchState,
@@ -403,19 +404,12 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const snapshot = getActiveSlideSnapshot(cardMedia)
     const gallery = readGalleryFromElement(cardMedia)
     const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || snapshot?.alt || 'Матрас'
-    const specs = buildCatalogModalSpecs(card.dataset)
+    const specGroups = buildCatalogModalSpecGroups(card.dataset)
     const tags = [...card.querySelectorAll('.catalogue-new-tags > .catalogue-new-tag')]
       .map((tag) => tag.textContent?.trim())
       .filter((tag): tag is string => Boolean(tag))
     const slug = String(card.dataset.productSlug || sharedState.slug).trim()
-    const specsHtml = specs
-      .map((spec) => (
-        `<div class="catalogue-new-shared-product-spec">` +
-        `<span class="catalogue-new-shared-product-spec-label">${escapeHtml(spec.label)}</span>` +
-        `<span class="catalogue-new-shared-product-spec-value">${escapeHtml(spec.value)}</span>` +
-        `</div>`
-      ))
-      .join('')
+    const specsHtml = buildSharedProductSpecSegmentsHtml(specGroups.main, specGroups.details)
     const tagsHtml = tags.length
       ? `<div class="catalogue-new-shared-product-tags catalogue-new-tags">${tags.map((tag) => `<span class="catalogue-new-tag">${escapeHtml(tag)}</span>`).join('')}</div>`
       : ''
@@ -430,7 +424,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         })}
         <div class="catalogue-new-shared-product-info">
           <h1 class="catalogue-new-shared-product-title">${escapeHtml(title)}</h1>
-          <div class="catalogue-new-shared-product-specs">${specsHtml}</div>
+          ${specsHtml}
           ${tagsHtml}
           <div class="catalogue-new-shared-product-actions catalogue-new-image-modal-actions">
             <div class="catalogue-new-image-modal-actions-row">
@@ -472,6 +466,8 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     if (favBtn) syncSharedProductFavouriteButton(favBtn, slug)
     if (sharedProductSection) {
       initCatalogProductGalleries(sharedProductSection)
+      const specSegments = sharedProductSection.querySelector<HTMLElement>('[data-catalog-spec-segments]')
+      if (specSegments) initCatalogSpecSegments(specSegments)
       const sharedMedia = sharedProductSection.querySelector<HTMLElement>('[data-catalog-card-media]')
       const cardMediaEl = card.querySelector<HTMLElement>('[data-catalog-card-media]')
       if (sharedMedia && cardMediaEl) {

@@ -728,7 +728,16 @@
           <div class="catalogue-new-image-modal-media catalogue-new-card-media" id="catalogueImageModalMedia" data-catalog-card-media></div>
           <div class="catalogue-new-image-modal-content">
             <h3 class="catalogue-new-image-modal-title" id="catalogueImageModalTitle"></h3>
-            <div class="catalogue-new-image-modal-specs" id="catalogueImageModalSpecs"></div>
+            <div class="catalogue-new-spec-segments" id="catalogueImageModalSpecSegments" data-catalog-spec-segments>
+              <div class="catalogue-new-spec-segments-control" role="tablist" aria-label="Раздел характеристик">
+                <button type="button" class="catalogue-new-spec-segments-btn is-active" role="tab" id="catalogueImageModalSpecTabMain" aria-selected="true" aria-controls="catalogueImageModalSpecsMain" data-spec-segment="main" tabindex="0">Основные характеристики</button>
+                <button type="button" class="catalogue-new-spec-segments-btn" role="tab" id="catalogueImageModalSpecTabDetails" aria-selected="false" aria-controls="catalogueImageModalSpecsDetails" data-spec-segment="details" tabindex="-1">Наполнение</button>
+              </div>
+              <div class="catalogue-new-spec-segments-panels">
+                <div class="catalogue-new-image-modal-specs catalogue-new-spec-segments-panel" id="catalogueImageModalSpecsMain" role="tabpanel" aria-labelledby="catalogueImageModalSpecTabMain" data-spec-segment-panel="main"></div>
+                <div class="catalogue-new-image-modal-specs catalogue-new-spec-segments-panel" id="catalogueImageModalSpecsDetails" role="tabpanel" aria-labelledby="catalogueImageModalSpecTabDetails" data-spec-segment-panel="details" hidden></div>
+              </div>
+            </div>
             <p class="catalogue-new-image-modal-specs-empty" id="catalogueImageModalSpecsEmpty" hidden>Характеристики не указаны</p>
             <div class="catalogue-new-tags-row catalogue-new-image-modal-tags-row" id="catalogueImageModalTagsRow" hidden>
               <div class="catalogue-new-tags" id="catalogueImageModalTags"></div>

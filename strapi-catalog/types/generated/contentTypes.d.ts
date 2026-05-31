@@ -835,6 +835,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::collection.collection'
     >;
+    cover_description: Schema.Attribute.Text;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -885,6 +886,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     >;
     image_url: Schema.Attribute.String;
     is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    layers_catalog: Schema.Attribute.Text;
     load_range: Schema.Attribute.Enumeration<
       [
         '\u0434\u043E_120_\u043A\u0433',

@@ -25,6 +25,11 @@ export type CatalogModalSpec = {
   value: string
 }
 
+export type CatalogModalSpecGroups = {
+  main: CatalogModalSpec[]
+  details: CatalogModalSpec[]
+}
+
 const modalLabelMaps = {
   firmness: {
     soft: 'Мягкий',
@@ -87,35 +92,48 @@ function readSizes(dataset: CatalogCardDataset): string[] {
   return legacy.length ? legacy : [...STANDARD_MATTRESS_SIZES]
 }
 
-export function buildCatalogModalSpecs(dataset: CatalogCardDataset): CatalogModalSpec[] {
+export function buildCatalogModalSpecGroups(dataset: CatalogCardDataset): CatalogModalSpecGroups {
   const sizes = readSizes(dataset)
   const layersCatalog = String(dataset.layersCatalog || '').trim()
   const coverDescription = String(dataset.coverDescription || '').trim()
   const fillings = layersCatalog
     ? layersCatalog
     : parseCsv(dataset.fillings).map((value) => mapValue(value, modalLabelMaps.fillings)).join(', ')
+  const loadLabel = mapValue(dataset.loadRange, modalLabelMaps.loadRange)
+
+  const main: CatalogModalSpec[] = [
+    { label: 'Жесткость', value: mapValue(dataset.firmness, modalLabelMaps.firmness) },
+    { label: 'Тип матраса', value: mapValue(dataset.type, modalLabelMaps.type) },
+    { label: 'Нагрузка', value: loadLabel },
+    { label: 'Размер', value: sizes.length ? formatCatalogSizeList(sizes) : '' },
+  ].filter((spec) => spec.value)
+
+  if (coverDescription) {
+    main.push({ label: 'Чехол', value: coverDescription })
+  }
+
+  const details: CatalogModalSpec[] = []
+  if (fillings) {
+    details.push({ label: 'Наполнение', value: fillings })
+  }
+
+  return { main, details }
+}
+
+export function buildCatalogModalSpecs(dataset: CatalogCardDataset): CatalogModalSpec[] {
+  const layersCatalog = String(dataset.layersCatalog || '').trim()
   const features = parseCsv(dataset.features).map((value) => mapValue(value, modalLabelMaps.features)).join(', ')
   const height = dataset.height ? `${dataset.height} см` : ''
   const heightRange = mapValue(dataset.heightRange, modalLabelMaps.heightRange)
   const heightLabel = height && heightRange ? `${height} (${heightRange})` : height || heightRange
-  const loadLabel = mapValue(dataset.loadRange, modalLabelMaps.loadRange)
+  const groups = buildCatalogModalSpecGroups(dataset)
 
   const specs: CatalogModalSpec[] = [
-    { label: 'Жесткость', value: mapValue(dataset.firmness, modalLabelMaps.firmness) },
-    { label: 'Тип матраса', value: mapValue(dataset.type, modalLabelMaps.type) },
+    ...groups.main,
     { label: 'Высота', value: heightLabel },
-    { label: 'Нагрузка', value: loadLabel },
-    { label: 'Размер', value: sizes.length ? formatCatalogSizeList(sizes) : '' },
-  ]
-
-  if (coverDescription) {
-    specs.push({ label: 'Чехол', value: coverDescription })
-  }
-
-  specs.push(
-    { label: layersCatalog ? 'Наполнение' : 'Наполнители', value: fillings },
+    ...groups.details,
     { label: 'Особенности', value: features },
-  )
+  ]
 
   return specs.filter((spec) => spec.value)
 }

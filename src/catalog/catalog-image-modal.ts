@@ -1,5 +1,10 @@
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
-import { buildCatalogCardMetaHtmlFromDataset, buildCatalogModalSpecs } from './catalog-modal'
+import { buildCatalogCardMetaHtmlFromDataset, buildCatalogModalSpecGroups } from './catalog-modal'
+import {
+  initCatalogSpecSegments,
+  renderSpecsIntoPanel,
+  setCatalogSpecSegment,
+} from './catalog-spec-segments'
 import {
   destroyCatalogProductGalleries,
   mountCatalogProductMedia,
@@ -34,7 +39,9 @@ export type CatalogImageModalElements = {
   positionsCount: HTMLElement
   imageMedia: HTMLElement
   title: HTMLElement
-  specs: HTMLElement
+  specSegmentsRoot: HTMLElement
+  specsMain: HTMLElement
+  specsDetails: HTMLElement
   specsEmpty: HTMLElement
   tagsRow: HTMLElement | null
   tagsRoot: HTMLElement | null
@@ -153,24 +160,7 @@ function getApiUrl(): string {
   return import.meta.env.VITE_API_URL || '/api/submit'
 }
 
-function appendModalSpec(specsRoot: HTMLElement, label: string, value: string): void {
-  if (!value) return
-  const row = document.createElement('div')
-  row.className = 'catalogue-new-image-modal-spec'
-  const labelEl = document.createElement('span')
-  labelEl.className = 'catalogue-new-image-modal-spec-label'
-  labelEl.textContent = label
-  const valueEl = document.createElement('span')
-  valueEl.className = 'catalogue-new-image-modal-spec-value'
-  valueEl.textContent = value
-  if (value.includes('\n')) {
-    valueEl.style.whiteSpace = 'pre-line'
-  }
-  row.append(labelEl, valueEl)
-  specsRoot.appendChild(row)
-}
-
-function cardDatasetToSpecDataset(ds: DOMStringMap): Parameters<typeof buildCatalogModalSpecs>[0] {
+function cardDatasetToSpecDataset(ds: DOMStringMap): Parameters<typeof buildCatalogModalSpecGroups>[0] {
   return {
     firmness: ds.firmness,
     type: ds.type,
@@ -235,11 +225,15 @@ export function initCatalogImageModal(
   let pendingContactSlugs: string[] = []
 
   const clearModalSpecs = (): void => {
-    elements.specs.replaceChildren()
+    elements.specsMain.replaceChildren()
+    elements.specsDetails.replaceChildren()
+    elements.specSegmentsRoot.hidden = true
     elements.specsEmpty.hidden = true
     elements.tagsRoot?.replaceChildren()
     if (elements.tagsRow) elements.tagsRow.hidden = true
   }
+
+  initCatalogSpecSegments(elements.specSegmentsRoot)
 
   const renderPreviewTags = (card: HTMLElement): void => {
     if (!elements.tagsRow || !elements.tagsRoot) return
@@ -506,13 +500,17 @@ export function initCatalogImageModal(
     initCatalogProductGalleries(elements.imageMedia)
     elements.title.textContent = title || 'Матрас'
     clearModalSpecs()
-    buildCatalogModalSpecs(cardDatasetToSpecDataset(dataset)).forEach((spec) => {
-      appendModalSpec(elements.specs, spec.label, spec.value)
-    })
-    renderPreviewTags(card)
-    if (!elements.specs.childElementCount) {
+    const specGroups = buildCatalogModalSpecGroups(cardDatasetToSpecDataset(dataset))
+    renderSpecsIntoPanel(elements.specsMain, specGroups.main)
+    renderSpecsIntoPanel(elements.specsDetails, specGroups.details)
+    const hasSpecs = specGroups.main.length > 0 || specGroups.details.length > 0
+    if (hasSpecs) {
+      elements.specSegmentsRoot.hidden = false
+      setCatalogSpecSegment(elements.specSegmentsRoot, 'main')
+    } else {
       elements.specsEmpty.hidden = false
     }
+    renderPreviewTags(card)
     elements.previewRoot.hidden = false
     elements.contactRoot.hidden = true
     elements.dialog.classList.remove('is-contact-view')

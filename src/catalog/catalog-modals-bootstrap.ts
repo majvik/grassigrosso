@@ -24,7 +24,9 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
   const catalogueImageModalPositionsCount = queryElement<HTMLElement>(documentRef, 'catalogueImageModalPositionsCount')
   const catalogueImageModalMedia = queryElement<HTMLElement>(documentRef, 'catalogueImageModalMedia')
   const catalogueImageModalTitle = queryElement<HTMLElement>(documentRef, 'catalogueImageModalTitle')
-  const catalogueImageModalSpecs = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecs')
+  const catalogueImageModalSpecSegments = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecSegments')
+  const catalogueImageModalSpecsMain = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecsMain')
+  const catalogueImageModalSpecsDetails = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecsDetails')
   const catalogueImageModalSpecsEmpty = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecsEmpty')
   const catalogueImageModalTagsRow = queryElement<HTMLElement>(documentRef, 'catalogueImageModalTagsRow')
   const catalogueImageModalTags = queryElement<HTMLElement>(documentRef, 'catalogueImageModalTags')
@@ -46,7 +48,9 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
     catalogueImageModalPositionsCount &&
     catalogueImageModalMedia &&
     catalogueImageModalTitle &&
-    catalogueImageModalSpecs &&
+    catalogueImageModalSpecSegments &&
+    catalogueImageModalSpecsMain &&
+    catalogueImageModalSpecsDetails &&
     catalogueImageModalSpecsEmpty &&
     catalogueImageModalContactBtn &&
     catalogueImageModalShareBtn &&
@@ -66,7 +70,9 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
         positionsCount: catalogueImageModalPositionsCount,
         imageMedia: catalogueImageModalMedia,
         title: catalogueImageModalTitle,
-        specs: catalogueImageModalSpecs,
+        specSegmentsRoot: catalogueImageModalSpecSegments,
+        specsMain: catalogueImageModalSpecsMain,
+        specsDetails: catalogueImageModalSpecsDetails,
         specsEmpty: catalogueImageModalSpecsEmpty,
         tagsRow: catalogueImageModalTagsRow,
         tagsRoot: catalogueImageModalTags,
