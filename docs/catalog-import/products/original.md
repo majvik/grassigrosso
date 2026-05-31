@@ -19,7 +19,7 @@ sizes:
 - 180x190
 - 180x200
 filling_slugs:
-- orthoFoam
+- nanoFoam
 features:
 - edgeSupport
 image: images/original.png

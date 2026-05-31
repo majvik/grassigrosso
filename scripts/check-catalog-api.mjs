@@ -19,7 +19,7 @@ const requiredFilterSlugs = {
   collection: ['classic', 'flexi', 'relax', 'trend'],
   firmness: ['soft', 'medium', 'hard', 'dualFirmness'],
   type: ['spring', 'nospring'],
-  fillings: ['memoryEffect'],
+  fillings: ['memoryEffect', 'nanoFoam'],
 }
 
 async function readJson(path) {
@@ -198,6 +198,19 @@ if (products) {
         }
       }
     }
+  }
+
+  const nanoFoamProducts = items.filter((product) => (product.fillings || []).includes('nanoFoam'))
+  if (nanoFoamProducts.length < 5) {
+    failures.push(
+      `/api/catalog/products: expected at least 5 products with nanoFoam filling, got ${nanoFoamProducts.length} (${nanoFoamProducts.map((p) => p.slug).join(', ')})`,
+    )
+  }
+  const nanoFoamLabel = (filters?.groups?.fillings || []).find((option) => option.slug === 'nanoFoam')
+  if (nanoFoamLabel?.name !== 'Пена повышенной плотности') {
+    failures.push(
+      `/api/catalog/filters: nanoFoam label expected "Пена повышенной плотности", got ${nanoFoamLabel?.name || '(missing)'}`,
+    )
   }
 }
 

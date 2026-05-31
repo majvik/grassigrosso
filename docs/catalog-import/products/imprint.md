@@ -21,7 +21,6 @@ sizes:
 filling_slugs:
 - coir
 - memoryEffect
-- orthoFoam
 features:
 - edgeSupport
 image: images/imprint.png

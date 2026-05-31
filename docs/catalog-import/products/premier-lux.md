@@ -21,7 +21,6 @@ sizes:
 filling_slugs:
 - coir
 - latex
-- orthoFoam
 features:
 - edgeSupport
 image: images/premier-lux.png

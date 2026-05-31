@@ -20,6 +20,7 @@ sizes:
 - 180x200
 filling_slugs:
 - orthoFoam
+- nanoFoam
 features:
 - edgeSupport
 image: images/galaksi.png

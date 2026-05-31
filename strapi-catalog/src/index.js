@@ -134,9 +134,9 @@ module.exports = {
     const fillingOptions = await ensureRows('api::filling-option.filling-option', [
       { name: 'Кокосовая койра', slug: 'coir', is_active: true },
       { name: 'Латекс', slug: 'latex', is_active: true },
-      { name: 'Орто-пена', slug: 'orthoFoam', is_active: true },
+      { name: 'Высокоэластичная пена', slug: 'orthoFoam', is_active: true },
       { name: 'С эффектом памяти', slug: 'memoryEffect', is_active: true },
-      { name: 'Нано-пена', slug: 'nanoFoam', is_active: true },
+      { name: 'Пена повышенной плотности', slug: 'nanoFoam', is_active: true },
       { name: 'Форплит', slug: 'forplit', is_active: true },
     ]);
 
@@ -194,6 +194,17 @@ module.exports = {
       'нано-пена': 'nanoFoam',
       'форплит': 'forplit',
     }[normalize(value)] || String(value || '').trim());
+    const inferFillingSlugsFromLayers = (text) => {
+      const low = String(text || '').toLowerCase();
+      const slugs = new Set();
+      if (/кокос/.test(low)) slugs.add('coir');
+      if (/memory\s*foam|эффектом памяти/.test(low)) slugs.add('memoryEffect');
+      if (/neolatex|латекс/.test(low)) slugs.add('latex');
+      if (/flexi|elax|высокоэластичн|(?<!повышенной )орто/.test(low)) slugs.add('orthoFoam');
+      if (/повышенной плотности|(?<!высокоэластичной )карбон|нано/.test(low)) slugs.add('nanoFoam');
+      if (/форплит/.test(low)) slugs.add('forplit');
+      return slugs;
+    };
     const parseCsv = (value) =>
       String(value || '')
         .split(',')
@@ -216,6 +227,7 @@ module.exports = {
 
     let linkedProducts = 0;
     let dualFirmnessFeatureLinked = 0;
+    let fillingOptionsLinked = 0;
     for (const product of products) {
       const data = {};
       const firmness = firmnessOptions.get(mapFirmness(product.firmness));
@@ -250,6 +262,27 @@ module.exports = {
           const featureIds = featureRows.map((row) => row.id).filter(Boolean);
           data.features = [...featureIds, dualFirmnessFeature.id];
           dualFirmnessFeatureLinked += 1;
+        }
+      }
+
+      const layersText = String(product.layers_catalog || '').trim();
+      if (layersText) {
+        const inferredSlugs = inferFillingSlugsFromLayers(layersText);
+        const currentSlugs = new Set(
+          (Array.isArray(product.filling_options) ? product.filling_options : [])
+            .map((row) => String(row?.slug || '').trim())
+            .filter(Boolean),
+        );
+        const mergedSlugs = new Set([...currentSlugs, ...inferredSlugs]);
+        const missing = [...inferredSlugs].some((slug) => !currentSlugs.has(slug));
+        if (missing) {
+          const fillingIds = [...mergedSlugs]
+            .map((slug) => fillingOptions.get(slug)?.id)
+            .filter(Boolean);
+          if (fillingIds.length) {
+            data.filling_options = fillingIds;
+            fillingOptionsLinked += 1;
+          }
         }
       }
 
@@ -369,6 +402,6 @@ module.exports = {
       strapi.log.warn(`Catalog bootstrap: product gallery backfill skipped: ${e.message}`);
     }
 
-    strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products (${dualFirmnessFeatureLinked} dual-firmness feature links)`);
+    strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products (${dualFirmnessFeatureLinked} dual-firmness feature links, ${fillingOptionsLinked} filling links from layers)`);
   },
 };

@@ -151,9 +151,9 @@ def map_filling_slugs(text: str) -> list[str]:
         add("memoryEffect")
     if re.search(r"neolatex|латекс", low):
         add("latex")
-    if re.search(r"flexi|elax|высокоэластичн|орто|карбон|повышенной плотности|бельг", low):
+    if re.search(r"flexi|elax|высокоэластичн|(?<!повышенной )орто", low):
         add("orthoFoam")
-    if re.search(r"нано", low):
+    if re.search(r"повышенной плотности|(?<!высокоэластичной )карбон|нано", low):
         add("nanoFoam")
     if re.search(r"форплит", low):
         add("forplit")
@@ -248,7 +248,7 @@ def parse_layers(text: str) -> list[str]:
 
     keywords = (
         "пена", "пружин", "койра", "латекс", "войлок", "elax", "flexi",
-        "neolatex", "борт", "каркас", "бикоттон", "бельг",
+        "neolatex", "борт", "каркас", "бикоттон", "форплит",
     )
     return [
         re.sub(r"^\d+\.\s*", "", line).strip()
@@ -276,7 +276,7 @@ def parse_page(page_num: int) -> dict:
     mattress_type = detect_mattress_type(text, page_num)
     layers = parse_layers(text)
     cover = parse_cover(text, page_num)
-    filling_slugs = map_filling_slugs("\n".join(layers) + "\n" + text)
+    filling_slugs = map_filling_slugs("\n".join(layers))
     features = map_features(text)
 
     tags = [type_label(mattress_type)]

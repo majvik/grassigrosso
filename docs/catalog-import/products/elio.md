@@ -21,7 +21,7 @@ sizes:
 filling_slugs:
 - coir
 - latex
-- orthoFoam
+- nanoFoam
 features:
 - edgeSupport
 image: images/elio.png

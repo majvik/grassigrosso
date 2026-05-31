@@ -20,7 +20,6 @@ sizes:
 - 180x200
 filling_slugs:
 - coir
-- orthoFoam
 features:
 - edgeSupport
 image: images/davos.png

@@ -21,6 +21,7 @@ sizes:
 filling_slugs:
 - memoryEffect
 - orthoFoam
+- nanoFoam
 features: []
 image: images/sky-foam.png
 image_alt: Скай Фоам — коллекция Flexi
