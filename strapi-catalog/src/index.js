@@ -16,8 +16,23 @@ const path = require('path');
   }
 })();
 
+const { normalizeGalleryInput } = require('./api/catalog/utils/normalize-gallery-input');
+const { cleanupOrphanGalleryComponents } = require('./api/catalog/utils/cleanup-orphan-gallery-components');
+
 module.exports = {
-  register(/*{ strapi }*/) {},
+  register({ strapi }) {
+    strapi.documents.use(async (context, next) => {
+      const { action, uid, params } = context;
+      if (
+        uid === 'api::product.product'
+        && (action === 'create' || action === 'update')
+        && Array.isArray(params?.data?.gallery)
+      ) {
+        params.data.gallery = await normalizeGalleryInput(strapi, params.data.gallery);
+      }
+      return next();
+    });
+  },
 
   async bootstrap({ strapi }) {
     const ensureRows = async (uid, rows) => {
@@ -364,6 +379,29 @@ module.exports = {
     }
 
     try {
+      const orphanGalleryCleanupKey = 'catalog.product-gallery.orphan-cleanup.v1';
+      const coreStoreGallery = strapi.db.connection('strapi_core_store_settings');
+      const orphanGalleryCleanupDone = await coreStoreGallery
+        .where({ key: orphanGalleryCleanupKey })
+        .first();
+      if (!orphanGalleryCleanupDone) {
+        const removedOrphans = await cleanupOrphanGalleryComponents(strapi);
+        if (removedOrphans) {
+          strapi.log.info(`Catalog bootstrap: removed ${removedOrphans} orphan product gallery components`);
+        }
+        await coreStoreGallery.insert({
+          key: orphanGalleryCleanupKey,
+          value: JSON.stringify({ completedAt: new Date().toISOString(), removedOrphans }),
+          type: 'object',
+          environment: null,
+          tag: null,
+        });
+      }
+    } catch (e) {
+      strapi.log.warn(`Catalog bootstrap: orphan gallery cleanup skipped: ${e.message}`);
+    }
+
+    try {
       const productsForGallery = await productRepo.findMany({
         populate: {
           media: true,
@@ -372,18 +410,19 @@ module.exports = {
           },
         },
       });
+      const productDocuments = strapi.documents('api::product.product');
       let galleryBackfilled = 0;
       for (const product of Array.isArray(productsForGallery) ? productsForGallery : []) {
         const galleryRows = Array.isArray(product.gallery) ? product.gallery : [];
         const hasGalleryMedia = galleryRows.some((row) => row?.slide_image || row?.slide_video);
         if (hasGalleryMedia) continue;
         const mediaId = product.media?.id;
-        if (!mediaId) continue;
+        if (!mediaId || !product.documentId) continue;
         const altText =
           String(product.media?.alternativeText || '').trim() ||
           (product.name ? `Коллекция ${product.name}` : 'Изображение товара');
-        await productRepo.update({
-          where: { id: product.id },
+        await productDocuments.update({
+          documentId: product.documentId,
           data: {
             gallery: [
               {

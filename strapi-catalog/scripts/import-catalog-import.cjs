@@ -404,8 +404,9 @@ async function upsertProduct(strapi, product, lookups, options) {
 }
 
 async function purgeOthers(strapi, importSlugs, dryRun) {
-  const repo = strapi.db.query('api::product.product');
-  const all = await repo.findMany({ select: ['id', 'slug', 'is_active'] });
+  const { cleanupOrphanGalleryComponents } = require('../src/api/catalog/utils/cleanup-orphan-gallery-components');
+  const productDocuments = strapi.documents('api::product.product');
+  const all = await productDocuments.findMany({ fields: ['slug'] });
   let count = 0;
   for (const row of all) {
     const slug = String(row.slug || '').trim();
@@ -415,8 +416,14 @@ async function purgeOthers(strapi, importSlugs, dryRun) {
       console.log(`[dry-run] would delete ${slug}`);
       continue;
     }
-    await repo.delete({ where: { id: row.id } });
+    await productDocuments.delete({ documentId: row.documentId });
     console.log(`deleted: ${slug}`);
+  }
+  if (!dryRun && count) {
+    const removedOrphans = await cleanupOrphanGalleryComponents(strapi);
+    if (removedOrphans) {
+      console.log(`[import-catalog] removed ${removedOrphans} orphan gallery components`);
+    }
   }
   return count;
 }
