@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Upsert catalog products from docs/catalog-import/ into Strapi.
- * Run: npm run catalog-import:strapi [-- --dry-run] [-- --deactivate-others] [-- --force-media]
+ * Run: npm run catalog-import:strapi [-- --dry-run] [-- --deactivate-others] [-- --purge-others] [-- --force-media]
  */
 
 'use strict';
@@ -64,6 +64,7 @@ function parseArgs(argv) {
   return {
     dryRun: argv.includes('--dry-run'),
     deactivateOthers: argv.includes('--deactivate-others'),
+    purgeOthers: argv.includes('--purge-others'),
     forceMedia: argv.includes('--force-media'),
   };
 }
@@ -402,6 +403,24 @@ async function upsertProduct(strapi, product, lookups, options) {
   return 'created';
 }
 
+async function purgeOthers(strapi, importSlugs, dryRun) {
+  const repo = strapi.db.query('api::product.product');
+  const all = await repo.findMany({ select: ['id', 'slug', 'is_active'] });
+  let count = 0;
+  for (const row of all) {
+    const slug = String(row.slug || '').trim();
+    if (!slug || importSlugs.has(slug)) continue;
+    count += 1;
+    if (dryRun) {
+      console.log(`[dry-run] would delete ${slug}`);
+      continue;
+    }
+    await repo.delete({ where: { id: row.id } });
+    console.log(`deleted: ${slug}`);
+  }
+  return count;
+}
+
 async function deactivateOthers(strapi, importSlugs, dryRun) {
   const repo = strapi.db.query('api::product.product');
   const all = await repo.findMany({ select: ['id', 'slug', 'is_active'] });
@@ -453,12 +472,16 @@ async function main() {
     }
 
     let deactivated = 0;
+    let purged = 0;
     if (options.deactivateOthers) {
       deactivated = await deactivateOthers(strapi, importSlugs, options.dryRun);
     }
+    if (options.purgeOthers) {
+      purged = await purgeOthers(strapi, importSlugs, options.dryRun);
+    }
 
     console.log('');
-    console.log(`[import-catalog] done: created=${created}, updated=${updated}, deactivated=${deactivated}`);
+    console.log(`[import-catalog] done: created=${created}, updated=${updated}, deactivated=${deactivated}, purged=${purged}`);
   } finally {
     await strapi.destroy();
   }

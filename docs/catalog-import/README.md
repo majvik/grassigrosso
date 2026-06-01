@@ -92,10 +92,10 @@ npm run catalog-import:preview:serve
 # рабочая БД (если пустая — скопируйте seed)
 cp strapi-catalog/database/seed/data.db strapi-catalog/.tmp/data.db
 
-npm run catalog-import:strapi -- --deactivate-others
+npm run catalog-import:strapi -- --deactivate-others --purge-others
 ```
 
-Команда собирает Strapi, upsert'ит 43 товара по `slug` из `products/*.md`, загружает PNG в uploads и (с флагом `--deactivate-others`) отключает старые placeholder-карточки.
+Команда собирает Strapi, upsert'ит 43 товара по `slug` из `products/*.md`, загружает PNG в uploads. С флагом `--deactivate-others` отключает старые placeholder-карточки; с `--purge-others` **удаляет** все Product, которых нет в import-set (рекомендуется после первого импорта, чтобы не копить мусор в админке и seed).
 
 **Флаги:**
 
@@ -103,6 +103,7 @@ npm run catalog-import:strapi -- --deactivate-others
 |------|----------|
 | `--dry-run` | только лог, без записи в БД |
 | `--deactivate-others` | `is_active: false` для Product вне import-set |
+| `--purge-others` | удалить Product вне import-set (classic-001, flexi, trend и т.п.) |
 | `--force-media` | перезалить PNG даже если `media` уже есть |
 
 Повторный запуск обновляет scalars, relations и текстовые поля из MD; без `--force-media` существующие картинки в админке не трогаются.
