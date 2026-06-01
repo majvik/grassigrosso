@@ -32,6 +32,7 @@ const INTERNAL_API_PREFIXES = [
 /** Пути, которые проксируются на Strapi — тело не трогаем express.json (иначе upstream получает пустой POST). */
 const STRAPI_PROXY_PATH_PREFIXES = [
   '/admin',
+  '/upload',
   '/uploads',
   '/content-manager',
   '/content-type-builder',
