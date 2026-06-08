@@ -1,3 +1,10 @@
+import {
+  abandonCatalogModalLayer,
+  finishCatalogModalLayer,
+  prepareCatalogModalLayer,
+  registerCatalogModal,
+} from './catalog-modal-coordinator'
+
 export type CatalogFavouritesClearModalElements = {
   modal: HTMLElement
   overlay: HTMLElement
@@ -46,22 +53,31 @@ export function initCatalogFavouritesClearModal(
     confirmBtn.textContent = defaultConfirm
   }
 
-  const close = (): void => {
+  const cleanup = (): void => {
     modal.setAttribute('hidden', '')
-    options.unlockScroll?.()
-    document.body.classList.remove('modal-open')
     context = { mode: 'clear' }
     renderContent()
   }
 
+  const close = (): void => {
+    finishCatalogModalLayer(cleanup, options.unlockScroll)
+  }
+
+  const dismiss = (): void => {
+    abandonCatalogModalLayer(cleanup, options.unlockScroll)
+  }
+
   const open = (nextContext: CatalogFavouritesClearModalContext = { mode: 'clear' }): void => {
     if (nextContext.mode === 'clear' && options.getFavouritesCount() <= 0) return
+    prepareCatalogModalLayer('favourites-clear')
     context = nextContext
     renderContent()
     modal.removeAttribute('hidden')
     options.lockScroll?.()
     document.body.classList.add('modal-open')
   }
+
+  registerCatalogModal('favourites-clear', modal, { close, dismiss })
 
   openTrigger?.addEventListener('click', (event) => {
     event.preventDefault()

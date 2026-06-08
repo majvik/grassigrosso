@@ -17,6 +17,12 @@ import {
 } from './catalog-product-gallery'
 import { observeCatalogMediaHosts } from './catalog-media-load-queue'
 import { getCatalogProductBySlug } from './catalog-product-store'
+import {
+  prepareCatalogModalLayer,
+  registerCatalogModal,
+  removeCatalogModalFromSuspendStack,
+  resetCatalogModalLayersBeforePrimaryOpen,
+} from './catalog-modal-coordinator'
 import { buildCatalogProductShareUrl, copyTextWithToast, flashCatalogShareLinkCopiedLabel } from './catalog-share'
 
 const CATALOG_PAGE_NAME = 'Страница "Каталог"'
@@ -416,12 +422,13 @@ export function initCatalogImageModal(
   const openContactView = (slugs: string[], entry: 'preview' | 'favourites'): void => {
     const unique = [...new Set(slugs.map((s) => String(s || '').trim()).filter(Boolean))]
     if (!unique.length) return
+    const wasHidden = elements.modal.hasAttribute('hidden')
+    if (wasHidden) prepareCatalogModalLayer('image')
     pendingContactSlugs = unique
     contactEntry = entry
     resetContactForm()
     setPositionsSectionVisible(true)
     renderPositionsList()
-    const wasHidden = elements.modal.hasAttribute('hidden')
     setContactViewVisible(true)
     elements.modal.removeAttribute('hidden')
     if (wasHidden) {
@@ -431,13 +438,14 @@ export function initCatalogImageModal(
   }
 
   const openSizeHelpContactView = (): void => {
+    const wasHidden = elements.modal.hasAttribute('hidden')
+    if (wasHidden) prepareCatalogModalLayer('image')
     pendingContactSlugs = []
     contactEntry = 'size-help'
     resetContactForm()
     elements.positionsList.replaceChildren()
     elements.positionsCount.textContent = '0'
     setPositionsSectionVisible(false)
-    const wasHidden = elements.modal.hasAttribute('hidden')
     setContactViewVisible(true)
     elements.modal.removeAttribute('hidden')
     if (wasHidden) {
@@ -456,7 +464,18 @@ export function initCatalogImageModal(
     elements.dialog.classList.remove('is-contact-view')
   }
 
+  const hideCatalogueImageModal = (): void => {
+    elements.modal.setAttribute('hidden', '')
+  }
+
+  const showCatalogueImageModal = (): void => {
+    elements.modal.removeAttribute('hidden')
+    options.lockScroll?.()
+    document.body.classList.add('modal-open')
+  }
+
   const closeCatalogueImageModal = (): void => {
+    removeCatalogModalFromSuspendStack('image')
     elements.modal.setAttribute('hidden', '')
     destroyCatalogProductGalleries(elements.imageMedia)
     elements.imageMedia.replaceChildren()
@@ -488,6 +507,8 @@ export function initCatalogImageModal(
     const snapshot = getActiveSlideSnapshot(cardMedia)
     const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || snapshot?.alt || ''
     if (!gallery.length && !snapshot?.src) return
+
+    resetCatalogModalLayersBeforePrimaryOpen()
 
     const dataset = card.dataset || {}
     activeModalProductSlug = String(dataset.productSlug || '').trim()
@@ -723,5 +744,11 @@ export function initCatalogImageModal(
       return
     }
     closeCatalogueImageModal()
+  })
+
+  registerCatalogModal('image', elements.modal, {
+    close: closeCatalogueImageModal,
+    hide: hideCatalogueImageModal,
+    show: showCatalogueImageModal,
   })
 }

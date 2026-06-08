@@ -1,4 +1,10 @@
 import { fetchCatalogFilters } from './catalog-api'
+import {
+  abandonCatalogModalLayer,
+  finishCatalogModalLayer,
+  prepareCatalogModalLayer,
+  registerCatalogModal,
+} from './catalog-modal-coordinator'
 import type {
   CatalogFilterGroupKey,
   CatalogFilterHelp,
@@ -167,23 +173,32 @@ export function initCatalogFilterHelpModal(
   elements: CatalogFilterHelpModalElements,
   options: CatalogFilterHelpModalOptions = {},
 ): void {
-  const close = (): void => {
+  const cleanup = (): void => {
     elements.modal.setAttribute('hidden', '')
     elements.title.textContent = ''
     elements.body.replaceChildren()
-    options.unlockScroll?.()
-    document.body.classList.remove('modal-open')
+  }
+
+  const close = (): void => {
+    finishCatalogModalLayer(cleanup, options.unlockScroll)
+  }
+
+  const dismiss = (): void => {
+    abandonCatalogModalLayer(cleanup, options.unlockScroll)
   }
 
   const open = (key: CatalogHelpKey): void => {
     const entry = mergedHelpState[key]
     if (!entry) return
+    prepareCatalogModalLayer('filter-help')
     elements.title.textContent = entry.modalTitle
     renderHelpBody(elements.body, entry)
     elements.modal.removeAttribute('hidden')
     options.lockScroll?.()
     document.body.classList.add('modal-open')
   }
+
+  registerCatalogModal('filter-help', elements.modal, { close, dismiss })
 
   document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target : null
