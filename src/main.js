@@ -8,8 +8,6 @@ import {
   relocateOverlayRoots,
   scalePageForWideScreens,
 } from './app-shell'
-import { setupCatalogueNewPageHero, prefetchCatalogHeroFeed } from './catalog-hero-slider'
-import { prefetchCatalogProductsFeed } from './catalog/catalog-api'
 import { initCommercialOfferModal } from './commercial-offer'
 import { initCollectionsSlider } from './collections-slider'
 import { initContactForms } from './contact-forms'
@@ -28,13 +26,26 @@ import { initPageInteractions } from './page-interactions'
 import { initPageLayout } from './page-layout'
 import { initResourceModals } from './resource-modals'
 import { initTestimonialsSlider } from './testimonials-slider'
-import { initCataloguePage } from './catalog/catalog-page'
+
+const isCatalogPage = document.body.dataset.page === 'catalog'
 
 const reactEntryPromise = document.querySelector('[data-react-root]')
   ? import('./react-entry').catch((error) => {
       console.error('react-entry bootstrap failed:', error)
     })
   : Promise.resolve()
+
+const catalogRuntimePromise = isCatalogPage
+  ? Promise.all([
+      import('./catalog-hero-slider'),
+      import('./catalog/catalog-api'),
+      import('./catalog/catalog-page'),
+    ]).then(([heroSlider, catalogApi, catalogPage]) => ({
+      heroSlider,
+      catalogApi,
+      catalogPage,
+    }))
+  : Promise.resolve(null)
 
 applyWidowFix()
 
@@ -44,7 +55,7 @@ const lenisInstance = createLenisInstance(Lenis)
 
 const preloader = document.getElementById('preloader')
 
-function initApp() {
+function initApp(catalogRuntime) {
   scalePageForWideScreens()
   window.addEventListener('resize', scalePageForWideScreens)
 
@@ -52,7 +63,7 @@ function initApp() {
   const { lockScroll, unlockScroll } = createScrollLocks(lenisInstance)
 
   initPageInteractions({ lockScroll, unlockScroll, copyToastRoot })
-  initCataloguePage({ lockScroll, unlockScroll })
+  catalogRuntime?.catalogPage.initCataloguePage({ lockScroll, unlockScroll })
   initCollectionsSlider()
   initTestimonialsSlider()
   initPageLayout()
@@ -64,11 +75,13 @@ function initApp() {
   initCommercialOfferModal({ lockScroll, unlockScroll })
 }
 
-// Start hero feed network request immediately — before React renders.
-// DOM initialization (initCatalogHeroSlider) happens after React in reactEntryPromise.finally().
-if (document.body.dataset.page === 'catalog') {
-  prefetchCatalogHeroFeed()
-  prefetchCatalogProductsFeed()
+// Start catalog feed requests immediately — before React renders.
+if (isCatalogPage) {
+  void catalogRuntimePromise.then((runtime) => {
+    if (!runtime) return
+    runtime.heroSlider.prefetchCatalogHeroFeed()
+    runtime.catalogApi.prefetchCatalogProductsFeed()
+  })
 }
 
 initPageLoad({
@@ -91,12 +104,12 @@ initPageLoad({
     }
   })
   .finally(() => {
-    void reactEntryPromise.finally(() => {
-    initApp()
-      // Initialize hero slider AFTER React has rendered the catalog DOM.
-      // prefetchCatalogHeroFeed() already started the network request above.
-      if (document.body.dataset.page === 'catalog') {
-        void setupCatalogueNewPageHero()
-      }
+    void Promise.all([reactEntryPromise, catalogRuntimePromise]).finally(() => {
+      void catalogRuntimePromise.then((runtime) => {
+        initApp(runtime)
+        if (runtime) {
+          void runtime.heroSlider.setupCatalogueNewPageHero()
+        }
+      })
     })
   })

@@ -16,6 +16,7 @@ import {
   wasCatalogGalleryInteracted,
 } from './catalog-product-gallery'
 import { observeCatalogMediaHosts } from './catalog-media-load-queue'
+import { getCatalogProductBySlug } from './catalog-product-store'
 import { buildCatalogProductShareUrl, copyTextWithToast, flashCatalogShareLinkCopiedLabel } from './catalog-share'
 
 const CATALOG_PAGE_NAME = 'Страница "Каталог"'
@@ -479,7 +480,11 @@ export function initCatalogImageModal(
   const openCatalogueImageModal = (card: Element | null): void => {
     if (!card || !(card instanceof HTMLElement)) return
     const cardMedia = card.querySelector<HTMLElement>('[data-catalog-card-media]')
-    const gallery = readGalleryFromElement(cardMedia)
+    const productSlug = String(card.dataset.productSlug || '').trim()
+    const storedProduct = getCatalogProductBySlug(productSlug)
+    const gallery = storedProduct?.gallery?.length
+      ? storedProduct.gallery
+      : readGalleryFromElement(cardMedia)
     const snapshot = getActiveSlideSnapshot(cardMedia)
     const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || snapshot?.alt || ''
     if (!gallery.length && !snapshot?.src) return

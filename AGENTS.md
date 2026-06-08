@@ -1,5 +1,29 @@
 # Grassigrosso — правила для агентов и разработчиков
 
+## GSD + Superpowers (обязательно)
+
+Для **любой нетривиальной задачи** (фича, perf, баг с несколькими гипотезами, интеграция, рефакторинг) агент **сначала** работает через **GSD** (goal-backward, фазы, verify) и **Superpowers** (spec → plan → execute → verify). Не прыгать сразу в код без диагностики и плана.
+
+### Порядок работы
+
+1. **Superpowers spec** — `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`: проблема, гипотезы, измерения, root cause, success criteria.
+2. **GSD execution plan** — `docs/superpowers/plans/YYYY-MM-DD-<topic>.md`: фазы с задачами, файлами, verify после каждой фазы.
+3. **Execute по фазам** — одна фаза → verify (`typecheck`, `check:catalog-api`, `check:catalog-ui`, CDP/Network при perf) → следующая.
+4. **Обновить plan** — статус фаз и post-fix метрики в том же plan-файле.
+
+### Когда spec/plan не нужен
+
+- Однострочный typo, очевидный hotfix по точному указанию пользователя, чисто информационный ответ.
+
+### Где смотреть примеры
+
+- [docs/superpowers/specs/](docs/superpowers/specs/) — design specs
+- [docs/superpowers/plans/](docs/superpowers/plans/) — phased plans (каталог perf wave 1–2)
+
+### Perf / каталог
+
+После изменений медиа или listing runtime: `npm run catalog:optimize-media` (если новые uploads) → smoke `check:catalog-api` + `check:catalog-ui` → при sidecar/seed — commit `strapi-catalog/public/uploads/` и при необходимости `npm run strapi:sync-seed`.
+
 ## Новая маркетинговая HTML-страница
 
 1. **Предпочтительно:** `npm run new-page -- <slug> "Заголовок – Grassigrosso"`  

@@ -6,6 +6,11 @@ import {
 import { fetchCatalogFilters, getCatalogProductsFeed, type CatalogFilterGroups } from './catalog-api'
 import { buildCatalogueCardHtml } from './catalog-card'
 import {
+  buildCatalogProductListingEntries,
+  type CatalogProductListingEntry,
+} from './catalog-product-meta'
+import { setCatalogProductStore } from './catalog-product-store'
+import {
   buildCatalogProductMediaHtml,
   destroyCatalogProductGalleries,
   getActiveSlideSnapshot,
@@ -144,8 +149,10 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   let scheduleStickySidebarSync = () => {}
   let cards = queryElements<HTMLElement>(catalogueNewCardsRoot, '.catalogue-new-card')
   let cardMeta: CatalogCardMeta<HTMLElement>[] = []
+  let productCatalog: CatalogProductListingEntry[] | null = null
   let visibleCardsLimit = CATALOGUE_PAGE_SIZE
   let matchedCards: HTMLElement[] = []
+  let matchedResultsCount = 0
   const sharedState = readCatalogSharedState()
   let sharedFavouritesSlugs = sharedState.mode === 'favourites' ? [...sharedState.slugs] : []
   let sharedSlugs = new Set(sharedFavouritesSlugs)
@@ -238,12 +245,30 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     catalogueNewLayout?.insertBefore(sharedProductSection, catalogueNewSidebar)
   }
 
+  function getFilterMeta(): CatalogCardMeta<HTMLElement>[] {
+    return productCatalog ? productCatalog.map((entry) => entry.meta) : cardMeta
+  }
+
   function updateCardsCache() {
     cards = queryElements<HTMLElement>(cardsRootEl, '.catalogue-new-card')
-    cardMeta = cards.map((card, index) => {
-      card.dataset.initialOrder = String(index)
-      return readCatalogueCardMeta(card, index)
-    })
+    if (productCatalog) {
+      const cardBySlug = new Map(
+        cards.map((card) => [String(card.dataset.productSlug || '').trim(), card] as const),
+      )
+      productCatalog.forEach((entry) => {
+        const card = cardBySlug.get(entry.meta.slug) || null
+        entry.meta.card = card as HTMLElement
+      })
+      cardMeta = cards.map((card, index) => {
+        card.dataset.initialOrder = String(index)
+        return readCatalogueCardMeta(card, index)
+      })
+    } else {
+      cardMeta = cards.map((card, index) => {
+        card.dataset.initialOrder = String(index)
+        return readCatalogueCardMeta(card, index)
+      })
+    }
     syncSharedFavouritesRemoveButtons()
   }
 
@@ -265,7 +290,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   function updateResultsCount() {
     if (!catalogueNewResultsValue) return
-    catalogueNewResultsValue.textContent = String(matchedCards.length)
+    catalogueNewResultsValue.textContent = String(matchedResultsCount)
   }
 
   function cloneFilterState(source: CatalogFilterState): CatalogFilterState {
@@ -293,14 +318,14 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   function countMatchesWithState(candidateState: CatalogFilterState, favSet: Set<string>): number {
     let count = 0
-    cardMeta.forEach((meta) => {
+    getFilterMeta().forEach((meta) => {
       if (matchesCatalogCardMeta(meta, candidateState, favSet)) count += 1
     })
     return count
   }
 
   function getBestZeroResultsResetGroup(favSet: Set<string>): string | null {
-    if (isSharedFavouritesView || isSharedProductView || matchedCards.length > 0) return null
+    if (isSharedFavouritesView || isSharedProductView || matchedResultsCount > 0) return null
     let bestGroup: ZeroResultsFilterGroup | null = null
     let bestCount = -1
     ZERO_RESULTS_FILTER_GROUPS.forEach((group) => {
@@ -480,6 +505,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   function applySorting() {
+    if (productCatalog) return
     const cardsToSort = [...cards]
     const metaByCard = new Map(cardMeta.map((meta) => [meta.card, meta]))
     cardsToSort.sort((a, b) => {
@@ -497,8 +523,9 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   function syncFilterOptionsFromCards() {
-    if (!cardMeta.length) return
-    const available = collectAvailableCatalogFilters(cardMeta)
+    const filterMeta = getFilterMeta()
+    if (!filterMeta.length) return
+    const available = collectAvailableCatalogFilters(filterMeta)
     applyAvailableFilterOptions(sidebarEl, state, available)
     syncUiFromState()
   }
@@ -510,19 +537,41 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   function applyFilters() {
     const favSet = readCatalogFavourites()
     matchedCards = []
-    cardMeta.forEach((meta) => {
-      if (isSharedFavouritesView) {
-        if (meta.slug && sharedSlugs.has(meta.slug)) matchedCards.push(meta.card)
-        return
-      }
-      if (matchesCatalogCardMeta(meta, state, favSet)) matchedCards.push(meta.card)
-    })
 
-    const limit = isSharedFavouritesView ? Number.MAX_SAFE_INTEGER : visibleCardsLimit
-    const visibleSet = new Set(matchedCards.slice(0, limit))
-    cards.forEach((card) => {
-      card.style.display = visibleSet.has(card) ? '' : 'none'
-    })
+    if (productCatalog) {
+      let matchedEntries = productCatalog.filter((entry) => {
+        if (isSharedFavouritesView) {
+          return Boolean(entry.meta.slug && sharedSlugs.has(entry.meta.slug))
+        }
+        return matchesCatalogCardMeta(entry.meta, state, favSet)
+      })
+      matchedResultsCount = matchedEntries.length
+      matchedEntries.sort((a, b) => compareCatalogCardMeta(a.meta, b.meta, state.sort))
+
+      const limit = isSharedFavouritesView ? Number.MAX_SAFE_INTEGER : visibleCardsLimit
+      const visibleEntries = matchedEntries.slice(0, limit)
+
+      destroyCatalogProductGalleries(cardsRootEl)
+      cardsRootEl.innerHTML = visibleEntries.map((entry) => buildCatalogueCardHtml(entry.product)).join('')
+      updateCardsCache()
+      matchedCards = [...cards]
+    } else {
+      cardMeta.forEach((meta) => {
+        if (isSharedFavouritesView) {
+          if (meta.slug && sharedSlugs.has(meta.slug)) matchedCards.push(meta.card)
+          return
+        }
+        if (matchesCatalogCardMeta(meta, state, favSet)) matchedCards.push(meta.card)
+      })
+      matchedResultsCount = matchedCards.length
+
+      const limit = isSharedFavouritesView ? Number.MAX_SAFE_INTEGER : visibleCardsLimit
+      const visibleSet = new Set(matchedCards.slice(0, limit))
+      cards.forEach((card) => {
+        card.style.display = visibleSet.has(card) ? '' : 'none'
+      })
+      matchedCards = matchedCards.filter((card) => visibleSet.has(card))
+    }
 
     if (catalogueNewFavouritesBackRow) {
       catalogueNewFavouritesBackRow.hidden = !state.favouritesOnly
@@ -532,11 +581,11 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       catalogueNewFavouritesActions.hidden = !shouldShowFavouritesAction
     }
     if (isSharedFavouritesView) {
-      if (catalogueNewFavouritesContactBtn) catalogueNewFavouritesContactBtn.disabled = matchedCards.length === 0
-      if (catalogueNewFavouritesShareBtn) catalogueNewFavouritesShareBtn.disabled = matchedCards.length === 0
+      if (catalogueNewFavouritesContactBtn) catalogueNewFavouritesContactBtn.disabled = matchedResultsCount === 0
+      if (catalogueNewFavouritesShareBtn) catalogueNewFavouritesShareBtn.disabled = matchedResultsCount === 0
     }
 
-    const isEmptyNormalCatalogue = !isSharedFavouritesView && !isSharedProductView && matchedCards.length === 0
+    const isEmptyNormalCatalogue = !isSharedFavouritesView && !isSharedProductView && matchedResultsCount === 0
     if (!isEmptyNormalCatalogue) {
       emptyStateResetClickCount = 0
     }
@@ -545,7 +594,8 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const zeroResultsResetGroup = isEmptyNormalCatalogue ? getBestZeroResultsResetGroup(favSet) : null
     syncCatalogZeroResultsHint(sidebarEl, zeroResultsResetGroup)
     syncEmptyStateResetButton(favSet)
-    infiniteSentinel.hidden = isSharedFavouritesView || isSharedProductView || matchedCards.length <= visibleCardsLimit
+    infiniteSentinel.hidden =
+      isSharedFavouritesView || isSharedProductView || matchedResultsCount <= visibleCardsLimit
     updateResultsCount()
     renderSharedProductView()
     syncVisibleCatalogCardMediaLoading(cardsRootEl)
@@ -594,14 +644,14 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const group = ZERO_RESULTS_FILTER_GROUPS.find((item) => item === groupName)
     if (!group) return
     const wasEmptyCatalogue =
-      !isSharedFavouritesView && !isSharedProductView && matchedCards.length === 0
+      !isSharedFavouritesView && !isSharedProductView && matchedResultsCount === 0
     clearFilterGroup(state, group)
     syncUiFromState()
     syncFilterDependencies()
     sizeSelectController.closeMenus()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
     applyFilters()
-    if (wasEmptyCatalogue && matchedCards.length === 0) {
+    if (wasEmptyCatalogue && matchedResultsCount === 0) {
       emptyStateResetClickCount += 1
       syncEmptyStateResetButton(readCatalogFavourites())
     }
@@ -667,16 +717,13 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       const items = await getCatalogProductsFeed()
       if (items.length === 0) return
 
-      const html = items.map((item) => buildCatalogueCardHtml(item)).join('')
-      destroyCatalogProductGalleries(cardsRootEl)
-      cardsRootEl.innerHTML = html
-      updateCardsCache()
+      setCatalogProductStore(items)
+      productCatalog = buildCatalogProductListingEntries(items)
       await new Promise<void>((resolve) => {
         requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
       })
       syncCatalogueFavouritesUi()
       syncFilterOptionsFromCards()
-      applySorting()
       visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
     } catch (err) {
@@ -953,14 +1000,14 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return
-          if (matchedCards.length <= visibleCardsLimit) return
+          if (matchedResultsCount <= visibleCardsLimit) return
           visibleCardsLimit += CATALOGUE_PAGE_SIZE
           applyFilters()
         })
       },
       {
         root: null,
-        rootMargin: '600px 0px',
+        rootMargin: '200px 0px',
         threshold: 0,
       },
     )

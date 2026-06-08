@@ -178,7 +178,11 @@ try {
   await connect(await waitForDevtools())
   await send('Runtime.enable')
   await send('Page.enable')
-  await waitFor('catalog cards loaded', `document.querySelectorAll(".catalogue-new-card").length >= ${EXPECTED_PRODUCT_COUNT}`)
+  await waitFor(
+    'catalog results loaded',
+    `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '${EXPECTED_PRODUCT_COUNT}'`,
+    30000,
+  )
 
   const initial = await evaluate(`(() => ({
     url: location.pathname,
@@ -188,7 +192,10 @@ try {
     consoleErrors: window.__catalogSmokeErrors || 0,
   }))()`)
   if (initial.url !== '/catalog') failures.push(`expected /catalog, got ${initial.url}`)
-  if (initial.cards < EXPECTED_PRODUCT_COUNT) failures.push(`expected at least ${EXPECTED_PRODUCT_COUNT} cards, got ${initial.cards}`)
+  if (initial.results !== String(EXPECTED_PRODUCT_COUNT)) {
+    failures.push(`expected ${EXPECTED_PRODUCT_COUNT} results, got ${initial.results}`)
+  }
+  if (initial.cards > 6) failures.push(`expected at most 6 cards in DOM on first page, got ${initial.cards}`)
   if (initial.visible !== 6) failures.push(`expected first page to show 6 cards, got ${initial.visible}`)
 
   await evaluate(`(() => {
