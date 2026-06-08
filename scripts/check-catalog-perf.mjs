@@ -1,17 +1,17 @@
 #!/usr/bin/env node
-import fs from 'node:fs'
-import os from 'node:os'
-import path from 'node:path'
-import { spawn } from 'node:child_process'
+import {
+  cleanupChromeSession,
+  delay,
+  startCatalogChromeSession,
+} from './lib/catalog-chrome-session.mjs'
+import { shouldRunBrowserSmoke } from './lib/catalog-smoke-env.mjs'
 
 const baseUrl = String(process.env.CATALOG_PERF_BASE_URL || process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5174').replace(/\/+$/, '')
 const apiBase = String(process.env.CATALOG_API_BASE_URL || '').replace(/\/+$/, '')
   || (baseUrl.includes(':5174') || baseUrl.includes(':5177') ? 'http://127.0.0.1:3000' : baseUrl)
-const chromePath = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-const port = Number(process.env.CHROME_DEBUG_PORT || (9300 + Math.floor(Math.random() * 400)))
-const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grass-catalog-perf-'))
 const failures = []
 const OVERALL_TIMEOUT_MS = Number(process.env.CATALOG_PERF_TIMEOUT_MS || 60000)
+const runBrowser = shouldRunBrowserSmoke(baseUrl)
 
 const BUDGET = {
   maxCardsInDom: Number(process.env.CATALOG_PERF_MAX_CARDS || 6),
@@ -21,25 +21,7 @@ const BUDGET = {
   maxListingJsonBytes: Number(process.env.CATALOG_PERF_MAX_LISTING_JSON || 28000),
 }
 
-if (!fs.existsSync(chromePath)) {
-  console.error(`Chrome not found: ${chromePath}`)
-  process.exit(1)
-}
-
-const chrome = spawn(chromePath, [
-  '--headless=new',
-  '--disable-gpu',
-  '--no-first-run',
-  '--no-default-browser-check',
-  '--disable-background-networking',
-  `--remote-debugging-port=${port}`,
-  `--user-data-dir=${userDataDir}`,
-  `${baseUrl}/catalog`,
-], { stdio: 'ignore' })
-
-let socket
-let nextId = 1
-const pending = new Map()
+let session = null
 let cleaned = false
 let overallTimeoutId = null
 
@@ -47,13 +29,13 @@ function cleanup() {
   if (cleaned) return
   cleaned = true
   if (overallTimeoutId) clearTimeout(overallTimeoutId)
-  for (const [id, entry] of pending.entries()) {
-    pending.delete(id)
-    entry.reject(new Error('Perf runner cleaned up'))
+  if (session) {
+    cleanupChromeSession({
+      ...session,
+      onCleanup: () => session.cdp.failPending('Perf runner cleaned up'),
+    })
+    session = null
   }
-  try { socket?.close() } catch {}
-  try { chrome.kill('SIGKILL') } catch {}
-  try { fs.rmSync(userDataDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }) } catch {}
 }
 
 process.on('exit', cleanup)
@@ -62,13 +44,22 @@ process.on('SIGINT', () => {
   process.exit(130)
 })
 
-overallTimeoutId = setTimeout(() => {
-  failures.push(`catalog perf exceeded ${OVERALL_TIMEOUT_MS}ms`)
-  cleanup()
-}, OVERALL_TIMEOUT_MS)
+if (runBrowser) {
+  overallTimeoutId = setTimeout(() => {
+    failures.push(`catalog perf exceeded ${OVERALL_TIMEOUT_MS}ms`)
+    cleanup()
+  }, OVERALL_TIMEOUT_MS)
+}
 
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+async function fetchText(url) {
+  let response
+  try {
+    response = await fetch(url)
+  } catch (error) {
+    throw new Error(`${url}: request failed: ${error.message}`)
+  }
+  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`)
+  return response.text()
 }
 
 async function fetchJson(url) {
@@ -82,71 +73,7 @@ async function fetchJson(url) {
   return response.json()
 }
 
-chrome.on('exit', (code, signal) => {
-  if (cleaned) return
-  failures.push(`Chrome exited early (code=${code ?? 'null'}, signal=${signal ?? 'null'})`)
-  cleanup()
-})
-
-async function waitForDevtools() {
-  const deadline = Date.now() + 10000
-  let lastError
-  while (Date.now() < deadline) {
-    try {
-      const tabs = await fetch(`http://127.0.0.1:${port}/json/list`).then((r) => r.json())
-      const tab = tabs.find((item) => String(item.url || '').startsWith(`${baseUrl}/catalog`)) || tabs[0]
-      if (tab?.webSocketDebuggerUrl) return tab.webSocketDebuggerUrl
-    } catch (error) {
-      lastError = error
-    }
-    await delay(200)
-  }
-  throw lastError || new Error('Chrome DevTools endpoint did not become ready')
-}
-
-function connect(wsUrl) {
-  return new Promise((resolve, reject) => {
-    socket = new WebSocket(wsUrl)
-    socket.addEventListener('open', () => resolve())
-    socket.addEventListener('error', (event) => reject(event.error || new Error('WebSocket error')))
-    socket.addEventListener('message', (event) => {
-      const message = JSON.parse(event.data)
-      if (!message.id) return
-      const entry = pending.get(message.id)
-      if (!entry) return
-      pending.delete(message.id)
-      if (message.error) entry.reject(new Error(message.error.message || JSON.stringify(message.error)))
-      else entry.resolve(message.result)
-    })
-  })
-}
-
-function send(method, params = {}) {
-  const id = nextId++
-  socket.send(JSON.stringify({ id, method, params }))
-  return new Promise((resolve, reject) => {
-    pending.set(id, { resolve, reject })
-    setTimeout(() => {
-      if (!pending.has(id)) return
-      pending.delete(id)
-      reject(new Error(`${method} timed out`))
-    }, 15000)
-  })
-}
-
-async function evaluate(expression) {
-  const result = await send('Runtime.evaluate', {
-    expression,
-    awaitPromise: true,
-    returnByValue: true,
-  })
-  if (result.exceptionDetails) {
-    throw new Error(result.exceptionDetails.text || 'Runtime.evaluate exception')
-  }
-  return result.result?.value
-}
-
-async function waitFor(label, expression, timeoutMs = 30000) {
+async function waitFor(evaluate, label, expression, timeoutMs = 30000) {
   const deadline = Date.now() + timeoutMs
   while (Date.now() < deadline) {
     const value = await evaluate(expression)
@@ -157,8 +84,7 @@ async function waitFor(label, expression, timeoutMs = 30000) {
   return null
 }
 
-try {
-  const listingPayload = await fetchJson(`${apiBase}/api/catalog/products?view=listing`)
+function assertListingPayload(listingPayload) {
   const listingBytes = JSON.stringify(listingPayload).length
   if (listingBytes > BUDGET.maxListingJsonBytes) {
     failures.push(`listing JSON ${listingBytes} B exceeds budget ${BUDGET.maxListingJsonBytes} B`)
@@ -167,63 +93,103 @@ try {
   if (orient?.gallery?.[0]?.sources) {
     failures.push('listing orient gallery must not include sources[]')
   }
+  if (orient?.layersCatalog) {
+    failures.push('listing orient must not include layersCatalog')
+  }
+  return listingBytes
+}
 
-  await delay(800)
-  await connect(await waitForDevtools())
-  await send('Runtime.enable')
-  await send('Page.enable')
+function assertCatalogHtmlPreloads(html) {
+  if (!html.includes('rel="preload"') || !html.includes('catalog-hero.avif')) {
+    failures.push('catalog HTML missing hero AVIF preload link')
+  }
+  if (!html.includes('/api/catalog/products?view=listing')) {
+    failures.push('catalog HTML missing listing API preload')
+  }
+}
 
-  await waitFor(
-    'catalog results loaded',
-    `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '43'`,
-  )
+function assertBrowserMetrics(listingBytes, metrics) {
+  if (!metrics) {
+    failures.push('failed to collect perf metrics')
+    return
+  }
+  if (metrics.cards > BUDGET.maxCardsInDom) {
+    failures.push(`cards in DOM ${metrics.cards} > ${BUDGET.maxCardsInDom}`)
+  }
+  if (metrics.eager > BUDGET.maxEagerImages) {
+    failures.push(`eager images ${metrics.eager} > ${BUDGET.maxEagerImages}`)
+  }
+  if (metrics.hiddenEager > 0) {
+    failures.push(`hidden eager images ${metrics.hiddenEager}`)
+  }
+  if (metrics.uploads > BUDGET.maxUploadRequests) {
+    failures.push(`upload requests ${metrics.uploads} > ${BUDGET.maxUploadRequests}`)
+  }
+  if (metrics.domNodes > BUDGET.maxDomNodes) {
+    failures.push(`DOM nodes ${metrics.domNodes} > ${BUDGET.maxDomNodes}`)
+  }
+  if (!metrics.heroPreload) {
+    failures.push('missing hero AVIF preload link')
+  }
+  console.log('Catalog perf metrics:', JSON.stringify({ listingBytes, ...metrics }, null, 2))
+}
 
-  const metrics = await evaluate(`(() => {
-    const nav = performance.getEntriesByType('navigation')[0]
-    const resources = performance.getEntriesByType('resource')
-    const uploads = resources.filter((r) => r.name.includes('/uploads/'))
-    const imgs = [...document.querySelectorAll('img')]
-    const eager = imgs.filter((i) => i.loading === 'eager')
-    const hiddenEager = eager.filter((i) => {
-      const r = i.getBoundingClientRect()
-      return r.width === 0 || r.height === 0 || i.offsetParent === null
+try {
+  const listingPayload = await fetchJson(`${apiBase}/api/catalog/products?view=listing`)
+  const listingBytes = assertListingPayload(listingPayload)
+
+  if (!runBrowser) {
+    const html = await fetchText(`${baseUrl}/catalog`)
+    assertCatalogHtmlPreloads(html)
+    console.log('Catalog perf API/HTML metrics:', JSON.stringify({
+      listingBytes,
+      heroPreload: html.includes('catalog-hero.avif'),
+      listingPreload: html.includes('/api/catalog/products?view=listing'),
+      mode: 'remote-fetch',
+    }, null, 2))
+    console.log('Remote deploy: DOM perf skipped (headless Chrome unreliable on HTTPS). Use Cursor browser MCP for cards/eager/uploads.')
+  } else {
+    session = await startCatalogChromeSession(baseUrl)
+    session.chrome.on('exit', (code, signal) => {
+      if (cleaned) return
+      failures.push(`Chrome exited early (code=${code ?? 'null'}, signal=${signal ?? 'null'})`)
+      cleanup()
     })
-    const heroPreload = [...document.querySelectorAll('link[rel="preload"][as="image"]')]
-      .some((l) => (l.getAttribute('href') || '').includes('catalog-hero'))
-    return {
-      cards: document.querySelectorAll('.catalogue-new-card').length,
-      domNodes: document.getElementsByTagName('*').length,
-      eager: eager.length,
-      hiddenEager: hiddenEager.length,
-      uploads: uploads.length,
-      transferUploadsKB: Math.round(uploads.reduce((s, r) => s + (r.transferSize || 0), 0) / 1024),
-      ttfb: nav ? Math.round(nav.responseStart) : null,
-      dcl: nav ? Math.round(nav.domContentLoadedEventEnd) : null,
-      heroPreload,
-    }
-  })()`)
 
-  if (!metrics) failures.push('failed to collect perf metrics')
-  else {
-    if (metrics.cards > BUDGET.maxCardsInDom) {
-      failures.push(`cards in DOM ${metrics.cards} > ${BUDGET.maxCardsInDom}`)
-    }
-    if (metrics.eager > BUDGET.maxEagerImages) {
-      failures.push(`eager images ${metrics.eager} > ${BUDGET.maxEagerImages}`)
-    }
-    if (metrics.hiddenEager > 0) {
-      failures.push(`hidden eager images ${metrics.hiddenEager}`)
-    }
-    if (metrics.uploads > BUDGET.maxUploadRequests) {
-      failures.push(`upload requests ${metrics.uploads} > ${BUDGET.maxUploadRequests}`)
-    }
-    if (metrics.domNodes > BUDGET.maxDomNodes) {
-      failures.push(`DOM nodes ${metrics.domNodes} > ${BUDGET.maxDomNodes}`)
-    }
-    if (!metrics.heroPreload) {
-      failures.push('missing hero AVIF preload link')
-    }
-    console.log('Catalog perf metrics:', JSON.stringify({ listingBytes, ...metrics }, null, 2))
+    const evaluate = (expression, timeoutMs) => session.cdp.evaluate(expression, timeoutMs)
+
+    await waitFor(
+      evaluate,
+      'catalog results loaded',
+      `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '43'`,
+    )
+
+    const metrics = await evaluate(`(() => {
+      const nav = performance.getEntriesByType('navigation')[0]
+      const resources = performance.getEntriesByType('resource')
+      const uploads = resources.filter((r) => r.name.includes('/uploads/'))
+      const imgs = [...document.querySelectorAll('img')]
+      const eager = imgs.filter((i) => i.loading === 'eager')
+      const hiddenEager = eager.filter((i) => {
+        const r = i.getBoundingClientRect()
+        return r.width === 0 || r.height === 0 || i.offsetParent === null
+      })
+      const heroPreload = [...document.querySelectorAll('link[rel="preload"][as="image"]')]
+        .some((l) => (l.getAttribute('href') || l.href || '').includes('catalog-hero'))
+      return {
+        cards: document.querySelectorAll('.catalogue-new-card').length,
+        domNodes: document.getElementsByTagName('*').length,
+        eager: eager.length,
+        hiddenEager: hiddenEager.length,
+        uploads: uploads.length,
+        transferUploadsKB: Math.round(uploads.reduce((s, r) => s + (r.transferSize || 0), 0) / 1024),
+        ttfb: nav ? Math.round(nav.responseStart) : null,
+        dcl: nav ? Math.round(nav.domContentLoadedEventEnd) : null,
+        heroPreload,
+      }
+    })()`)
+
+    assertBrowserMetrics(listingBytes, metrics)
   }
 } catch (error) {
   failures.push(error.message)

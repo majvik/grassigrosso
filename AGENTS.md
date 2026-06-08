@@ -27,7 +27,9 @@
 ### Деплой (Timeweb App Platform)
 
 - Dev/prod на Timeweb: **push в git → CI/CD → Docker build (`Dockerfile`) → App Platform**. Ручной restart не нужен — `server.cjs`, `dist/` и uploads попадают в образ из последнего commit.
-- После push проверка dev: `CATALOG_PERF_BASE_URL=https://majvik-grassigrosso-e3cd.twc1.net npm run check:catalog-perf` (и `check:catalog-ui`).
+- После push на dev: `CATALOG_PERF_BASE_URL=https://majvik-grassigrosso-e3cd.twc1.net npm run check:catalog-perf` (API + HTML preload; DOM-метрики локально через Chrome headless).
+- Полный UI/DOM smoke на Timeweb — **Cursor browser MCP** (`browser_navigate` → `/catalog`, `browser_cdp` / `Runtime.evaluate` для cards/eager/uploads). Headless Chrome на удалённом HTTPS из CLI ненадёжен.
+- `check:catalog-ui` на remote URL намеренно skip'ается; локально: `CATALOG_UI_BASE_URL=http://127.0.0.1:5174 npm run check:catalog-ui`.
 - На Timeweb задайте env как в [.env.example](.env.example), в т.ч. **`CATALOG_STRAPI_CACHE_TTL_MS=45000`** для кэша catalog API в Node.
 
 ## Новая маркетинговая HTML-страница

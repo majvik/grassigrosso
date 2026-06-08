@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-import fs from 'node:fs'
-import os from 'node:os'
-import path from 'node:path'
-import { spawn } from 'node:child_process'
+import {
+  cleanupChromeSession,
+  delay,
+  startCatalogChromeSession,
+} from './lib/catalog-chrome-session.mjs'
+import { shouldRunBrowserSmoke } from './lib/catalog-smoke-env.mjs'
 
 const baseUrl = String(process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5177').replace(/\/+$/, '')
-const chromePath = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-const port = Number(process.env.CHROME_DEBUG_PORT || (9200 + Math.floor(Math.random() * 400)))
-const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grass-catalog-chrome-'))
+const runBrowser = shouldRunBrowserSmoke(baseUrl)
 const EXPECTED_PRODUCT_COUNT = 43
 const EXPECTED_CLASSIC_FILTER_COUNT = '6'
 const EXPECTED_SIZE_SLUGS = [
@@ -21,43 +21,21 @@ const EXPECTED_SIZE_SLUGS = [
 const failures = []
 const OVERALL_TIMEOUT_MS = Number(process.env.CATALOG_UI_TIMEOUT_MS || 45000)
 
-if (!fs.existsSync(chromePath)) {
-  console.error(`Chrome not found: ${chromePath}`)
-  process.exit(1)
-}
-
-const chrome = spawn(chromePath, [
-  '--headless=new',
-  '--disable-gpu',
-  '--no-first-run',
-  '--no-default-browser-check',
-  '--disable-background-networking',
-  `--remote-debugging-port=${port}`,
-  `--user-data-dir=${userDataDir}`,
-  `${baseUrl}/catalog`,
-], { stdio: 'ignore' })
-
-let socket
-let nextId = 1
-const pending = new Map()
+let session = null
 let cleaned = false
 let overallTimeoutId = null
-
-function failPending(reason) {
-  for (const [id, entry] of pending.entries()) {
-    pending.delete(id)
-    entry.reject(new Error(reason))
-  }
-}
 
 function cleanup() {
   if (cleaned) return
   cleaned = true
   if (overallTimeoutId) clearTimeout(overallTimeoutId)
-  failPending('Smoke runner was cleaned up')
-  try { socket?.close() } catch {}
-  try { chrome.kill('SIGKILL') } catch {}
-  try { fs.rmSync(userDataDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }) } catch {}
+  if (session) {
+    cleanupChromeSession({
+      ...session,
+      onCleanup: () => session.cdp.failPending('Smoke runner was cleaned up'),
+    })
+    session = null
+  }
 }
 
 process.on('exit', cleanup)
@@ -65,104 +43,13 @@ process.on('SIGINT', () => {
   cleanup()
   process.exit(130)
 })
-chrome.on('exit', (code, signal) => {
-  if (cleaned) return
-  failures.push(`Chrome exited early (code=${code ?? 'null'}, signal=${signal ?? 'null'})`)
-  cleanup()
-})
 
 overallTimeoutId = setTimeout(() => {
   failures.push(`catalog ui smoke exceeded ${OVERALL_TIMEOUT_MS}ms`)
   cleanup()
 }, OVERALL_TIMEOUT_MS)
 
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-async function fetchJson(url) {
-  const response = await fetch(url)
-  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`)
-  return response.json()
-}
-
-async function waitForDevtools() {
-  const deadline = Date.now() + 10000
-  let lastError
-  while (Date.now() < deadline) {
-    try {
-      const tabs = await fetchJson(`http://127.0.0.1:${port}/json/list`)
-      const tab = tabs.find((item) => String(item.url || '').startsWith(`${baseUrl}/catalog`)) || tabs[0]
-      if (tab?.webSocketDebuggerUrl) return tab.webSocketDebuggerUrl
-    } catch (error) {
-      lastError = error
-    }
-    await delay(200)
-  }
-  throw lastError || new Error('Chrome DevTools endpoint did not become ready')
-}
-
-function connect(wsUrl) {
-  return new Promise((resolve, reject) => {
-    let settled = false
-    socket = new WebSocket(wsUrl)
-    const settleResolve = () => {
-      if (settled) return
-      settled = true
-      resolve()
-    }
-    const settleReject = (error) => {
-      if (settled) return
-      settled = true
-      reject(error)
-    }
-
-    socket.addEventListener('open', settleResolve)
-    socket.addEventListener('error', (event) => {
-      settleReject(event.error || new Error('WebSocket connection error'))
-    })
-    socket.addEventListener('close', () => {
-      failPending('WebSocket closed')
-      settleReject(new Error('WebSocket closed before smoke finished'))
-    })
-    socket.addEventListener('message', (event) => {
-      const message = JSON.parse(event.data)
-      if (!message.id) return
-      const entry = pending.get(message.id)
-      if (!entry) return
-      pending.delete(message.id)
-      if (message.error) entry.reject(new Error(message.error.message || JSON.stringify(message.error)))
-      else entry.resolve(message.result)
-    })
-  })
-}
-
-function send(method, params = {}) {
-  const id = nextId++
-  socket.send(JSON.stringify({ id, method, params }))
-  return new Promise((resolve, reject) => {
-    pending.set(id, { resolve, reject })
-    setTimeout(() => {
-      if (!pending.has(id)) return
-      pending.delete(id)
-      reject(new Error(`${method} timed out`))
-    }, 10000)
-  })
-}
-
-async function evaluate(expression) {
-  const result = await send('Runtime.evaluate', {
-    expression,
-    awaitPromise: true,
-    returnByValue: true,
-  })
-  if (result.exceptionDetails) {
-    throw new Error(result.exceptionDetails.text || 'Runtime.evaluate exception')
-  }
-  return result.result?.value
-}
-
-async function waitFor(label, expression, timeoutMs = 10000) {
+async function waitFor(evaluate, label, expression, timeoutMs = 10000) {
   const deadline = Date.now() + timeoutMs
   let value
   while (Date.now() < deadline) {
@@ -175,10 +62,25 @@ async function waitFor(label, expression, timeoutMs = 10000) {
 }
 
 try {
-  await connect(await waitForDevtools())
-  await send('Runtime.enable')
-  await send('Page.enable')
+  if (!runBrowser) {
+    console.log(`Catalog UI smoke skipped for remote deploy: ${baseUrl}/catalog`)
+    console.log('Use Cursor browser MCP (navigate + snapshot/CDP) for full UI checks on Timeweb dev/prod.')
+    process.exit(0)
+  }
+
+  session = await startCatalogChromeSession(baseUrl)
+  session.chrome.on('exit', (code, signal) => {
+    if (cleaned) return
+    failures.push(`Chrome exited early (code=${code ?? 'null'}, signal=${signal ?? 'null'})`)
+    cleanup()
+  })
+
+  const { cdp } = session
+  const evaluate = (expression, timeoutMs) => cdp.evaluate(expression, timeoutMs)
+  const send = (method, params, timeoutMs) => cdp.send(method, params, timeoutMs)
+
   await waitFor(
+    evaluate,
     'catalog results loaded',
     `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '${EXPECTED_PRODUCT_COUNT}'`,
     30000,
@@ -204,13 +106,13 @@ try {
     chip.click()
     return true
   })()`)
-  const classic = await waitFor('classic filter applied', `(() => {
+  const classic = await waitFor(evaluate, 'classic filter applied', `(() => {
     const result = document.querySelector('.catalogue-new-results strong')?.textContent?.trim()
     return result === '${EXPECTED_CLASSIC_FILTER_COUNT}' ? { result } : false
   })()`)
   if (!classic) failures.push(`classic filter did not produce ${EXPECTED_CLASSIC_FILTER_COUNT} results`)
 
-  const sizeMenuOk = await waitFor('catalog size menu slugs', `(() => {
+  const sizeMenuOk = await waitFor(evaluate, 'catalog size menu slugs', `(() => {
     const sizeSelect = document.querySelector('.catalogue-new-size-select[data-catalog-select="size"]')
     if (!sizeSelect) return false
     const trigger = sizeSelect.querySelector('.catalogue-new-size-select-trigger')
@@ -240,7 +142,7 @@ try {
     option.click()
     return true
   })()`)
-  const sorted = await waitFor('height sort applied', `(() => {
+  const sorted = await waitFor(evaluate, 'height sort applied', `(() => {
     const visible = [...document.querySelectorAll('.catalogue-new-card')]
       .filter((card) => getComputedStyle(card).display !== 'none')
       .map((card) => Number(card.dataset.height || 0))
@@ -256,7 +158,7 @@ try {
     favourite.click()
     return true
   })()`)
-  const favourite = await waitFor('favourite toggled', `(() => {
+  const favourite = await waitFor(evaluate, 'favourite toggled', `(() => {
     const count = document.querySelector('#catalogue-new-favourites-count')?.textContent?.trim()
     return count === '1' ? { count } : false
   })()`)
@@ -269,7 +171,7 @@ try {
     card.click()
     return true
   })()`)
-  const modal = await waitFor('modal opened', `(() => {
+  const modal = await waitFor(evaluate, 'modal opened', `(() => {
     const modal = document.querySelector('#catalogueImageModal')
     const title = document.querySelector('#catalogueImageModalTitle')?.textContent?.trim()
     const specs = document.querySelectorAll('.catalogue-new-image-modal-spec').length
@@ -278,7 +180,7 @@ try {
   if (!modal) failures.push('catalog modal did not open with specs')
 
   await evaluate(`document.querySelector('#catalogueImageModalClose')?.click()`)
-  await waitFor('modal closed', `document.querySelector('#catalogueImageModal')?.hasAttribute('hidden') === true`)
+  await waitFor(evaluate, 'modal closed', `document.querySelector('#catalogueImageModal')?.hasAttribute('hidden') === true`)
 
   const logs = await send('Runtime.evaluate', {
     expression: `(() => {
