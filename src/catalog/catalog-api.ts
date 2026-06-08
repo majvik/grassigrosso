@@ -94,6 +94,8 @@ export type CatalogHeroFeed = {
   autoplay_ms?: number | string | null
 }
 
+export type CatalogProductsView = 'listing' | 'full'
+
 async function fetchJson<T>(path: string): Promise<T> {
   const response = await fetch(path, { headers: { Accept: 'application/json' } })
   if (!response.ok) throw new Error(`HTTP ${response.status}`)
@@ -134,25 +136,40 @@ export function normalizeCatalogProductForUi(item: CatalogProduct): CatalogProdu
   }
 }
 
-let catalogProductsPrefetch: Promise<CatalogProduct[]> | null = null
+let catalogProductsListingPrefetch: Promise<CatalogProduct[]> | null = null
+let catalogProductsFullPrefetch: Promise<CatalogProduct[]> | null = null
 
-export function prefetchCatalogProductsFeed(): void {
-  catalogProductsPrefetch = fetchCatalogProducts()
+function catalogProductsPath(view: CatalogProductsView): string {
+  return view === 'listing' ? '/api/catalog/products?view=listing' : '/api/catalog/products'
 }
 
-export async function fetchCatalogProducts(): Promise<CatalogProduct[]> {
-  const payload = await fetchJson<{ items?: CatalogProduct[] }>('/api/catalog/products')
+export function prefetchCatalogProductsFeed(): void {
+  catalogProductsListingPrefetch = fetchCatalogProducts('listing')
+  catalogProductsFullPrefetch = fetchCatalogProducts('full')
+}
+
+export async function fetchCatalogProducts(view: CatalogProductsView = 'full'): Promise<CatalogProduct[]> {
+  const payload = await fetchJson<{ items?: CatalogProduct[] }>(catalogProductsPath(view))
   const items = Array.isArray(payload.items) ? payload.items : []
   return items.map(normalizeCatalogProductForUi)
 }
 
 export async function getCatalogProductsFeed(): Promise<CatalogProduct[]> {
-  if (catalogProductsPrefetch) {
-    const pending = catalogProductsPrefetch
-    catalogProductsPrefetch = null
+  if (catalogProductsListingPrefetch) {
+    const pending = catalogProductsListingPrefetch
+    catalogProductsListingPrefetch = null
     return pending
   }
-  return fetchCatalogProducts()
+  return fetchCatalogProducts('listing')
+}
+
+export async function getCatalogProductsFullFeed(): Promise<CatalogProduct[]> {
+  if (catalogProductsFullPrefetch) {
+    const pending = catalogProductsFullPrefetch
+    catalogProductsFullPrefetch = null
+    return pending
+  }
+  return fetchCatalogProducts('full')
 }
 
 export async function fetchCatalogHeroFeed(): Promise<CatalogHeroFeed> {

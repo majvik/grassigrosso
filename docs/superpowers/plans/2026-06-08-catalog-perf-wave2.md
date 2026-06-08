@@ -24,11 +24,15 @@
 
 **Verify:** non-catalog pages don't load catalog listing chunk; catalog still works.
 
-## Phase 3 — Backend slim feed (P2, optional)
+## Phase 3 — Backend slim feed (P2)
 
 | ID | Task | File |
 |----|------|------|
-| 3.1 | `GET /api/catalog/products?view=listing` — gallery[0] only | `catalog-feed.js`, `catalog-api.ts` |
+| 3.1 | `GET /api/catalog/products?view=listing` — gallery[0] only | `server.cjs`, `catalog-api.ts` |
+| 3.2 | Background full feed merge for modal/swipe | `catalog-listing-controller.ts` |
+| 3.3 | `<link rel="preload">` catalog API feeds | `catalog.html` |
+
+**Verify:** listing JSON smaller; modal gallery still full after background merge.
 
 ## Phase status
 
@@ -36,4 +40,4 @@
 |-------|--------|
 | 1 | done |
 | 2 | done |
-| 3 | pending |
+| 3 | done |

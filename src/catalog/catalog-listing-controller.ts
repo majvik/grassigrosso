@@ -3,9 +3,10 @@ import {
   openCatalogAccordionGroupExclusive,
   setCatalogAccordionGroupExpanded,
 } from './catalog-accordion'
-import { fetchCatalogFilters, getCatalogProductsFeed, type CatalogFilterGroups } from './catalog-api'
+import { fetchCatalogFilters, getCatalogProductsFeed, getCatalogProductsFullFeed, type CatalogFilterGroups, type CatalogProduct } from './catalog-api'
 import { buildCatalogueCardHtml } from './catalog-card'
 import {
+  buildCatalogCardMetaFromProduct,
   buildCatalogProductListingEntries,
   type CatalogProductListingEntry,
 } from './catalog-product-meta'
@@ -712,6 +713,19 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     }
   }
 
+  function mergeFullCatalogProducts(items: CatalogProduct[]): void {
+    if (!productCatalog) return
+    setCatalogProductStore(items)
+    const bySlug = new Map(items.map((item) => [String(item.slug || '').trim(), item]))
+    productCatalog.forEach((entry) => {
+      const full = bySlug.get(entry.meta.slug)
+      if (!full) return
+      entry.product = full
+      entry.meta = buildCatalogCardMetaFromProduct(full, entry.meta.initialOrder, entry.meta.card)
+    })
+    applyFilters()
+  }
+
   async function loadCatalogueFromStrapi() {
     try {
       const items = await getCatalogProductsFeed()
@@ -726,6 +740,15 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       syncFilterOptionsFromCards()
       visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
+
+      void getCatalogProductsFullFeed()
+        .then((fullItems) => {
+          if (fullItems.length === 0) return
+          mergeFullCatalogProducts(fullItems)
+        })
+        .catch((err) => {
+          console.warn('Catalogue full product feed failed:', err)
+        })
     } catch (err) {
       console.warn('Catalogue Strapi fetch failed, using static fallback:', err)
     }

@@ -237,6 +237,33 @@ if (products) {
   }
 }
 
+const listingProducts = await readJson('/api/catalog/products?view=listing')
+if (listingProducts) {
+  const listingItems = assertList('/api/catalog/products?view=listing', listingProducts.items, 'items')
+  if (listingProducts.view !== 'listing') {
+    failures.push('/api/catalog/products?view=listing: missing view=listing marker')
+  }
+  for (const product of listingItems) {
+    if (Array.isArray(product.gallery) && product.gallery.length > 1) {
+      failures.push(
+        `/api/catalog/products?view=listing: ${product.slug || '(unknown)'} gallery must have at most 1 item`,
+      )
+    }
+  }
+  const orient = listingItems.find((product) => product.slug === 'orient')
+  if (orient && Array.isArray(orient.gallery) && orient.gallery.length !== 1) {
+    failures.push('/api/catalog/products?view=listing: orient must expose exactly 1 gallery slide')
+  }
+  const fullOrient = (products?.items || []).find((product) => product.slug === 'orient')
+  if (fullOrient && Array.isArray(fullOrient.gallery) && fullOrient.gallery.length > 1 && listingProducts) {
+    const listingBytes = JSON.stringify(listingProducts).length
+    const fullBytes = JSON.stringify(products).length
+    if (listingBytes >= fullBytes) {
+      failures.push('/api/catalog/products?view=listing: expected smaller payload than full feed')
+    }
+  }
+}
+
 const heroSlides = await readJson('/api/catalog/hero-slides')
 if (heroSlides) {
   const slides = assertList('/api/catalog/hero-slides', heroSlides.slides, 'slides')

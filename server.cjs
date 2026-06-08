@@ -123,6 +123,18 @@ function attachCatalogApiCacheHeaders(res) {
   res.set('Cache-Control', `public, max-age=${sec}, stale-while-revalidate=${swr}`);
 }
 
+function slimCatalogProductsForListing(items) {
+  if (!Array.isArray(items)) return [];
+  return items.map((item) => ({
+    ...item,
+    gallery: Array.isArray(item.gallery) ? item.gallery.slice(0, 1) : [],
+  }));
+}
+
+function resolveCatalogProductsView(queryView) {
+  return String(queryView || 'full').trim().toLowerCase() === 'listing' ? 'listing' : 'full';
+}
+
 let isQueueProcessing = false;
 
 const corsOptions = buildCorsOptions({
@@ -972,11 +984,46 @@ app.get('/api/catalog/products', async (req, res) => {
     return res.status(503).json({ error: 'STRAPI_URL is not configured' });
   }
 
-  const cacheKey = 'catalog:products';
-  const cached = getCatalogStrapiCache(cacheKey);
-  if (cached !== undefined) {
+  const view = resolveCatalogProductsView(req.query.view);
+  const cacheKeyFull = 'catalog:products:full';
+  const cacheKeyListing = 'catalog:products:listing';
+
+  const respondWithView = (fullPayload) => {
+    if (view === 'listing') {
+      const listingPayload = {
+        ...fullPayload,
+        items: slimCatalogProductsForListing(fullPayload.items),
+        view: 'listing',
+      };
+      setCatalogStrapiCache(cacheKeyListing, listingPayload);
+      attachCatalogApiCacheHeaders(res);
+      return res.json(listingPayload);
+    }
     attachCatalogApiCacheHeaders(res);
-    return res.json(cached);
+    return res.json({ ...fullPayload, view: 'full' });
+  };
+
+  const cachedFull = getCatalogStrapiCache(cacheKeyFull);
+  if (cachedFull !== undefined) {
+    if (view === 'listing') {
+      const cachedListing = getCatalogStrapiCache(cacheKeyListing);
+      if (cachedListing !== undefined) {
+        attachCatalogApiCacheHeaders(res);
+        return res.json(cachedListing);
+      }
+    } else {
+      attachCatalogApiCacheHeaders(res);
+      return res.json({ ...cachedFull, view: 'full' });
+    }
+    return respondWithView(cachedFull);
+  }
+
+  if (view === 'listing') {
+    const cachedListing = getCatalogStrapiCache(cacheKeyListing);
+    if (cachedListing !== undefined) {
+      attachCatalogApiCacheHeaders(res);
+      return res.json(cachedListing);
+    }
   }
 
   try {
@@ -991,9 +1038,8 @@ app.get('/api/catalog/products', async (req, res) => {
     // Treat a successful feed response as authoritative even when list is empty.
     // This avoids false 502 when Strapi /api/products is unavailable in current setup.
     const payload = { items: normalizedFeedItems, source: 'strapi-catalog-feed' };
-    setCatalogStrapiCache(cacheKey, payload);
-    attachCatalogApiCacheHeaders(res);
-    return res.json(payload);
+    setCatalogStrapiCache(cacheKeyFull, payload);
+    return respondWithView(payload);
   } catch (_) {
     // Fallback to default products endpoint (if project is configured that way)
   }
@@ -1016,9 +1062,8 @@ app.get('/api/catalog/products', async (req, res) => {
     const rows = normalizeStrapiListPayload(fallbackResponse.data);
     const products = rows.map(mapStrapiProduct).filter((item) => item && item.name);
     const payload = { items: products, source: 'strapi-products' };
-    setCatalogStrapiCache(cacheKey, payload);
-    attachCatalogApiCacheHeaders(res);
-    return res.json(payload);
+    setCatalogStrapiCache(cacheKeyFull, payload);
+    return respondWithView(payload);
   } catch (error) {
     const details = extractAxiosErrorDetails(error);
     console.error('❌ Ошибка загрузки каталога из Strapi:', details);
