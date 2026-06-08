@@ -28,6 +28,7 @@
     "catalog-import:preview": "node scripts/build-catalog-import-preview.mjs",
     "catalog-import:preview:serve": "node scripts/build-catalog-import-preview.mjs && npx --yes serve docs/catalog-import -p 8765",
     "catalog:optimize-media": "node scripts/optimize-catalog-uploads.mjs",
+    "catalog:export-snapshot": "node scripts/export-catalog-snapshot.mjs",
     "catalog-import:strapi": "npm run build --prefix strapi-catalog && node strapi-catalog/scripts/import-catalog-import.cjs && npm run catalog:optimize-media"
   },
   "dependencies": {

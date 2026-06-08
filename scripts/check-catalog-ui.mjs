@@ -6,7 +6,7 @@ import {
 } from './lib/catalog-chrome-session.mjs'
 import { shouldRunBrowserSmoke } from './lib/catalog-smoke-env.mjs'
 
-const baseUrl = String(process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5177').replace(/\/+$/, '')
+const baseUrl = String(process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5174').replace(/\/+$/, '')
 const runBrowser = shouldRunBrowserSmoke(baseUrl)
 const EXPECTED_PRODUCT_COUNT = 43
 const EXPECTED_CLASSIC_FILTER_COUNT = '6'

@@ -1,0 +1,253 @@
+{
+  "groups": {
+    "collection": [
+      {
+        "slug": "classic",
+        "name": "Classic",
+        "sortOrder": 1
+      },
+      {
+        "slug": "flexi",
+        "name": "Flexi",
+        "sortOrder": 2
+      },
+      {
+        "slug": "relax",
+        "name": "Relax",
+        "sortOrder": 3
+      },
+      {
+        "slug": "trend",
+        "name": "Trend",
+        "sortOrder": 4
+      }
+    ],
+    "size": [
+      {
+        "slug": "140x190",
+        "name": "140 × 190",
+        "sortOrder": 0
+      },
+      {
+        "slug": "140x200",
+        "name": "140 × 200",
+        "sortOrder": 1
+      },
+      {
+        "slug": "160x190",
+        "name": "160 × 190",
+        "sortOrder": 2
+      },
+      {
+        "slug": "160x200",
+        "name": "160 × 200",
+        "sortOrder": 3
+      },
+      {
+        "slug": "180x190",
+        "name": "180 × 190",
+        "sortOrder": 4
+      },
+      {
+        "slug": "180x200",
+        "name": "180 × 200",
+        "sortOrder": 5
+      }
+    ],
+    "firmness": [
+      {
+        "slug": "soft",
+        "name": "Мягкий",
+        "sortOrder": 0
+      },
+      {
+        "slug": "medium",
+        "name": "Средний",
+        "sortOrder": 1
+      },
+      {
+        "slug": "hard",
+        "name": "Жесткий",
+        "sortOrder": 2
+      },
+      {
+        "slug": "dualFirmness",
+        "name": "Разная жесткость сторон",
+        "sortOrder": 3
+      }
+    ],
+    "type": [
+      {
+        "slug": "spring",
+        "name": "Пружинный",
+        "sortOrder": 0
+      },
+      {
+        "slug": "nospring",
+        "name": "Беспружинный",
+        "sortOrder": 1
+      },
+      {
+        "slug": "topper",
+        "name": "Топер",
+        "sortOrder": 2
+      },
+      {
+        "slug": "doubleSided",
+        "name": "Двухсторонние",
+        "sortOrder": 3
+      },
+      {
+        "slug": "singleSided",
+        "name": "Односторонние",
+        "sortOrder": 4
+      }
+    ],
+    "loadRange": [
+      {
+        "slug": "upTo120",
+        "name": "до 120 кг",
+        "sortOrder": 0
+      },
+      {
+        "slug": "upTo160",
+        "name": "до 160 кг",
+        "sortOrder": 1
+      },
+      {
+        "slug": "upTo180",
+        "name": "до 180 кг",
+        "sortOrder": 2
+      },
+      {
+        "slug": "over160",
+        "name": "Без ограничений",
+        "sortOrder": 3
+      }
+    ],
+    "heightRange": [
+      {
+        "slug": "low",
+        "name": "Компактные до 16 см",
+        "sortOrder": 0
+      },
+      {
+        "slug": "mid",
+        "name": "Средние 16-22 см",
+        "sortOrder": 1
+      },
+      {
+        "slug": "high",
+        "name": "Высокие от 23 см",
+        "sortOrder": 2
+      }
+    ],
+    "fillings": [
+      {
+        "slug": "coir",
+        "name": "Кокосовая койра",
+        "sortOrder": 0
+      },
+      {
+        "slug": "latex",
+        "name": "Латекс",
+        "sortOrder": 1
+      },
+      {
+        "slug": "orthoFoam",
+        "name": "Орто-пена",
+        "sortOrder": 2
+      },
+      {
+        "slug": "memoryEffect",
+        "name": "С эффектом памяти",
+        "sortOrder": 3
+      },
+      {
+        "slug": "nanoFoam",
+        "name": "Нано-пена",
+        "sortOrder": 4
+      },
+      {
+        "slug": "forplit",
+        "name": "Форплит",
+        "sortOrder": 5
+      }
+    ],
+    "features": [
+      {
+        "slug": "removableCover",
+        "name": "Съемный чехол",
+        "sortOrder": 0
+      },
+      {
+        "slug": "winterSummer",
+        "name": "Эффект зима-лето",
+        "sortOrder": 1
+      },
+      {
+        "slug": "edgeSupport",
+        "name": "Усиленный периметр",
+        "sortOrder": 2
+      },
+      {
+        "slug": "dualFirmness",
+        "name": "Разная жесткость сторон",
+        "sortOrder": 3
+      }
+    ]
+  },
+  "filterHelp": {
+    "collection": {
+      "modalTitle": "Как выбрать коллекцию",
+      "segments": []
+    },
+    "size": {
+      "modalTitle": "Как выбрать размер",
+      "segments": []
+    },
+    "firmness": {
+      "modalTitle": "Как выбрать жёсткость",
+      "segments": []
+    },
+    "type": {
+      "modalTitle": "Как выбрать тип конструкции",
+      "segments": []
+    },
+    "loadRange": {
+      "modalTitle": "Как выбрать нагрузку",
+      "segments": []
+    },
+    "heightRange": {
+      "modalTitle": "Как выбрать высоту матраса",
+      "segments": []
+    },
+    "fillings": {
+      "modalTitle": "Как выбрать наполнитель",
+      "segments": []
+    },
+    "features": {
+      "modalTitle": "Как выбрать особенности",
+      "segments": []
+    }
+  },
+  "shareHelp": {
+    "favouritesShare": {
+      "modalTitle": "Ссылка на подборку",
+      "segments": [
+        {
+          "text": "Вы можете отправить ссылку на эту позицию менеджеру или коллеге — так проще обсудить модель и параметры до заказа. Ссылка на подборку"
+        }
+      ]
+    },
+    "productShare": {
+      "modalTitle": "Ссылка на позицию",
+      "segments": [
+        {
+          "text": "Вы можете отправить ссылку на эту позицию менеджеру или коллеге — так проще обсудить модель и параметры до заказа. Ссылка на позицию"
+        }
+      ]
+    }
+  },
+  "source": "strapi-catalog-filter-feed"
+}

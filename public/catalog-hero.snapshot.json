@@ -1,0 +1,34 @@
+{
+  "slides": [
+    {
+      "type": "image",
+      "src": "/uploads/photo_2026_06_01_18_03_25_4272884eaa.avif",
+      "poster": "",
+      "alt": "Интерьер спальни",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/photo_2026_06_01_18_03_27_cb7a419f56.avif",
+      "poster": "",
+      "alt": "Интерьер в тёплых тонах",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/photo_2026_06_01_18_03_26_2_7886a9283e.avif",
+      "poster": "",
+      "alt": "Номер отеля",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/photo_2026_06_01_18_03_25_4272884eaa.avif",
+      "poster": "",
+      "alt": "Светлая спальня",
+      "mime": ""
+    }
+  ],
+  "autoplayMs": 6500,
+  "source": "strapi-catalog-hero-feed"
+}

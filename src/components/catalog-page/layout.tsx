@@ -1,4 +1,4 @@
-import { CatalogFallbackCardsGrid } from '@/components/catalog-page/cards'
+import { CatalogLoadingCardsGrid } from '@/components/catalog-page/cards'
 import { CatalogSidebarFilters } from '@/components/catalog-page/filters'
 import { CatalogHeroSection } from '@/components/catalog-page/hero'
 import {
@@ -83,7 +83,7 @@ export function CatalogPageLayout() {
         <section className="catalogue-new-content" id="catalogue-new-products">
           <CatalogToolbar />
           <CatalogFavouritesBackRow />
-          <CatalogFallbackCardsGrid />
+          <CatalogLoadingCardsGrid />
           <CatalogFavouritesActions />
         </section>
       </div>

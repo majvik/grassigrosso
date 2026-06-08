@@ -94,26 +94,86 @@ function readCatalogStrapiCacheTtlMs() {
   const n = Number(raw);
   return Number.isFinite(n) ? Math.max(0, n) : (isProd ? 45000 : 0);
 }
-const CATALOG_STRAPI_CACHE_TTL_MS = readCatalogStrapiCacheTtlMs();
-const catalogStrapiResponseCache = new Map();
 
-function getCatalogStrapiCache(key) {
-  if (CATALOG_STRAPI_CACHE_TTL_MS <= 0) return undefined;
-  const row = catalogStrapiResponseCache.get(key);
-  if (!row) return undefined;
-  if (Date.now() > row.expires) {
-    catalogStrapiResponseCache.delete(key);
-    return undefined;
-  }
-  return row.body;
+/** Extended stale window (мс) — отдаём last-good при ошибке Strapi. 0 — только fresh TTL. Prod default 24h. */
+function readCatalogStrapiStaleMs() {
+  const raw = process.env.CATALOG_STRAPI_STALE_MS;
+  if (raw === undefined || raw === '') return isProd ? 86400000 : 0;
+  const n = Number(raw);
+  return Number.isFinite(n) ? Math.max(0, n) : (isProd ? 86400000 : 0);
 }
 
-function setCatalogStrapiCache(key, body) {
-  if (CATALOG_STRAPI_CACHE_TTL_MS <= 0) return;
+const CATALOG_STRAPI_CACHE_TTL_MS = readCatalogStrapiCacheTtlMs();
+const CATALOG_STRAPI_STALE_MS = readCatalogStrapiStaleMs();
+const catalogStrapiResponseCache = new Map();
+
+const CATALOG_DISK_SNAPSHOT_FILES = {
+  'catalog:products:full': 'catalog-products.snapshot.json',
+  'catalog:products:listing': 'catalog-products-listing.snapshot.json',
+  'catalog:filters': 'catalog-filters.snapshot.json',
+  'catalog:hero-slides': 'catalog-hero.snapshot.json',
+};
+
+function readCatalogDiskSnapshot(filename) {
+  const candidates = [
+    path.join(__dirname, 'dist', filename),
+    path.join(__dirname, 'public', filename),
+  ];
+  for (const filePath of candidates) {
+    try {
+      if (!fs.existsSync(filePath)) continue;
+      const raw = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(raw);
+    } catch (_) {
+      // try next path
+    }
+  }
+  return undefined;
+}
+
+function getCatalogStrapiCache(key, options = {}) {
+  const allowStale = options.allowStale === true;
+  const row = catalogStrapiResponseCache.get(key);
+  if (!row) return undefined;
+  const now = Date.now();
+  if (now <= row.expires) return row.body;
+  if (allowStale && row.staleUntil && now <= row.staleUntil) return row.body;
+  catalogStrapiResponseCache.delete(key);
+  return undefined;
+}
+
+function setCatalogStrapiCache(key, body, options = {}) {
+  const skipEmpty = options.skipEmpty === true;
+  if (skipEmpty && body && Array.isArray(body.items) && body.items.length === 0) return;
+  if (CATALOG_STRAPI_CACHE_TTL_MS <= 0 && CATALOG_STRAPI_STALE_MS <= 0) return;
+  const now = Date.now();
   catalogStrapiResponseCache.set(key, {
-    expires: Date.now() + CATALOG_STRAPI_CACHE_TTL_MS,
-    body
+    expires: CATALOG_STRAPI_CACHE_TTL_MS > 0 ? now + CATALOG_STRAPI_CACHE_TTL_MS : now,
+    staleUntil: CATALOG_STRAPI_STALE_MS > 0 ? now + CATALOG_STRAPI_STALE_MS : now,
+    body,
   });
+}
+
+function resolveCatalogFallbackPayload(cacheKey) {
+  const staleBody = getCatalogStrapiCache(cacheKey, { allowStale: true });
+  if (staleBody !== undefined) {
+    return { payload: staleBody, source: 'stale-cache' };
+  }
+  const filename = CATALOG_DISK_SNAPSHOT_FILES[cacheKey];
+  if (!filename) return undefined;
+  const diskBody = readCatalogDiskSnapshot(filename);
+  if (diskBody === undefined) return undefined;
+  return { payload: diskBody, source: 'disk-snapshot' };
+}
+
+function sendCatalogJson(res, payload, source) {
+  const body =
+    payload && typeof payload === 'object'
+      ? { ...payload, ...(source ? { source } : {}) }
+      : payload;
+  if (source) res.set('X-Catalog-Source', source);
+  attachCatalogApiCacheHeaders(res);
+  return res.json(body);
 }
 
 function attachCatalogApiCacheHeaders(res) {
@@ -994,6 +1054,10 @@ app.get('/api/catalog/hero-slides', async (req, res) => {
   } catch (error) {
     const details = extractAxiosErrorDetails(error);
     console.error('❌ Ошибка загрузки hero-слайдера из Strapi:', details);
+    const fallback = resolveCatalogFallbackPayload(cacheKey);
+    if (fallback) {
+      return sendCatalogJson(res, fallback.payload, fallback.source);
+    }
     return res.status(502).json({
       error: 'Failed to fetch catalog hero from Strapi',
       details,
@@ -1011,19 +1075,21 @@ app.get('/api/catalog/products', async (req, res) => {
   const cacheKeyFull = 'catalog:products:full';
   const cacheKeyListing = 'catalog:products:listing';
 
-  const respondWithView = (fullPayload) => {
+  const respondWithView = (fullPayload, options = {}) => {
+    const shouldCache = options.cache !== false;
+    const responseSource = options.source || fullPayload.source;
     if (view === 'listing') {
       const listingPayload = {
         ...fullPayload,
         items: slimCatalogProductsForListing(fullPayload.items),
         view: 'listing',
       };
-      setCatalogStrapiCache(cacheKeyListing, listingPayload);
-      attachCatalogApiCacheHeaders(res);
-      return res.json(listingPayload);
+      if (shouldCache) {
+        setCatalogStrapiCache(cacheKeyListing, listingPayload, { skipEmpty: true });
+      }
+      return sendCatalogJson(res, listingPayload, responseSource);
     }
-    attachCatalogApiCacheHeaders(res);
-    return res.json({ ...fullPayload, view: 'full' });
+    return sendCatalogJson(res, { ...fullPayload, view: 'full' }, responseSource);
   };
 
   const cachedFull = getCatalogStrapiCache(cacheKeyFull);
@@ -1061,8 +1127,10 @@ app.get('/api/catalog/products', async (req, res) => {
     // Treat a successful feed response as authoritative even when list is empty.
     // This avoids false 502 when Strapi /api/products is unavailable in current setup.
     const payload = { items: normalizedFeedItems, source: 'strapi-catalog-feed' };
-    setCatalogStrapiCache(cacheKeyFull, payload);
-    return respondWithView(payload);
+    if (normalizedFeedItems.length > 0) {
+      setCatalogStrapiCache(cacheKeyFull, payload, { skipEmpty: true });
+    }
+    return respondWithView(payload, { cache: normalizedFeedItems.length > 0 });
   } catch (_) {
     // Fallback to default products endpoint (if project is configured that way)
   }
@@ -1085,11 +1153,27 @@ app.get('/api/catalog/products', async (req, res) => {
     const rows = normalizeStrapiListPayload(fallbackResponse.data);
     const products = rows.map(mapStrapiProduct).filter((item) => item && item.name);
     const payload = { items: products, source: 'strapi-products' };
-    setCatalogStrapiCache(cacheKeyFull, payload);
-    return respondWithView(payload);
+    if (products.length > 0) {
+      setCatalogStrapiCache(cacheKeyFull, payload, { skipEmpty: true });
+    }
+    return respondWithView(payload, { cache: products.length > 0 });
   } catch (error) {
     const details = extractAxiosErrorDetails(error);
     console.error('❌ Ошибка загрузки каталога из Strapi:', details);
+    const fallbackKey = view === 'listing' ? cacheKeyListing : cacheKeyFull;
+    let fallback = resolveCatalogFallbackPayload(fallbackKey);
+    if (!fallback && view === 'listing') {
+      const fullFallback = resolveCatalogFallbackPayload(cacheKeyFull);
+      if (fullFallback) {
+        fallback = {
+          payload: fullFallback.payload,
+          source: fullFallback.source,
+        };
+      }
+    }
+    if (fallback) {
+      return respondWithView(fallback.payload, { cache: false, source: fallback.source });
+    }
     return res.status(502).json({
       error: 'Failed to fetch catalog from Strapi',
       details
@@ -1142,6 +1226,10 @@ app.get('/api/catalog/filters', async (req, res) => {
   } catch (error) {
     const details = extractAxiosErrorDetails(error);
     console.error('❌ Ошибка загрузки фильтров каталога из Strapi:', details);
+    const fallback = resolveCatalogFallbackPayload(cacheKey);
+    if (fallback) {
+      return sendCatalogJson(res, fallback.payload, fallback.source);
+    }
     return res.status(502).json({
       error: 'Failed to fetch catalog filters from Strapi',
       details,

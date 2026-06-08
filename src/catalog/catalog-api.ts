@@ -96,10 +96,72 @@ export type CatalogHeroFeed = {
 
 export type CatalogProductsView = 'listing' | 'full'
 
+export type CatalogFeedSource = 'api' | 'session-storage' | 'disk-snapshot'
+
+export type CatalogProductsFetchResult = {
+  items: CatalogProduct[]
+  source: CatalogFeedSource
+}
+
+const SESSION_CATALOG_PRODUCTS_LISTING_KEY = 'catalog:products:listing'
+const SESSION_CATALOG_PRODUCTS_FULL_KEY = 'catalog:products:full'
+
 async function fetchJson<T>(path: string): Promise<T> {
   const response = await fetch(path, { headers: { Accept: 'application/json' } })
   if (!response.ok) throw new Error(`HTTP ${response.status}`)
   return response.json() as Promise<T>
+}
+
+function readSessionCatalogProducts(view: CatalogProductsView): CatalogProduct[] | null {
+  try {
+    const key = view === 'listing' ? SESSION_CATALOG_PRODUCTS_LISTING_KEY : SESSION_CATALOG_PRODUCTS_FULL_KEY
+    const raw = sessionStorage.getItem(key)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { items?: CatalogProduct[] }
+    const items = Array.isArray(parsed.items) ? parsed.items : []
+    return items.length > 0 ? items.map(normalizeCatalogProductForUi) : null
+  } catch {
+    return null
+  }
+}
+
+function writeSessionCatalogProducts(view: CatalogProductsView, items: CatalogProduct[]): void {
+  try {
+    const key = view === 'listing' ? SESSION_CATALOG_PRODUCTS_LISTING_KEY : SESSION_CATALOG_PRODUCTS_FULL_KEY
+    sessionStorage.setItem(key, JSON.stringify({ items, savedAt: Date.now() }))
+  } catch {
+    // sessionStorage may be unavailable
+  }
+}
+
+async function fetchCatalogProductsSnapshot(view: CatalogProductsView): Promise<CatalogProduct[]> {
+  const snapshotPath =
+    view === 'listing' ? '/catalog-products-listing.snapshot.json' : '/catalog-products.snapshot.json'
+  const payload = await fetchJson<{ items?: CatalogProduct[] }>(snapshotPath)
+  const items = Array.isArray(payload.items) ? payload.items : []
+  return items.map(normalizeCatalogProductForUi)
+}
+
+export async function fetchCatalogProductsWithFallback(
+  view: CatalogProductsView = 'full',
+): Promise<CatalogProductsFetchResult> {
+  try {
+    const payload = await fetchJson<{ items?: CatalogProduct[] }>(catalogProductsPath(view))
+    const items = Array.isArray(payload.items) ? payload.items.map(normalizeCatalogProductForUi) : []
+    if (items.length === 0) throw new Error('Empty catalog feed')
+    writeSessionCatalogProducts(view, items)
+    return { items, source: 'api' }
+  } catch {
+    const cached = readSessionCatalogProducts(view)
+    if (cached && cached.length > 0) {
+      return { items: cached, source: 'session-storage' }
+    }
+    const snapshotItems = await fetchCatalogProductsSnapshot(view)
+    if (snapshotItems.length > 0) {
+      return { items: snapshotItems, source: 'disk-snapshot' }
+    }
+    throw new Error('Catalog unavailable')
+  }
 }
 
 export async function fetchCatalogFilters(): Promise<CatalogFiltersPayload> {
@@ -158,18 +220,30 @@ export async function getCatalogProductsFeed(): Promise<CatalogProduct[]> {
   if (catalogProductsListingPrefetch) {
     const pending = catalogProductsListingPrefetch
     catalogProductsListingPrefetch = null
-    return pending
+    try {
+      const items = await pending
+      if (items.length > 0) return items
+    } catch {
+      // prefetch failed — use fallback chain below
+    }
   }
-  return fetchCatalogProducts('listing')
+  const result = await fetchCatalogProductsWithFallback('listing')
+  return result.items
 }
 
 export async function getCatalogProductsFullFeed(): Promise<CatalogProduct[]> {
   if (catalogProductsFullPrefetch) {
     const pending = catalogProductsFullPrefetch
     catalogProductsFullPrefetch = null
-    return pending
+    try {
+      const items = await pending
+      if (items.length > 0) return items
+    } catch {
+      // prefetch failed — use fallback chain below
+    }
   }
-  return fetchCatalogProducts('full')
+  const result = await fetchCatalogProductsWithFallback('full')
+  return result.items
 }
 
 export async function fetchCatalogHeroFeed(): Promise<CatalogHeroFeed> {

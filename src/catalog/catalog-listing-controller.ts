@@ -174,6 +174,14 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     '<p>Выбрано слишком много фильтров.<br />Сбросьте некоторые для обновления выдачи.</p>' +
     '<button type="button" class="catalogue-new-empty-reset-btn" data-catalog-empty-reset hidden>Сбросить фильтр</button>'
   catalogueNewCardsRoot.insertAdjacentElement('afterend', emptyStateEl)
+  const loadErrorEl = documentRef.createElement('div')
+  loadErrorEl.className = 'catalogue-new-load-error'
+  loadErrorEl.hidden = true
+  loadErrorEl.innerHTML =
+    '<p>Каталог временно недоступен. Проверьте соединение и попробуйте снова.</p>' +
+    '<button type="button" class="btn-primary-large" data-catalog-load-retry>Повторить</button>'
+  catalogueNewCardsRoot.insertAdjacentElement('afterend', loadErrorEl)
+  const loadErrorRetryBtn = queryElement<HTMLButtonElement>(loadErrorEl, '[data-catalog-load-retry]')
   const emptyStateResetBtn = queryElement<HTMLButtonElement>(emptyStateEl, '[data-catalog-empty-reset]')
   let emptyStateResetClickCount = 0
   const state: CatalogFilterState = {
@@ -726,33 +734,76 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     applyFilters()
   }
 
-  async function loadCatalogueFromStrapi() {
-    try {
-      const items = await getCatalogProductsFeed()
-      if (items.length === 0) return
+  function showCatalogLoadError(): void {
+    cardsRootEl.classList.add('is-empty')
+    cardsRootEl.removeAttribute('aria-busy')
+    loadErrorEl.hidden = false
+  }
 
-      setCatalogProductStore(items)
-      productCatalog = buildCatalogProductListingEntries(items)
-      await new Promise<void>((resolve) => {
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  function hideCatalogLoadError(): void {
+    loadErrorEl.hidden = true
+  }
+
+  async function sleep(ms: number): Promise<void> {
+    await new Promise<void>((resolve) => {
+      window.setTimeout(resolve, ms)
+    })
+  }
+
+  async function loadCatalogProductsWithRetry(maxAttempts = 3): Promise<CatalogProduct[]> {
+    let lastError: unknown
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      try {
+        const items = await getCatalogProductsFeed()
+        if (items.length === 0) throw new Error('Empty catalog feed')
+        return items
+      } catch (error) {
+        lastError = error
+        if (attempt < maxAttempts) await sleep(attempt * 1000)
+      }
+    }
+    throw lastError instanceof Error ? lastError : new Error('Catalog unavailable')
+  }
+
+  async function applyLoadedCatalogProducts(items: CatalogProduct[]): Promise<void> {
+    hideCatalogLoadError()
+    setCatalogProductStore(items)
+    productCatalog = buildCatalogProductListingEntries(items)
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    })
+    syncCatalogueFavouritesUi()
+    syncFilterOptionsFromCards()
+    visibleCardsLimit = CATALOGUE_PAGE_SIZE
+    applyFilters()
+
+    void getCatalogProductsFullFeed()
+      .then((fullItems) => {
+        if (fullItems.length === 0) return
+        mergeFullCatalogProducts(fullItems)
       })
-      syncCatalogueFavouritesUi()
-      syncFilterOptionsFromCards()
-      visibleCardsLimit = CATALOGUE_PAGE_SIZE
-      applyFilters()
+      .catch((err) => {
+        console.warn('Catalogue full product feed failed:', err)
+      })
+  }
 
-      void getCatalogProductsFullFeed()
-        .then((fullItems) => {
-          if (fullItems.length === 0) return
-          mergeFullCatalogProducts(fullItems)
-        })
-        .catch((err) => {
-          console.warn('Catalogue full product feed failed:', err)
-        })
+  async function loadCatalogueFromStrapi() {
+    hideCatalogLoadError()
+    cardsRootEl.setAttribute('aria-busy', 'true')
+    try {
+      const items = await loadCatalogProductsWithRetry()
+      await applyLoadedCatalogProducts(items)
     } catch (err) {
-      console.warn('Catalogue Strapi fetch failed, using static fallback:', err)
+      console.warn('Catalogue load failed:', err)
+      showCatalogLoadError()
+    } finally {
+      cardsRootEl.removeAttribute('aria-busy')
     }
   }
+
+  loadErrorRetryBtn?.addEventListener('click', () => {
+    void loadCatalogueFromStrapi()
+  })
 
   updateCardsCache()
   syncCatalogueFavouritesUi()

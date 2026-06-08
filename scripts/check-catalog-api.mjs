@@ -1,5 +1,13 @@
 #!/usr/bin/env node
 
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const scriptDir = path.dirname(fileURLToPath(import.meta.url))
+const rootDir = path.resolve(scriptDir, '..')
+const publicDir = path.join(rootDir, 'public')
+
 const baseUrl = String(process.env.CATALOG_API_BASE_URL || 'http://127.0.0.1:3000').replace(/\/+$/, '')
 const failures = []
 let catalogFilterSlugSets = null
@@ -277,6 +285,34 @@ if (heroSlides) {
     if (!slide.src || typeof slide.src !== 'string') {
       failures.push('/api/catalog/hero-slides: slide missing src')
     }
+  }
+}
+
+const snapshotManifestPath = path.join(publicDir, 'catalog-snapshot.manifest.json')
+const snapshotProductsPath = path.join(publicDir, 'catalog-products.snapshot.json')
+if (!fs.existsSync(snapshotManifestPath)) {
+  failures.push('public/catalog-snapshot.manifest.json missing — run npm run catalog:export-snapshot')
+} else {
+  try {
+    const manifest = JSON.parse(fs.readFileSync(snapshotManifestPath, 'utf8'))
+    if (!Number.isFinite(manifest.productCount) || manifest.productCount < 40) {
+      failures.push(`catalog snapshot manifest: expected productCount >= 40, got ${manifest.productCount ?? '(missing)'}`)
+    }
+    if (!manifest.productsSha256 || typeof manifest.productsSha256 !== 'string') {
+      failures.push('catalog snapshot manifest: missing productsSha256')
+    }
+    if (fs.existsSync(snapshotProductsPath)) {
+      const snapshotProducts = JSON.parse(fs.readFileSync(snapshotProductsPath, 'utf8'))
+      const snapshotItems = assertList('catalog-products.snapshot.json', snapshotProducts.items, 'items')
+      const orientSnapshot = snapshotItems.find((product) => product.slug === 'orient')
+      if (!orientSnapshot) {
+        failures.push('catalog-products.snapshot.json: missing orient slug')
+      }
+    } else {
+      failures.push('public/catalog-products.snapshot.json missing — run npm run catalog:export-snapshot')
+    }
+  } catch (error) {
+    failures.push(`catalog snapshot manifest: invalid JSON (${error.message})`)
   }
 }
 

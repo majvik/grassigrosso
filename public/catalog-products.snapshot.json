@@ -1,0 +1,2424 @@
+{
+  "items": [
+    {
+      "name": "Ориент",
+      "slug": "orient",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "medium",
+      "mattressType": "spring",
+      "heightCm": 19,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Ориент — коллекция Classic",
+          "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.avif",
+          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.jpg",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "photo_2026-06-01_18-03-32.jpg",
+          "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.avif",
+          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.jpg",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "photo_2026-06-01_18-03-27.jpg",
+          "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.avif",
+          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.jpg",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "photo_2026-06-01_18-03-31.jpg",
+          "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.avif",
+          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.jpg",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "photo_2026-06-01_18-03-29.jpg",
+          "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.avif",
+          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.avif",
+      "imageAlt": "Ориент — коллекция Classic",
+      "coverDescription": "Жаккард, стёганный на синтепоне",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (20мм)\n2. термовойлок\n3. 500 пружин на одно спальное место (h – 140мм)\n4. войлок\n5. высокоэластичная пена flexi (20мм)\n6. еврокаркас",
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Ориент Плюс",
+      "slug": "orient-plus",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "dualFirmness",
+      "mattressType": "spring",
+      "heightCm": 20,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Ориент Плюс — коллекция Classic",
+          "src": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.avif",
+          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.jpg",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "photo_2026-06-01_18-03-35.jpg",
+          "src": "/uploads/photo_2026_06_01_18_03_35_3456da6880.avif",
+          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_35_3456da6880.jpg",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/photo_2026_06_01_18_03_35_3456da6880.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/photo_2026_06_01_18_03_35_3456da6880.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "photo_2026-06-01_18-03-33.jpg",
+          "src": "/uploads/photo_2026_06_01_18_03_33_aa2cc52802.avif",
+          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_33_aa2cc52802.jpg",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/photo_2026_06_01_18_03_33_aa2cc52802.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/photo_2026_06_01_18_03_33_aa2cc52802.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "photo_2026-06-01_18-03-34 (2).jpg",
+          "src": "/uploads/photo_2026_06_01_18_03_34_2_5e62e1e8eb.avif",
+          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_34_2_5e62e1e8eb.jpg",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/photo_2026_06_01_18_03_34_2_5e62e1e8eb.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/photo_2026_06_01_18_03_34_2_5e62e1e8eb.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "photo_2026-06-01_18-03-36.jpg",
+          "src": "/uploads/photo_2026_06_01_18_03_36_c0f622e586.avif",
+          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_36_c0f622e586.jpg",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/photo_2026_06_01_18_03_36_c0f622e586.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/photo_2026_06_01_18_03_36_c0f622e586.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.avif",
+      "imageAlt": "Ориент Плюс — коллекция Classic",
+      "coverDescription": "Жаккард, стёганный на синтепоне",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\"  (20мм)\n2. термовойлок\n3. 500 пружин на одно спальное место (h – 140мм)\n4. термовойлок\n5. кокосовая койра (10мм)\n6. высокоэластичная пена \"flexi\" (20мм)\n7. еврокаркас",
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Аспект",
+      "slug": "aspect",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "medium",
+      "mattressType": "spring",
+      "heightCm": 20,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Аспект — коллекция Classic",
+          "src": "/uploads/aspect_0b78cde0d6.avif",
+          "fallbackSrc": "/uploads/aspect_0b78cde0d6.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/aspect_0b78cde0d6.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/aspect_0b78cde0d6.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/aspect_0b78cde0d6.avif",
+      "imageAlt": "Аспект — коллекция Classic",
+      "coverDescription": "Трикотаж, стёганный на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (10мм)\n2. кокосовая койра (10мм)\n3. термовойлок\n4. 500 пружин на одно спальное место (h – 140мм)\n5. термовойлок\n6. кокосовая койра (10мм)\n7. высокоэластичная пена \"flexi\" (10мм)\n8. еврокаркас",
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Эвер Фоам 10",
+      "slug": "ever-foam-10",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "medium",
+      "mattressType": "nospring",
+      "heightCm": 10,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Эвер Фоам 10 — коллекция Classic",
+          "src": "/uploads/ever_foam_10_4db418ff47.avif",
+          "fallbackSrc": "/uploads/ever_foam_10_4db418ff47.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/ever_foam_10_4db418ff47.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/ever_foam_10_4db418ff47.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/ever_foam_10_4db418ff47.avif",
+      "imageAlt": "Эвер Фоам 10 — коллекция Classic",
+      "coverDescription": "Жаккард, стёганный на синтепоне",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (80мм)",
+      "tags": [
+        "Беспружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Эвер Фоам 16",
+      "slug": "ever-foam-16",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "medium",
+      "mattressType": "nospring",
+      "heightCm": 16,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Эвер Фоам 16 — коллекция Classic",
+          "src": "/uploads/ever_foam_16_2fb4eb1cba.avif",
+          "fallbackSrc": "/uploads/ever_foam_16_2fb4eb1cba.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/ever_foam_16_2fb4eb1cba.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/ever_foam_16_2fb4eb1cba.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/ever_foam_16_2fb4eb1cba.avif",
+      "imageAlt": "Эвер Фоам 16 — коллекция Classic",
+      "coverDescription": "Жаккард, стёганный на синтепоне",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (140мм)",
+      "tags": [
+        "Беспружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Эвер Фоам 20",
+      "slug": "ever-foam-20",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "medium",
+      "mattressType": "nospring",
+      "heightCm": 20,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Эвер Фоам 20 — коллекция Classic",
+          "src": "/uploads/ever_foam_20_b1af34b875.avif",
+          "fallbackSrc": "/uploads/ever_foam_20_b1af34b875.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/ever_foam_20_b1af34b875.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/ever_foam_20_b1af34b875.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/ever_foam_20_b1af34b875.avif",
+      "imageAlt": "Эвер Фоам 20 — коллекция Classic",
+      "coverDescription": "Жаккард, стёганный на синтепоне",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\"  (180мм)",
+      "tags": [
+        "Беспружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Ортофоам Стандарт",
+      "slug": "ortofoam-standard",
+      "collectionName": "Flexi",
+      "collectionSlug": "flexi",
+      "firmness": "medium",
+      "mattressType": "nospring",
+      "heightCm": 16,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Ортофоам Стандарт — коллекция Flexi",
+          "src": "/uploads/ortofoam_standard_50cf10ea6d.avif",
+          "fallbackSrc": "/uploads/ortofoam_standard_50cf10ea6d.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/ortofoam_standard_50cf10ea6d.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/ortofoam_standard_50cf10ea6d.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/ortofoam_standard_50cf10ea6d.avif",
+      "imageAlt": "Ортофоам Стандарт — коллекция Flexi",
+      "coverDescription": "Трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (140мм)",
+      "tags": [
+        "Беспружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Ортофоам Плюс",
+      "slug": "ortofoam-plus",
+      "collectionName": "Flexi",
+      "collectionSlug": "flexi",
+      "firmness": "medium",
+      "mattressType": "nospring",
+      "heightCm": 20,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Ортофоам Плюс — коллекция Flexi",
+          "src": "/uploads/ortofoam_plus_160ac099ba.avif",
+          "fallbackSrc": "/uploads/ortofoam_plus_160ac099ba.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/ortofoam_plus_160ac099ba.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/ortofoam_plus_160ac099ba.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/ortofoam_plus_160ac099ba.avif",
+      "imageAlt": "Ортофоам Плюс — коллекция Flexi",
+      "coverDescription": "Трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (180 мм)",
+      "tags": [
+        "Беспружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Хард Формат",
+      "slug": "hard-format",
+      "collectionName": "Flexi",
+      "collectionSlug": "flexi",
+      "firmness": "dualFirmness",
+      "mattressType": "nospring",
+      "heightCm": 20,
+      "maxLoadKg": 140,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Хард Формат — коллекция Flexi",
+          "src": "/uploads/hard_format_0d6264cc49.avif",
+          "fallbackSrc": "/uploads/hard_format_0d6264cc49.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/hard_format_0d6264cc49.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/hard_format_0d6264cc49.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/hard_format_0d6264cc49.avif",
+      "imageAlt": "Хард Формат — коллекция Flexi",
+      "coverDescription": "Трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (20мм)\n2. кокосовая койра (10мм)\n3. высокоэластичная пена \"flexi\" (140мм)\n4. кокосовая койра (10мм)",
+      "tags": [
+        "Беспружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Скай Фоам",
+      "slug": "sky-foam",
+      "collectionName": "Flexi",
+      "collectionSlug": "flexi",
+      "firmness": "dualFirmness",
+      "mattressType": "nospring",
+      "heightCm": 21,
+      "maxLoadKg": 140,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "memoryEffect",
+        "orthoFoam",
+        "nanoFoam"
+      ],
+      "features": [
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Скай Фоам — коллекция Flexi",
+          "src": "/uploads/sky_foam_0fbe8b34a5.avif",
+          "fallbackSrc": "/uploads/sky_foam_0fbe8b34a5.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/sky_foam_0fbe8b34a5.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/sky_foam_0fbe8b34a5.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/sky_foam_0fbe8b34a5.avif",
+      "imageAlt": "Скай Фоам — коллекция Flexi",
+      "coverDescription": "Трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. пена с эффектом памяти \"memory foam\" (40мм)\n2. пена повышенной плотности \"карбон\" (100мм)\n3. высокоэластичная пена \"flexi\" (40мм)",
+      "tags": [
+        "Беспружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Эволюшен",
+      "slug": "evolution",
+      "collectionName": "Flexi",
+      "collectionSlug": "flexi",
+      "firmness": "hard",
+      "mattressType": "nospring",
+      "heightCm": 23,
+      "maxLoadKg": 180,
+      "loadRange": "upTo180",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "memoryEffect",
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Эволюшен — коллекция Flexi",
+          "src": "/uploads/evolution_42ab6a5690.avif",
+          "fallbackSrc": "/uploads/evolution_42ab6a5690.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/evolution_42ab6a5690.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/evolution_42ab6a5690.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/evolution_42ab6a5690.avif",
+      "imageAlt": "Эволюшен — коллекция Flexi",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе и высокоэластичной пене",
+      "layersCatalog": "1. пена с эффектом памяти \"memory foam\" (20мм)\n2. elax (30мм)\n3. бикоттон (10мм)\n4. высокоэластичная пена \"flexi\" (20мм)\n5. бикоттон (10мм)\n6. elax (30мм)\n7. пена с эффектом памяти \"memory foam\" (20мм)",
+      "tags": [
+        "Беспружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Гранд",
+      "slug": "grand",
+      "collectionName": "Flexi",
+      "collectionSlug": "flexi",
+      "firmness": "hard",
+      "mattressType": "nospring",
+      "heightCm": 24,
+      "maxLoadKg": 180,
+      "loadRange": "upTo180",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Гранд — коллекция Flexi",
+          "src": "/uploads/grand_1bea9a4b63.avif",
+          "fallbackSrc": "/uploads/grand_1bea9a4b63.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/grand_1bea9a4b63.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/grand_1bea9a4b63.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/grand_1bea9a4b63.avif",
+      "imageAlt": "Гранд — коллекция Flexi",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе и высокоэластичной пене",
+      "layersCatalog": "1. elax (30мм)\n2. кокосовая койра (30мм)\n3. высокоэластичная пена \"flexi\" (30мм)\n4. кокосовая койра (30мм)\n5. высокоэластичная пена \"flexi\" (30мм)\n6. кокосовая койра (30мм)\n7. elax (30мм)",
+      "tags": [
+        "Беспружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Империо",
+      "slug": "imperio",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "dualFirmness",
+      "mattressType": "spring",
+      "heightCm": 24,
+      "maxLoadKg": 140,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "memoryEffect",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Империо — коллекция Relax",
+          "src": "/uploads/imperio_8069a3faa1.avif",
+          "fallbackSrc": "/uploads/imperio_8069a3faa1.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/imperio_8069a3faa1.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/imperio_8069a3faa1.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/imperio_8069a3faa1.avif",
+      "imageAlt": "Империо — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. elax (30мм)\n2. бикоттон (10мм)\n3. хлопковый войлок\n4. 1000 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. пена с эффектом памяти \"memory foam\" (40мм)\n7. татами борт",
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Люксор",
+      "slug": "luxor",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "medium",
+      "mattressType": "spring",
+      "heightCm": 26,
+      "maxLoadKg": 160,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "memoryEffect",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Люксор — коллекция Relax",
+          "src": "/uploads/luxor_adb0d9305d.avif",
+          "fallbackSrc": "/uploads/luxor_adb0d9305d.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/luxor_adb0d9305d.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/luxor_adb0d9305d.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/luxor_adb0d9305d.avif",
+      "imageAlt": "Люксор — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. пена с эффектом памяти \"memory foam\" (20мм)\n2. elax (30мм)\n3. хлопковый войлок\n4. 1000 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. elax (30мм)\n7. пена с эффектом памяти \"memory foam\" (20мм)\n8. татами борт",
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Галакси",
+      "slug": "galaksi",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "medium",
+      "mattressType": "spring",
+      "heightCm": 26,
+      "maxLoadKg": 160,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam",
+        "nanoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Галакси — коллекция Relax",
+          "src": "/uploads/galaksi_29d31b0292.avif",
+          "fallbackSrc": "/uploads/galaksi_29d31b0292.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/galaksi_29d31b0292.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/galaksi_29d31b0292.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/galaksi_29d31b0292.avif",
+      "imageAlt": "Галакси — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. пена повышенной плотности \"карбон массаж\" (30мм)\n2. высокоэластичная пена \"flexi\" (20мм)\n3. хлопковый войлок\n4. 1000 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. высокоэластичная пена \"flexi\" (20мм)\n7. пена повышенной плотности \"карбон массаж\" (30мм)\n8. татами борт",
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Дискавери",
+      "slug": "discovery",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 27,
+      "maxLoadKg": 160,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam",
+        "forplit"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Дискавери — коллекция Relax",
+          "src": "/uploads/discovery_caf02c8839.avif",
+          "fallbackSrc": "/uploads/discovery_caf02c8839.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/discovery_caf02c8839.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/discovery_caf02c8839.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/discovery_caf02c8839.avif",
+      "imageAlt": "Дискавери — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. форплит (20мм)\n2. высокоэластичная пена \"flexi\" (20мм)\n3. кокосовая койра (10мм)\n4. хлопковый войлок\n5. 1000 пружин на одно спальное место (h – 140мм)\n6. хлопковый войлок\n7. кокосовая койра (10мм)\n8. высокоэластичная пена \"flexi\" (20мм)\n9. форплит (20мм)\n10. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Давос",
+      "slug": "davos",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 150,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Давос — коллекция Relax",
+          "src": "/uploads/davos_f60728f139.avif",
+          "fallbackSrc": "/uploads/davos_f60728f139.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/davos_f60728f139.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/davos_f60728f139.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/davos_f60728f139.avif",
+      "imageAlt": "Давос — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. кокосовая койра (20мм)\n2. хлопковый войлок\n3. 1000 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (20мм)\n6. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Давос Микс",
+      "slug": "davos-mix",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "dualFirmness",
+      "mattressType": "spring",
+      "heightCm": 23,
+      "maxLoadKg": 150,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "latex"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Давос Микс — коллекция Relax",
+          "src": "/uploads/davos_mix_cbba0a9e32.avif",
+          "fallbackSrc": "/uploads/davos_mix_cbba0a9e32.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/davos_mix_cbba0a9e32.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/davos_mix_cbba0a9e32.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/davos_mix_cbba0a9e32.avif",
+      "imageAlt": "Давос Микс — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. бельгийский латекс\n2. кокосовая койра (10мм)\n3. хлопковый войлок\n4. 1000 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. кокосовая койра (20мм)\n7. татами борт",
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Элио",
+      "slug": "elio",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "dualFirmness",
+      "mattressType": "spring",
+      "heightCm": 23,
+      "maxLoadKg": 140,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "latex",
+        "nanoFoam"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Элио — коллекция Relax",
+          "src": "/uploads/elio_d91de9f2ca.avif",
+          "fallbackSrc": "/uploads/elio_d91de9f2ca.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/elio_d91de9f2ca.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/elio_d91de9f2ca.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/elio_d91de9f2ca.avif",
+      "imageAlt": "Элио — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. пена повышенной плотности \"карбон массаж\" (30мм)\n2. хлопковый войлок\n3. 1000 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (10мм)\n6. бельгийский латекс (20мм)\n7. татами борт",
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Премьер",
+      "slug": "premier",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 24,
+      "maxLoadKg": 140,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Премьер — коллекция Relax",
+          "src": "/uploads/premier_2c2d5c8a99.avif",
+          "fallbackSrc": "/uploads/premier_2c2d5c8a99.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/premier_2c2d5c8a99.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/premier_2c2d5c8a99.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/premier_2c2d5c8a99.avif",
+      "imageAlt": "Премьер — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (20мм)\n2. кокосовая койра (10мм)\n3. хлопковый войлок\n4. 1000 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. кокосовая койра (10мм)\n7. высокоэластичная пена \"flexi\" (20мм)\n8. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Премьер Люкс",
+      "slug": "premier-lux",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 24,
+      "maxLoadKg": 140,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "latex"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Премьер Люкс — коллекция Relax",
+          "src": "/uploads/premier_lux_d2f5d4e27c.avif",
+          "fallbackSrc": "/uploads/premier_lux_d2f5d4e27c.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/premier_lux_d2f5d4e27c.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/premier_lux_d2f5d4e27c.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/premier_lux_d2f5d4e27c.avif",
+      "imageAlt": "Премьер Люкс — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. бельгийский латекс (20мм)\n2. кокосовая койра (10мм)\n3. хлопковый войлок\n4. 1000 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. кокосовая койра (10мм)\n7. бельгийский латекс (20мм)\n8. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Импринт",
+      "slug": "imprint",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "medium",
+      "mattressType": "spring",
+      "heightCm": 23,
+      "maxLoadKg": 140,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "memoryEffect"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Импринт — коллекция Relax",
+          "src": "/uploads/imprint_8388805d62.avif",
+          "fallbackSrc": "/uploads/imprint_8388805d62.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/imprint_8388805d62.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/imprint_8388805d62.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/imprint_8388805d62.avif",
+      "imageAlt": "Импринт — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. пена с эффектом памяти \"memory foam\"  (20мм)\n2. кокосовая койра (10мм)\n3. хлопковый войлок\n4. 1000 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. кокосовая койра (10мм)\n7. пена с эффектом памяти \"memory foam\" (20мм)\n8. татами борт",
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Релакс Плюс",
+      "slug": "relax-plus",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "dualFirmness",
+      "mattressType": "spring",
+      "heightCm": 21,
+      "maxLoadKg": 140,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Релакс Плюс — коллекция Relax",
+          "src": "/uploads/relax_plus_e0c55db1b5.avif",
+          "fallbackSrc": "/uploads/relax_plus_e0c55db1b5.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/relax_plus_e0c55db1b5.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/relax_plus_e0c55db1b5.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/relax_plus_e0c55db1b5.avif",
+      "imageAlt": "Релакс Плюс — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (20мм)\n2. хлопковый войлок\n3. 1000 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (10мм)\n6. высокоэластичная пена \"flexi\" (20мм)\n7. еврокаркас",
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Ларго",
+      "slug": "largo",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 21,
+      "maxLoadKg": 140,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Ларго — коллекция Relax",
+          "src": "/uploads/largo_bd4c921f15.avif",
+          "fallbackSrc": "/uploads/largo_bd4c921f15.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/largo_bd4c921f15.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/largo_bd4c921f15.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/largo_bd4c921f15.avif",
+      "imageAlt": "Ларго — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (10мм)\n2. кокосовая койра (10мм)\n3. хлопковый войлок\n4. 1000 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. кокосовая койра (10мм)\n7. высокоэластичная пена \"flexi\" (10мм)\n8. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Твин",
+      "slug": "twin",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "dualFirmness",
+      "mattressType": "spring",
+      "heightCm": 20,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Твин — коллекция Trend",
+          "src": "/uploads/twin_32ba60f7b8.avif",
+          "fallbackSrc": "/uploads/twin_32ba60f7b8.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/twin_32ba60f7b8.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/twin_32ba60f7b8.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/twin_32ba60f7b8.avif",
+      "imageAlt": "Твин — коллекция Trend",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. кокосовая койра (20мм)\n2. хлопковый войлок\n3. 500 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. высокоэластичная пена \"flexi\" (20мм)\n6. еврокаркас",
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Релакс",
+      "slug": "relax-trend",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "dualFirmness",
+      "mattressType": "spring",
+      "heightCm": 21,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Релакс — коллекция Trend",
+          "src": "/uploads/relax_trend_55248b6852.avif",
+          "fallbackSrc": "/uploads/relax_trend_55248b6852.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/relax_trend_55248b6852.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/relax_trend_55248b6852.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/relax_trend_55248b6852.avif",
+      "imageAlt": "Релакс — коллекция Trend",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (20мм)\n2. хлопковый войлок\n3. 500 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (10мм)\n6. высокоэластичная пена \"flexi\" (20мм)\n7. еврокаркас",
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Оригинал",
+      "slug": "original",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "medium",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "nanoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Оригинал — коллекция Trend",
+          "src": "/uploads/original_aff309d5fc.avif",
+          "fallbackSrc": "/uploads/original_aff309d5fc.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/original_aff309d5fc.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/original_aff309d5fc.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/original_aff309d5fc.avif",
+      "imageAlt": "Оригинал — коллекция Trend",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. пена повышенной плотности \"карбон массаж\" (30мм)\n2. хлопковый войлок\n3. 500 пружин на одно спальное место (h – 140 мм)\n4. хлопковый войлок\n5. пена повышенной плотности \"карбон массаж\" (30мм)\n6. еврокаркас",
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Эдванс",
+      "slug": "advance",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "medium",
+      "mattressType": "spring",
+      "heightCm": 23,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "docId test",
+          "src": "/uploads/advance_3b197e92a3.avif",
+          "fallbackSrc": "/uploads/advance_3b197e92a3.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/advance_3b197e92a3.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/advance_3b197e92a3.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/advance_3b197e92a3.avif",
+      "imageAlt": "docId test",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (20мм)\n2. кокосовая койра (10мм)\n3. хлопковый войлок\n4. 500 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. кокосовая койра (10мм)\n7. высокоэластичная пена \"flexi\" (20мм)\n8. еврокаркас",
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Оптима",
+      "slug": "optima",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "dualFirmness",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 130,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Оптима — коллекция Trend",
+          "src": "/uploads/optima_36d543128e.avif",
+          "fallbackSrc": "/uploads/optima_36d543128e.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/optima_36d543128e.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/optima_36d543128e.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/optima_36d543128e.avif",
+      "imageAlt": "Оптима — коллекция Trend",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. кокосовая койра (20мм)\n2. хлопковый войлок\n3. 500 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (10мм)\n6. высокоэластичная пена \"flexi\" (20мм)\n7. татами борт",
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Динамик",
+      "slug": "dynamic",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 21,
+      "maxLoadKg": 130,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Динамик — коллекция Trend",
+          "src": "/uploads/dynamic_2522e44e03.avif",
+          "fallbackSrc": "/uploads/dynamic_2522e44e03.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/dynamic_2522e44e03.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/dynamic_2522e44e03.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/dynamic_2522e44e03.avif",
+      "imageAlt": "Динамик — коллекция Trend",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. кокосовая койра (20мм)\n2. хлопковый войлок\n3. 500 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (20мм)\n6. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Спейс",
+      "slug": "space",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "dualFirmness",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "latex",
+        "nanoFoam"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Спейс — коллекция Trend",
+          "src": "/uploads/space_d3a4a357c4.avif",
+          "fallbackSrc": "/uploads/space_d3a4a357c4.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/space_d3a4a357c4.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/space_d3a4a357c4.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/space_d3a4a357c4.avif",
+      "imageAlt": "Спейс — коллекция Trend",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. пена повышенной плотности \"карбон массаж\" (30мм)\n2. хлопковый войлок\n3. 500 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (10мм)\n6. neolatex (20мм)\n7. татами борт",
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Сенсо",
+      "slug": "senso",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "dualFirmness",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 130,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "latex"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Сенсо — коллекция Trend",
+          "src": "/uploads/senso_a20c7ebe8c.avif",
+          "fallbackSrc": "/uploads/senso_a20c7ebe8c.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/senso_a20c7ebe8c.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/senso_a20c7ebe8c.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/senso_a20c7ebe8c.avif",
+      "imageAlt": "Сенсо — коллекция Trend",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. neolatex (20мм)\n2. кокосовая койра (10мм)\n3. хлопковый войлок\n4. 500 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. кокосовая койра (20мм)\n7. татами борт",
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Лидер",
+      "slug": "lider",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 26,
+      "maxLoadKg": 160,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Лидер — коллекция Trend",
+          "src": "/uploads/lider_0a44c1d610.avif",
+          "fallbackSrc": "/uploads/lider_0a44c1d610.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/lider_0a44c1d610.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/lider_0a44c1d610.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/lider_0a44c1d610.avif",
+      "imageAlt": "Лидер — коллекция Trend",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (40мм)\n2. кокосовая койра (10мм)\n3. хлопковый войлок\n4. 500 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. кокосовая койра (10мм)\n7. высокоэластичная пена \"flexi\" (40мм)\n8. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Гравити",
+      "slug": "gravity",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 25,
+      "maxLoadKg": 160,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Гравити — коллекция Trend",
+          "src": "/uploads/gravity_bd49fb1798.avif",
+          "fallbackSrc": "/uploads/gravity_bd49fb1798.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/gravity_bd49fb1798.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/gravity_bd49fb1798.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/gravity_bd49fb1798.avif",
+      "imageAlt": "Гравити — коллекция Trend",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (20мм)\n2. кокосовая койра (20мм)\n3. хлопковый войлок\n4. 500 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. кокосовая койра (20мм)\n7. высокоэластичная пена \"flexi\" (20мм)\n8. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Мэджик",
+      "slug": "magic",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 27,
+      "maxLoadKg": 160,
+      "loadRange": "upTo160",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "latex",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Мэджик — коллекция Trend",
+          "src": "/uploads/magic_88318c046d.avif",
+          "fallbackSrc": "/uploads/magic_88318c046d.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/magic_88318c046d.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/magic_88318c046d.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/magic_88318c046d.avif",
+      "imageAlt": "Мэджик — коллекция Trend",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. бельгийский латекс (20мм)\n2. кокосовая койра (10мм)\n3. высокоэластичная пена \"flexi\"  (20мм)\n4. хлопковый войлок\n5. 500 пружин на одно спальное место (h – 140мм)\n6. хлопковый войлок\n7. высокоэластичная пена \"flexi\" (20мм)\n8. кокосовая койра (10мм)\n9. бельгийский латекс (20мм)\n10. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Флип Стандарт",
+      "slug": "flip-standard",
+      "collectionName": "",
+      "collectionSlug": "topper",
+      "firmness": "medium",
+      "mattressType": "topper",
+      "heightCm": 4,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Флип Стандарт — коллекция Топеры",
+          "src": "/uploads/flip_standard_95327ae0cb.avif",
+          "fallbackSrc": "/uploads/flip_standard_95327ae0cb.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/flip_standard_95327ae0cb.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/flip_standard_95327ae0cb.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/flip_standard_95327ae0cb.avif",
+      "imageAlt": "Флип Стандарт — коллекция Топеры",
+      "coverDescription": "Жаккард, стёганный на синтепоне",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (30мм)",
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Флип Плюс",
+      "slug": "flip-plus",
+      "collectionName": "",
+      "collectionSlug": "topper",
+      "firmness": "medium",
+      "mattressType": "topper",
+      "heightCm": 6,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Флип Плюс — коллекция Топеры",
+          "src": "/uploads/flip_plus_172f296634.avif",
+          "fallbackSrc": "/uploads/flip_plus_172f296634.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/flip_plus_172f296634.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/flip_plus_172f296634.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/flip_plus_172f296634.avif",
+      "imageAlt": "Флип Плюс — коллекция Топеры",
+      "coverDescription": "Жаккард, стёганный на синтепоне",
+      "layersCatalog": "1. высокоэластичная пена \"flexi\" (50мм)",
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Эффект",
+      "slug": "effect",
+      "collectionName": "",
+      "collectionSlug": "topper",
+      "firmness": "medium",
+      "mattressType": "topper",
+      "heightCm": 4,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Эффект — коллекция Топеры",
+          "src": "/uploads/effect_2758decd3c.avif",
+          "fallbackSrc": "/uploads/effect_2758decd3c.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/effect_2758decd3c.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/effect_2758decd3c.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/effect_2758decd3c.avif",
+      "imageAlt": "Эффект — коллекция Топеры",
+      "coverDescription": "Трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. кокосовая койра (20мм)",
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Дуал",
+      "slug": "dual",
+      "collectionName": "",
+      "collectionSlug": "topper",
+      "firmness": "medium",
+      "mattressType": "topper",
+      "heightCm": 6,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Дуал — коллекция Топеры",
+          "src": "/uploads/dual_f689094c66.avif",
+          "fallbackSrc": "/uploads/dual_f689094c66.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/dual_f689094c66.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/dual_f689094c66.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/dual_f689094c66.avif",
+      "imageAlt": "Дуал — коллекция Топеры",
+      "coverDescription": "Трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. кокосовая койра (20мм)\n2. высокоэластичная пена \"flexi\"  (20мм)",
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Делюкс Мемори",
+      "slug": "deluxe-memory",
+      "collectionName": "",
+      "collectionSlug": "topper",
+      "firmness": "medium",
+      "mattressType": "topper",
+      "heightCm": 12,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "memoryEffect",
+        "orthoFoam"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Делюкс Мемори — коллекция Топеры",
+          "src": "/uploads/deluxe_memory_a643a05849.avif",
+          "fallbackSrc": "/uploads/deluxe_memory_a643a05849.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/deluxe_memory_a643a05849.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/deluxe_memory_a643a05849.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/deluxe_memory_a643a05849.avif",
+      "imageAlt": "Делюкс Мемори — коллекция Топеры",
+      "coverDescription": "Трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. пена с эффектом памяти \"memory foam\" (40мм)\n2. высокоэластичная пена \"flexi\" (50мм)",
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Делюкс Латекс",
+      "slug": "deluxe-latex",
+      "collectionName": "",
+      "collectionSlug": "topper",
+      "firmness": "medium",
+      "mattressType": "topper",
+      "heightCm": 6,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "latex"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Делюкс Латекс — коллекция Топеры",
+          "src": "/uploads/deluxe_latex_b5f31cac38.avif",
+          "fallbackSrc": "/uploads/deluxe_latex_b5f31cac38.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/deluxe_latex_b5f31cac38.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/deluxe_latex_b5f31cac38.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/deluxe_latex_b5f31cac38.avif",
+      "imageAlt": "Делюкс Латекс — коллекция Топеры",
+      "coverDescription": "Трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. neolatex (40мм)",
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Софт",
+      "slug": "soft-topper",
+      "collectionName": "",
+      "collectionSlug": "topper",
+      "firmness": "medium",
+      "mattressType": "topper",
+      "heightCm": 6,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "memoryEffect"
+      ],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Софт — коллекция Топеры",
+          "src": "/uploads/soft_topper_d350ee9685.avif",
+          "fallbackSrc": "/uploads/soft_topper_d350ee9685.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/soft_topper_d350ee9685.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/soft_topper_d350ee9685.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/soft_topper_d350ee9685.avif",
+      "imageAlt": "Софт — коллекция Топеры",
+      "coverDescription": "Трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. пена с эффектом памяти \"memory foam\" (40мм)",
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Сенсетив",
+      "slug": "sensitive",
+      "collectionName": "",
+      "collectionSlug": "topper",
+      "firmness": "medium",
+      "mattressType": "topper",
+      "heightCm": 6,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [],
+      "features": [],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Сенсетив — коллекция Топеры",
+          "src": "/uploads/sensitive_8aa448ed87.avif",
+          "fallbackSrc": "/uploads/sensitive_8aa448ed87.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/sensitive_8aa448ed87.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/sensitive_8aa448ed87.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/sensitive_8aa448ed87.avif",
+      "imageAlt": "Сенсетив — коллекция Топеры",
+      "coverDescription": "Трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "",
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
+      "isActive": true
+    }
+  ],
+  "source": "strapi-catalog-feed",
+  "view": "full"
+}
