@@ -22,6 +22,7 @@
     "start": "bash scripts/start-services.sh",
     "check:catalog-api": "node scripts/check-catalog-api.mjs",
     "check:catalog-ui": "node scripts/check-catalog-ui.mjs",
+    "check:catalog-perf": "node scripts/check-catalog-perf.mjs",
     "catalog-import:build": "python3 scripts/build-catalog-import.py",
     "catalog-import:validate": "node scripts/validate-catalog-import.mjs",
     "catalog-import:preview": "node scripts/build-catalog-import-preview.mjs",

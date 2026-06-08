@@ -123,12 +123,35 @@ function attachCatalogApiCacheHeaders(res) {
   res.set('Cache-Control', `public, max-age=${sec}, stale-while-revalidate=${swr}`);
 }
 
+function slimCatalogGalleryItem(item) {
+  if (!item || typeof item !== 'object') return null;
+  const type = item.type === 'video' ? 'video' : 'image';
+  const slim = {
+    type,
+    src: String(item.src || ''),
+  };
+  if (item.alt) slim.alt = String(item.alt);
+  if (item.fallbackSrc) slim.fallbackSrc = String(item.fallbackSrc);
+  if (type === 'video') {
+    if (item.mime) slim.mime = String(item.mime);
+    if (item.poster) slim.poster = String(item.poster);
+    if (item.posterFallbackSrc) slim.posterFallbackSrc = String(item.posterFallbackSrc);
+  }
+  return slim;
+}
+
 function slimCatalogProductsForListing(items) {
   if (!Array.isArray(items)) return [];
-  return items.map((item) => ({
-    ...item,
-    gallery: Array.isArray(item.gallery) ? item.gallery.slice(0, 1) : [],
-  }));
+  return items.map((item) => {
+    const { layersCatalog, coverDescription, imageUrl, imageAlt, ...rest } = item;
+    const gallery = Array.isArray(rest.gallery)
+      ? rest.gallery.slice(0, 1).map(slimCatalogGalleryItem).filter(Boolean)
+      : [];
+    return {
+      ...rest,
+      gallery,
+    };
+  });
 }
 
 function resolveCatalogProductsView(queryView) {

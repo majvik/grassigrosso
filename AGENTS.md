@@ -22,7 +22,13 @@
 
 ### Perf / каталог
 
-После изменений медиа или listing runtime: `npm run catalog:optimize-media` (если новые uploads) → smoke `check:catalog-api` + `check:catalog-ui` → при sidecar/seed — commit `strapi-catalog/public/uploads/` и при необходимости `npm run strapi:sync-seed`.
+После изменений медиа или listing runtime: `npm run catalog:optimize-media` (если новые uploads) → smoke `check:catalog-api` + `check:catalog-ui` + `check:catalog-perf` → при sidecar/seed — commit `strapi-catalog/public/uploads/` и при необходимости `npm run strapi:sync-seed`.
+
+### Деплой (Timeweb App Platform)
+
+- Dev/prod на Timeweb: **push в git → CI/CD → Docker build (`Dockerfile`) → App Platform**. Ручной restart не нужен — `server.cjs`, `dist/` и uploads попадают в образ из последнего commit.
+- После push проверка dev: `CATALOG_PERF_BASE_URL=https://majvik-grassigrosso-e3cd.twc1.net npm run check:catalog-perf` (и `check:catalog-ui`).
+- На Timeweb задайте env как в [.env.example](.env.example), в т.ч. **`CATALOG_STRAPI_CACHE_TTL_MS=45000`** для кэша catalog API в Node.
 
 ## Новая маркетинговая HTML-страница
 

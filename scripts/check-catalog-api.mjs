@@ -254,6 +254,9 @@ if (listingProducts) {
   if (orient && Array.isArray(orient.gallery) && orient.gallery.length !== 1) {
     failures.push('/api/catalog/products?view=listing: orient must expose exactly 1 gallery slide')
   }
+  if (orient?.gallery?.[0]?.sources) {
+    failures.push('/api/catalog/products?view=listing: gallery items must not include sources[]')
+  }
   const fullOrient = (products?.items || []).find((product) => product.slug === 'orient')
   if (fullOrient && Array.isArray(fullOrient.gallery) && fullOrient.gallery.length > 1 && listingProducts) {
     const listingBytes = JSON.stringify(listingProducts).length
