@@ -9,6 +9,29 @@ function escapeAttr(value: unknown): string {
     .replace(/'/g, '&#39;')
 }
 
+function normalizeUploadPath(url: string): string {
+  const clean = String(url || '').split('?')[0].split('#')[0]
+  const match = clean.match(/\/uploads\/[^/]+$/)
+  return match ? match[0] : clean
+}
+
+function slideSrcMatchesExisting(existingSlide: Element, slide: CatalogHeroSlide): boolean {
+  if (!existingSlide || !slide?.src) return false
+  const feedPath = normalizeUploadPath(String(slide.src))
+  const img = existingSlide.querySelector('img')
+  const video = existingSlide.querySelector('video')
+  if (img) {
+    const current = normalizeUploadPath(img.currentSrc || img.getAttribute('src') || '')
+    return current.endsWith(feedPath) || feedPath.endsWith(current)
+  }
+  if (video && slide.type === 'video') {
+    const source = video.querySelector('source')
+    const current = normalizeUploadPath(source?.getAttribute('src') || video.getAttribute('src') || '')
+    return current.endsWith(feedPath) || feedPath.endsWith(current)
+  }
+  return false
+}
+
 function renderSlide(slide: CatalogHeroSlide, index: number): string {
   const active = index === 0
   const activeClass = active ? ' is-active' : ''
@@ -50,6 +73,16 @@ export function applyCatalogHeroFeed(sliderRoot: Element, data: CatalogHeroFeed)
   }
 
   const slides = Array.isArray(data.slides) ? data.slides : []
-  slidesRoot.innerHTML = slides.map(renderSlide).join('')
+  const existingSlides = [...slidesRoot.querySelectorAll('.catalog-hero-slide')]
+  const slidesHtml = slides
+    .map((slide, index) => {
+      if (index === 0 && slideSrcMatchesExisting(existingSlides[0], slide)) {
+        return existingSlides[0].outerHTML
+      }
+      return renderSlide(slide, index)
+    })
+    .join('')
+
+  slidesRoot.innerHTML = slidesHtml
   dotsRoot.innerHTML = slides.map((_, index) => renderDot(index)).join('')
 }

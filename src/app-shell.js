@@ -9,6 +9,7 @@ export function ensureVideoSource(video) {
 
 export function createLenisInstance(LenisCtor) {
   if (window.innerWidth <= 1024) return null
+  if (document.body.dataset.page === 'catalog') return null
 
   const lenis = new LenisCtor({
     duration: 1.2,

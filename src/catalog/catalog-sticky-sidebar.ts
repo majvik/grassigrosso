@@ -84,6 +84,7 @@ export function initCatalogStickySidebar(
   }
 
   let stickyRaf = 0
+  let scrollEndTimer = 0
   const scheduleSync = (): void => {
     if (stickyRaf) cancelAnimationFrame(stickyRaf)
     stickyRaf = requestAnimationFrame(() => {
@@ -93,7 +94,14 @@ export function initCatalogStickySidebar(
   }
 
   scheduleSync()
-  window.addEventListener('scroll', scheduleSync, { passive: true })
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (scrollEndTimer) window.clearTimeout(scrollEndTimer)
+      scrollEndTimer = window.setTimeout(scheduleSync, 120)
+    },
+    { passive: true },
+  )
   sidebar.addEventListener('scroll', syncSidebarInternalScrollState, { passive: true })
   window.addEventListener('resize', scheduleSync)
   desktopMedia.addEventListener('change', scheduleSync)

@@ -3,7 +3,7 @@ import {
   openCatalogAccordionGroupExclusive,
   setCatalogAccordionGroupExpanded,
 } from './catalog-accordion'
-import { fetchCatalogFilters, fetchCatalogProducts, type CatalogFilterGroups } from './catalog-api'
+import { fetchCatalogFilters, getCatalogProductsFeed, type CatalogFilterGroups } from './catalog-api'
 import { buildCatalogueCardHtml } from './catalog-card'
 import {
   buildCatalogProductMediaHtml,
@@ -13,7 +13,9 @@ import {
   initCatalogProductGalleries,
   readGalleryFromElement,
   setCatalogGalleryActiveIndex,
+  syncVisibleCatalogCardMediaLoading,
 } from './catalog-product-gallery'
+import { observeCatalogMediaHosts } from './catalog-media-load-queue'
 import { readCatalogueCardMeta } from './catalog-card-meta'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
 import { buildCatalogModalSpecGroups } from './catalog-modal'
@@ -465,7 +467,8 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const favBtn = sharedProductSection.querySelector<HTMLButtonElement>('[data-shared-product-favourite]')
     if (favBtn) syncSharedProductFavouriteButton(favBtn, slug)
     if (sharedProductSection) {
-      initCatalogProductGalleries(sharedProductSection)
+      initCatalogProductGalleries(sharedProductSection, { lazyBind: false })
+      observeCatalogMediaHosts(sharedProductSection)
       const specSegments = sharedProductSection.querySelector<HTMLElement>('[data-catalog-spec-segments]')
       if (specSegments) initCatalogSpecSegments(specSegments)
       const sharedMedia = sharedProductSection.querySelector<HTMLElement>('[data-catalog-card-media]')
@@ -545,6 +548,9 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     infiniteSentinel.hidden = isSharedFavouritesView || isSharedProductView || matchedCards.length <= visibleCardsLimit
     updateResultsCount()
     renderSharedProductView()
+    syncVisibleCatalogCardMediaLoading(cardsRootEl)
+    initCatalogProductGalleries(cardsRootEl, { lazyBind: true })
+    observeCatalogMediaHosts(cardsRootEl)
     scheduleStickySidebarSync()
   }
 
@@ -658,14 +664,16 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   async function loadCatalogueFromStrapi() {
     try {
-      const items = await fetchCatalogProducts()
+      const items = await getCatalogProductsFeed()
       if (items.length === 0) return
 
       const html = items.map((item) => buildCatalogueCardHtml(item)).join('')
       destroyCatalogProductGalleries(cardsRootEl)
       cardsRootEl.innerHTML = html
       updateCardsCache()
-      initCatalogProductGalleries(cardsRootEl)
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      })
       syncCatalogueFavouritesUi()
       syncFilterOptionsFromCards()
       applySorting()
@@ -677,7 +685,6 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   updateCardsCache()
-  initCatalogProductGalleries(cardsRootEl)
   syncCatalogueFavouritesUi()
 
   window.addEventListener('catalogue:favourites-updated', () => {
@@ -953,7 +960,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       },
       {
         root: null,
-        rootMargin: '400px 0px',
+        rootMargin: '600px 0px',
         threshold: 0,
       },
     )

@@ -154,11 +154,28 @@ if (products) {
         if (!item.src || typeof item.src !== 'string') {
           failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery item missing src`)
         } else {
-          const key = `${item.type}|${item.src}`
+          const key = `${item.type}|${item.fallbackSrc || item.src}`
           if (seenGallery.has(key)) {
             failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery has duplicate src`)
           }
           seenGallery.add(key)
+          if (item.type === 'image' && Array.isArray(item.sources)) {
+            for (const source of item.sources) {
+              if (!source || typeof source !== 'object') {
+                failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery source must be an object`)
+                continue
+              }
+              if (!source.type || typeof source.type !== 'string') {
+                failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery source missing type`)
+              }
+              if (!source.src || typeof source.src !== 'string') {
+                failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery source missing src`)
+              }
+            }
+          }
+          if (item.fallbackSrc && typeof item.fallbackSrc !== 'string') {
+            failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery item fallbackSrc must be string`)
+          }
         }
       }
     }

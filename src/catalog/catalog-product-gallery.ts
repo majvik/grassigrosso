@@ -11,6 +11,7 @@ export type CatalogProductMediaHtmlOptions = {
   rootClass?: string
   productSlug?: string
   carousel?: boolean
+  eagerFirstSlide?: boolean
 }
 
 const GALLERY_ROOT_SELECTOR = '[data-catalog-card-media]'
@@ -47,7 +48,21 @@ export function normalizeCatalogGalleryItems(
     out.push({
       type: item.type === 'video' ? 'video' : 'image',
       src: String(item.src),
+      fallbackSrc: item.fallbackSrc ? String(item.fallbackSrc) : undefined,
+      sources: Array.isArray(item.sources)
+        ? item.sources.map((source) => ({
+            type: String(source.type || ''),
+            src: String(source.src || ''),
+          })).filter((source) => source.type && source.src)
+        : undefined,
       poster: item.poster ? String(item.poster) : undefined,
+      posterFallbackSrc: item.posterFallbackSrc ? String(item.posterFallbackSrc) : undefined,
+      posterSources: Array.isArray(item.posterSources)
+        ? item.posterSources.map((source) => ({
+            type: String(source.type || ''),
+            src: String(source.src || ''),
+          })).filter((source) => source.type && source.src)
+        : undefined,
       alt: item.alt ? String(item.alt) : undefined,
       mime: item.mime ? String(item.mime) : undefined,
     })
@@ -68,39 +83,111 @@ export function normalizeCatalogGalleryItems(
   return out.slice(0, 5)
 }
 
+function buildPictureHtml(item: CatalogProductMediaItem, eager: boolean): string {
+  const alt = escapeHtml(item.alt || '')
+  const loading = eager ? 'eager' : 'lazy'
+  const fetchPriority = eager ? ' fetchpriority="high"' : ''
+  const fallbackSrc = escapeHtml(item.fallbackSrc || item.src)
+
+  if (!item.sources?.length) {
+    return `<img src="${escapeHtml(item.src)}" alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} />`
+  }
+
+  const sourcesHtml = item.sources
+    .map((source) => `<source type="${escapeHtml(source.type)}" srcset="${escapeHtml(source.src)}" />`)
+    .join('')
+  return `<picture>${sourcesHtml}<img src="${fallbackSrc}" alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} /></picture>`
+}
+
 function buildSlideHtml(item: CatalogProductMediaItem, index: number, eager: boolean): string {
   const activeClass = index === 0 ? ' is-active' : ''
   const alt = escapeHtml(item.alt || '')
   if (item.type === 'video') {
-    const poster = escapeHtml(item.poster || '')
+    const posterAttr = item.poster ? ` poster="${escapeHtml(item.posterFallbackSrc || item.poster)}"` : ''
     const mime = escapeHtml(item.mime || 'video/mp4')
+    const fallbackMime = escapeHtml(item.fallbackSrc?.endsWith('.mp4') ? 'video/mp4' : item.mime || 'video/mp4')
+    if (index > 0) {
+      return (
+        `<div class="catalogue-new-card-media-slide${activeClass}" data-catalog-gallery-slide="${index}"` +
+        ` data-media-deferred="true" data-media-payload="${escapeAttrJson(item)}"></div>`
+      )
+    }
     return (
       `<div class="catalogue-new-card-media-slide${activeClass}" data-catalog-gallery-slide="${index}">` +
       `<video class="catalogue-new-card-media-video" muted playsinline loop preload="none"` +
-      (poster ? ` poster="${poster}"` : '') +
+      posterAttr +
       ` data-src="${escapeHtml(item.src)}"` +
+      ` data-fallback-src="${escapeHtml(item.fallbackSrc || item.src)}"` +
       (mime ? ` data-mime="${mime}"` : '') +
+      (fallbackMime ? ` data-fallback-mime="${fallbackMime}"` : '') +
       ` aria-label="${alt || 'Видео'}"></video>` +
       `</div>`
     )
   }
 
-  const loading = eager ? 'eager' : 'lazy'
-  const fetchPriority = eager ? ' fetchpriority="high"' : ''
+  if (index > 0) {
+    return (
+      `<div class="catalogue-new-card-media-slide${activeClass}" data-catalog-gallery-slide="${index}"` +
+      ` data-media-deferred="true" data-media-payload="${escapeAttrJson(item)}"></div>`
+    )
+  }
+
   return (
     `<div class="catalogue-new-card-media-slide${activeClass}" data-catalog-gallery-slide="${index}">` +
-    `<img src="${escapeHtml(item.src)}" alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} />` +
+    buildPictureHtml(item, eager) +
     `</div>`
   )
 }
 
-function buildCatalogProductMediaInnerHtml(gallery: CatalogProductMediaItem[]): {
+function hydrateDeferredSlide(slide: HTMLElement): void {
+  if (slide.getAttribute('data-media-hydrated') === 'true') return
+  const raw = slide.getAttribute('data-media-payload')
+  if (!raw) return
+
+  let item: CatalogProductMediaItem
+  try {
+    item = normalizeCatalogGalleryItems([JSON.parse(raw) as CatalogProductMediaItem])[0]
+  } catch {
+    return
+  }
+  if (!item) return
+
+  slide.removeAttribute('data-media-payload')
+  slide.removeAttribute('data-media-deferred')
+  slide.setAttribute('data-media-hydrated', 'true')
+
+  if (item.type === 'video') {
+    const alt = escapeHtml(item.alt || '')
+    const posterAttr = item.poster ? ` poster="${escapeHtml(item.posterFallbackSrc || item.poster)}"` : ''
+    const mime = escapeHtml(item.mime || 'video/mp4')
+    const fallbackMime = escapeHtml(item.fallbackSrc?.endsWith('.mp4') ? 'video/mp4' : item.mime || 'video/mp4')
+    slide.innerHTML =
+      `<video class="catalogue-new-card-media-video" muted playsinline loop preload="none"` +
+      posterAttr +
+      ` data-src="${escapeHtml(item.src)}"` +
+      ` data-fallback-src="${escapeHtml(item.fallbackSrc || item.src)}"` +
+      (mime ? ` data-mime="${mime}"` : '') +
+      (fallbackMime ? ` data-fallback-mime="${fallbackMime}"` : '') +
+      ` aria-label="${alt || 'Видео'}"></video>`
+    if (slide.classList.contains('is-active')) syncVideoSlide(slide, true)
+    return
+  }
+
+  slide.innerHTML = buildPictureHtml(item, false)
+}
+
+function buildCatalogProductMediaInnerHtml(
+  gallery: CatalogProductMediaItem[],
+  eagerFirstSlide = false,
+): {
   slidesHtml: string
   dotsBlock: string
   carousel: boolean
 } {
   const carousel = gallery.length >= 2
-  const slidesHtml = gallery.map((item, index) => buildSlideHtml(item, index, index === 0)).join('')
+  const slidesHtml = gallery
+    .map((item, index) => buildSlideHtml(item, index, eagerFirstSlide && index === 0))
+    .join('')
   const dotsHtml = carousel
     ? gallery
         .map(
@@ -144,7 +231,7 @@ export function mountCatalogProductMedia(
 ): void {
   const gallery = normalizeCatalogGalleryItems(rawGallery, fallback)
   applyCatalogProductMediaHostAttributes(host, gallery, options)
-  const { slidesHtml, dotsBlock } = buildCatalogProductMediaInnerHtml(gallery)
+  const { slidesHtml, dotsBlock } = buildCatalogProductMediaInnerHtml(gallery, options.eagerFirstSlide === true)
   host.innerHTML =
     `<div class="catalogue-new-card-media-viewport" data-catalog-gallery-viewport tabindex="-1">` +
     slidesHtml +
@@ -161,7 +248,10 @@ export function buildCatalogProductMediaHtml(
   const rootClass = escapeHtml(options.rootClass || 'catalogue-new-card-media')
   const productSlug = options.productSlug ? escapeHtml(options.productSlug) : ''
   const slugAttr = productSlug ? ` data-product-slug="${productSlug}"` : ''
-  const { slidesHtml, dotsBlock, carousel } = buildCatalogProductMediaInnerHtml(gallery)
+  const { slidesHtml, dotsBlock, carousel } = buildCatalogProductMediaInnerHtml(
+    gallery,
+    options.eagerFirstSlide === true,
+  )
   const carouselAttr = carousel && options.carousel !== false ? ' data-catalog-gallery-enabled="true"' : ''
   const aria = carousel && options.carousel !== false ? ' role="region" aria-roledescription="carousel"' : ''
 
@@ -202,11 +292,11 @@ export function getActiveSlideSnapshot(root: Element | null): CatalogGallerySlid
       poster: poster || undefined,
     }
   }
-  const img = activeSlide.querySelector<HTMLImageElement>('img')
+  const img = activeSlide.querySelector<HTMLImageElement>('picture img, img')
   if (!img) return null
   return {
     type: 'image',
-    src: img.getAttribute('src') || '',
+    src: img.getAttribute('src') || img.currentSrc || '',
     alt: img.getAttribute('alt') || '',
   }
 }
@@ -223,6 +313,7 @@ function syncVideoSlide(slide: HTMLElement, active: boolean): void {
   const video = slide.querySelector<HTMLVideoElement>('video')
   if (!video) return
   const dataSrc = video.dataset.src || ''
+  const fallbackSrc = video.dataset.fallbackSrc || dataSrc
   if (active) {
     if (dataSrc && !video.getAttribute('src')) {
       video.setAttribute('src', dataSrc)
@@ -238,7 +329,24 @@ function syncVideoSlide(slide: HTMLElement, active: boolean): void {
       }
     }
     video.load()
-    void video.play().catch(() => {})
+    void video.play().catch(() => {
+      if (fallbackSrc && fallbackSrc !== dataSrc && !video.dataset.fallbackApplied) {
+        video.dataset.fallbackApplied = '1'
+        video.setAttribute('src', fallbackSrc)
+        const fallbackMime = video.dataset.fallbackMime
+        if (fallbackMime) {
+          let source = video.querySelector<HTMLSourceElement>('source')
+          if (!source) {
+            source = document.createElement('source')
+            video.appendChild(source)
+          }
+          source.src = fallbackSrc
+          source.type = fallbackMime
+        }
+        video.load()
+        void video.play().catch(() => {})
+      }
+    })
     return
   }
   video.pause()
@@ -264,8 +372,10 @@ function bindGalleryController(root: HTMLElement): void {
     slides[activeIndex]?.classList.remove('is-active')
     syncVideoSlide(slides[activeIndex], false)
     activeIndex = clamped
-    slides[activeIndex]?.classList.add('is-active')
-    syncVideoSlide(slides[activeIndex], true)
+    const nextSlide = slides[activeIndex]
+    if (nextSlide) hydrateDeferredSlide(nextSlide)
+    nextSlide?.classList.add('is-active')
+    syncVideoSlide(nextSlide, true)
     dots.forEach((dot, index) => {
       dot.classList.toggle('is-active', index === activeIndex)
     })
@@ -443,6 +553,51 @@ export function destroyCatalogProductGalleries(root: ParentNode = document): voi
   })
 }
 
+function isCatalogCardVisible(card: HTMLElement): boolean {
+  return card.style.display !== 'none'
+}
+
+function isCatalogMediaHostVisible(host: HTMLElement): boolean {
+  const card = host.closest('.catalogue-new-card')
+  if (card instanceof HTMLElement) return isCatalogCardVisible(card)
+  return true
+}
+
+export function syncVisibleCatalogCardMediaLoading(cardsRoot: ParentNode = document): void {
+  const cards = collectCatalogCards(cardsRoot)
+  let promotedLcp = false
+  for (const card of cards) {
+    const img = card.querySelector<HTMLImageElement>(
+      '[data-catalog-card-media] picture img, [data-catalog-card-media] img',
+    )
+    if (!img) continue
+    if (!isCatalogCardVisible(card)) {
+      img.loading = 'lazy'
+      img.removeAttribute('fetchpriority')
+      continue
+    }
+    if (!promotedLcp) {
+      img.loading = 'eager'
+      img.setAttribute('fetchpriority', 'high')
+      promotedLcp = true
+      continue
+    }
+    img.loading = 'lazy'
+    img.removeAttribute('fetchpriority')
+  }
+}
+
+function collectCatalogCards(root: ParentNode): HTMLElement[] {
+  const cards: HTMLElement[] = []
+  if (root instanceof HTMLElement && root.matches('.catalogue-new-card')) cards.push(root)
+  if (root instanceof Element || root instanceof Document || root instanceof DocumentFragment) {
+    root.querySelectorAll<HTMLElement>('.catalogue-new-card').forEach((card) => {
+      if (!cards.includes(card)) cards.push(card)
+    })
+  }
+  return cards
+}
+
 function collectGalleryHosts(root: ParentNode): HTMLElement[] {
   const hosts: HTMLElement[] = []
   if (root instanceof HTMLElement && root.matches(GALLERY_ROOT_SELECTOR)) {
@@ -456,10 +611,15 @@ function collectGalleryHosts(root: ParentNode): HTMLElement[] {
   return hosts
 }
 
-export function initCatalogProductGalleries(root: ParentNode = document): void {
+export function initCatalogProductGalleries(
+  root: ParentNode = document,
+  options: { lazyBind?: boolean } = {},
+): void {
+  const lazyBind = options.lazyBind !== false && document.body.dataset.page === 'catalog'
   collectGalleryHosts(root).forEach((el) => {
     el.removeAttribute(LEGACY_INIT_FLAG)
     if (galleryControllers.has(el)) return
+    if (lazyBind && !isCatalogMediaHostVisible(el)) return
     bindGalleryController(el)
   })
 }
@@ -478,6 +638,7 @@ export function setCatalogGalleryActiveIndex(root: HTMLElement, nextIndex: numbe
   const clamped = Math.max(0, Math.min(slides.length - 1, nextIndex))
   slides.forEach((slide, index) => {
     const active = index === clamped
+    if (active) hydrateDeferredSlide(slide)
     slide.classList.toggle('is-active', active)
     syncVideoSlide(slide, active)
   })

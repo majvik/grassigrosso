@@ -15,6 +15,7 @@ import {
   setCatalogGalleryActiveIndex,
   wasCatalogGalleryInteracted,
 } from './catalog-product-gallery'
+import { observeCatalogMediaHosts } from './catalog-media-load-queue'
 import { buildCatalogProductShareUrl, copyTextWithToast, flashCatalogShareLinkCopiedLabel } from './catalog-share'
 
 const CATALOG_PAGE_NAME = 'Страница "Каталог"'
@@ -494,10 +495,12 @@ export function initCatalogImageModal(
     mountCatalogProductMedia(elements.imageMedia, gallery, {
       rootClass: 'catalogue-new-image-modal-media catalogue-new-card-media',
       productSlug: activeModalProductSlug,
+      eagerFirstSlide: true,
     })
     const activeIndex = getCatalogGalleryActiveIndex(cardMedia)
     setCatalogGalleryActiveIndex(elements.imageMedia, activeIndex)
-    initCatalogProductGalleries(elements.imageMedia)
+    initCatalogProductGalleries(elements.imageMedia, { lazyBind: false })
+    observeCatalogMediaHosts(elements.imageMedia)
     elements.title.textContent = title || 'Матрас'
     clearModalSpecs()
     const specGroups = buildCatalogModalSpecGroups(cardDatasetToSpecDataset(dataset))

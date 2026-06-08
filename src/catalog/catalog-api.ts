@@ -38,10 +38,19 @@ export type CatalogFiltersPayload = {
   shareHelp: CatalogShareHelp
 }
 
+export type CatalogMediaSource = {
+  type: string
+  src: string
+}
+
 export type CatalogProductMediaItem = {
   type: 'image' | 'video'
   src: string
+  fallbackSrc?: string
+  sources?: CatalogMediaSource[]
   poster?: string
+  posterFallbackSrc?: string
+  posterSources?: CatalogMediaSource[]
   alt?: string
   mime?: string
 }
@@ -125,10 +134,25 @@ export function normalizeCatalogProductForUi(item: CatalogProduct): CatalogProdu
   }
 }
 
+let catalogProductsPrefetch: Promise<CatalogProduct[]> | null = null
+
+export function prefetchCatalogProductsFeed(): void {
+  catalogProductsPrefetch = fetchCatalogProducts()
+}
+
 export async function fetchCatalogProducts(): Promise<CatalogProduct[]> {
   const payload = await fetchJson<{ items?: CatalogProduct[] }>('/api/catalog/products')
   const items = Array.isArray(payload.items) ? payload.items : []
   return items.map(normalizeCatalogProductForUi)
+}
+
+export async function getCatalogProductsFeed(): Promise<CatalogProduct[]> {
+  if (catalogProductsPrefetch) {
+    const pending = catalogProductsPrefetch
+    catalogProductsPrefetch = null
+    return pending
+  }
+  return fetchCatalogProducts()
 }
 
 export async function fetchCatalogHeroFeed(): Promise<CatalogHeroFeed> {

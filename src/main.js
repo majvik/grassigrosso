@@ -9,6 +9,7 @@ import {
   scalePageForWideScreens,
 } from './app-shell'
 import { setupCatalogueNewPageHero, prefetchCatalogHeroFeed } from './catalog-hero-slider'
+import { prefetchCatalogProductsFeed } from './catalog/catalog-api'
 import { initCommercialOfferModal } from './commercial-offer'
 import { initCollectionsSlider } from './collections-slider'
 import { initContactForms } from './contact-forms'
@@ -67,6 +68,7 @@ function initApp() {
 // DOM initialization (initCatalogHeroSlider) happens after React in reactEntryPromise.finally().
 if (document.body.dataset.page === 'catalog') {
   prefetchCatalogHeroFeed()
+  prefetchCatalogProductsFeed()
 }
 
 initPageLoad({

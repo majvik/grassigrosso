@@ -1,6 +1,10 @@
 'use strict';
 
-const { preferAvifVariant } = require('./prefer-avif');
+const {
+  resolveImageMedia,
+  resolveVideoMedia,
+  resolvePosterMedia,
+} = require('./resolve-media-sources');
 
 const MAX_GALLERY_ITEMS = 5;
 
@@ -21,7 +25,7 @@ function mediaAlt(media, fallback) {
 
 function dedupeKey(item) {
   if (!item || !item.src) return '';
-  return `${item.type}|${item.src}`;
+  return `${item.type}|${item.fallbackSrc || item.src}`;
 }
 
 function pushItem(items, seen, item) {
@@ -32,29 +36,51 @@ function pushItem(items, seen, item) {
   items.push(item);
 }
 
+function applyImageFields(item, resolved) {
+  item.src = resolved.src;
+  item.fallbackSrc = resolved.fallbackSrc;
+  if (resolved.sources.length > 0) {
+    item.sources = resolved.sources;
+  }
+}
+
+function applyPosterFields(item, posterUrl) {
+  if (!posterUrl) return;
+  const resolved = resolvePosterMedia(posterUrl);
+  item.poster = resolved.src;
+  item.posterFallbackSrc = resolved.fallbackSrc;
+  if (resolved.sources.length > 0) {
+    item.posterSources = resolved.sources;
+  }
+}
+
 function itemFromVideoRow(row, fallbackName) {
   const videoUrl = mediaUrl(row?.slide_video);
   if (!videoUrl) return null;
-  const posterUrl = mediaUrl(row?.poster);
+  const resolved = resolveVideoMedia(videoUrl);
   const alt = String(row?.alt_text || '').trim();
-  return {
+  const item = {
     type: 'video',
-    src: videoUrl,
-    poster: posterUrl ? preferAvifVariant(posterUrl) : undefined,
+    src: resolved.src,
+    fallbackSrc: resolved.fallbackSrc,
     alt: alt || mediaAlt(row.slide_video, fallbackName || 'Видео'),
-    mime: mediaMime(row.slide_video) || 'video/mp4',
+    mime: mediaMime(row.slide_video) || resolved.mime || 'video/mp4',
   };
+  applyPosterFields(item, mediaUrl(row?.poster));
+  return item;
 }
 
 function itemFromImageRow(row, fallbackName) {
   const imageUrl = mediaUrl(row?.slide_image);
   if (!imageUrl) return null;
+  const resolved = resolveImageMedia(imageUrl);
   const alt = String(row?.alt_text || '').trim();
-  return {
+  const item = {
     type: 'image',
-    src: preferAvifVariant(imageUrl),
     alt: alt || mediaAlt(row.slide_image, fallbackName || 'Изображение товара'),
   };
+  applyImageFields(item, resolved);
+  return item;
 }
 
 function itemFromGalleryComponentRow(row, fallbackName) {
@@ -68,23 +94,27 @@ function itemFromLegacyMedia(media, imageUrl, fallbackName) {
   if (!url) return null;
   const mime = mediaMime(media);
   if (mime.startsWith('video/')) {
+    const resolved = resolveVideoMedia(url);
     return {
       type: 'video',
-      src: url,
+      src: resolved.src,
+      fallbackSrc: resolved.fallbackSrc,
       alt: mediaAlt(media, fallbackName || 'Видео'),
-      mime: mime || 'video/mp4',
+      mime: mime || resolved.mime || 'video/mp4',
     };
   }
-  return {
+  const resolved = resolveImageMedia(url);
+  const item = {
     type: 'image',
-    src: preferAvifVariant(url),
     alt: mediaAlt(media, fallbackName || 'Изображение товара'),
   };
+  applyImageFields(item, resolved);
+  return item;
 }
 
 /**
  * @param {object} row Product row with optional gallery[], media, image_url, name
- * @returns {{ gallery: Array<{ type: string, src: string, poster?: string, alt?: string, mime?: string }>, imageUrl: string, imageAlt: string }}
+ * @returns {{ gallery: Array<{ type: string, src: string, fallbackSrc?: string, sources?: Array<{ type: string, src: string }>, poster?: string, posterSources?: Array<{ type: string, src: string }>, posterFallbackSrc?: string, alt?: string, mime?: string }>, imageUrl: string, imageAlt: string }}
  */
 function buildProductGallery(row) {
   const fallbackName = row?.name ? `Коллекция ${row.name}` : 'Изображение товара';

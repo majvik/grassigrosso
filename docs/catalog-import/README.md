@@ -125,7 +125,17 @@ npm run check:catalog-api
 - Источник: **embedded XObject 1034×1034** из `source_pdf` (не рендер страницы).
 - Имя файла: `images/{slug}.png`.
 - Обложки коллекций (`pdf/5`, `12`, `19`, `33`, `45`) **не извлекаются**.
-- При загрузке в Strapi можно положить `.avif` рядом с `.png` (см. AGENTS.md).
+- В Strapi БД хранится только оригинал (`/uploads/*.png`); AVIF/WebP — sidecar-файлы рядом в git.
+
+### Оптимизация медиа после загрузки в админку
+
+```bash
+npm run catalog:optimize-media
+npm run strapi:sync-seed
+git add strapi-catalog/public/uploads/ strapi-catalog/database/seed/
+```
+
+`catalog-import:strapi` автоматически вызывает `catalog:optimize-media` после импорта. Флаги: `--dry-run`, `--force`, `--only=basename.png`.
 
 ## Размеры
 
