@@ -97,8 +97,16 @@ export function CatalogHeroSection() {
             Каталог <br /> продукции
           </h1>
           <p className="catalog-hero-description">
-            Подберите матрас под ваши задачи: формат использования, уровень жесткости и требуемую нагрузку.
+            Подберите матрас под ваши задачи:
+            <br />
+            формат использования, уровень жесткости и требуемую нагрузку.
           </p>
+          <div className="catalog-hero-download" data-document-card data-document="catalog">
+            <a href="#" className="catalog-link catalog-hero-download-link" data-document-request-trigger>
+              <span>Скачать каталог</span>
+              <img src="/arrow-hero-catalog.svg" alt="" className="catalog-arrow" />
+            </a>
+          </div>
         </div>
         <div className="catalog-hero-image">
           <CatalogHeroSlides />

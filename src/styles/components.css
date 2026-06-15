@@ -6106,12 +6106,28 @@ a:hover .arrow-medium {
 
 .catalog-hero-description {
   font-family: var(--font-family);
-  font-size: 21px;
+  font-size: 19px;
   font-weight: 400;
   color: var(--color-text);
   line-height: 1.4;
   margin: 0;
   max-width: 40em;
+}
+
+.catalog-hero-download-link {
+  align-items: center;
+  gap: 16px;
+}
+
+.catalog-hero-download-link span {
+  font-size: 19px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.catalog-hero-download-link .catalog-arrow {
+  width: 27px;
+  height: 40px;
 }
 
 .catalog-hero-image {
