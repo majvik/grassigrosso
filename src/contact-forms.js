@@ -28,6 +28,7 @@ function getPageName() {
     dealers: 'Страница "Дилерам"',
     contacts: 'Страница "Контакты"',
     catalog: 'Страница "Каталог"',
+    'download-catalog': 'Скачать каталог',
   }
   return pageNames[slug] || slug
 }
@@ -147,6 +148,16 @@ function attachBlurValidation(form) {
   })
 }
 
+function triggerDocumentDownload(docId) {
+  if (!docId) return
+  const link = document.createElement('a')
+  link.href = `/api/download/${encodeURIComponent(docId)}`
+  link.rel = 'noopener'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
 export function initContactForms() {
   const contactForms = document.querySelectorAll('.contact-form, [data-contact-form]')
   if (contactForms.length === 0) return
@@ -210,7 +221,12 @@ export function initContactForms() {
         const data = await response.json().catch(() => ({}))
 
         if (response.ok) {
-          showNotification('Заявка отправлена! Мы свяжемся с вами в ближайшее время.', 'success', submitBtn)
+          const downloadDoc = form.dataset.downloadDoc
+          const successMessage = downloadDoc
+            ? 'Заявка отправлена! Начинается загрузка каталога.'
+            : 'Заявка отправлена! Мы свяжемся с вами в ближайшее время.'
+          showNotification(successMessage, 'success', submitBtn)
+          if (downloadDoc) triggerDocumentDownload(downloadDoc)
           form.reset()
           clearErrors(form)
         } else {

@@ -18,6 +18,7 @@ const path = require('path');
 
 const { normalizeGalleryInput } = require('./api/catalog/utils/normalize-gallery-input');
 const { cleanupOrphanGalleryComponents } = require('./api/catalog/utils/cleanup-orphan-gallery-components');
+const { seedDownloadCatalogPage } = require('./api/catalog/utils/seed-download-catalog');
 
 module.exports = {
   register({ strapi }) {
@@ -439,6 +440,12 @@ module.exports = {
       }
     } catch (e) {
       strapi.log.warn(`Catalog bootstrap: product gallery backfill skipped: ${e.message}`);
+    }
+
+    try {
+      await seedDownloadCatalogPage(strapi);
+    } catch (e) {
+      strapi.log.warn(`Catalog bootstrap: download-catalog page seed skipped: ${e.message}`);
     }
 
     strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products (${dualFirmnessFeatureLinked} dual-firmness feature links, ${fillingOptionsLinked} filling links from layers)`);

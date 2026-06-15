@@ -581,6 +581,43 @@ export interface ApiCollectionCollection extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiDownloadCatalogPageDownloadCatalogPage
+  extends Struct.SingleTypeSchema {
+  collectionName: 'download_catalog_pages';
+  info: {
+    displayName: 'Download catalog page';
+    pluralName: 'download-catalog-pages';
+    singularName: 'download-catalog-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::download-catalog-page.download-catalog-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    slider_autoplay_ms: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 2500;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<6500>;
+    slides: Schema.Attribute.Component<'catalog.hero-slide', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiFeatureOptionFeatureOption
   extends Struct.CollectionTypeSchema {
   collectionName: 'feature_options';
@@ -1483,6 +1520,7 @@ declare module '@strapi/strapi' {
       'api::catalog-new-hero.catalog-new-hero': ApiCatalogNewHeroCatalogNewHero;
       'api::catalog-share-help.catalog-share-help': ApiCatalogShareHelpCatalogShareHelp;
       'api::collection.collection': ApiCollectionCollection;
+      'api::download-catalog-page.download-catalog-page': ApiDownloadCatalogPageDownloadCatalogPage;
       'api::feature-option.feature-option': ApiFeatureOptionFeatureOption;
       'api::filling-option.filling-option': ApiFillingOptionFillingOption;
       'api::firmness-option.firmness-option': ApiFirmnessOptionFirmnessOption;

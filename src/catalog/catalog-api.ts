@@ -253,3 +253,11 @@ export async function fetchCatalogHeroFeed(): Promise<CatalogHeroFeed> {
     slides: Array.isArray(payload.slides) ? payload.slides : [],
   }
 }
+
+export async function fetchDownloadCatalogSlides(): Promise<CatalogHeroFeed> {
+  const payload = await fetchJson<Partial<CatalogHeroFeed>>('/api/download-catalog/slides')
+  return {
+    ...payload,
+    slides: Array.isArray(payload.slides) ? payload.slides : [],
+  }
+}

@@ -101,8 +101,8 @@ export function CatalogHeroSection() {
             <br />
             формат использования, уровень жесткости и требуемую нагрузку.
           </p>
-          <div className="catalog-hero-download" data-document-card data-document="catalog">
-            <a href="#" className="catalog-link catalog-hero-download-link" data-document-request-trigger>
+          <div className="catalog-hero-download">
+            <a href="/download-catalog" className="catalog-link catalog-hero-download-link">
               <span>Скачать каталог</span>
               <img src="/arrow-hero-catalog.svg" alt="" className="catalog-arrow" />
             </a>

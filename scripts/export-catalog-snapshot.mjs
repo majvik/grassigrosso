@@ -31,11 +31,15 @@ async function writeSnapshot(filename, payload) {
 }
 
 async function main() {
-  const [productsFull, productsListing, filters, hero] = await Promise.all([
+  const [productsFull, productsListing, filters, hero, downloadSlides] = await Promise.all([
     fetchJson('/api/catalog/products'),
     fetchJson('/api/catalog/products?view=listing'),
     fetchJson('/api/catalog/filters'),
     fetchJson('/api/catalog/hero-slides'),
+    fetchJson('/api/download-catalog/slides').catch((error) => {
+      console.warn(`download-catalog slides snapshot skipped: ${error.message}`)
+      return null
+    }),
   ])
 
   const productCount = Array.isArray(productsFull.items) ? productsFull.items.length : 0
@@ -49,6 +53,9 @@ async function main() {
   await writeSnapshot('catalog-products-listing.snapshot.json', productsListing)
   await writeSnapshot('catalog-filters.snapshot.json', filters)
   await writeSnapshot('catalog-hero.snapshot.json', hero)
+  if (downloadSlides && Array.isArray(downloadSlides.slides) && downloadSlides.slides.length) {
+    await writeSnapshot('download-catalog-slides.snapshot.json', downloadSlides)
+  }
 
   const manifest = {
     syncedAt: new Date().toISOString(),

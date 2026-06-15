@@ -28,6 +28,7 @@ import { initResourceModals } from './resource-modals'
 import { initTestimonialsSlider } from './testimonials-slider'
 
 const isCatalogPage = document.body.dataset.page === 'catalog'
+const isDownloadCatalogPage = document.body.dataset.page === 'download-catalog'
 
 const reactEntryPromise = document.querySelector('[data-react-root]')
   ? import('./react-entry').catch((error) => {
@@ -45,6 +46,10 @@ const catalogRuntimePromise = isCatalogPage
       catalogApi,
       catalogPage,
     }))
+  : Promise.resolve(null)
+
+const downloadCatalogRuntimePromise = isDownloadCatalogPage
+  ? import('./catalog-hero-slider')
   : Promise.resolve(null)
 
 applyWidowFix()
@@ -84,6 +89,13 @@ if (isCatalogPage) {
   })
 }
 
+if (isDownloadCatalogPage) {
+  void downloadCatalogRuntimePromise.then((heroSlider) => {
+    if (!heroSlider) return
+    heroSlider.prefetchDownloadCatalogFeed()
+  })
+}
+
 initPageLoad({
   preloader,
   waitForFonts,
@@ -104,12 +116,17 @@ initPageLoad({
     }
   })
   .finally(() => {
-    void Promise.all([reactEntryPromise, catalogRuntimePromise]).finally(() => {
+    void Promise.all([reactEntryPromise, catalogRuntimePromise, downloadCatalogRuntimePromise]).finally(() => {
       void catalogRuntimePromise.then((runtime) => {
         initApp(runtime)
         if (runtime) {
           void runtime.heroSlider.setupCatalogueNewPageHero()
         }
       })
+      if (isDownloadCatalogPage) {
+        void downloadCatalogRuntimePromise.then((heroSlider) => {
+          if (heroSlider) void heroSlider.setupDownloadCatalogHero()
+        })
+      }
     })
   })

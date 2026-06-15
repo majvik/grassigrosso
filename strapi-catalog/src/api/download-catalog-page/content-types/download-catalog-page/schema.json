@@ -1,0 +1,24 @@
+{
+  "kind": "singleType",
+  "collectionName": "download_catalog_pages",
+  "info": {
+    "singularName": "download-catalog-page",
+    "pluralName": "download-catalog-pages",
+    "displayName": "Download catalog page"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "slider_autoplay_ms": {
+      "type": "integer",
+      "default": 6500,
+      "min": 2500
+    },
+    "slides": {
+      "type": "component",
+      "repeatable": true,
+      "component": "catalog.hero-slide"
+    }
+  }
+}

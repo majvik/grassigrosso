@@ -1,0 +1,62 @@
+{
+  "slides": [
+    {
+      "type": "image",
+      "src": "/uploads/download_slide_01_994ae3c66a.avif",
+      "poster": "",
+      "alt": "Каталог продукции Grassigrosso",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/download_slide_02_c12410da7e.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 2",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/download_slide_03_2b3c434d67.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 3",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/download_slide_04_9db907bc18.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 4",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/download_slide_05_303bc57cdd.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 5",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/download_slide_06_4869f145cc.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 6",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/download_slide_07_fe396aad9d.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 7",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/download_slide_08_67cb4ff2fe.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 8",
+      "mime": ""
+    }
+  ],
+  "autoplayMs": 6500,
+  "source": "strapi-download-catalog-feed"
+}

@@ -1,4 +1,5 @@
 import { CatalogPage } from "@/components/pages/CatalogPage";
+import { DownloadCatalogPage } from "@/components/pages/DownloadCatalogPage";
 import { DealersPage } from "@/components/pages/DealersPage";
 import { ContactsPage } from "@/components/pages/ContactsPage";
 import { DocumentsPage } from "@/components/pages/DocumentsPage";
@@ -24,6 +25,7 @@ export function ReactIslandRoot({ page }: ReactIslandRootProps) {
   if (page === "contacts") return <ContactsPage />;
   if (page === "documents") return <DocumentsPage />;
   if (page === "unsubscribe") return <UnsubscribePage />;
+  if (page === "download-catalog") return <DownloadCatalogPage />;
   if (page === "404") return <NotFoundPage />;
   if (page in LEGAL_PAGES) return <LegalPage pageId={page as LegalPageId} />;
 

@@ -1,0 +1,92 @@
+.page {
+  padding: 80px 24px 96px;
+}
+
+.inner {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 32px;
+  color: var(--ui-action-primary);
+  font-family: var(--ui-font-display);
+  font-size: var(--font-size-section-title);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.coverSlider {
+  position: relative;
+  margin: 0 auto 40px;
+  width: 100%;
+  max-width: 920px;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.coverSlider :global(.catalog-hero-slider) {
+  width: 100%;
+  height: 100%;
+}
+
+.coverSlider :global(.catalog-hero-slide picture),
+.coverSlider :global(.catalog-hero-slide img),
+.coverSlider :global(.catalog-hero-slide video) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.formHeading {
+  max-width: 640px;
+  margin: 0 auto 24px;
+  color: var(--ui-action-primary);
+  font-family: var(--ui-font-display);
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 32px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.formWrap {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.formWrap :global(.contact-form) {
+  width: 100%;
+}
+
+.formWrap :global(.form-submit-group) {
+  align-items: stretch;
+}
+
+.formWrap :global(.btn-primary) {
+  width: 100%;
+}
+
+@media (max-width: 1439px) {
+  .title {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 64px 20px 72px;
+  }
+
+  .title {
+    font-size: 40px;
+  }
+
+  .formHeading {
+    font-size: 20px;
+  }
+}

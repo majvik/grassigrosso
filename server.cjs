@@ -112,6 +112,7 @@ const CATALOG_DISK_SNAPSHOT_FILES = {
   'catalog:products:listing': 'catalog-products-listing.snapshot.json',
   'catalog:filters': 'catalog-filters.snapshot.json',
   'catalog:hero-slides': 'catalog-hero.snapshot.json',
+  'download-catalog:slides': 'download-catalog-slides.snapshot.json',
 };
 
 function readCatalogDiskSnapshot(filename) {
@@ -776,6 +777,7 @@ const PAGE_EMAIL_ROUTING = {
   'Отелям (каталог)':   ['hotels@grassigrosso.com'],
   'Страница "Дилерам"': ['b2b@grassigrosso.com'],
   'Страница "Каталог"': ['sales@grassigrosso.com'],
+  'Скачать каталог':      ['sales@grassigrosso.com'],
   'Документы':          ['sales@grassigrosso.com'],
   'Документы (помощь)': ['sales@grassigrosso.com'],
   'Страница "Контакты"':['sales@grassigrosso.com'],
@@ -1060,6 +1062,54 @@ app.get('/api/catalog/hero-slides', async (req, res) => {
     }
     return res.status(502).json({
       error: 'Failed to fetch catalog hero from Strapi',
+      details,
+      slides: [],
+    });
+  }
+});
+
+app.get('/api/download-catalog/slides', async (req, res) => {
+  if (!STRAPI_URL) {
+    return res.status(503).json({ error: 'STRAPI_URL is not configured', slides: [] });
+  }
+
+  const cacheKey = 'download-catalog:slides';
+  const cached = getCatalogStrapiCache(cacheKey);
+  if (cached !== undefined) {
+    attachCatalogApiCacheHeaders(res);
+    return res.json(cached);
+  }
+
+  try {
+    const feedUrl = `${STRAPI_URL}/api/download-catalog-feed`;
+    const response = await axios.get(feedUrl, { timeout: 10000 });
+    const slides = Array.isArray(response.data?.slides) ? response.data.slides : [];
+    const normalizedSlides = slides.map((slide) => ({
+      type: slide.type === 'video' ? 'video' : 'image',
+      src: normalizeStrapiMediaUrl(slide.src || ''),
+      poster: normalizeStrapiMediaUrl(slide.poster || ''),
+      alt: String(slide.alt || '').trim(),
+      mime: String(slide.mime || '').trim(),
+    })).filter((slide) => slide.src);
+    const autoplayRaw = Number(response.data?.autoplayMs ?? response.data?.autoplay_ms);
+    const autoplayMs = Number.isFinite(autoplayRaw) ? Math.max(2500, autoplayRaw) : 6500;
+    const payload = {
+      slides: normalizedSlides,
+      autoplayMs,
+      source: response.data?.source || 'strapi-download-catalog-feed',
+    };
+    setCatalogStrapiCache(cacheKey, payload);
+    attachCatalogApiCacheHeaders(res);
+    return res.json(payload);
+  } catch (error) {
+    const details = extractAxiosErrorDetails(error);
+    console.error('❌ Ошибка загрузки слайдера /download-catalog из Strapi:', details);
+    const fallback = resolveCatalogFallbackPayload(cacheKey);
+    if (fallback) {
+      return sendCatalogJson(res, fallback.payload, fallback.source);
+    }
+    return res.status(502).json({
+      error: 'Failed to fetch download-catalog slides from Strapi',
       details,
       slides: [],
     });
