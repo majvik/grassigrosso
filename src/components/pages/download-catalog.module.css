@@ -66,6 +66,14 @@
     padding-bottom: var(--space-8);
   }
 
+  .page :global(.catalogue-new-shared-product-info) {
+    order: 1;
+  }
+
+  .media {
+    order: 2;
+  }
+
   .form {
     margin-top: var(--space-5);
   }
