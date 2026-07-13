@@ -220,6 +220,15 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     actionsEl: catalogueNewFavouritesActions,
   }
 
+  function setCatalogCardsGridLoading(isLoading: boolean): void {
+    cardsRootEl.classList.toggle('catalogue-new-cards--loading', isLoading)
+    if (isLoading) {
+      cardsRootEl.setAttribute('aria-busy', 'true')
+      return
+    }
+    cardsRootEl.removeAttribute('aria-busy')
+  }
+
   if (isSharedFavouritesView || isSharedProductView) {
     documentRef.documentElement.classList.add('catalogue-shared-view')
     catalogueHero?.setAttribute('hidden', '')
@@ -476,6 +485,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
                 <span class="catalogue-new-favourites-share-link-icon" aria-hidden="true">
                   <img class="catalogue-new-favourites-share-icon--default" src="/icons/share-default.svg" alt="" />
                   <img class="catalogue-new-favourites-share-icon--hover" src="/icons/share-hover.svg" alt="" />
+                  <img class="catalogue-new-favourites-share-icon--copied" src="/icons/share-copied.svg" alt="" />
                 </span>
               </button>
               <button
@@ -610,6 +620,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     syncVisibleCatalogCardMediaLoading(cardsRootEl)
     initCatalogProductGalleries(cardsRootEl, { lazyBind: true })
     observeCatalogMediaHosts(cardsRootEl)
+    syncCatalogFavouriteButtons(cardsRootEl, favSet)
     scheduleStickySidebarSync()
   }
 
@@ -735,8 +746,8 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   function showCatalogLoadError(): void {
+    setCatalogCardsGridLoading(false)
     cardsRootEl.classList.add('is-empty')
-    cardsRootEl.removeAttribute('aria-busy')
     loadErrorEl.hidden = false
   }
 
@@ -789,7 +800,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   async function loadCatalogueFromStrapi() {
     hideCatalogLoadError()
-    cardsRootEl.setAttribute('aria-busy', 'true')
+    setCatalogCardsGridLoading(true)
     try {
       const items = await loadCatalogProductsWithRetry()
       await applyLoadedCatalogProducts(items)
@@ -797,7 +808,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       console.warn('Catalogue load failed:', err)
       showCatalogLoadError()
     } finally {
-      cardsRootEl.removeAttribute('aria-busy')
+      setCatalogCardsGridLoading(false)
     }
   }
 

@@ -1093,9 +1093,12 @@ app.get('/api/download-catalog/slides', async (req, res) => {
     })).filter((slide) => slide.src);
     const autoplayRaw = Number(response.data?.autoplayMs ?? response.data?.autoplay_ms);
     const autoplayMs = Number.isFinite(autoplayRaw) ? Math.max(2500, autoplayRaw) : 6500;
+    const displayMode = response.data?.displayMode === 'image_only' ? 'image_only' : 'slider';
+    const visibleSlides = displayMode === 'image_only' ? normalizedSlides.slice(0, 1) : normalizedSlides;
     const payload = {
-      slides: normalizedSlides,
+      slides: visibleSlides,
       autoplayMs,
+      displayMode,
       source: response.data?.source || 'strapi-download-catalog-feed',
     };
     setCatalogStrapiCache(cacheKey, payload);

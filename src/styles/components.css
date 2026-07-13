@@ -7835,11 +7835,21 @@ html[data-page="catalog"] .catalogue-new-favourites-share-link-icon img {
   height: 24px;
 }
 
-html[data-page="catalog"] .catalogue-new-favourites-share-icon--hover {
+html[data-page="catalog"] .catalogue-new-favourites-share-icon--hover,
+html[data-page="catalog"] .catalogue-new-favourites-share-icon--copied {
   display: none !important;
 }
 
 html[data-page="catalog"] .catalogue-new-favourites-share-icon--default {
+  display: block !important;
+}
+
+html[data-page="catalog"] .catalogue-new-favourites-share-link-btn.is-copied .catalogue-new-favourites-share-icon--default,
+html[data-page="catalog"] .catalogue-new-favourites-share-link-btn.is-copied .catalogue-new-favourites-share-icon--hover {
+  display: none !important;
+}
+
+html[data-page="catalog"] .catalogue-new-favourites-share-link-btn.is-copied .catalogue-new-favourites-share-icon--copied {
   display: block !important;
 }
 
@@ -7854,6 +7864,15 @@ html[data-page="catalog"] .catalogue-new-favourites-share-link-btn:hover:not(:di
 }
 
 html[data-page="catalog"] .catalogue-new-favourites-share-link-btn:hover:not(:disabled) .catalogue-new-favourites-share-icon--hover {
+  display: block !important;
+}
+
+html[data-page="catalog"] .catalogue-new-favourites-share-link-btn.is-copied:hover:not(:disabled) .catalogue-new-favourites-share-icon--default,
+html[data-page="catalog"] .catalogue-new-favourites-share-link-btn.is-copied:hover:not(:disabled) .catalogue-new-favourites-share-icon--hover {
+  display: none !important;
+}
+
+html[data-page="catalog"] .catalogue-new-favourites-share-link-btn.is-copied:hover:not(:disabled) .catalogue-new-favourites-share-icon--copied {
   display: block !important;
 }
 

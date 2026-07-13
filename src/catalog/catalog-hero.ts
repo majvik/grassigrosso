@@ -86,3 +86,31 @@ export function applyCatalogHeroFeed(sliderRoot: Element, data: CatalogHeroFeed)
   slidesRoot.innerHTML = slidesHtml
   dotsRoot.innerHTML = slides.map((_, index) => renderDot(index)).join('')
 }
+
+export function setDownloadCatalogMediaDisplayMode(
+  sliderRoot: Element,
+  displayMode: 'slider' | 'image_only',
+): void {
+  const root = sliderRoot as HTMLElement
+  const isImageOnly = displayMode === 'image_only'
+  root.classList.toggle('is-image-only', isImageOnly)
+  if (isImageOnly) {
+    root.removeAttribute('aria-roledescription')
+    root.setAttribute('aria-label', 'Изображение каталога')
+  } else {
+    root.setAttribute('aria-roledescription', 'carousel')
+    root.setAttribute('aria-label', 'Галерея каталога')
+  }
+
+  sliderRoot.querySelectorAll('.catalog-hero-nav-side').forEach((node) => {
+    node.toggleAttribute('hidden', isImageOnly)
+  })
+  const dotsRoot = sliderRoot.querySelector('.catalog-hero-dots')
+  if (dotsRoot instanceof HTMLElement) {
+    if (isImageOnly) {
+      dotsRoot.replaceChildren()
+    }
+    dotsRoot.hidden = isImageOnly
+    dotsRoot.setAttribute('aria-hidden', isImageOnly ? 'true' : 'false')
+  }
+}

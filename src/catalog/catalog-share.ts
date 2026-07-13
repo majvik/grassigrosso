@@ -110,9 +110,11 @@ export function flashCatalogShareLinkCopiedLabel(
   if (previousTimer) clearTimeout(previousTimer)
   labelEl.textContent = SHARE_LINK_LABEL_COPIED
   btn.setAttribute('aria-label', SHARE_LINK_LABEL_COPIED)
+  btn.classList.add('is-copied')
   const timer = window.setTimeout(() => {
     labelEl.textContent = SHARE_LINK_LABEL_DEFAULT
     btn.setAttribute('aria-label', SHARE_LINK_LABEL_DEFAULT)
+    btn.classList.remove('is-copied')
     shareLinkLabelTimers.delete(btn)
   }, durationMs)
   shareLinkLabelTimers.set(btn, timer)

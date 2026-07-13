@@ -1,5 +1,5 @@
 import { fetchCatalogHeroFeed, fetchDownloadCatalogSlides } from './catalog/catalog-api'
-import { applyCatalogHeroFeed } from './catalog/catalog-hero'
+import { applyCatalogHeroFeed, setDownloadCatalogMediaDisplayMode } from './catalog/catalog-hero'
 
 // Prefetch started early (before React renders) so the network request is in-flight
 // while React hydrates the page. setupCatalogueNewPageHero() then just awaits this promise.
@@ -37,11 +37,15 @@ export async function setupDownloadCatalogHero() {
 
   try {
     const data = await (_downloadFeedPrefetch || fetchDownloadCatalogSlides())
+    const displayMode = data.displayMode === 'image_only' ? 'image_only' : 'slider'
     if (Array.isArray(data.slides) && data.slides.length > 0) {
       applyCatalogHeroFeed(sliderRoot, data)
     }
+    setDownloadCatalogMediaDisplayMode(sliderRoot, displayMode)
+    if (displayMode === 'image_only') return
   } catch (error) {
     console.warn('Download catalog Strapi fetch failed, using static slides:', error)
+    setDownloadCatalogMediaDisplayMode(sliderRoot, 'slider')
   }
 
   initCatalogHeroSlider(sliderRoot)

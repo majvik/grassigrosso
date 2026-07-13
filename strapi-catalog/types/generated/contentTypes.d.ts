@@ -602,6 +602,9 @@ export interface ApiDownloadCatalogPageDownloadCatalogPage
       'api::download-catalog-page.download-catalog-page'
     > &
       Schema.Attribute.Private;
+    media_display_mode: Schema.Attribute.Enumeration<['slider', 'image_only']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'slider'>;
     publishedAt: Schema.Attribute.DateTime;
     slider_autoplay_ms: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<

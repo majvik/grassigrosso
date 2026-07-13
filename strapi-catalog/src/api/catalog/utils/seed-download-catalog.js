@@ -91,7 +91,7 @@ async function seedDownloadCatalogPage(strapi) {
 
   if (!slides.length) return { skipped: true };
 
-  const data = { slider_autoplay_ms: 6500, slides };
+  const data = { media_display_mode: 'slider', slider_autoplay_ms: 6500, slides };
   if (existing) {
     await docs.update({ documentId: existing.documentId, data });
   } else {

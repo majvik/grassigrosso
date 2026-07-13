@@ -30,7 +30,7 @@ module.exports = {
       });
 
     if (!page) {
-      ctx.body = { slides: [], autoplayMs: 6500, source: 'strapi-download-catalog-feed' };
+      ctx.body = { slides: [], autoplayMs: 6500, displayMode: 'slider', source: 'strapi-download-catalog-feed' };
       return;
     }
 
@@ -63,10 +63,13 @@ module.exports = {
     }
 
     const autoplayMs = Number(page.slider_autoplay_ms || 6500);
+    const displayMode = page.media_display_mode === 'image_only' ? 'image_only' : 'slider';
+    const feedSlides = displayMode === 'image_only' ? slides.slice(0, 1) : slides;
 
     ctx.body = {
-      slides,
+      slides: feedSlides,
       autoplayMs: Number.isFinite(autoplayMs) ? Math.max(2500, autoplayMs) : 6500,
+      displayMode,
       source: 'strapi-download-catalog-feed',
     };
   },

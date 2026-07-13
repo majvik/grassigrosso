@@ -891,6 +891,36 @@
   height: 100%;
   object-fit: cover;
 }
+.catalog-hero-slider.is-image-only .catalog-hero-dots,
+.catalog-hero-slider.is-image-only .catalog-hero-nav-side {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+html[data-page="download-catalog"] .catalog-hero-slider,
+html[data-page="download-catalog"] .catalog-hero-slides {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+html[data-page="download-catalog"] .catalog-hero-slide {
+  overflow: hidden;
+}
+html[data-page="download-catalog"] .catalog-hero-slide img,
+html[data-page="download-catalog"] .catalog-hero-slide video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: auto;
+  min-width: 100%;
+  min-height: 100%;
+  max-width: none;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  object-position: center center;
+}
 .catalog-hero-dots {
   position: absolute;
   left: 50%;
@@ -1046,7 +1076,7 @@
 .catalogue-new-cards.is-empty {
   display: none;
 }
-.catalogue-new-cards--loading {
+.catalogue-new-cards--loading:not(:has(.catalogue-new-card)) {
   pointer-events: none;
 }
 .catalogue-new-card-skeleton {

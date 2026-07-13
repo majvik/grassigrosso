@@ -10,6 +10,12 @@
     "draftAndPublish": false
   },
   "attributes": {
+    "media_display_mode": {
+      "type": "enumeration",
+      "enum": ["slider", "image_only"],
+      "default": "slider",
+      "required": true
+    },
     "slider_autoplay_ms": {
       "type": "integer",
       "default": 6500,

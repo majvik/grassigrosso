@@ -87,6 +87,7 @@ export function CatalogFavouritesActions() {
           <span className="catalogue-new-favourites-share-link-icon" aria-hidden="true">
             <img className="catalogue-new-favourites-share-icon--default" src="/icons/share-default.svg" alt="" />
             <img className="catalogue-new-favourites-share-icon--hover" src="/icons/share-hover.svg" alt="" />
+            <img className="catalogue-new-favourites-share-icon--copied" src="/icons/share-copied.svg" alt="" />
           </span>
         </button>
         <button

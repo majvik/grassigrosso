@@ -10,8 +10,8 @@ function DownloadCatalogSlideZeroFallback() {
     <img
       src={DOWNLOAD_SLIDE_0_SRC}
       alt="Каталог продукции Grassigrosso"
-      width={920}
-      height={518}
+      width={440}
+      height={612}
       loading="eager"
       fetchPriority="high"
       decoding="async"
@@ -130,38 +130,44 @@ function HiddenTrapField() {
 
 export function DownloadCatalogPage() {
   return (
-    <section className={styles.page} aria-labelledby="download-catalog-title">
-      <div className={styles.inner}>
-        <h1 className={styles.title} id="download-catalog-title">
-          Скачать каталог
-        </h1>
+    <section className={`catalogue-new-shared-product ${styles.page}`} aria-labelledby="download-catalog-title">
+      <a href="/catalog" className="catalogue-new-shared-back">
+        Назад в каталог
+      </a>
 
-        <DownloadCatalogSlider />
+      <div className="catalogue-new-shared-product-shell">
+        <div className={styles.media}>
+          <DownloadCatalogSlider />
+        </div>
 
-        <h2 className={styles.formHeading}>Введите данные</h2>
+        <div className="catalogue-new-shared-product-info">
+          <h1 className="catalogue-new-shared-product-title" id="download-catalog-title">
+            Скачать каталог
+          </h1>
 
-        <div className={styles.formWrap}>
-          <form className="contact-form" data-contact-form data-download-doc="catalog">
-            <HiddenTrapField />
-            <div className="form-group" data-form-group>
-              <label htmlFor="name">Имя</label>
-              <input type="text" id="name" placeholder="Иван Иванов" />
-            </div>
-            <div className="form-group" data-form-group>
-              <label htmlFor="phone">Телефон</label>
-              <input type="tel" id="phone" placeholder="+7 (999) 123-45-67" required />
-            </div>
-            <div className="form-group" data-form-group>
-              <label htmlFor="email">E-mail</label>
-              <input type="email" id="email" placeholder="example@company.com" required />
-            </div>
-            <div className="form-submit-group">
-              <PrivacyCheckbox />
-              <button type="submit" className="btn-primary" disabled>
-                Скачать каталог
-              </button>
-            </div>
-          </form>
+          <div className={styles.form}>
+            <form className="contact-form" data-contact-form data-download-doc="catalog">
+              <HiddenTrapField />
+              <div className="form-group" data-form-group>
+                <label htmlFor="name">Имя</label>
+                <input type="text" id="name" placeholder="Иван Иванов" />
+              </div>
+              <div className="form-group" data-form-group>
+                <label htmlFor="phone">Телефон</label>
+                <input type="tel" id="phone" placeholder="+7 (999) 123-45-67" required />
+              </div>
+              <div className="form-group" data-form-group>
+                <label htmlFor="email">E-mail</label>
+                <input type="email" id="email" placeholder="example@company.com" required />
+              </div>
+              <div className="form-submit-group">
+                <PrivacyCheckbox />
+                <button type="submit" className="btn-primary" disabled>
+                  Скачать каталог
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </section>

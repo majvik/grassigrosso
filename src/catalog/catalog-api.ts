@@ -94,6 +94,12 @@ export type CatalogHeroFeed = {
   autoplay_ms?: number | string | null
 }
 
+export type DownloadCatalogMediaDisplayMode = 'slider' | 'image_only'
+
+export type DownloadCatalogFeed = CatalogHeroFeed & {
+  displayMode?: DownloadCatalogMediaDisplayMode | string | null
+}
+
 export type CatalogProductsView = 'listing' | 'full'
 
 export type CatalogFeedSource = 'api' | 'session-storage' | 'disk-snapshot'
@@ -254,10 +260,13 @@ export async function fetchCatalogHeroFeed(): Promise<CatalogHeroFeed> {
   }
 }
 
-export async function fetchDownloadCatalogSlides(): Promise<CatalogHeroFeed> {
-  const payload = await fetchJson<Partial<CatalogHeroFeed>>('/api/download-catalog/slides')
+export async function fetchDownloadCatalogSlides(): Promise<DownloadCatalogFeed> {
+  const payload = await fetchJson<Partial<DownloadCatalogFeed>>('/api/download-catalog/slides')
+  const displayMode = payload.displayMode === 'image_only' ? 'image_only' : 'slider'
+  const slides = Array.isArray(payload.slides) ? payload.slides : []
   return {
     ...payload,
-    slides: Array.isArray(payload.slides) ? payload.slides : [],
+    displayMode,
+    slides: displayMode === 'image_only' ? slides.slice(0, 1) : slides,
   }
 }
