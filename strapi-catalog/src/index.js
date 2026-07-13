@@ -19,6 +19,7 @@ const path = require('path');
 const { normalizeGalleryInput } = require('./api/catalog/utils/normalize-gallery-input');
 const { cleanupOrphanGalleryComponents } = require('./api/catalog/utils/cleanup-orphan-gallery-components');
 const { seedDownloadCatalogPage } = require('./api/catalog/utils/seed-download-catalog');
+const { seedCatalogFilterHelpContent } = require('./api/catalog/utils/seed-catalog-filter-help-content');
 
 module.exports = {
   register({ strapi }) {
@@ -320,8 +321,8 @@ module.exports = {
         ['type', 'Как выбрать тип конструкции'],
         ['loadRange', 'Как выбрать нагрузку'],
         ['heightRange', 'Как выбрать высоту матраса'],
-        ['fillings', 'Как выбрать наполнитель'],
-        ['features', 'Как выбрать особенности'],
+        ['fillings', 'Как выбрать состав'],
+        ['features', 'Как выбрать доп. особенности'],
       ];
       for (const [filter_key, modal_title] of catalogueFilterHelpSeeds) {
         const existing = await helpRepo.findOne({ where: { filter_key } });
@@ -446,6 +447,12 @@ module.exports = {
       await seedDownloadCatalogPage(strapi);
     } catch (e) {
       strapi.log.warn(`Catalog bootstrap: download-catalog page seed skipped: ${e.message}`);
+    }
+
+    try {
+      await seedCatalogFilterHelpContent(strapi);
+    } catch (e) {
+      strapi.log.warn(`Catalog bootstrap: filter-help content seed skipped: ${e.message}`);
     }
 
     strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products (${dualFirmnessFeatureLinked} dual-firmness feature links, ${fillingOptionsLinked} filling links from layers)`);

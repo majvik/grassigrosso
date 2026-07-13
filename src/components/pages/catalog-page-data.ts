@@ -282,7 +282,7 @@ export const CATALOG_FILTER_GROUPS: CatalogFilterGroupData[] = [
     filterGroup: 'fillings',
     helpLabel: 'Как выбрать?',
     helpOpen: 'fillings',
-    helpRowAriaLabel: 'Как выбрать наполнитель',
+    helpRowAriaLabel: 'Как выбрать состав',
     kind: 'chip',
     options: [
       { kind: 'chip', label: 'Любая', value: 'all' },
@@ -301,7 +301,7 @@ export const CATALOG_FILTER_GROUPS: CatalogFilterGroupData[] = [
     filterGroup: 'features',
     helpLabel: 'Как выбрать?',
     helpOpen: 'features',
-    helpRowAriaLabel: 'Как выбрать особенности',
+    helpRowAriaLabel: 'Как выбрать доп. особенности',
     kind: 'chip',
     options: [
       { kind: 'chip', label: 'Любые', value: 'all' },

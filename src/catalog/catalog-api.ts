@@ -12,15 +12,35 @@ export type CatalogFilterGroupKey =
 
 export type CatalogFilterGroups = Partial<Record<CatalogFilterGroupKey, CatalogFilterOption[]>>
 
-/** Сегмент модалки «Как выбрать?»: текст и опционально изображение (из Strapi). */
+/** Сегмент модалки «Как выбрать?»: тип блока, текст и опционально изображение (из Strapi). */
+export type CatalogFilterHelpSegmentVariant =
+  | 'intro'
+  | 'heading'
+  | 'paragraph'
+  | 'listItem'
+  | 'numberedListItem'
+
 export type CatalogFilterHelpSegment = {
+  variant?: CatalogFilterHelpSegmentVariant
   text: string
+  listIndex?: number
   imageUrl?: string
   imageAlt?: string
 }
 
+export type CatalogFilterHelpSummaryItem = {
+  lead: string
+  highlight: string
+}
+
+export type CatalogFilterHelpSummary = {
+  title: string
+  items: CatalogFilterHelpSummaryItem[]
+}
+
 export type CatalogFilterHelpEntry = {
   modalTitle: string
+  summary?: CatalogFilterHelpSummary
   segments: CatalogFilterHelpSegment[]
 }
 

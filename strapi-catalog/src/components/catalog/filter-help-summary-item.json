@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_catalog_filter_help_summary_items",
+  "info": {
+    "displayName": "Filter help summary item",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "lead": {
+      "type": "text",
+      "required": true
+    },
+    "highlight": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

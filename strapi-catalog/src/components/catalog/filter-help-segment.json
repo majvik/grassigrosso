@@ -6,6 +6,16 @@
   },
   "options": {},
   "attributes": {
+    "variant": {
+      "type": "enumeration",
+      "enum": ["intro", "heading", "paragraph", "listItem", "numberedListItem"],
+      "default": "paragraph",
+      "required": true
+    },
+    "list_index": {
+      "type": "integer",
+      "min": 1
+    },
     "body": {
       "type": "text",
       "required": false
