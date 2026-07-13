@@ -548,6 +548,12 @@ export interface ApiCatalogShareHelpCatalogShareHelp
     > &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
+    summary_items: Schema.Attribute.Component<
+      'catalog.filter-help-summary-item',
+      true
+    >;
+    summary_title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0415\u0441\u043B\u0438 \u043A\u043E\u0440\u043E\u0442\u043A\u043E'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

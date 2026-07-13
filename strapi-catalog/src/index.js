@@ -20,6 +20,7 @@ const { normalizeGalleryInput } = require('./api/catalog/utils/normalize-gallery
 const { cleanupOrphanGalleryComponents } = require('./api/catalog/utils/cleanup-orphan-gallery-components');
 const { seedDownloadCatalogPage } = require('./api/catalog/utils/seed-download-catalog');
 const { seedCatalogFilterHelpContent } = require('./api/catalog/utils/seed-catalog-filter-help-content');
+const { seedCatalogShareHelpContent } = require('./api/catalog/utils/seed-catalog-share-help-content');
 
 module.exports = {
   register({ strapi }) {
@@ -453,6 +454,12 @@ module.exports = {
       await seedCatalogFilterHelpContent(strapi);
     } catch (e) {
       strapi.log.warn(`Catalog bootstrap: filter-help content seed skipped: ${e.message}`);
+    }
+
+    try {
+      await seedCatalogShareHelpContent(strapi);
+    } catch (e) {
+      strapi.log.warn(`Catalog bootstrap: share-help content seed skipped: ${e.message}`);
     }
 
     strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products (${dualFirmnessFeatureLinked} dual-firmness feature links, ${fillingOptionsLinked} filling links from layers)`);

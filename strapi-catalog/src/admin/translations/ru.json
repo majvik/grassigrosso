@@ -73,5 +73,9 @@
   "catalog.filter-help-segment.variant.heading": "Подзаголовок",
   "catalog.filter-help-segment.variant.paragraph": "Абзац",
   "catalog.filter-help-segment.variant.listItem": "Пункт списка",
-  "catalog.filter-help-segment.variant.numberedListItem": "Нумерованный пункт"
+  "catalog.filter-help-segment.variant.numberedListItem": "Нумерованный пункт",
+  "content-manager.content-types.api::catalog-share-help.catalog-share-help.summary_title": "Заголовок блока «Если коротко»",
+  "content-manager.content-types.api::catalog-share-help.catalog-share-help.summary_items": "Если коротко",
+  "content-type-builder.content-types.api::catalog-share-help.catalog-share-help.attributes.summary_title": "Заголовок блока «Если коротко»",
+  "content-type-builder.content-types.api::catalog-share-help.catalog-share-help.attributes.summary_items": "Если коротко"
 }

@@ -20,6 +20,15 @@
       "type": "string",
       "required": true
     },
+    "summary_title": {
+      "type": "string",
+      "default": "Если коротко"
+    },
+    "summary_items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "catalog.filter-help-summary-item"
+    },
     "segments": {
       "type": "component",
       "repeatable": true,

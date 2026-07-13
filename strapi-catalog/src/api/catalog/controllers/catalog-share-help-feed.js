@@ -9,6 +9,7 @@ module.exports = {
       shareHelpRows = await strapi.db.query('api::catalog-share-help.catalog-share-help').findMany({
         where: { is_active: true },
         populate: {
+          summary_items: true,
           segments: { populate: ['photo'] },
         },
         orderBy: [{ id: 'asc' }],

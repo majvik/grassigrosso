@@ -24,7 +24,7 @@ function mediaAlt(media, fallback) {
 function mapSummaryItems(items) {
   const mapped = (Array.isArray(items) ? items : [])
     .map((item) => ({
-      lead: String(item?.lead || '').trim(),
+      lead: String(item?.lead || '').replace(/^\s+/, ''),
       highlight: String(item?.highlight || '').trim(),
     }))
     .filter((item) => item.lead || item.highlight);

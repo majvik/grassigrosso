@@ -54,20 +54,14 @@ const SEGMENT_VARIANTS = new Set<CatalogFilterHelpSegmentVariant>([
   'numberedListItem',
 ])
 
-const FAVOURITES_SHARE_HELP_TEXT =
-  'Вы можете отправить эту ссылку менеджеру или своему другу — так будет легче согласовать нужные позиции из каталога.'
-
-const PRODUCT_SHARE_HELP_TEXT =
-  'Вы можете отправить ссылку на эту позицию менеджеру или коллеге — так проще обсудить модель и параметры до заказа.'
-
 const DEFAULT_SHARE_HELP: CatalogShareHelp = {
   favouritesShare: {
     modalTitle: 'Ссылка на подборку',
-    segments: [{ variant: 'paragraph', text: FAVOURITES_SHARE_HELP_TEXT }],
+    segments: [],
   },
   productShare: {
     modalTitle: 'Ссылка на позицию',
-    segments: [{ variant: 'paragraph', text: PRODUCT_SHARE_HELP_TEXT }],
+    segments: [],
   },
 }
 
@@ -77,7 +71,7 @@ function normalizeSummary(raw: unknown): CatalogFilterHelpSummary | undefined {
   const items = Array.isArray((raw as CatalogFilterHelpSummary).items)
     ? (raw as CatalogFilterHelpSummary).items
         .map((item) => ({
-          lead: String(item?.lead || '').trim(),
+          lead: String(item?.lead || '').replace(/^\s+/, ''),
           highlight: String(item?.highlight || '').trim(),
         }))
         .filter((item) => item.lead || item.highlight)
@@ -178,8 +172,16 @@ function renderSummary(root: HTMLElement, summary: CatalogFilterHelpSummary): vo
     li.className = 'catalogue-new-filter-help-modal-summary-item'
     appendHelpInlineBold(li, item.lead)
     if (item.highlight) {
+      const highlight = String(item.highlight).trim()
+      if (!highlight) continue
+      const last = li.lastChild
+      const endsWithSpace =
+        last?.nodeType === Node.TEXT_NODE && /\s$/.test(String(last.textContent || ''))
+      if (!endsWithSpace) {
+        li.appendChild(document.createTextNode(' '))
+      }
       const strong = document.createElement('strong')
-      strong.textContent = item.highlight
+      strong.textContent = highlight
       li.appendChild(strong)
     }
     list.appendChild(li)
