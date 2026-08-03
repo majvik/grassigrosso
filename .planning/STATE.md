@@ -5,32 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 1 — Shared Page Components (ready to execute)
+**Current focus:** Phase 2 plan corrected after schema-parity audit — **awaiting user approval** before any Phase 2 code
 
 ## Current Position
 
-Phase: 1 of 6 (Shared Page Components)
-Plan: 01-01 (next)
-Status: Ready to execute Phase 1 / Plan 01-01
-Last activity: 2026-08-03 — Phase 1 plan created (01-01-PLAN.md)
+Phase: 2 of 6 (Wave 1 Single Types) — PLANNING ONLY
+Plan: 02-01 drafted, not executed
+Status: Original Phase 2 rejected as lossy; corrected plan requires content-contract matrix + fixtures before schemas — waiting for explicit «кодить Phase 2»
+Last activity: 2026-08-03 — Plan audit against current TSX/runtime completed
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 17% (Phase 1 done; Phase 2 approved design, not executed)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: —
-- Total execution time: 0 hours
+- Total plans completed: 1
+- Average duration: ~2 min
+- Total execution time: ~0.03 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 1. Shared Page Components | 1/1 | ~2 min | ~2 min |
 
 **Recent Trend:**
-- Last 5 plans: —
+- Last 5 plans: 01-01 (~2 min)
 - Trend: —
 
 *Updated after each plan completion*
@@ -49,17 +49,24 @@ Recent decisions affecting current work:
 - Wave 2 / Phase 6: legal only
 - Out: 404, unsubscribe, second CMS bundle, email routing via CMS
 - Phase 1: four `page.*` components only (hero, section, faq-item, list-item); nestability via section→list-item; no singles/feeds/frontend/seed
+- Phase 1 executed without git commits (parent will commit); Strapi verify used existing `dev:all` reload
 
 ### Pending Todos
 
-None yet.
+- Parent: commit Phase 1 artifacts (`strapi-catalog/src/components/page/*`, `ru.json`, generated `components.d.ts`, planning SUMMARY/STATE)
+- Phase 2: wave-1 single types + download-catalog text fields + ADM-04
+- Phase 2 first gate: complete/review render-input → CMS/code-owned matrix; do not implement the old section-only schemas
 
 ### Blockers/Concerns
 
-None yet. Pattern reference: existing `download-catalog-page` + feed + Node proxy + snapshot.
+- Existing Phase 1 artifacts are uncommitted and belong to the current dirty tree; preserve them.
+- `page.section` is not sufficient for lossless Index/Hotels/Dealers migration; Phase 2 must introduce explicit structured components after inventory.
+- Strict local-only gate: no push/PR/deploy/Timeweb mutation until separately authorized by the user.
+- A phase cannot be complete without automated coverage for its new behavior and a fully green local verification suite.
 
 ## Session Continuity
 
 Last session: 2026-08-03
-Stopped at: Phase 1 planned — `01-01-PLAN.md` ready for `/gsd-execute-phase 1`
+Stopped at: Completed 01-01-PLAN.md — SUMMARY written
 Resume file: None
+Next: `/gsd-execute-phase 2` or plan Phase 2 when ready

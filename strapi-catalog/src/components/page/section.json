@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_page_sections",
+  "info": {
+    "displayName": "Секция",
+    "icon": "layer"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "displayName": "Заголовок"
+    },
+    "subtitle": {
+      "type": "text",
+      "required": false,
+      "displayName": "Подзаголовок"
+    },
+    "body": {
+      "type": "text",
+      "required": false,
+      "displayName": "Текст"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "page.list-item",
+      "displayName": "Пункты"
+    }
+  }
+}

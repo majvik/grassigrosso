@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_page_list_items",
+  "info": {
+    "displayName": "Пункт списка",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "displayName": "Заголовок"
+    },
+    "text": {
+      "type": "text",
+      "required": false,
+      "displayName": "Текст"
+    },
+    "href": {
+      "type": "string",
+      "required": false,
+      "displayName": "Ссылка"
+    }
+  }
+}

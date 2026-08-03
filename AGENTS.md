@@ -11,6 +11,19 @@
 3. **Execute по фазам** — одна фаза → verify (`typecheck`, `check:catalog-api`, `check:catalog-ui`, CDP/Network при perf) → следующая.
 4. **Обновить plan** — статус фаз и post-fix метрики в том же plan-файле.
 
+## Локальная разработка и обязательные тесты (жёсткий gate)
+
+Эти правила имеют приоритет над любыми описанными ниже инструкциями по deploy, CI/CD и remote smoke, пока пользователь явно не отменит локальный режим.
+
+1. **Разработка ведётся строго локально.** Запрещены `git push`, создание/обновление pull request, запуск remote deploy, изменение Timeweb/dev/prod и любые другие действия, отправляющие текущие изменения во внешние системы.
+2. **Задача не выполнена, пока изменения не покрыты автоматическими тестами.** Для новой логики нужны новые тесты; для исправленного бага — regression test, который падает до исправления и проходит после него.
+3. **Все относящиеся к задаче тесты обязаны пройти локально.** Минимум: новые/изменённые тесты, `typecheck`, релевантные API/UI/integration checks и `build`, если изменение влияет на сборку или runtime.
+4. Ручной smoke, визуальная проверка и browser/CDP-проверка **дополняют**, но не заменяют автоматические тесты.
+5. Если подходящего test harness ещё нет, его создание входит в задачу. Нельзя объявлять задачу выполненной со ссылкой на отсутствие тестовой инфраструктуры.
+6. При непокрытом сценарии, падающем/не запущенном обязательном тесте или невозможности локально воспроизвести verify статус остаётся `in_progress`/`blocked`, но не `complete`.
+7. Перед завершением каждой фазы в plan нужно перечислить добавленные тесты, точные локальные команды и их результаты. Формулировки «должно работать» или «проверено вручную» не являются достаточным verify.
+8. Агент не должен предлагать push/deploy как следующий автоматический шаг. Это возможно только после отдельного явного разрешения пользователя, и всё равно лишь при полном зелёном локальном test gate.
+
 ### Когда spec/plan не нужен
 
 - Однострочный typo, очевидный hotfix по точному указанию пользователя, чисто информационный ответ.
@@ -22,9 +35,11 @@
 
 ### Perf / каталог
 
-После изменений медиа или listing runtime: `npm run catalog:optimize-media` (если новые uploads) → smoke `check:catalog-api` + `check:catalog-ui` + `check:catalog-perf` → при sidecar/seed — commit `strapi-catalog/public/uploads/` и при необходимости `npm run strapi:sync-seed` → **`npm run catalog:export-snapshot`** → commit `public/catalog-*.snapshot.json` и `public/catalog-snapshot.manifest.json`.
+После изменений медиа или listing runtime: `npm run catalog:optimize-media` (если новые uploads) → автоматические локальные тесты + smoke `check:catalog-api` + `check:catalog-ui` + `check:catalog-perf` → при sidecar/seed локально выполнить `npm run strapi:sync-seed` → **`npm run catalog:export-snapshot`**. Файлы подготовить локально; не push/deploy без отдельного явного разрешения пользователя.
 
 ### Деплой (Timeweb App Platform)
+
+> **Справочный раздел, не разрешение на действие.** В текущем режиме любые push/deploy запрещены правилом «Локальная разработка и обязательные тесты» выше.
 
 - Dev/prod на Timeweb: **push в git → CI/CD → Docker build (`Dockerfile`) → App Platform**. Ручной restart не нужен — `server.cjs`, `dist/` и uploads попадают в образ из последнего commit.
 - После push на dev: `CATALOG_PERF_BASE_URL=https://majvik-grassigrosso-e3cd.twc1.net npm run check:catalog-perf` (API + HTML preload; DOM-метрики локально через Chrome headless).

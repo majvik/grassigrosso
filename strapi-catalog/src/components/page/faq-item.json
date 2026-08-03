@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_page_faq_items",
+  "info": {
+    "displayName": "Пункт FAQ",
+    "icon": "question"
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true,
+      "displayName": "Вопрос"
+    },
+    "answer": {
+      "type": "text",
+      "required": true,
+      "displayName": "Ответ"
+    },
+    "open_by_default": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "displayName": "Открыт по умолчанию"
+    }
+  }
+}

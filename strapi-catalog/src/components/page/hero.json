@@ -1,0 +1,42 @@
+{
+  "collectionName": "components_page_heroes",
+  "info": {
+    "displayName": "Hero страницы",
+    "icon": "landscape"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "displayName": "Заголовок"
+    },
+    "description": {
+      "type": "text",
+      "required": false,
+      "displayName": "Описание"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"],
+      "displayName": "Изображение"
+    },
+    "image_alt": {
+      "type": "string",
+      "required": false,
+      "displayName": "Alt изображения"
+    },
+    "cta_label": {
+      "type": "string",
+      "required": false,
+      "displayName": "Текст кнопки"
+    },
+    "cta_url": {
+      "type": "string",
+      "required": false,
+      "displayName": "Ссылка кнопки"
+    }
+  }
+}
