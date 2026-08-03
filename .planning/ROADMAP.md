@@ -123,7 +123,7 @@ Plans:
 | 1. Shared Page Components | 1/1 | Complete | 2026-08-03 |
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) | 2026-08-03 |
 | 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) | 2026-08-03 |
-| 4. React Hydrate | 0/1 | Spec/plan draft v2 — awaiting affirm | - |
+| 4. React Hydrate | 0/1 | Phase A done — awaiting accept | - |
 | 5. Local Acceptance Gate | 0/TBD | Not started | - |
 | 6. Legal Pages | 0/TBD | Not started | - |
 

@@ -1,7 +1,7 @@
 # Pages CMS Phase 4 — React hydrate (execution plan)
 
 **Date:** 2026-08-03
-**Status:** draft v2 — awaiting affirm of merge/lifecycle/DOM locks; **no hydrate application code until affirmed**
+**Status:** Phase A DONE (local) — awaiting accept; B–E not started. No page JSX wiring. No push / no `strapi:sync-seed`.
 **Design:** [2026-08-03-pages-cms-react-hydrate-design.md](../specs/2026-08-03-pages-cms-react-hydrate-design.md)
 **GSD phase:** `.planning/phases/04-react-hydrate/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -32,8 +32,8 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 | Step | Command / artifact | Result |
 |------|--------------------|--------|
 | Design + plan draft v1 | Option B sketch | superseded by v2 |
-| Design + plan draft v2 | merge/lifecycle/DOM locks | awaiting affirm |
-| Phase A | client + merge + unit harness | not started |
+| Design + plan draft v2 | merge/lifecycle/DOM locks | affirmed |
+| Phase A | client + merge + unit harness | DONE — `check:pages-cms-hydrate` PASS |
 | Phase B | index + download-catalog texts + DOM slice | not started |
 | Phase C | hotels + dealers + DOM slice | not started |
 | Phase D | contacts + documents + map + DOM slice | not started |
@@ -59,6 +59,13 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
    - client lifecycle: single in-flight; failed promise cleared; invalid not cached
    - client source only `/api/pages/`
 6. **No page component wiring yet.**
+
+### Post-fix (Phase A)
+
+- Modules: `src/pages/pages-api.ts`, `pages-cms-validate.ts`, `pages-cms-merge.ts`, `pages-cms-mount-guard.ts`, `use-page-cms.ts`
+- Harness: `npm run check:pages-cms-hydrate` (esbuild bundle of harness entry; no React in unit path)
+- Wired into `check:pages-cms` companion
+- Evidence: merge/lifecycle/mountGuard/isolation PASS; `typecheck` PASS; no `src/components/pages/*` edits
 
 ### Verify
 
