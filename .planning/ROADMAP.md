@@ -121,7 +121,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Shared Page Components | 1/1 | Complete | 2026-08-03 |
-| 2. Wave 1 Single Types | 0/TBD | Not started | - |
+| 2. Wave 1 Single Types | 0/1 | In progress (Tasks 1–5 done; Task 6 next) | - |
 | 3. Feeds, Proxy & Seed | 0/TBD | Not started | - |
 | 4. React Hydrate | 0/TBD | Not started | - |
 | 5. Local Acceptance Gate | 0/TBD | Not started | - |
