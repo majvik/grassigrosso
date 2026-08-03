@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Phase 4B/C DOM hydrate gate — index + download-catalog + hotels + dealers.
+ * Phase 4B–D DOM hydrate gate — all six wave-1 pages.
  *
  * Requires local Vite. Stubs window.fetch for /api/pages/:slug.
  *
@@ -23,8 +23,8 @@ const baseUrl = String(
   process.env.PAGES_CMS_UI_BASE_URL || process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5174',
 ).replace(/\/+$/, '')
 const runBrowser = shouldRunBrowserSmoke(baseUrl)
-const OVERALL_TIMEOUT_MS = Number(process.env.PAGES_CMS_HYDRATE_DOM_TIMEOUT_MS || 240000)
-const PHASE_PAGES = ['index', 'download-catalog', 'hotels', 'dealers']
+const OVERALL_TIMEOUT_MS = Number(process.env.PAGES_CMS_HYDRATE_DOM_TIMEOUT_MS || 360000)
+const PHASE_PAGES = ['index', 'download-catalog', 'hotels', 'dealers', 'contacts', 'documents']
 const FAILURE_MODES = [
   { id: '404', mock: { mode: 'fail', status: 404 } },
   { id: '503', mock: { mode: 'fail', status: 503 } },
@@ -52,6 +52,22 @@ const DEALERS_SECTIONS = [
   'contact-section',
   'faq-section',
 ]
+const CONTACTS_SECTIONS = [
+  'contacts-hero',
+  'contacts-offices',
+  'contacts-map',
+  'contact-section',
+]
+const DOCUMENTS_SECTIONS = [
+  'documents-hero',
+  'documents-certification',
+  'documents-commercial',
+  'documents-help',
+  'documents-faq',
+]
+const CONTACTS_OFFICE_SLUGS = ['main', 'voronezh', 'lnr', 'dnr']
+const DOCUMENTS_CERT_KEYS = ['declaration', 'certificate', 'trademark']
+const DOCUMENTS_COMPANY_KEYS = ['catalog', 'presentation']
 
 const failures = []
 let session = null
@@ -107,14 +123,7 @@ function reactPageAttr(slug) {
 }
 
 function loadParityPayload(slug) {
-  const file =
-    slug === 'index'
-      ? 'pages-index.snapshot.json'
-      : slug === 'download-catalog'
-        ? 'pages-download-catalog.snapshot.json'
-        : slug === 'hotels'
-          ? 'pages-hotels.snapshot.json'
-          : 'pages-dealers.snapshot.json'
+  const file = `pages-${slug}.snapshot.json`
   return JSON.parse(fs.readFileSync(path.join(ROOT, 'public', file), 'utf8'))
 }
 
@@ -237,16 +246,37 @@ function hooksReadyExpr(slug) {
       return commercial && boxspring && accessories && form && mainText > 20
     })()`
   }
+  if (slug === 'dealers') {
+    return `(() => {
+      const map = !!document.querySelector('#geographyMapContainer')
+      const packages = ['standard','individual','exclusive'].every((v) =>
+        !!document.querySelector('[data-package="' + v + '"]'),
+      )
+      const select = !!document.querySelector('select[name="package"]')
+      const play = !!document.querySelector('#qualityVideo .hero-play-btn')
+      const form = !!document.querySelector('[data-contact-form]')
+      const mainText = (document.querySelector('main')?.innerText || '').trim().length
+      return map && packages && select && play && form && mainText > 20
+    })()`
+  }
+  if (slug === 'contacts') {
+    return `(() => {
+      const tabs = document.querySelectorAll('[data-map-tab]').length
+      const frames = document.querySelectorAll('[data-map-frame]').length
+      const mainMap = !!document.querySelector('#map-main')
+      const form = !!document.querySelector('[data-contact-form]')
+      const mainText = (document.querySelector('main')?.innerText || '').trim().length
+      return tabs === 4 && frames === 4 && mainMap && form && mainText > 20
+    })()`
+  }
   return `(() => {
-    const map = !!document.querySelector('#geographyMapContainer')
-    const packages = ['standard','individual','exclusive'].every((v) =>
-      !!document.querySelector('[data-package="' + v + '"]'),
+    const docs = ['declaration','certificate','trademark','catalog','presentation'].every((k) =>
+      !!document.querySelector('[data-document="' + k + '"]'),
     )
-    const select = !!document.querySelector('select[name="package"]')
-    const play = !!document.querySelector('#qualityVideo .hero-play-btn')
-    const form = !!document.querySelector('[data-contact-form]')
+    const request = document.querySelectorAll('[data-document-request-trigger]').length
+    const help = !!document.querySelector('[data-open-help-modal]')
     const mainText = (document.querySelector('main')?.innerText || '').trim().length
-    return map && packages && select && play && form && mainText > 20
+    return docs && request >= 5 && help && mainText > 20
   })()`
 }
 
@@ -331,28 +361,77 @@ function criticalHooksExpr(slug) {
       }
     })()`
   }
+  if (slug === 'dealers') {
+    return `(() => ({
+      map: !!document.querySelector('#geographyMapContainer'),
+      mapImg: document.querySelector('#geographyMapImg')?.getAttribute('src') || '',
+      packages: [...document.querySelectorAll('[data-package]')].map((el) => el.getAttribute('data-package')),
+      packageSelect: !!document.querySelector('select[name="package"]'),
+      packageOptions: [...document.querySelectorAll('select[name="package"] option')]
+        .map((el) => el.value)
+        .filter(Boolean),
+      play: !!document.querySelector('#qualityVideo .hero-play-btn'),
+      video: !!document.querySelector('#qualityVideo video.quality-video'),
+      form: !!document.querySelector('[data-contact-form]'),
+      honeypot: !!document.querySelector('#website'),
+      topLevelSections: [...document.querySelectorAll('[data-react-root][data-react-page="dealers"] > section')]
+        .map((el) => el.className),
+      offers: document.querySelectorAll('.offer-card').length,
+      requirements: document.querySelectorAll('.requirement-card').length,
+      packageCards: document.querySelectorAll('.package-card').length,
+      cities: document.querySelectorAll('.geography-cities .city-item').length,
+      faq: document.querySelectorAll('[data-faq-item]').length,
+      heroTitle: (document.querySelector('.page-hero-title')?.textContent || '').trim(),
+      contactTitle: (document.querySelector('.contact-section .section-title')?.textContent || '').trim(),
+      qualityPoster: document.querySelector('#qualityVideo video')?.getAttribute('poster') || '',
+      mainText: (document.querySelector('main')?.innerText || '').trim().length,
+      rawHtml: document.documentElement.innerHTML.includes('map_iframe_html'),
+    }))()`
+  }
+  if (slug === 'contacts') {
+    return `(() => {
+      const frames = [...document.querySelectorAll('[data-map-frame]')].map((el) => ({
+        slug: el.getAttribute('data-office'),
+        tag: el.tagName,
+        id: el.id,
+        src: el.tagName === 'IFRAME' ? el.getAttribute('src') || '' : '',
+        embed: el.getAttribute('data-map-embed') === '1',
+      }))
+      return {
+        tabs: [...document.querySelectorAll('[data-map-tab]')].map((el) => el.getAttribute('data-office')),
+        frames,
+        mapIds: ['main','voronezh','lnr','dnr'].map((s) => !!document.querySelector('#map-' + s)),
+        form: !!document.querySelector('[data-contact-form]'),
+        honeypot: !!document.querySelector('#website'),
+        copyEmail: document.querySelectorAll('[data-copy-email-trigger]').length,
+        topLevelSections: [...document.querySelectorAll('[data-react-root][data-react-page="contacts"] > section')]
+          .map((el) => el.className),
+        offices: document.querySelectorAll('.contacts-office-card').length,
+        heroTitle: (document.querySelector('.contacts-hero-title')?.textContent || '').trim(),
+        mapTitle: (document.querySelector('.contacts-map .section-title')?.textContent || '').trim(),
+        contactTitle: (document.querySelector('.contact-section .section-title')?.textContent || '').trim(),
+        heroImg: document.querySelector('.contacts-hero-image img')?.getAttribute('src') || '',
+        mainText: (document.querySelector('main')?.innerText || '').trim().length,
+        rawHtml: document.documentElement.innerHTML.includes('map_iframe_html'),
+        hasDangerousMapHtml: /<iframe[^>]+srcdoc=/i.test(document.documentElement.innerHTML),
+      }
+    })()`
+  }
   return `(() => ({
-    map: !!document.querySelector('#geographyMapContainer'),
-    mapImg: document.querySelector('#geographyMapImg')?.getAttribute('src') || '',
-    packages: [...document.querySelectorAll('[data-package]')].map((el) => el.getAttribute('data-package')),
-    packageSelect: !!document.querySelector('select[name="package"]'),
-    packageOptions: [...document.querySelectorAll('select[name="package"] option')]
-      .map((el) => el.value)
-      .filter(Boolean),
-    play: !!document.querySelector('#qualityVideo .hero-play-btn'),
-    video: !!document.querySelector('#qualityVideo video.quality-video'),
-    form: !!document.querySelector('[data-contact-form]'),
-    honeypot: !!document.querySelector('#website'),
-    topLevelSections: [...document.querySelectorAll('[data-react-root][data-react-page="dealers"] > section')]
+    documents: [...document.querySelectorAll('[data-document]')].map((el) => el.getAttribute('data-document')),
+    requestTriggers: document.querySelectorAll('[data-document-request-trigger]').length,
+    help: !!document.querySelector('[data-open-help-modal]'),
+    formAbsent: !document.querySelector('[data-contact-form]'),
+    topLevelSections: [...document.querySelectorAll('[data-react-root][data-react-page="documents"] > section')]
       .map((el) => el.className),
-    offers: document.querySelectorAll('.offer-card').length,
-    requirements: document.querySelectorAll('.requirement-card').length,
-    packageCards: document.querySelectorAll('.package-card').length,
-    cities: document.querySelectorAll('.geography-cities .city-item').length,
+    certCards: document.querySelectorAll('.documents-cert-card').length,
+    companyItems: document.querySelectorAll('.documents-commercial-item').length,
     faq: document.querySelectorAll('[data-faq-item]').length,
-    heroTitle: (document.querySelector('.page-hero-title')?.textContent || '').trim(),
-    contactTitle: (document.querySelector('.contact-section .section-title')?.textContent || '').trim(),
-    qualityPoster: document.querySelector('#qualityVideo video')?.getAttribute('poster') || '',
+    heroTitle: (document.querySelector('.documents-hero-title')?.textContent || '').trim(),
+    helpTitle: (document.querySelector('.documents-help .section-title')?.textContent || '').trim(),
+    helpCta: (document.querySelector('[data-open-help-modal]')?.textContent || '').trim(),
+    heroImg: document.querySelector('.documents-hero-image img')?.getAttribute('src') || '',
+    companyImg: document.querySelector('.documents-commercial-icon img')?.getAttribute('src') || '',
     mainText: (document.querySelector('main')?.innerText || '').trim().length,
     rawHtml: document.documentElement.innerHTML.includes('map_iframe_html'),
   }))()`
@@ -403,6 +482,36 @@ function geometryExpr(slug) {
       }
     })()`
   }
+  if (slug === 'dealers') {
+    return `(() => {
+      const box = (el) => {
+        if (!el) return null
+        const r = el.getBoundingClientRect()
+        return { top: r.top, left: r.left, width: r.width, height: r.height }
+      }
+      return {
+        hero: box(document.querySelector('.page-hero-title')),
+        map: box(document.querySelector('#geographyMapContainer')),
+        packages: box(document.querySelector('.packages-section')),
+        form: box(document.querySelector('[data-contact-form]')),
+      }
+    })()`
+  }
+  if (slug === 'contacts') {
+    return `(() => {
+      const box = (el) => {
+        if (!el) return null
+        const r = el.getBoundingClientRect()
+        return { top: r.top, left: r.left, width: r.width, height: r.height }
+      }
+      return {
+        hero: box(document.querySelector('.contacts-hero-title')),
+        tabs: box(document.querySelector('[data-map-tab]')),
+        map: box(document.querySelector('#map-main')),
+        form: box(document.querySelector('[data-contact-form]')),
+      }
+    })()`
+  }
   return `(() => {
     const box = (el) => {
       if (!el) return null
@@ -410,10 +519,10 @@ function geometryExpr(slug) {
       return { top: r.top, left: r.left, width: r.width, height: r.height }
     }
     return {
-      hero: box(document.querySelector('.page-hero-title')),
-      map: box(document.querySelector('#geographyMapContainer')),
-      packages: box(document.querySelector('.packages-section')),
-      form: box(document.querySelector('[data-contact-form]')),
+      hero: box(document.querySelector('.documents-hero-title')),
+      certs: box(document.querySelector('.documents-certification')),
+      help: box(document.querySelector('[data-open-help-modal]')),
+      faq: box(document.querySelector('.documents-faq')),
     }
   })()`
 }
@@ -502,7 +611,7 @@ function assertFirstPaintBaseline(slug, snap) {
     assert(accessories?.sourceCount === 0, `${slug} baseline: accessories must not use legacy sources when image set`)
     assertCurrentSrcIncludes(`${slug} baseline boxspring`, boxspring, 'boxspring')
     assertCurrentSrcIncludes(`${slug} baseline accessories`, accessories, 'accessories')
-  } else {
+  } else if (slug === 'dealers') {
     assert(
       JSON.stringify(snap?.topLevelSections) === JSON.stringify(DEALERS_SECTIONS),
       `${slug} baseline: section allowlist (${JSON.stringify(snap?.topLevelSections)})`,
@@ -523,6 +632,45 @@ function assertFirstPaintBaseline(slug, snap) {
     // Marquee duplicates cities once → 86 city items
     assert(snap?.cities === 86, `${slug} baseline: city marquee items (${snap?.cities})`)
     assert(String(snap?.heroTitle || '').includes('Дилерская программа'), `${slug} baseline: hero`)
+  } else if (slug === 'contacts') {
+    assert(
+      JSON.stringify(snap?.topLevelSections) === JSON.stringify(CONTACTS_SECTIONS),
+      `${slug} baseline: section allowlist (${JSON.stringify(snap?.topLevelSections)})`,
+    )
+    assert(
+      JSON.stringify(snap?.tabs) === JSON.stringify(CONTACTS_OFFICE_SLUGS),
+      `${slug} baseline: map tabs (${JSON.stringify(snap?.tabs)})`,
+    )
+    assert(
+      snap?.mapIds?.every(Boolean) && snap.mapIds.length === 4,
+      `${slug} baseline: #map-* ids missing`,
+    )
+    assert(snap?.offices === 4, `${slug} baseline: 4 office cards`)
+    assert(snap?.form && snap?.honeypot && snap?.copyEmail === 4, `${slug} baseline: form/hooks`)
+    assert(String(snap?.heroTitle || '') === 'Контакты', `${slug} baseline: hero`)
+    assert(!snap?.hasDangerousMapHtml, `${slug} baseline: srcdoc iframe`)
+    for (const frame of snap?.frames || []) {
+      assert(frame.tag === 'IFRAME' && frame.embed, `${slug} baseline: expected embed iframe for ${frame.slug}`)
+      assert(
+        String(frame.src).startsWith('https://yandex.ru/map-widget/'),
+        `${slug} baseline: iframe src allowlist (${frame.src})`,
+      )
+    }
+  } else {
+    assert(
+      JSON.stringify(snap?.topLevelSections) === JSON.stringify(DOCUMENTS_SECTIONS),
+      `${slug} baseline: section allowlist (${JSON.stringify(snap?.topLevelSections)})`,
+    )
+    assert(
+      JSON.stringify(snap?.documents) ===
+        JSON.stringify([...DOCUMENTS_CERT_KEYS, ...DOCUMENTS_COMPANY_KEYS]),
+      `${slug} baseline: document keys (${JSON.stringify(snap?.documents)})`,
+    )
+    assert(snap?.certCards === 3, `${slug} baseline: 3 cert cards`)
+    assert(snap?.companyItems === 2, `${slug} baseline: 2 company docs`)
+    assert(snap?.requestTriggers >= 5, `${slug} baseline: request triggers`)
+    assert(snap?.help && snap?.faq === 3, `${slug} baseline: help/faq`)
+    assert(String(snap?.heroTitle || '').includes('Документы'), `${slug} baseline: hero`)
   }
   assert(!snap?.rawHtml, `${slug} baseline: map_iframe_html leaked`)
   assert(snap?.mainText > 20, `${slug} baseline: empty main`)
@@ -532,7 +680,9 @@ function fallbackTitleFor(slug, parityPayload) {
   if (slug === 'index') return 'Любовь с первого утра'
   if (slug === 'download-catalog') return parityPayload.title || 'Скачать каталог'
   if (slug === 'hotels') return parityPayload.hero?.title || 'Сон, о котором хочется написать в отзыве'
-  return parityPayload.hero?.title || 'Дилерская программа Grassigrosso'
+  if (slug === 'dealers') return parityPayload.hero?.title || 'Дилерская программа Grassigrosso'
+  if (slug === 'contacts') return parityPayload.hero?.title || 'Контакты'
+  return parityPayload.hero?.title || 'Документы и сертификаты'
 }
 
 function fe05DelayedMap(slug) {
@@ -555,11 +705,27 @@ function fe05DelayedMap(slug) {
       form: ['top', 'left', 'width'],
     }
   }
+  if (slug === 'dealers') {
+    return {
+      hero: ['top', 'left', 'width'],
+      map: ['top', 'left', 'width'],
+      packages: ['top', 'left', 'width'],
+      form: ['top', 'left', 'width'],
+    }
+  }
+  if (slug === 'contacts') {
+    return {
+      hero: ['top', 'left', 'width'],
+      tabs: ['top', 'left', 'width'],
+      map: ['top', 'left', 'width'],
+      form: ['top', 'left', 'width'],
+    }
+  }
   return {
     hero: ['top', 'left', 'width'],
-    map: ['top', 'left', 'width'],
-    packages: ['top', 'left', 'width'],
-    form: ['top', 'left', 'width'],
+    certs: ['top', 'left', 'width'],
+    help: ['top', 'left', 'width'],
+    faq: ['top', 'left', 'width'],
   }
 }
 
@@ -643,7 +809,7 @@ async function runPageScenarios(slug) {
         }
         return product
       })
-    } else {
+    } else if (slug === 'dealers') {
       divergent.hero = {
         ...divergent.hero,
         title: 'CMS Dealers Title Marker',
@@ -651,6 +817,32 @@ async function runPageScenarios(slug) {
       divergent.contact_section_title = 'CMS Dealers Contact Marker'
       divergent.quality_image = { url: '/uploads/cms-dealers-quality-marker.avif' }
       divergent.geography_map_image = { url: '/uploads/cms-dealers-map-marker.svg' }
+    } else if (slug === 'contacts') {
+      divergent.hero = {
+        ...divergent.hero,
+        title: 'CMS Contacts Title Marker',
+        image: { url: '/uploads/cms-contacts-hero-marker.png' },
+      }
+      divergent.map_title = 'CMS Contacts Map Marker'
+      divergent.contact_section_title = 'CMS Contacts Contact Marker'
+      divergent.offices = divergent.offices.map((office) =>
+        office.slug === 'main'
+          ? {
+              ...office,
+              map_embed_url:
+                'https://yandex.ru/map-widget/v1/?ll=34.152577%2C44.970737&z=16&cms=contacts-map-marker',
+            }
+          : office,
+      )
+    } else {
+      divergent.hero = {
+        ...divergent.hero,
+        title: 'CMS Documents Title Marker',
+        image: { url: '/uploads/cms-documents-hero-marker.png' },
+      }
+      divergent.help_title = 'CMS Documents Help Marker'
+      divergent.help_cta_label = 'CMS Documents Help CTA'
+      divergent.company_illustration = { url: '/uploads/cms-documents-company-marker.svg' }
     }
 
     await setMock(evaluate, { mode: 'json', status: 200, body: envelope(divergent, 'strapi') })
@@ -690,11 +882,38 @@ async function runPageScenarios(slug) {
         })()`,
         15000,
       )
-    } else {
+    } else if (slug === 'dealers') {
       await waitFor(
         evaluate,
         `${slug} success hydrate`,
         `document.querySelector('.page-hero-title')?.textContent?.trim() === 'CMS Dealers Title Marker'`,
+        15000,
+      )
+    } else if (slug === 'contacts') {
+      await waitFor(
+        evaluate,
+        `${slug} success hydrate`,
+        `document.querySelector('.contacts-hero-title')?.textContent?.trim() === 'CMS Contacts Title Marker'`,
+        15000,
+      )
+      await waitFor(
+        evaluate,
+        `${slug} map embed marker`,
+        `(() => {
+          const main = document.querySelector('#map-main')
+          return (
+            main?.tagName === 'IFRAME' &&
+            (main.getAttribute('src') || '').includes('cms=contacts-map-marker') &&
+            !document.documentElement.innerHTML.includes('map_iframe_html')
+          )
+        })()`,
+        15000,
+      )
+    } else {
+      await waitFor(
+        evaluate,
+        `${slug} success hydrate`,
+        `document.querySelector('.documents-hero-title')?.textContent?.trim() === 'CMS Documents Title Marker'`,
         15000,
       )
     }
@@ -763,7 +982,7 @@ async function runPageScenarios(slug) {
         products: ['left', 'width'],
         form: ['left', 'width'],
       })
-    } else {
+    } else if (slug === 'dealers') {
       assert(
         JSON.stringify(ok?.topLevelSections) === JSON.stringify(DEALERS_SECTIONS),
         `${slug} success: section allowlist drifted`,
@@ -787,6 +1006,60 @@ async function runPageScenarios(slug) {
         map: ['left', 'width'],
         packages: ['left', 'width'],
         form: ['left', 'width'],
+      })
+    } else if (slug === 'contacts') {
+      assert(
+        JSON.stringify(ok?.topLevelSections) === JSON.stringify(CONTACTS_SECTIONS),
+        `${slug} success: section allowlist drifted`,
+      )
+      assert(
+        JSON.stringify(ok?.tabs) === JSON.stringify(CONTACTS_OFFICE_SLUGS),
+        `${slug} success: tabs drifted`,
+      )
+      assert(ok?.heroTitle === 'CMS Contacts Title Marker', `${slug} success: hero title`)
+      assert(ok?.mapTitle === 'CMS Contacts Map Marker', `${slug} success: map title`)
+      assert(ok?.contactTitle === 'CMS Contacts Contact Marker', `${slug} success: contact title`)
+      assert(
+        ok?.heroImg === '/uploads/cms-contacts-hero-marker.png',
+        `${slug} success: hero image (${ok?.heroImg})`,
+      )
+      const mainFrame = (ok?.frames || []).find((f) => f.slug === 'main')
+      assert(
+        mainFrame?.tag === 'IFRAME' && String(mainFrame.src).includes('cms=contacts-map-marker'),
+        `${slug} success: main map embed marker (${JSON.stringify(mainFrame)})`,
+      )
+      assert(!ok?.rawHtml && !ok?.hasDangerousMapHtml, `${slug} success: map HTML leak`)
+      assert(ok?.form && ok?.honeypot, `${slug} success: form hooks`)
+      assertGeometryKeys(`${slug} success FE-05`, geoBaseline, geoAfter, {
+        tabs: ['left', 'width'],
+        form: ['left', 'width'],
+      })
+    } else {
+      assert(
+        JSON.stringify(ok?.topLevelSections) === JSON.stringify(DOCUMENTS_SECTIONS),
+        `${slug} success: section allowlist drifted`,
+      )
+      assert(
+        JSON.stringify(ok?.documents) ===
+          JSON.stringify([...DOCUMENTS_CERT_KEYS, ...DOCUMENTS_COMPANY_KEYS]),
+        `${slug} success: document keys drifted`,
+      )
+      assert(ok?.heroTitle === 'CMS Documents Title Marker', `${slug} success: hero title`)
+      assert(ok?.helpTitle === 'CMS Documents Help Marker', `${slug} success: help title`)
+      assert(ok?.helpCta === 'CMS Documents Help CTA', `${slug} success: help cta`)
+      assert(
+        ok?.heroImg === '/uploads/cms-documents-hero-marker.png',
+        `${slug} success: hero image (${ok?.heroImg})`,
+      )
+      assert(
+        ok?.companyImg === '/uploads/cms-documents-company-marker.svg',
+        `${slug} success: company illustration (${ok?.companyImg})`,
+      )
+      assert(ok?.help && ok?.requestTriggers >= 5, `${slug} success: hooks`)
+      assertGeometryKeys(`${slug} success FE-05`, geoBaseline, geoAfter, {
+        certs: ['left', 'width'],
+        // CTA label changes on divergent hydrate → width may reflow; left must stay.
+        help: ['left'],
       })
     }
     console.log(`  ${slug} success: PASS`, JSON.stringify({ geoBaseline, geoAfter }))
@@ -829,6 +1102,39 @@ async function runPageScenarios(slug) {
     assertCurrentSrcIncludes(`${slug} null-image boxspring`, boxFallback, 'boxspring')
     assertCurrentSrcIncludes(`${slug} null-image accessories`, accFallback, 'accessories')
     console.log(`  ${slug} null-image fallback: PASS`, JSON.stringify({ boxFallback, accFallback }))
+  }
+
+  // --- Contacts: null map_embed_url → placeholder (JS map path), never HTML ---
+  if (slug === 'contacts') {
+    const nullMaps = structuredClone(parityPayload)
+    nullMaps.offices = nullMaps.offices.map((office) => ({ ...office, map_embed_url: null }))
+    await navigateWithMock(cdp, slug, {
+      mode: 'json',
+      status: 200,
+      body: envelope(nullMaps, 'strapi'),
+    })
+    await waitFor(evaluate, `${slug} null-map paint`, hooksReadyExpr(slug), 15000)
+    await waitFor(
+      evaluate,
+      `${slug} null-map placeholders`,
+      `(() => {
+        const frames = [...document.querySelectorAll('[data-map-frame]')]
+        return (
+          frames.length === 4 &&
+          frames.every((el) => el.tagName === 'DIV' && el.getAttribute('data-map-embed') !== '1') &&
+          !!document.querySelector('#map-main.contacts-map-placeholder') &&
+          !document.documentElement.innerHTML.includes('map_iframe_html')
+        )
+      })()`,
+      15000,
+    )
+    const nullSnap = await evaluate(criticalHooksExpr(slug))
+    assert(
+      (nullSnap?.frames || []).every((f) => f.tag === 'DIV' && !f.embed && !f.src),
+      `${slug} null-map: expected placeholder divs (${JSON.stringify(nullSnap?.frames)})`,
+    )
+    assert(!nullSnap?.rawHtml && !nullSnap?.hasDangerousMapHtml, `${slug} null-map: HTML leak`)
+    console.log(`  ${slug} null-map fallback: PASS`, JSON.stringify({ frames: nullSnap?.frames }))
   }
 
   // --- FE-05 content-equal parity hydrate ---
@@ -878,7 +1184,7 @@ async function runPageScenarios(slug) {
         Math.abs((before?.products?.height || 0) - (after?.products?.height || 0)) <= 1,
         `${slug} parity: products height changed`,
       )
-    } else {
+    } else if (slug === 'dealers') {
       assertGeometryKeys(`${slug} FE-05 parity`, before, after, fe05DelayedMap(slug))
       assert(
         JSON.stringify(beforeHooks?.packages) === JSON.stringify(afterHooks?.packages),
@@ -889,6 +1195,24 @@ async function runPageScenarios(slug) {
         Math.abs((before?.packages?.height || 0) - (after?.packages?.height || 0)) <= 1,
         `${slug} parity: packages height changed`,
       )
+    } else if (slug === 'contacts') {
+      assertGeometryKeys(`${slug} FE-05 parity`, before, after, fe05DelayedMap(slug))
+      assert(
+        JSON.stringify(beforeHooks?.tabs) === JSON.stringify(afterHooks?.tabs),
+        `${slug} parity: tabs changed`,
+      )
+      assert(
+        JSON.stringify((beforeHooks?.frames || []).map((f) => f.src)) ===
+          JSON.stringify((afterHooks?.frames || []).map((f) => f.src)),
+        `${slug} parity: map src changed on content-equal`,
+      )
+    } else {
+      assertGeometryKeys(`${slug} FE-05 parity`, before, after, fe05DelayedMap(slug))
+      assert(
+        JSON.stringify(beforeHooks?.documents) === JSON.stringify(afterHooks?.documents),
+        `${slug} parity: documents keys changed`,
+      )
+      assert(beforeHooks?.certCards === afterHooks?.certCards, `${slug} parity: cert count`)
     }
     console.log(`  ${slug} FE-05 parity: PASS`, JSON.stringify({ before, after }))
   }
@@ -933,7 +1257,7 @@ try {
     process.exit(1)
   }
 
-  console.log('\npages-cms hydrate-dom PASS (index + download-catalog + hotels + dealers)')
+  console.log('\npages-cms hydrate-dom PASS (all six wave-1 pages)')
   cleanup()
   process.exit(0)
 } catch (err) {

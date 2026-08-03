@@ -1,68 +1,52 @@
 import { FaqSection } from '@/components/marketing/shared-page-sections'
+import { usePageCms } from '@/pages/use-page-cms'
+import {
+  DOCUMENTS_COMPANY_ILLUSTRATION_FALLBACK,
+  DOCUMENTS_HERO_PICTURE,
+  DOCUMENTS_PAGE_DEFAULTS,
+  type DocumentsPageContent,
+  type PagesMedia,
+} from './documents-page-defaults'
 
-const certificates = [
-  {
-    id: 'declaration',
-    title: 'Евразийский Экономический Союз. Декларация о соответствии',
-    type: 'Декларация',
-    size: '2.5 MB',
-  },
-  {
-    id: 'certificate',
-    title: 'Результаты лабораторных испытаний «ПромМаш Тест»',
-    type: 'Сертификат',
-    size: '1.8 MB',
-  },
-  {
-    id: 'trademark',
-    title: 'Свидетельство на товарный знак GrassiGrosso',
-    type: 'Товарный знак',
-    size: '1.2 MB',
-  },
-]
-
-const companyDocuments = [
-  { id: 'catalog', title: 'Каталог продукции', label: 'Запросить каталог продукции' },
-  { id: 'presentation', title: 'Презентация компании', label: 'Запросить презентацию компании' },
-]
-
-const faqItems: Array<{ active?: boolean; answer: string; question: string }> = [
-  {
-    active: true,
-    answer:
-      'Стандартные сроки производства составляют 3 рабочих дня с момента подтверждения заказа. Для индивидуальных проектов сроки согласовываются отдельно.',
-    question: 'Как быстро производите?',
-  },
-  {
-    answer:
-      'Да, мы осуществляем доставку по всей России. Стоимость и сроки доставки рассчитываются индивидуально в зависимости от региона и объема заказа.',
-    question: 'Доставляете ли в регионы?',
-  },
-  {
-    answer:
-      'Мы принимаем все способы оплаты, а также работаем по системе отсрочки платежа для постоянных клиентов.\nВсе условия оплаты обсуждаются индивидуально.',
-    question: 'Какие есть способы оплаты?',
-  },
-]
+function mediaUrl(media: PagesMedia): string {
+  return media?.url || ''
+}
 
 export function DocumentsPage() {
+  const data = usePageCms(
+    'documents',
+    DOCUMENTS_PAGE_DEFAULTS as DocumentsPageContent & Record<string, unknown>,
+  ) as DocumentsPageContent
+
+  const cmsHero = mediaUrl(data.hero.image)
+  const companyIllustration =
+    mediaUrl(data.company_illustration) || DOCUMENTS_COMPANY_ILLUSTRATION_FALLBACK
+
+  const faqItems = data.faq_items.map((item) => ({
+    question: item.question,
+    answer: item.answer,
+    active: item.open_by_default,
+  }))
+
   return (
     <>
       <section className="documents-hero">
         <div className="documents-hero-content">
           <div className="documents-hero-text">
-            <h1 className="documents-hero-title">Документы и сертификаты</h1>
-            <p className="documents-hero-description">
-              Полная прозрачность и соответствие стандартам. Мы предоставляем всю необходимую документацию для работы.
-            </p>
+            <h1 className="documents-hero-title">{data.hero.title}</h1>
+            <p className="documents-hero-description">{data.hero.description}</p>
           </div>
           <div className="documents-hero-image">
-            <picture>
-              <source type="image/avif" srcSet="/docs-hero@2x.avif 2x, /docs-hero.avif 1x" />
-              <source type="image/webp" srcSet="/docs-hero@2x.webp 2x, /docs-hero.webp 1x" />
-              <source type="image/png" srcSet="/docs-hero@2x.png 2x, /docs-hero.png 1x" />
-              <img src="/docs-hero.png" alt="Интерьер спальни" />
-            </picture>
+            {cmsHero ? (
+              <img src={cmsHero} alt={data.hero.image_alt || ''} />
+            ) : (
+              <picture>
+                <source type="image/avif" srcSet={DOCUMENTS_HERO_PICTURE.avif} />
+                <source type="image/webp" srcSet={DOCUMENTS_HERO_PICTURE.webp} />
+                <source type="image/png" srcSet={DOCUMENTS_HERO_PICTURE.png} />
+                <img src={DOCUMENTS_HERO_PICTURE.src} alt={data.hero.image_alt || ''} />
+              </picture>
+            )}
           </div>
         </div>
       </section>
@@ -70,26 +54,38 @@ export function DocumentsPage() {
       <section className="documents-certification">
         <div className="documents-certification-header">
           <div className="documents-certification-header-left">
-            <h2 className="section-title">Официальная сертификация</h2>
+            <h2 className="section-title">{data.certificates_title}</h2>
           </div>
           <div className="documents-certification-header-right">
             <p className="documents-certification-intro" />
           </div>
         </div>
         <div className="documents-certification-grid">
-          {certificates.map((document) => (
-            <div className="documents-cert-card" data-document={document.id} data-document-card key={document.id}>
+          {data.certificates.map((document) => (
+            <div
+              className="documents-cert-card"
+              data-document={document.document_key}
+              data-document-card
+              key={document.document_key}
+            >
               <div className="documents-cert-icon">
                 <img src="/document.svg" alt="" />
               </div>
               <h3 className="documents-cert-title">{document.title}</h3>
-              <span className="documents-cert-type">{document.type}</span>
+              <span className="documents-cert-type">{document.type_label}</span>
               <div className="documents-cert-footer">
-                <a href="#" className="documents-cert-download" data-document-request-trigger>
-                  ЗАПРОСИТЬ
+                <a
+                  href="#"
+                  className="documents-cert-download"
+                  data-document-request-trigger
+                  aria-label={document.request_aria_label || document.request_label}
+                >
+                  {document.request_label || 'ЗАПРОСИТЬ'}
                   <img src="/arrow-down.svg" alt="" className="arrow-down" />
                 </a>
-                <span className="documents-cert-size">{document.size}</span>
+                {document.size_label ? (
+                  <span className="documents-cert-size">{document.size_label}</span>
+                ) : null}
               </div>
             </div>
           ))}
@@ -99,27 +95,34 @@ export function DocumentsPage() {
       <section className="documents-commercial">
         <div className="documents-commercial-content">
           <div className="documents-commercial-left">
-            <h2 className="section-title documents-commercial-title">О компании Grassigrosso</h2>
+            <h2 className="section-title documents-commercial-title">{data.company_title}</h2>
             <div className="documents-commercial-icon">
-              <img src="/catalog-illustration.svg" alt="" />
+              <img src={companyIllustration} alt="" />
             </div>
           </div>
           <div className="documents-commercial-right">
             <div className="documents-commercial-list">
-              {companyDocuments.map((document) => (
-                <div className="documents-commercial-item" data-document={document.id} data-document-card key={document.id}>
+              {data.company_documents.map((document) => (
+                <div
+                  className="documents-commercial-item"
+                  data-document={document.document_key}
+                  data-document-card
+                  key={document.document_key}
+                >
                   <div className="documents-commercial-item-icon">
                     <img src="/catalog.svg" alt="" />
                   </div>
                   <div className="documents-commercial-item-content">
                     <h3 className="documents-commercial-item-title">{document.title}</h3>
-                    <p className="documents-commercial-item-type">PDF документ</p>
+                    <p className="documents-commercial-item-type">
+                      {document.type_label || 'PDF документ'}
+                    </p>
                   </div>
                   <a
                     href="#"
                     className="documents-commercial-item-download"
                     data-document-request-trigger
-                    aria-label={document.label}
+                    aria-label={document.request_aria_label || document.title}
                   >
                     <img src="/arrow-down.svg" alt="" />
                   </a>
@@ -133,12 +136,12 @@ export function DocumentsPage() {
       <section className="documents-help">
         <div className="documents-help-content">
           <div className="documents-help-left">
-            <h2 className="section-title">Нужна помощь с документами?</h2>
+            <h2 className="section-title">{data.help_title}</h2>
           </div>
           <div className="documents-help-right">
-            <p className="documents-help-text">Наши менеджеры готовы предоставить любые необходимые документы по запросу</p>
+            <p className="documents-help-text">{data.help_body}</p>
             <a href="#" className="btn-primary-large" data-open-help-modal>
-              Связаться с менеджером
+              {data.help_cta_label}
             </a>
           </div>
         </div>
@@ -147,7 +150,7 @@ export function DocumentsPage() {
       <FaqSection
         items={faqItems}
         sectionClassName="documents-faq"
-        title="Часто задаваемые вопросы"
+        title={data.faq_title}
         toggleElement="div"
       />
     </>

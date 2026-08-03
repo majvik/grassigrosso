@@ -1,7 +1,7 @@
 # Pages CMS Phase 4 — React hydrate (execution plan)
 
 **Date:** 2026-08-03
-**Status:** Phase A–B accepted; Phase C harden (product `currentSrc`) DONE (local) — awaiting accept. No push / no `strapi:sync-seed`.
+**Status:** Phase A–C accepted; Phase D DONE (local) — awaiting accept. No push / no `strapi:sync-seed`.
 **Design:** [2026-08-03-pages-cms-react-hydrate-design.md](../specs/2026-08-03-pages-cms-react-hydrate-design.md)
 **GSD phase:** `.planning/phases/04-react-hydrate/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -36,8 +36,8 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 | Design + plan draft v2 | merge/lifecycle/DOM locks | affirmed |
 | Phase A | client + merge + unit harness | DONE — accepted |
 | Phase B | index + download-catalog texts + DOM slice | DONE — accepted (`a537e6f` + `825deb0`) |
-| Phase C | hotels + dealers + DOM slice | DONE — harden (product currentSrc) awaiting accept |
-| Phase D | contacts + documents + map + DOM slice | not started |
+| Phase C | hotels + dealers + DOM slice | DONE — accepted (`97ab57e` + `02d254b`) |
+| Phase D | contacts + documents + map + DOM slice | DONE — awaiting accept |
 | Phase E | full unit + DOM (all 6) + FE-* docs | not started |
 
 ---
@@ -152,10 +152,18 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 
 ### Verify
 
-| Command | Expected |
-|---------|----------|
-| Hydrate unit + DOM (contacts + documents) | PASS |
-| Isolation + typecheck | PASS |
+| Command | Expected | Result (2026-08-04) |
+|---------|----------|---------------------|
+| Hydrate unit + DOM (contacts + documents) | PASS | PASS (DOM all 6 pages) |
+| Isolation + typecheck | PASS | PASS |
+
+### Delivered
+
+- `contacts-page-defaults.ts` / `documents-page-defaults.ts` + `usePageCms`
+- Map: `src={map_embed_url}` only; null → placeholder; `contacts-maps.js` skips embed frames
+- Slot allowlists: contacts 4 sections / 4 offices; documents 5 sections / cert+company keys
+- Fixtures: contacts seed keeps `map_iframe_html`; snapshot public `map_embed_url`
+- DOM: embed marker, null-map placeholders, document hooks, no `map_iframe_html`
 
 ---
 

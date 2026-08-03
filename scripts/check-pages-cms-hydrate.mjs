@@ -748,6 +748,59 @@ function assertUnchanged(fallback, before, label) {
   assert(dealersProjection.requirements.length === 2, 'dealers defaults: 2 requirements')
   assert(dealersProjection.faq_items.length === 3, 'dealers defaults: 3 faq')
 
+  const CONTACTS_PAGE_DEFAULTS = await bundleDefaults(
+    'src/components/pages/contacts-page-defaults.ts',
+    'CONTACTS_PAGE_DEFAULTS',
+  )
+  const contactsProjection = JSON.parse(JSON.stringify(CONTACTS_PAGE_DEFAULTS))
+  const contactsFixture = readFixture('contacts')
+  const contactsSnap = JSON.parse(
+    fs.readFileSync(path.join(root, 'public/pages-contacts.snapshot.json'), 'utf8'),
+  )
+  assert(deepEqual(contactsProjection, contactsFixture), 'contacts defaults must equal fixture (public)')
+  assert(deepEqual(contactsProjection, contactsSnap), 'contacts defaults must equal snapshot')
+  assert(contactsProjection.offices.length === 4, 'contacts defaults: 4 offices')
+  assert(
+    contactsProjection.offices.map((o) => o.slug).join(',') === 'main,voronezh,lnr,dnr',
+    'contacts defaults: office slug order',
+  )
+  assert(
+    contactsProjection.offices.every(
+      (o) =>
+        o.map_embed_url === null ||
+        (typeof o.map_embed_url === 'string' && o.map_embed_url.startsWith('https://yandex.ru/map-widget/')),
+    ),
+    'contacts defaults: map_embed_url null or allowlisted',
+  )
+  assert(!JSON.stringify(contactsProjection).includes('map_iframe_html'), 'contacts defaults must not leak map_iframe_html')
+  assert(
+    contactsProjection.contact_info.map((i) => i.icon_key).join(',') === 'phone,email,location',
+    'contacts defaults: contact icon_key order',
+  )
+
+  const DOCUMENTS_PAGE_DEFAULTS = await bundleDefaults(
+    'src/components/pages/documents-page-defaults.ts',
+    'DOCUMENTS_PAGE_DEFAULTS',
+  )
+  const documentsProjection = JSON.parse(JSON.stringify(DOCUMENTS_PAGE_DEFAULTS))
+  const documentsFixture = readFixture('documents')
+  const documentsSnap = JSON.parse(
+    fs.readFileSync(path.join(root, 'public/pages-documents.snapshot.json'), 'utf8'),
+  )
+  assert(deepEqual(documentsProjection, documentsFixture), 'documents defaults must equal fixture')
+  assert(deepEqual(documentsProjection, documentsSnap), 'documents defaults must equal snapshot')
+  assert(
+    documentsProjection.certificates.map((c) => c.document_key).join(',') ===
+      'declaration,certificate,trademark',
+    'documents defaults: certificate keys',
+  )
+  assert(
+    documentsProjection.company_documents.map((c) => c.document_key).join(',') ===
+      'catalog,presentation',
+    'documents defaults: company keys',
+  )
+  assert(documentsProjection.faq_items.length === 3, 'documents defaults: 3 faq')
+
   const DOWNLOAD_CATALOG_TEXT_DEFAULTS = await bundleDefaults(
     'src/components/pages/DownloadCatalogPage.tsx',
     'DOWNLOAD_CATALOG_TEXT_DEFAULTS',
@@ -767,7 +820,7 @@ function assertUnchanged(fallback, before, label) {
   }
 }
 
-// --- Phase C: email routing keys for hotels/dealers unchanged ---
+// --- Phase C/D: email routing keys unchanged ---
 {
   const contactForms = fs.readFileSync(path.join(root, 'src/contact-forms.js'), 'utf8')
   const server = fs.readFileSync(path.join(root, 'server.cjs'), 'utf8')
@@ -780,12 +833,28 @@ function assertUnchanged(fallback, before, label) {
     'getPageName dealers key must stay Страница "Дилерам"',
   )
   assert(
+    /contacts:\s*'Страница "Контакты"'/.test(contactForms),
+    'getPageName contacts key must stay Страница "Контакты"',
+  )
+  assert(
     /'Страница "Отелям"'\s*:\s*\[['"]hotels@grassigrosso\.com['"]\]/.test(server),
     'PAGE_EMAIL_ROUTING hotels label unchanged',
   )
   assert(
     /'Страница "Дилерам"'\s*:\s*\[['"]b2b@grassigrosso\.com['"]\]/.test(server),
     'PAGE_EMAIL_ROUTING dealers label unchanged',
+  )
+  assert(
+    /'Страница "Контакты"'\s*:\s*\[['"]sales@grassigrosso\.com['"]\]/.test(server),
+    'PAGE_EMAIL_ROUTING contacts label unchanged',
+  )
+  assert(
+    /'Документы'\s*:\s*\[['"]sales@grassigrosso\.com['"]\]/.test(server),
+    'PAGE_EMAIL_ROUTING Документы unchanged',
+  )
+  assert(
+    /'Документы \(помощь\)'\s*:\s*\[['"]sales@grassigrosso\.com['"]\]/.test(server),
+    'PAGE_EMAIL_ROUTING Документы (помощь) unchanged',
   )
 }
 

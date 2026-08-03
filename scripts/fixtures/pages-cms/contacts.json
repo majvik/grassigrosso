@@ -1,11 +1,11 @@
 {
   "hero": {
     "title": "Контакты",
-    "description": "Свяжитесь с нами удобным способом.",
+    "description": "Свяжитесь с нами удобным способом. Мы всегда готовы ответить на ваши вопросы.",
     "image": {
       "url": "/contacts-hero.png"
     },
-    "image_alt": "Офис",
+    "image_alt": "Интерьер спальни",
     "cta_label": "",
     "cta_url": ""
   },
@@ -36,6 +36,32 @@
       "email": "voronezh@grassigrosso.com",
       "schedule": "Пн-Пт: 9:00 - 18:00",
       "map_iframe_html": "<iframe src=\"https://yandex.ru/map-widget/v1/?ll=39.297287%2C51.681129&z=16\" width=\"100%\" height=\"400\" frameborder=\"0\"></iframe>"
+    },
+    {
+      "slug": "lnr",
+      "tab_label": "ЛНР",
+      "badge": "Представительство",
+      "city": "Луганск",
+      "region": "Луганская Народная Республика",
+      "address": "ул. Фабричная д 1",
+      "phone": "+7 (959) 201-18-08",
+      "phone_href": "tel:+79592011808",
+      "email": "LNR@grassigrosso.com",
+      "schedule": "Пн-Пт: 9:00 - 18:00",
+      "map_iframe_html": "<iframe src=\"https://yandex.ru/map-widget/v1/?ll=39.32438%2C48.541403&z=16\" width=\"100%\" height=\"400\" frameborder=\"0\"></iframe>"
+    },
+    {
+      "slug": "dnr",
+      "tab_label": "ДНР",
+      "badge": "Представительство",
+      "city": "Харцизск",
+      "region": "Донецкая Народная Республика",
+      "address": "ул. Вокзальная, д. 52",
+      "phone": "+7 (949) 410-67-60",
+      "phone_href": "tel:+79494106760",
+      "email": "DNR@grassigrosso.com",
+      "schedule": "Пн-Пт: 8:00 - 17:00",
+      "map_iframe_html": "<iframe src=\"https://yandex.ru/map-widget/v1/?ll=38.147954%2C48.035223&z=16\" width=\"100%\" height=\"400\" frameborder=\"0\"></iframe>"
     }
   ],
   "map_title": "Как нас найти",
@@ -53,7 +79,7 @@
     {
       "title": "Email",
       "value": "sales@grassigrosso.com",
-      "note": "Ответим в течение 24 часов",
+      "note": "Ответим в течение 24 часов в рамках рабочего времени",
       "href": "mailto:sales@grassigrosso.com",
       "icon_key": "email"
     },

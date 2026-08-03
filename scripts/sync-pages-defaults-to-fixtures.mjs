@@ -3,14 +3,11 @@
  * Sync pages-cms fixtures + public snapshots for wired Phase 4 pages
  * from hardcoded React defaults (CMS-owned projection).
  *
- * - index: full INDEX_PAGE_DEFAULTS → fixture + snapshot
- * - hotels: full HOTELS_PAGE_DEFAULTS → fixture + snapshot
- * - dealers: full DEALERS_PAGE_DEFAULTS → fixture + snapshot
- * - download-catalog: DOWNLOAD_CATALOG_TEXT_DEFAULTS → snapshot;
- *   fixture keeps slides/slider fields from existing fixture, replaces texts
+ * - index/hotels/dealers/contacts/documents: full defaults → fixture + snapshot
+ *   contacts fixture stores map_iframe_html (Strapi seed shape); snapshot uses map_embed_url
+ * - download-catalog: texts → snapshot; fixture keeps slides/slider fields
  *
- * Does NOT run strapi:sync-seed. Local Strapi seed still needs fixtures re-seed
- * when editors want Strapi to match (separate request).
+ * Does NOT run strapi:sync-seed.
  */
 import fs from 'node:fs'
 import os from 'node:os'
@@ -69,6 +66,19 @@ function cmsProjection(defaults) {
   return JSON.parse(JSON.stringify(defaults))
 }
 
+/** Public map_embed_url → Strapi seed map_iframe_html (phase-a positive fixtures). */
+function contactsFixtureFromPublic(publicContacts) {
+  return {
+    ...publicContacts,
+    offices: publicContacts.offices.map(({ map_embed_url, ...rest }) => ({
+      ...rest,
+      map_iframe_html: map_embed_url
+        ? `<iframe src="${map_embed_url}" width="100%" height="400" frameborder="0"></iframe>`
+        : '',
+    })),
+  }
+}
+
 const { INDEX_PAGE_DEFAULTS } = await bundleExport('src/components/pages/index-page-defaults.ts', [
   'INDEX_PAGE_DEFAULTS',
 ])
@@ -79,6 +89,14 @@ const { DEALERS_PAGE_DEFAULTS } = await bundleExport(
   'src/components/pages/dealers-page-defaults.ts',
   ['DEALERS_PAGE_DEFAULTS'],
 )
+const { CONTACTS_PAGE_DEFAULTS } = await bundleExport(
+  'src/components/pages/contacts-page-defaults.ts',
+  ['CONTACTS_PAGE_DEFAULTS'],
+)
+const { DOCUMENTS_PAGE_DEFAULTS } = await bundleExport(
+  'src/components/pages/documents-page-defaults.ts',
+  ['DOCUMENTS_PAGE_DEFAULTS'],
+)
 const { DOWNLOAD_CATALOG_TEXT_DEFAULTS } = await bundleExport(
   'src/components/pages/DownloadCatalogPage.tsx',
   ['DOWNLOAD_CATALOG_TEXT_DEFAULTS'],
@@ -87,11 +105,15 @@ const { DOWNLOAD_CATALOG_TEXT_DEFAULTS } = await bundleExport(
 const indexCms = cmsProjection(INDEX_PAGE_DEFAULTS)
 const hotelsCms = cmsProjection(HOTELS_PAGE_DEFAULTS)
 const dealersCms = cmsProjection(DEALERS_PAGE_DEFAULTS)
+const contactsCms = cmsProjection(CONTACTS_PAGE_DEFAULTS)
+const documentsCms = cmsProjection(DOCUMENTS_PAGE_DEFAULTS)
 const downloadTexts = cmsProjection(DOWNLOAD_CATALOG_TEXT_DEFAULTS)
 
 writeJson(path.join(fixturesDir, 'index.json'), indexCms)
 writeJson(path.join(fixturesDir, 'hotels.json'), hotelsCms)
 writeJson(path.join(fixturesDir, 'dealers.json'), dealersCms)
+writeJson(path.join(fixturesDir, 'contacts.json'), contactsFixtureFromPublic(contactsCms))
+writeJson(path.join(fixturesDir, 'documents.json'), documentsCms)
 
 const downloadFixturePath = path.join(fixturesDir, 'download-catalog.json')
 const prevDownload = JSON.parse(fs.readFileSync(downloadFixturePath, 'utf8'))
@@ -106,6 +128,8 @@ writeJson(downloadFixturePath, downloadFixture)
 writeJson(path.join(publicDir, 'pages-index.snapshot.json'), indexCms)
 writeJson(path.join(publicDir, 'pages-hotels.snapshot.json'), hotelsCms)
 writeJson(path.join(publicDir, 'pages-dealers.snapshot.json'), dealersCms)
+writeJson(path.join(publicDir, 'pages-contacts.snapshot.json'), contactsCms)
+writeJson(path.join(publicDir, 'pages-documents.snapshot.json'), documentsCms)
 writeJson(path.join(publicDir, 'pages-download-catalog.snapshot.json'), downloadTexts)
 
 /** Recompute manifest hashes from on-disk snapshot files (all six). */
@@ -131,11 +155,8 @@ if (fails.length) {
   process.exit(1)
 }
 
-console.log(
-  `Synced index + hotels + dealers + download-catalog fixtures/snapshots (${PAGES_SNAPSHOT_MANIFEST_NAME} ok)`,
-)
-console.log(`  index sha256=${sha256BySlug.index.slice(0, 12)}…`)
-console.log(`  hotels sha256=${sha256BySlug.hotels.slice(0, 12)}…`)
-console.log(`  dealers sha256=${sha256BySlug.dealers.slice(0, 12)}…`)
-console.log(`  download-catalog sha256=${sha256BySlug['download-catalog'].slice(0, 12)}…`)
+console.log(`Synced all six pages fixtures/snapshots (${PAGES_SNAPSHOT_MANIFEST_NAME} ok)`)
+for (const slug of PAGES_CMS_SLUGS) {
+  console.log(`  ${slug} sha256=${sha256BySlug[slug].slice(0, 12)}…`)
+}
 console.log('Note: local Strapi .tmp not updated (no seed / no sync-seed).')

@@ -35,7 +35,9 @@ const pagesCmsPrefetchSlug = (() => {
     page === 'index' ||
     page === 'download-catalog' ||
     page === 'hotels' ||
-    page === 'dealers'
+    page === 'dealers' ||
+    page === 'contacts' ||
+    page === 'documents'
   ) {
     return page
   }
@@ -108,7 +110,7 @@ if (isDownloadCatalogPage) {
   })
 }
 
-// Wave-1 pages CMS texts (Phase 4B/C): early Node /api/pages/:slug prefetch.
+// Wave-1 pages CMS texts (Phase 4B–D): early Node /api/pages/:slug prefetch.
 if (pagesCmsPrefetchSlug) {
   void import('./pages/pages-api')
     .then((mod) => {

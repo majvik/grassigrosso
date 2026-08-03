@@ -1,30 +1,15 @@
 {
-  "certificates_title": "Официальная сертификация",
-  "company_title": "О компании Grassigrosso",
-  "help_title": "Нужна помощь с документами?",
-  "help_body": "Наши менеджеры готовы предоставить любые необходимые документы по запросу",
-  "help_cta_label": "Связаться с менеджером",
-  "faq_title": "Часто задаваемые вопросы",
-  "company_illustration": {
-    "url": "/uploads/pages_cms_9712b36309a10ac1_catalog_illustration_51c8a97540.svg"
-  },
-  "faq_items": [
-    {
-      "question": "Как быстро производите?",
-      "answer": "Стандартные сроки производства составляют 3 рабочих дня.",
-      "open_by_default": true
-    }
-  ],
   "hero": {
     "title": "Документы и сертификаты",
-    "description": "Полная прозрачность и соответствие стандартам.",
+    "description": "Полная прозрачность и соответствие стандартам. Мы предоставляем всю необходимую документацию для работы.",
+    "image": {
+      "url": "/docs-hero.png"
+    },
     "image_alt": "Интерьер спальни",
     "cta_label": "",
-    "cta_url": "",
-    "image": {
-      "url": "/uploads/pages_cms_ffddab079003200c_docs_hero_389f5fb6e7.png"
-    }
+    "cta_url": ""
   },
+  "certificates_title": "Официальная сертификация",
   "certificates": [
     {
       "document_key": "declaration",
@@ -35,7 +20,7 @@
       "request_aria_label": "Запросить декларацию",
       "kind": "certificate",
       "file": {
-        "url": "/uploads/pages_cms_322d850417ca10dc_cddc897c7a.pdf"
+        "url": "/documents/Deklaraciya.pdf"
       }
     },
     {
@@ -47,7 +32,7 @@
       "request_aria_label": "Запросить сертификат",
       "kind": "certificate",
       "file": {
-        "url": "/uploads/pages_cms_40b0de100852348b_ed72e0a508.pdf"
+        "url": "/documents/Sertifikat.pdf"
       }
     },
     {
@@ -59,10 +44,14 @@
       "request_aria_label": "Запросить свидетельство",
       "kind": "certificate",
       "file": {
-        "url": "/uploads/pages_cms_7dc3d1fde4f03025_b9ee1c704d.pdf"
+        "url": "/documents/Trademark.pdf"
       }
     }
   ],
+  "company_title": "О компании Grassigrosso",
+  "company_illustration": {
+    "url": "/catalog-illustration.svg"
+  },
   "company_documents": [
     {
       "document_key": "catalog",
@@ -73,7 +62,7 @@
       "request_aria_label": "Запросить каталог продукции",
       "kind": "company",
       "file": {
-        "url": "/uploads/pages_cms_c3fa0e1e51352ae7_Catalog_v1_2_5b54dc882c.pdf"
+        "url": "/documents/Catalog_v1.2.pdf"
       }
     },
     {
@@ -85,8 +74,29 @@
       "request_aria_label": "Запросить презентацию компании",
       "kind": "company",
       "file": {
-        "url": "/uploads/pages_cms_c28902ee89483dfc_Grassigrosso_company_2cdf014cf9.pdf"
+        "url": "/documents/presentation.pdf"
       }
+    }
+  ],
+  "help_title": "Нужна помощь с документами?",
+  "help_body": "Наши менеджеры готовы предоставить любые необходимые документы по запросу",
+  "help_cta_label": "Связаться с менеджером",
+  "faq_title": "Часто задаваемые вопросы",
+  "faq_items": [
+    {
+      "question": "Как быстро производите?",
+      "answer": "Стандартные сроки производства составляют 3 рабочих дня с момента подтверждения заказа. Для индивидуальных проектов сроки согласовываются отдельно.",
+      "open_by_default": true
+    },
+    {
+      "question": "Доставляете ли в регионы?",
+      "answer": "Да, мы осуществляем доставку по всей России. Стоимость и сроки доставки рассчитываются индивидуально в зависимости от региона и объема заказа.",
+      "open_by_default": false
+    },
+    {
+      "question": "Какие есть способы оплаты?",
+      "answer": "Мы принимаем все способы оплаты, а также работаем по системе отсрочки платежа для постоянных клиентов.\nВсе условия оплаты обсуждаются индивидуально.",
+      "open_by_default": false
     }
   ]
 }

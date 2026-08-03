@@ -18,7 +18,7 @@ function initContactMaps() {
 
   CONTACTS_OFFICES.forEach((office) => {
     const container = document.getElementById(`map-${office.id}`)
-    if (!container) return
+    if (!container || !frameNeedsJsMap(container)) return
 
     const map = new ymaps.Map(`map-${office.id}`, {
       center: office.center,
@@ -51,18 +51,18 @@ function initContactMaps() {
   })
 }
 
+function frameNeedsJsMap(frame) {
+  if (!frame) return false
+  if (frame.tagName === 'IFRAME') return false
+  if (frame.getAttribute('data-map-embed') === '1') return false
+  if (frame.querySelector('iframe')) return false
+  return true
+}
+
 export function initContactsMaps() {
   const contactsMapTabs = document.querySelectorAll('.contacts-map-tab, [data-map-tab]')
   const contactsMapFrames = document.querySelectorAll('.contacts-map-frame, [data-map-frame]')
   if (contactsMapTabs.length === 0 || contactsMapFrames.length === 0) return
-
-  const yandexMapsUrl = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU'
-    + (YANDEX_MAPS_API_KEY ? `&apikey=${encodeURIComponent(YANDEX_MAPS_API_KEY)}` : '')
-
-  const script = document.createElement('script')
-  script.src = yandexMapsUrl
-  script.onload = () => ymaps.ready(initContactMaps)
-  document.head.appendChild(script)
 
   contactsMapTabs.forEach((tab) => {
     tab.addEventListener('click', () => {
@@ -79,4 +79,15 @@ export function initContactsMaps() {
   if (firstTab && !firstTab.classList.contains('active')) {
     firstTab.classList.add('active')
   }
+
+  const jsMapFrames = [...contactsMapFrames].filter(frameNeedsJsMap)
+  if (jsMapFrames.length === 0) return
+
+  const yandexMapsUrl = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU'
+    + (YANDEX_MAPS_API_KEY ? `&apikey=${encodeURIComponent(YANDEX_MAPS_API_KEY)}` : '')
+
+  const script = document.createElement('script')
+  script.src = yandexMapsUrl
+  script.onload = () => ymaps.ready(initContactMaps)
+  document.head.appendChild(script)
 }

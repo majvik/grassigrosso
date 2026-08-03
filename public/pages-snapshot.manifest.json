@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-08-03T21:22:12.672Z",
+  "syncedAt": "2026-08-03T21:38:06.499Z",
   "slugs": [
     "index",
     "hotels",
@@ -12,8 +12,8 @@
     "index": "0820704d1ec6607698415b531c3d71b86f120d5999fafe41d4f071e729664e0f",
     "hotels": "2367654d957629c6372ccb761530766b3f1c6d9c67e426a1e54070db7100f7ba",
     "dealers": "66aae86cd06e179af76344178b2ee46f70a841f042e6ff28f2a78e5ba6840d65",
-    "contacts": "d2baad9e90aadb14635601e9de7afce88733ff52d217b4e9d774a8a3df7b5fe1",
-    "documents": "c516c3f1208cf19b1814fa60d9aa19d0ff91047b1d17497fc0f26cba1240cb6e",
+    "contacts": "b6e10c791bdf1ea75706372aa5cd629a98a085cfd265e8ebdd81ee513db25189",
+    "documents": "f48de928dd0d2cd34c39c00fa039cf01ff1671df56eeed041a446ee89acc96ea",
     "download-catalog": "076b49a23f1b2af991d9773c72a7a64e3b8d7a5d7fcba728f84a12e232eeeb53"
   }
 }

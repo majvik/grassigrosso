@@ -7383,6 +7383,17 @@ a:hover .arrow-medium {
   background-color: var(--color-partner-cell);
 }
 
+/* CMS embed iframe owns the same slot as the JS map placeholder. */
+iframe.contacts-map-frame[data-map-embed] {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1280 / 549;
+  border: 0;
+  border-radius: 24px;
+  background-color: var(--color-partner-cell);
+}
+
 /* Карта Яндекса: растягиваем на весь блок с сохранением пропорций (обесцвечивание слоя карты задаётся в main.js через API) */
 .contacts-map-placeholder > div,
 .contacts-map-placeholder iframe {
