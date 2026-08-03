@@ -1,9 +1,28 @@
+import { usePageCms } from '@/pages/use-page-cms'
 import styles from './download-catalog.module.css'
 
 const DOWNLOAD_SLIDE_COUNT = 8
 
 /** SSR/LCP fallback — basename must match slide #0 in Strapi + download-catalog-slides.snapshot.json */
 const DOWNLOAD_SLIDE_0_BASE = '/uploads/download_catalog_cover_4eb40d86f8'
+
+export type DownloadCatalogTextContent = {
+  title: string
+  lead: string
+  submit_label: string
+  back_label: string
+  back_href: string
+  catalog_pdf: { url: string } | null
+}
+
+export const DOWNLOAD_CATALOG_TEXT_DEFAULTS: DownloadCatalogTextContent = {
+  title: 'Скачать каталог',
+  lead: 'Оставьте контакты — пришлём PDF каталога.',
+  submit_label: 'Скачать каталог',
+  back_label: 'Назад в каталог',
+  back_href: '/catalog',
+  catalog_pdf: { url: '/uploads/pages_cms_c3fa0e1e51352ae7_Catalog_v1_2_5b54dc882c.pdf' },
+}
 
 function DownloadCatalogSlideZeroFallback() {
   return (
@@ -143,10 +162,17 @@ function HiddenTrapField() {
 }
 
 export function DownloadCatalogPage() {
+  const data = usePageCms(
+    'download-catalog',
+    DOWNLOAD_CATALOG_TEXT_DEFAULTS as DownloadCatalogTextContent & Record<string, unknown>,
+  ) as DownloadCatalogTextContent
+
+  const pdfUrl = data.catalog_pdf?.url || ''
+
   return (
     <section className={`catalogue-new-shared-product ${styles.page}`} aria-labelledby="download-catalog-title">
-      <a href="/catalog" className="catalogue-new-shared-back">
-        Назад в каталог
+      <a href={data.back_href || '/catalog'} className="catalogue-new-shared-back">
+        {data.back_label}
       </a>
 
       <div className="catalogue-new-shared-product-shell">
@@ -156,11 +182,21 @@ export function DownloadCatalogPage() {
 
         <div className="catalogue-new-shared-product-info">
           <h1 className="catalogue-new-shared-product-title" id="download-catalog-title">
-            Скачать каталог
+            {data.title}
           </h1>
+          {data.lead ? (
+            <p className={styles.lead} data-download-lead="">
+              {data.lead}
+            </p>
+          ) : null}
 
           <div className={styles.form}>
-            <form className="contact-form" data-contact-form data-download-doc="catalog">
+            <form
+              className="contact-form"
+              data-contact-form
+              data-download-doc="catalog"
+              data-catalog-pdf={pdfUrl || undefined}
+            >
               <HiddenTrapField />
               <div className="form-group" data-form-group>
                 <label htmlFor="name">Имя</label>
@@ -177,7 +213,7 @@ export function DownloadCatalogPage() {
               <div className="form-submit-group">
                 <PrivacyCheckbox />
                 <button type="submit" className="btn-primary" disabled>
-                  Скачать каталог
+                  {data.submit_label}
                 </button>
               </div>
             </form>

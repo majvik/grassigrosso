@@ -25,6 +25,13 @@
   pointer-events: none !important;
 }
 
+.lead {
+  margin: var(--space-3) 0 0;
+  color: var(--color-text-secondary, #5a6b64);
+  font-size: var(--font-size-body, 1rem);
+  line-height: 1.5;
+}
+
 .form {
   margin-top: var(--space-6);
 }

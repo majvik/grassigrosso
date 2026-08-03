@@ -29,6 +29,12 @@ import { initTestimonialsSlider } from './testimonials-slider'
 
 const isCatalogPage = document.body.dataset.page === 'catalog'
 const isDownloadCatalogPage = document.body.dataset.page === 'download-catalog'
+const pagesCmsPrefetchSlug =
+  document.body.dataset.page === 'index'
+    ? 'index'
+    : document.body.dataset.page === 'download-catalog'
+      ? 'download-catalog'
+      : null
 
 const reactEntryPromise = document.querySelector('[data-react-root]')
   ? import('./react-entry').catch((error) => {
@@ -94,6 +100,17 @@ if (isDownloadCatalogPage) {
     if (!heroSlider) return
     heroSlider.prefetchDownloadCatalogFeed()
   })
+}
+
+// Wave-1 pages CMS texts (Phase 4B): early Node /api/pages/:slug prefetch.
+if (pagesCmsPrefetchSlug) {
+  void import('./pages/pages-api')
+    .then((mod) => {
+      mod.prefetchPageContent(pagesCmsPrefetchSlug)
+    })
+    .catch(() => {
+      /* non-fatal: page hook will fetch on mount */
+    })
 }
 
 initPageLoad({

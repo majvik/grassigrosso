@@ -19,6 +19,7 @@ const full = process.env.PAGES_CMS_PHASE_E_FULL === '1' || process.argv.includes
 const steps = [
   ['check:pages-cms-isolation', ['run', 'check:pages-cms-isolation']],
   ['check:pages-cms-hydrate', ['run', 'check:pages-cms-hydrate']],
+  ['check:pages-cms-hydrate-dom', ['run', 'check:pages-cms-hydrate-dom']],
   ['check:pages-cms-phase-a', ['run', 'check:pages-cms-phase-a']],
   ['check:pages-cms-strict', ['run', 'check:pages-cms-strict']],
   ['check:pages-cms-catalog-scope', ['run', 'check:pages-cms-catalog-scope']],

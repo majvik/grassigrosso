@@ -1,7 +1,7 @@
 # Pages CMS Phase 4 — React hydrate (design)
 
 **Date:** 2026-08-03
-**Status:** draft v2 affirmed; Phase A implemented — awaiting accept before B
+**Status:** Phase A accepted; Phase B implemented — awaiting accept before C
 **Depends on:** Phase 3 Complete (A–E accepted, `ad0d279`)
 **Requirements:** FE-01 … FE-05 (+ QA-01/02/03 locality)
 **Non-goals this phase:** Legal hydrate (Phase 6), catalog product/filter changes, email routing CMS, push/deploy, `strapi:sync-seed` unless separately requested, Phase 5 full milestone gate (beyond hydrate-specific harnesses)

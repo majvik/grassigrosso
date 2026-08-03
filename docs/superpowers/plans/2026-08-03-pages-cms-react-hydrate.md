@@ -1,7 +1,7 @@
 # Pages CMS Phase 4 — React hydrate (execution plan)
 
 **Date:** 2026-08-03
-**Status:** Phase A DONE (local) — awaiting accept; B–E not started. No page JSX wiring. No push / no `strapi:sync-seed`.
+**Status:** Phase A accepted (`686c584` + hydrate import fix); Phase B DONE (local) — awaiting accept. No push / no `strapi:sync-seed`.
 **Design:** [2026-08-03-pages-cms-react-hydrate-design.md](../specs/2026-08-03-pages-cms-react-hydrate-design.md)
 **GSD phase:** `.planning/phases/04-react-hydrate/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -33,8 +33,8 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 |------|--------------------|--------|
 | Design + plan draft v1 | Option B sketch | superseded by v2 |
 | Design + plan draft v2 | merge/lifecycle/DOM locks | affirmed |
-| Phase A | client + merge + unit harness | DONE (harden descriptors) — awaiting accept |
-| Phase B | index + download-catalog texts + DOM slice | not started |
+| Phase A | client + merge + unit harness | DONE — accepted |
+| Phase B | index + download-catalog texts + DOM slice | DONE — awaiting accept |
 | Phase C | hotels + dealers + DOM slice | not started |
 | Phase D | contacts + documents + map + DOM slice | not started |
 | Phase E | full unit + DOM (all 6) + FE-* docs | not started |
@@ -89,6 +89,14 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 2. Preserve code hooks (design critical selectors).
 3. Slides path untouched.
 4. DOM harness cases for these two pages: delayed / success / failure / no raw HTML; FE-05 parity geometry on index (and download chrome left/width).
+
+### Post-verify (Phase B)
+
+- `IndexPage` + `DownloadCatalogPage` texts via `usePageCms`; slides path untouched
+- `INDEX_PAGE_DEFAULTS` / `DOWNLOAD_CATALOG_TEXT_DEFAULTS`; critical hooks preserved
+- `main.js` prefetch for `index` + `download-catalog`; `index.html` `data-page="index"`
+- `npm run check:pages-cms-hydrate-dom` — delayed / failure / success / FE-05 for both pages
+- Evidence: hydrate unit + DOM + isolation + typecheck PASS; no hotels/dealers/contacts/documents wiring
 
 ### Verify
 

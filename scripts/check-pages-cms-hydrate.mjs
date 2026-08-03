@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Phase 4A unit harness: merge semantics, client lifecycle, mount guard, pages-api isolation.
+ * Phase 4A unit harness: schema-derived merge, coverage, lifecycle, mount guard.
  * Bundles src/pages/*.ts via esbuild (repo has no tsx; root package is commonjs).
  */
 import fs from 'node:fs'
@@ -114,7 +114,6 @@ function assertUnchanged(fallback, before, label) {
     assert(merged.ok, `parity ${slug}: ${merged.ok === false ? merged.reason : ''}`)
     assertUnchanged(fixture, before, `parity ${slug}`)
     if (merged.ok) {
-      // Spot-check behavior + content arrays survived
       assert(deepEqual(merged.value, fixture), `parity ${slug} value equals fixture`)
     }
   }
@@ -145,7 +144,6 @@ function assertUnchanged(fallback, before, label) {
     assert(heroMedia.fields[k]?.kind === 'media' && heroMedia.fields[k].optional === true, `${k} optional media`)
   }
 
-  // optional hero.image null accept
   const hotels = readFixture('hotels')
   const beforeH = structuredClone(hotels)
   const heroImgNull = mergePageContent('hotels', hotels, {
@@ -154,7 +152,6 @@ function assertUnchanged(fallback, before, label) {
   assert(heroImgNull.ok, `optional hero.image null: ${heroImgNull.ok === false ? heroImgNull.reason : ''}`)
   assertUnchanged(hotels, beforeH, 'hero.image null')
 
-  // product / collection image null accept
   const productNull = mergePageContent('hotels', hotels, {
     products: hotels.products.map((p) => ({ ...p, image: null })),
   })
@@ -173,20 +170,17 @@ function assertUnchanged(fallback, before, label) {
   })
   assert(posterNull.ok, `optional poster/video null: ${posterNull.ok === false ? posterNull.reason : ''}`)
 
-  // optional string ""
   const descEmpty = mergePageContent('hotels', hotels, {
     hero: { ...hotels.hero, description: '' },
   })
   assert(descEmpty.ok, `optional hero.description "": ${descEmpty.ok === false ? descEmpty.reason : ''}`)
 
-  // required string ""
   const titleEmpty = mergePageContent('hotels', hotels, {
     hero: { ...hotels.hero, title: '' },
   })
   assert(!titleEmpty.ok, 'required hero.title "" must reject')
   assertUnchanged(hotels, beforeH, 'required title empty')
 
-  // required media null — none in wave-1 schemas; assert + synthetic
   const requiredMedia = PAGES_CMS_SLUGS.flatMap((s) => listRequiredMediaPaths(s))
   assert(requiredMedia.length === 0, `unexpected required media: ${requiredMedia.join(',')}`)
   const synth = applyFieldDescForTests('synth.image', null, { kind: 'media', optional: false })
@@ -194,7 +188,6 @@ function assertUnchanged(fallback, before, label) {
   const synthOpt = applyFieldDescForTests('synth.image', null, { kind: 'media', optional: true })
   assert(synthOpt.ok && synthOpt.value === null, 'synthetic optional media null accept')
 
-  // unknown key on each major descriptor type
   for (const uid of [
     'page.hero',
     'page.hero-media',
@@ -218,9 +211,6 @@ function assertUnchanged(fallback, before, label) {
       else if (f.kind === 'media') sample[k] = null
       else if (f.kind === 'contentArray') sample[k] = []
       else if (f.kind === 'behaviorArray') sample[k] = []
-      else if (f.kind === 'component' || f.kind === 'object') {
-        /* skip nested for unknown-key probe */
-      }
     }
     sample.__unknown__ = true
     const hit = applyFieldDescForTests(uid, sample, desc)

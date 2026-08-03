@@ -1,6 +1,6 @@
 /**
- * Hardcoded-first CMS hydrate hook (Phase 4A).
- * Page wiring lands in Phase B+; not imported by page JSX in Phase A.
+ * Hardcoded-first CMS hydrate hook (Phase 4).
+ * Wired for index + download-catalog texts in Phase B; other pages in C–D.
  */
 import { useEffect, useRef, useState } from 'react'
 import type { PagesCmsSlug } from './pages-cms-constants'
