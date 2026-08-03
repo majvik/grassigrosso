@@ -1,7 +1,7 @@
 # Pages CMS Phase 3 — feeds, proxy & seed (execution plan)
 
 **Date:** 2026-08-03
-**Status:** IN PROGRESS — Phase A complete; Phase B next
+**Status:** IN PROGRESS — Phase A+B complete; Phase C next
 **Design:** [2026-08-03-pages-cms-feeds-proxy-seed-design.md](../specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md)
 **GSD phase:** `.planning/phases/03-feeds-proxy-seed/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -33,9 +33,9 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 |------|--------------------|--------|
 | Spec + plan v1 | `5f76aa0` | superseded by revision |
 | Spec + plan revision | `4cf5b13` | affirmed |
-| Phase A | `a63dd8c` | superseded — texts/slides mix + scripts runtime |
-| Phase A fix | download-catalog texts isolation + Strapi `pages-cms/utils` runtime | PASS — phase-a + strict + distUtils |
-| Phase B+ | — | not started |
+| Phase A fix | `4ed8476` | PASS — texts isolation + Strapi utils |
+| Phase B | `npm run check:pages-cms-phase-b` | PASS — seed×2, missing-file, catalog IDs, backup |
+| Phase C+ | — | not started |
 
 ---
 
