@@ -12,7 +12,7 @@ Milestone **v1.1** делает маркетинговые тексты волн
 
 - [x] **Phase 1: Shared Page Components** - Переиспользуемые `page.*` блоки с русскими лейблами
 - [x] **Phase 2: Wave 1 Single Types** - Single types страниц + расширение download-catalog + полный `ru.json`
-- [ ] **Phase 3: Feeds, Proxy & Seed** - Публичные feeds, `GET /api/pages/:slug`, snapshots, seed из React (E isolation re-accept)
+- [x] **Phase 3: Feeds, Proxy & Seed** - Публичные feeds, `GET /api/pages/:slug`, snapshots, seed из React
 - [ ] **Phase 4: React Hydrate** - Волны 1 страницы берут контент из Node API без поломки layout и email-routing
 - [ ] **Phase 5: Local Acceptance Gate** - Полное автотестовое покрытие и локальный green verify; без push/deploy
 - [ ] **Phase 6: Legal Pages** - Privacy / terms / cookies в CMS + hydrate `legal-content.tsx`
@@ -122,7 +122,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Shared Page Components | 1/1 | Complete | 2026-08-03 |
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) | 2026-08-03 |
-| 3. Feeds, Proxy & Seed | 1/1 | Pending Phase E re-accept (isolation harden) | 2026-08-03 |
+| 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) | 2026-08-03 |
 | 4. React Hydrate | 0/TBD | Not started | - |
 | 5. Local Acceptance Gate | 0/TBD | Not started | - |
 | 6. Legal Pages | 0/TBD | Not started | - |

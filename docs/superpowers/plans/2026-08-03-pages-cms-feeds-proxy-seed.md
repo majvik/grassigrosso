@@ -1,7 +1,7 @@
 # Pages CMS Phase 3 — feeds, proxy & seed (execution plan)
 
 **Date:** 2026-08-03
-**Status:** IN PROGRESS — Phase E isolation harden (untracked scan + negatives); awaiting re-accept. No push / no `strapi:sync-seed`.
+**Status:** DONE — Phase 3 A–E accepted locally (`ad0d279`); Phase 4 hydrate next. No push / no `strapi:sync-seed`.
 **Design:** [2026-08-03-pages-cms-feeds-proxy-seed-design.md](../specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md)
 **GSD phase:** `.planning/phases/03-feeds-proxy-seed/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -37,7 +37,7 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 | Phase B | `npm run check:pages-cms-phase-b` | DONE — accepted (`f2a1a91`) |
 | Phase C | `npm run check:pages-cms-phase-c` | DONE — accepted (`26302bd`) |
 | Phase D | `npm run check:pages-api` + narrowed catalog-scope | DONE — accepted (`ead6d4d`) |
-| Phase E | `npm run check:pages-cms-phase-e` + typecheck + build | IN PROGRESS — isolation harden (fs walk + negatives) |
+| Phase E | `npm run check:pages-cms-phase-e` + typecheck + build | DONE — accepted (`ad0d279` fs walk + negatives) |
 
 ---
 
@@ -202,7 +202,7 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 - Wired: `check:pages-cms-isolation` into `npm run check`
 - Hole fixed: prior gate used `git ls-files` only and missed untracked probes
 - Evidence: untracked `:1337`+page-feed probe → FAIL; clean tree → PASS; phase-e / typecheck / build after harden
-- REQUIREMENTS API-01…06 marked Complete pending Phase E re-accept; ROADMAP Phase 3 Complete (local only) pending re-accept
+- Phase E accepted 2026-08-03; REQUIREMENTS API-01…06 Complete; ROADMAP Phase 3 Complete (local only)
 
 ---
 

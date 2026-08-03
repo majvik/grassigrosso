@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 3 E isolation harden (untracked scan + negatives), then Phase 4 hydrate. No `strapi:sync-seed` / no push unless asked.
+**Current focus:** Phase 4 — React hydrate from `GET /api/pages/:slug` (spec/plan first; no code until plan affirmed). No `strapi:sync-seed` / no push unless asked.
 
 ## Current Position
 
-Phase: 3 of 6 (Feeds, Proxy & Seed) — Phase E re-accept
-Plan: 03-01 IN PROGRESS (isolation hole fix)
-Status: Isolation scans filesystem (incl. untracked); negatives for `:1337` / page-feed / `VITE_STRAPI_*`
-Last activity: 2026-08-03 — fixed isolation `git ls-files` hole; awaiting Phase E re-accept
+Phase: 4 of 6 (React Hydrate) — NEXT
+Plan: 03-01 COMPLETE; 04-01 spec/plan awaiting affirm
+Status: Phase 3 A–E accepted (`ad0d279` isolation harden); preparing Phase 4 design
+Last activity: 2026-08-03 — Phase E accepted; Phase 3 marked Complete locally
 
-Progress: [█████████░] Phase 3 pending E re-accept
+Progress: [██████████] Phase 3 done; Phase 4 planning
 
 ## Performance Metrics
 
@@ -27,28 +27,29 @@ Progress: [█████████░] Phase 3 pending E re-accept
 |-------|-------|--------|
 | 1. Shared Page Components | 1/1 | Complete |
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) |
-| 3. Feeds, Proxy & Seed | 1/1 | Pending Phase E re-accept |
-| 4. React Hydrate | 0/TBD | Not started |
+| 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) |
+| 4. React Hydrate | 0/1 | Spec/plan draft — awaiting affirm |
 
 ## Accumulated Context
 
 ### Decisions
 
 - Page content only via Node `GET /api/pages/:slug` (`strapi|memory-cache|disk-snapshot`)
-- Frontend `src/` must not call Strapi page feeds / `:1337` (`check:pages-cms-isolation`)
+- Frontend `src/` must not call Strapi page feeds / `:1337` (`check:pages-cms-isolation`, fs walk + negatives)
 - Seed writes `.tmp` only; snapshots in `public/pages-*.snapshot.json`
 - Local-only: no push/PR/deploy; no sync-seed unless asked
+- Phase 4: hardcoded TSX = first paint; hydrate merges Node `data`; email/`data-*`/keys code-owned
 
 ### Pending Todos
 
-- Phase 4: React hydrate for wave-1 pages from Node pages API
+- Affirm Phase 4 design + execution plan, then implement hydrate (no code before affirm)
 
 ### Blockers/Concerns
 
-None for Phase 3.
+None.
 
 ## Session Continuity
 
 Last session: 2026-08-03
-Stopped at: Phase E isolation harden (fs walk + negatives) — awaiting re-accept
-Next: Phase E re-accept → close Phase 3 → Phase 4 hydrate
+Stopped at: Phase 3 COMPLETE; Phase 4 spec/plan prepared for affirm
+Next: User affirms Phase 4 plan → execute hydrate phases

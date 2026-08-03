@@ -89,4 +89,4 @@
 
 ---
 *Requirements defined: 2026-08-03*
-*Last updated: 2026-08-03 — Phase 3 API-01…06 marked Complete after Phase E local gate*
+*Last updated: 2026-08-03 — Phase 3 Complete (A–E accepted `ad0d279`); Phase 4 FE-* pending*
