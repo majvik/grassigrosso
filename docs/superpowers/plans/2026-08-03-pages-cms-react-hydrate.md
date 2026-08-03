@@ -1,7 +1,7 @@
 # Pages CMS Phase 4 — React hydrate (execution plan)
 
 **Date:** 2026-08-03
-**Status:** Phase A–D accepted; Phase E DONE (local) — FE-01…05 Complete. No push / no `strapi:sync-seed`.
+**Status:** Phase A–D accepted; Phase E harden (uploads self-clean) DONE locally — awaiting accept. No push / no `strapi:sync-seed`.
 **Design:** [2026-08-03-pages-cms-react-hydrate-design.md](../specs/2026-08-03-pages-cms-react-hydrate-design.md)
 **GSD phase:** `.planning/phases/04-react-hydrate/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -38,7 +38,14 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 | Phase B | index + download-catalog texts + DOM slice | DONE — accepted (`a537e6f` + `825deb0`) |
 | Phase C | hotels + dealers + DOM slice | DONE — accepted (`97ab57e` + `02d254b`) |
 | Phase D | contacts + documents + map + DOM slice | DONE — accepted (`72c3ab9` + `a7f5816`) |
-| Phase E | full unit + DOM (all 6) + FE-* docs | DONE — awaiting accept |
+| Phase E | full unit + DOM (all 6) + FE-* docs | DONE — harden uploads self-clean awaiting accept |
+
+### Phase E harden (uploads drift)
+
+- `scripts/lib/pages-cms-uploads-guard.mjs`: fingerprint = path+size+SHA-256; cleanup deletes additions only; missing/changed → FAIL
+- `check-pages-cms.mjs` full mode: probe (sentinel preserved + delete/change negatives); finally cleanup on PASS/FAIL/signal; porcelain postcondition
+- Removed leftover 26 untracked generated uploads from prior non-cleaning run
+- Verify 2026-08-04: full gate PASS + porcelain match; content fingerprint (path+size+SHA-256) + delete/change negatives PASS; awaiting accept (Phase E/5 not closed)
 
 ---
 
@@ -185,11 +192,11 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 | `check:pages-cms-hydrate` | PASS | PASS |
 | `check:pages-cms-hydrate-dom` (all 6 pages × scenarios) | PASS | PASS |
 | `check:pages-cms-isolation` | PASS | PASS |
-| `check:pages-cms-phase-e` (full=yes) | PASS | PASS (`check:pages-api` N1–N5 + catalog-api) |
+| `check:pages-cms-phase-e` (full=yes) | PASS | PASS + uploads self-clean + porcelain match (2026-08-04 harden) |
 | `typecheck` / `build` | PASS | PASS |
 | `check:routes` | PASS | PASS |
 | `check:catalog-api` (:3000) | PASS | PASS |
-| `git diff --check` | PASS | PASS (on committed tree) |
+| `git status --porcelain` vs pre-gate | match | enforced by gate finally |
 | Push / `strapi:sync-seed` | **not performed** | **not performed** |
 
 ### FE-* evidence
