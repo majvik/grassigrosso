@@ -95,7 +95,8 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 - `IndexPage` + `DownloadCatalogPage` texts via `usePageCms`; slides path untouched
 - `INDEX_PAGE_DEFAULTS` / `DOWNLOAD_CATALOG_TEXT_DEFAULTS`; critical hooks preserved
 - Fixtures + `public/pages-{index,download-catalog}.snapshot.json` synced from defaults (`pages:sync-defaults-fixtures`); unit gate defaults↔fixture↔snapshot
-- Code-owned `INDEX_CERTIFICATION_CARDS` (3) restored for first paint; CMS `docs` separate
+- Code-owned `INDEX_CERTIFICATION_CARDS` (3) are the complete Index certification surface; `index.docs` is merge-only and must not create a DOM consumer (`/documents` owns document cards)
+- DOM baseline uses an exact top-level section allowlist and exact certification-card count; extra CMS-driven section/card/grid → FAIL
 - `catalog_pdf` → `data-catalog-pdf` → `resolveDocumentDownloadHref` with `/api/download/catalog` fallback
 - DOM: delayed baseline counts; failure 404/503/network/invalid; success media/PDF; FE-05 top/left/width parity (section height stable)
 - Evidence: hydrate unit + DOM + isolation + typecheck PASS; no hotels/dealers/contacts/documents wiring; no seed/push

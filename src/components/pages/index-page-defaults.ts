@@ -31,7 +31,8 @@ export const INDEX_HIDDEN_COLLECTION_NAMES = new Set(['Viva Natura'])
 
 /**
  * Code-owned first-paint certification marketing cards (not CMS `docs`).
- * CMS `docs` remain behavior-bound document hooks rendered separately.
+ * CMS `index.docs` remains merge-only for contract compatibility and is not
+ * rendered on Index. Document-card UI belongs to /documents.
  */
 export type IndexCertificationCard = {
   title: string

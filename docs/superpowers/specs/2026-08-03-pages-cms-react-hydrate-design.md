@@ -170,6 +170,14 @@ Behavior-bound algorithm:
 
 Hooks/attrs/ids listed in content-contract `ownership: code` — including form chrome, `getPageName`, map tab wiring, slider setup, commercial-offer triggers. Merge allowlists omit them.
 
+### Visual-slot ownership (locked)
+
+- A CMS contract describes available data, **not permission to invent UI**.
+- Hydrate may replace content only inside a visual slot present in the accepted pre-CMS DOM baseline.
+- Adding a section/card/grid/modal/CTA, or reusing content from another page, requires explicit user design approval and a spec revision before code.
+- Tests assert an exact allowlist of baseline slots and reject extra consumer regions; merely proving that old hooks still exist is insufficient.
+- `index.docs` is retained for contract/merge compatibility but is **not rendered on Index**: the Index certification surface contains exactly the three code-owned marketing cards. Document cards belong to `/documents`.
+
 ---
 
 ## 3. Shared client lifecycle (locked)

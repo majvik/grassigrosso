@@ -209,6 +209,13 @@ function criticalHooksExpr(slug) {
         play: !!document.querySelector('.hero-play-btn'),
         presentation: !!document.querySelector('[data-document="presentation"]'),
         baselineCount: document.querySelectorAll('[data-certification-baseline-card]').length,
+        certificationCardCount: document.querySelectorAll('.certification .certification-card').length,
+        certificationChildren: [...document.querySelectorAll('.certification > *')]
+          .map((el) => el.className),
+        certificationGridChildren: document.querySelectorAll('.certification > .certification-grid > *').length,
+        unexpectedIndexDocs: !!document.querySelector('[data-index-docs], .certification-docs'),
+        topLevelSections: [...document.querySelectorAll('[data-react-root][data-react-page="index"] > section')]
+          .map((el) => el.className),
         baselineTitles,
         solutions: document.querySelectorAll('.solution-card').length,
         collections: document.querySelectorAll('.collection-card').length,
@@ -287,6 +294,25 @@ function assertGeometryKeys(label, before, after, map) {
 function assertFirstPaintBaseline(slug, snap) {
   if (slug === 'index') {
     assert(snap?.baselineCount === 3, `${slug} baseline: expected 3 certification cards, got ${snap?.baselineCount}`)
+    assert(
+      snap?.certificationCardCount === 3,
+      `${slug} baseline: certification surface must contain exactly 3 cards, got ${snap?.certificationCardCount}`,
+    )
+    assert(!snap?.unexpectedIndexDocs, `${slug} baseline: unexpected CMS docs consumer on Index`)
+    assert(
+      JSON.stringify(snap?.certificationChildren) ===
+        JSON.stringify(['certification-header', 'certification-grid']),
+      `${slug} baseline: certification may contain only header + baseline grid (${JSON.stringify(snap?.certificationChildren)})`,
+    )
+    assert(
+      snap?.certificationGridChildren === 3,
+      `${slug} baseline: certification grid must contain exactly 3 children, got ${snap?.certificationGridChildren}`,
+    )
+    assert(
+      JSON.stringify(snap?.topLevelSections) ===
+        JSON.stringify(['hero', 'business-solutions', 'philosophy', 'collections', 'partners', 'testimonials', 'certification']),
+      `${slug} baseline: top-level section allowlist changed (${JSON.stringify(snap?.topLevelSections)})`,
+    )
     assert(
       snap?.baselineTitles?.includes('Производство') &&
         snap?.baselineTitles?.includes('Особенности сотрудничества') &&
@@ -400,6 +426,14 @@ async function runPageScenarios(slug) {
     if (slug === 'index') {
       assert(ok?.commercial && ok?.play && ok?.presentation, `${slug} success: hooks missing`)
       assert(ok?.baselineCount === 3, `${slug} success: baseline cards must stay`)
+      assert(ok?.certificationCardCount === 3, `${slug} success: extra certification card/consumer`)
+      assert(
+        JSON.stringify(ok?.certificationChildren) ===
+          JSON.stringify(['certification-header', 'certification-grid']) &&
+          ok?.certificationGridChildren === 3,
+        `${slug} success: certification DOM ownership changed`,
+      )
+      assert(!ok?.unexpectedIndexDocs, `${slug} success: CMS docs must not render on Index`)
       assert(ok?.poster === '/uploads/cms-index-poster-marker.avif', `${slug} success: poster media not hydrated (${ok?.poster})`)
       assert(
         ok?.partners === '/uploads/cms-partners-marker.png',

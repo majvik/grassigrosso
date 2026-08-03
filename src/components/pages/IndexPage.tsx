@@ -337,37 +337,6 @@ export function IndexPage() {
             </div>
           ))}
         </div>
-        {data.docs.length > 0 ? (
-          <div className="certification-docs" data-index-docs="">
-            {data.docs.map((doc) => (
-              <div
-                className="certification-card"
-                data-document={doc.document_key}
-                data-document-card=""
-                key={doc.document_key}
-              >
-                <div className="certification-image">
-                  <img src="/document.svg" alt="" />
-                </div>
-                <div className="certification-content">
-                  <h3 className="certification-title">{doc.title}</h3>
-                  <p className="certification-text">
-                    {doc.type_label}
-                    {doc.size_label ? ` · ${doc.size_label}` : ''}
-                  </p>
-                  <a
-                    href="#"
-                    className="certification-link"
-                    data-document-request-trigger
-                    aria-label={doc.request_aria_label || doc.request_label || doc.title}
-                  >
-                    {doc.request_label || 'ЗАПРОСИТЬ'}
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : null}
       </section>
     </>
   )
