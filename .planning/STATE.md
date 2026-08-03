@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 3 — Phase B harden PASS (pending accept); Phase C feeds next. No `server.cjs` page proxy yet. No `strapi:sync-seed`.
+**Current focus:** Phase 3 — Phase C harness PASS (pending accept); Phase D Node proxy next. No `server.cjs` page proxy yet. No `strapi:sync-seed`.
 
 ## Current Position
 
 Phase: 3 of 6 (Feeds, Proxy & Seed) — IN PROGRESS
-Plan: 03-01 Phase A accepted; Phase B harness green
-Status: `check:pages-cms-phase-b` PASS (N6 components/orphans/digests + inject rollback + no-kill)
-Last activity: 2026-08-03 — Phase B harden: SQLite-safe backup, N6 full, inject-failure FS/DB rollback
+Plan: 03-01 Phase A+B accepted; Phase C harness green
+Status: `check:pages-cms-phase-c` PASS (6 feeds + deep-populate + N7)
+Last activity: 2026-08-03 — Phase C Strapi page feeds + integration harness
 
-Progress: [████████▓░] 85%
+Progress: [████████▓░] 90%
 
 ## Performance Metrics
 
 **Velocity:**
 - Phase 1–2 complete locally (no push)
-- Phase 3A–3B complete locally (no push)
+- Phase 3A–3C complete locally (no push)
 
 **By Phase:**
 
@@ -28,7 +28,7 @@ Progress: [████████▓░] 85%
 |-------|-------|--------|
 | 1. Shared Page Components | 1/1 | Complete |
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) |
-| 3. Feeds, Proxy & Seed | 0/1 | A+B done; C next |
+| 3. Feeds, Proxy & Seed | 0/1 | A+B accepted; C harness green; D next |
 
 ## Accumulated Context
 
@@ -41,19 +41,20 @@ Progress: [████████▓░] 85%
 - Harness never kills `:1337` — refuses with instruction if busy
 - Media aliases map fixture URLs to existing public assets (Cyrillic PDFs, partners logos, etc.)
 - Logical digests are content-addressed (strip surrogate ids; include component trees + media file identities) for seed×2 and inject rollback
+- Six page feeds live under `api/pages-cms` (not `catalog/`) to keep catalog-scope clean
 - Local-only: no push/PR/deploy; no sync-seed unless asked
 
 ### Pending Todos
 
-- User accept Phase B harden
-- Phase C: Strapi page feeds + seeded deep-populate integration
+- User accept Phase C
+- Phase D: narrow catalog-scope → Node `GET /api/pages/:slug` + cache/snapshots/exporter
 
 ### Blockers/Concerns
 
-None for Phase B harness (green locally).
+None for Phase C harness (green locally).
 
 ## Session Continuity
 
 Last session: 2026-08-03
-Stopped at: Phase B harden PASS — awaiting accept
-Next: Phase C after Phase B acceptance
+Stopped at: Phase C harness PASS — awaiting accept
+Next: Phase D after Phase C acceptance

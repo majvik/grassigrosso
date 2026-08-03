@@ -1,7 +1,7 @@
 # Pages CMS Phase 3 — feeds, proxy & seed (execution plan)
 
 **Date:** 2026-08-03
-**Status:** IN PROGRESS — Phase A accepted; Phase B harness green (pending acceptance); Phase C next
+**Status:** IN PROGRESS — Phase A+B accepted; Phase C harness green (pending acceptance); Phase D next
 **Design:** [2026-08-03-pages-cms-feeds-proxy-seed-design.md](../specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md)
 **GSD phase:** `.planning/phases/03-feeds-proxy-seed/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -34,8 +34,8 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 | Spec + plan v1 | `5f76aa0` | superseded by revision |
 | Spec + plan revision | `4cf5b13` | affirmed |
 | Phase A fix | `4ed8476` | PASS — texts isolation + Strapi utils |
-| Phase B | `npm run check:pages-cms-phase-b` | DONE (harness) — N6 + inject-rollback + no-kill; pending user accept |
-| Phase C+ | — | not started |
+| Phase B | `npm run check:pages-cms-phase-b` | DONE — accepted (`f2a1a91`) |
+| Phase C | `npm run check:pages-cms-phase-c` | DONE (harness) — pending user accept |
 
 ---
 
@@ -114,6 +114,12 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 - Six feeds 200 + deep asserts PASS
 - `GET /api/download-catalog-feed` slides contract unchanged PASS
 - `npm run check:pages-cms-strict` PASS
+
+### Post-fix (2026-08-03)
+
+- Six public feeds under `pages-cms` (`auth: false`): `/api/{index,hotels,dealers,contacts,documents,download-catalog}-page-feed`
+- Shared serializer: explicit `DEEP_POPULATE_BY_SLUG`, `prefer-avif`, contacts `map_iframe_html` → `map_embed_url` (HTML stripped), download-catalog texts-only
+- `npm run check:pages-cms-phase-c` → PASS (`feeds=6 deepPopulate=ok mapStrip=ok textsIsolation=ok N7=ok`)
 
 ---
 

@@ -24,6 +24,7 @@
     "check:pages-cms-catalog-scope": "node scripts/check-pages-cms-catalog-scope.mjs",
     "check:pages-cms-phase-a": "node scripts/check-pages-cms-phase-a.mjs",
     "check:pages-cms-phase-b": "node scripts/check-pages-cms-phase-b.mjs",
+    "check:pages-cms-phase-c": "node scripts/check-pages-cms-phase-c.mjs",
     "pages-cms:seed": "node scripts/seed-pages-cms-from-fixtures.mjs",
     "pages-cms:seed:preflight": "node scripts/seed-pages-cms-from-fixtures.mjs --preflight-only",
     "preview": "vite preview",
