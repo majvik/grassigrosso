@@ -722,6 +722,80 @@ function assertPhase1Schemas() {
   }
 }
 
+function isCyrillicLabel(value) {
+  return typeof value === 'string' && /[А-Яа-яЁё]/.test(value.trim())
+}
+
+/** Flat enum value → RU label keys required for Admin Select (formatMessage id=value). */
+function collectWave1EnumFlatLabelKeys(c) {
+  const labels = new Map()
+  const visit = (uid, attributes, isComponent) => {
+    for (const [attrName, attr] of Object.entries(attributes || {})) {
+      if (attr?.type !== 'enumeration' || !Array.isArray(attr.enum)) continue
+      for (const value of attr.enum) {
+        const raw = String(value)
+        const nsKey = isComponent
+          ? `${uid}.${attrName}.${raw}`
+          : `api::${uid}.${uid}.${attrName}.${raw}`
+        labels.set(raw, nsKey)
+      }
+    }
+  }
+  for (const uid of [...c.phase1Components, ...c.phase2Components]) {
+    const def = c.definitions.components[uid]
+    if (def) visit(uid, def.attributes, true)
+  }
+  for (const uid of c.phase2SingleTypes) {
+    const def = c.definitions.singleTypes[uid]
+    if (def) visit(uid, def.attributes, false)
+  }
+  // download-catalog enums live on the preserve ST, not only phase2SingleTypes list
+  const dl = c.definitions.singleTypes['download-catalog-page']
+  if (dl) visit('download-catalog-page', dl.attributes, false)
+  return labels
+}
+
+function assertWave1EnumFlatLabels(ru, c) {
+  const pairs = collectWave1EnumFlatLabelKeys(c)
+  if (pairs.size === 0) {
+    fail('Wave 1 enum flat-label set unexpectedly empty')
+    return
+  }
+  for (const [value, nsKey] of pairs) {
+    const nsLabel = ru[nsKey]
+    const flatLabel = ru[value]
+    if (!isCyrillicLabel(nsLabel)) {
+      fail(`ru.json enum ns label missing/non-RU: ${nsKey}`)
+    }
+    if (!isCyrillicLabel(flatLabel)) {
+      fail(`ru.json enum flat UI label missing/non-RU for value "${value}" (needed by Admin Select)`)
+      continue
+    }
+    // Latin technical values must not equal their UI labels
+    if (/[A-Za-z]/.test(value) && flatLabel.trim() === value) {
+      fail(`ru.json enum flat label still technical for value "${value}"`)
+    }
+  }
+
+  // Negative: removing one flat enum UI key must fail the check
+  const probeValue = 'image_only'
+  if (!pairs.has(probeValue)) {
+    fail('negative-check failed: image_only not in Wave 1 enum flat-label set')
+  } else {
+    const probeRu = { ...ru }
+    delete probeRu[probeValue]
+    let detected = false
+    for (const [value] of pairs) {
+      if (!isCyrillicLabel(probeRu[value]) || (/[A-Za-z]/.test(value) && probeRu[value]?.trim() === value)) {
+        if (value === probeValue) detected = true
+      }
+    }
+    if (!detected) {
+      fail('negative-check failed: enum flat-label regression did not detect removed image_only')
+    }
+  }
+}
+
 function assertWave1FullRu() {
   const ru = readJson('strapi-catalog/src/admin/translations/ru.json')
   if (!ru || !contract) return
@@ -747,6 +821,8 @@ function assertWave1FullRu() {
       fail('negative-check failed: Wave 1 RU coverage did not detect removed key')
     }
   }
+
+  assertWave1EnumFlatLabels(ru, contract)
 }
 
 function collectDownloadPreserveMisses(schema, c) {

@@ -75,7 +75,7 @@
 - Hard fail when feed is empty/unavailable — `throw new Error('Empty catalog feed')` / `'Catalog unavailable'` in `src/catalog/catalog-api.ts`
 - Forms: `clearErrors` / `showError` with Russian messages — `src/contact-forms.js`
 - Unknown React `page`: render `NotFoundPage` — never `dangerouslySetInnerHTML` fallback — `src/components/app/ReactIslandRoot.tsx`
-- Strapi `registerTrads`: missing locale file → `{ data: {}, locale }` — `strapi-catalog/src/admin/app.js`
+- Strapi Admin RU: missing translation → English/technical fallback; load via `config.translations` in `strapi-catalog/src/admin/app.js` (not `registerTrads`)
 
 **Do not:**
 - Let client `page` strings diverge from `PAGE_EMAIL_ROUTING` keys — unknown labels silently fall back to `MAIL_TO` and break mailbox routing
@@ -182,21 +182,26 @@ Lead field `page` must match **exactly** across client, server, and contract lis
 ## Strapi Admin RU Translations
 
 **Files:**
-- Config/loader: `strapi-catalog/src/admin/app.js` — `locales: ['ru', 'en']`, dynamic `import(\`./translations/${locale}.json\`)`
-- Copy: `strapi-catalog/src/admin/translations/ru.json` (only committed locale JSON; missing `en.json` → empty `{}`)
+- Config: `strapi-catalog/src/admin/app.js` — `locales: ['ru', 'en']`, `config.translations.ru` imports `./translations/ru.json`
+- Copy: `strapi-catalog/src/admin/translations/ru.json`
+- Enum Select fix (Strapi 5.42): `src/admin/extensions/EnumerationInput.jsx` registered via `app.addFields({ type: 'enumeration' })` so option labels use `formatMessage({ id: value })`. Schema/API enum **values** stay technical (`image_only`, …).
+
+**Do not use `registerTrads` on root `app.js`** — Strapi Admin only merges custom strings from `config.translations` (`loadTrads(customisations?.config?.translations)`).
 
 **When adding or renaming Product / single-type / component fields:**
 1. Add Russian strings for both Content Manager and Content-Type Builder key families already used in `ru.json`
 2. Mirror plain field keys **and** nested `attributes.*` keys when peers do (see firmness/fillings blocks)
-3. Keep **slug** stable when changing display labels — slug is the public filter/API contract
-4. Restart/rebuild Strapi admin so `registerTrads` reloads JSON
+3. For every enumeration value: keep the technical value in schema; add **both** namespaced key (`page.document-card.kind.certificate`) **and** flat UI key (`"certificate": "Сертификат"`) so Admin Select can resolve labels
+4. Keep **slug** stable when changing display labels — slug is the public filter/API contract
+5. Restart/rebuild Strapi admin so `config.translations` and EnumerationInput reload
 
 **Key patterns in `ru.json`:**
 - `api::<uid>.<uid>.<field>`
 - `content-manager.content-types.api::<uid>.…` and `…attributes.<field>`
 - `content-type-builder.content-types.api::<uid>.attributes.<field>`
-- Components: `content-manager.components.catalog.<component>.…`
-- Enum options: `api::….media_display_mode.slider`, `catalog.filter-help-segment.variant.intro`
+- Components: `content-manager.components.catalog.<component>.…` / `page.<component>.…`
+- Enum options (namespaced): `api::….media_display_mode.slider`, `page.document-card.kind.certificate`
+- Enum options (flat UI id=value): `"image_only": "Только картинка"` — required for Select labels on 5.42
 
 **Operator note:** `en` cannot be removed (Strapi fallback). Users pick Russian once: Profile → Experience → Interface language → Русский.
 

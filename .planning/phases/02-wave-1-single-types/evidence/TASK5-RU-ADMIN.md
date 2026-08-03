@@ -1,43 +1,40 @@
-# Task 5 — RU Admin smoke evidence (2026-08-03)
+# Task 5 — RU Admin evidence (updated: enum Select labels)
 
 ## Automated
 
 | Check | Result |
 |-------|--------|
-| `npm run check:pages-cms-strict` | PASS — full Wave 1 RU key coverage + negative probe (delete `map_iframe_html` CM key → FAIL) |
+| `npm run check:pages-cms-strict` | PASS — Wave 1 RU keys + **enum flat UI labels** + negative `image_only` removal → FAIL |
 | `npm run typecheck` | PASS |
 | Strapi boot 5.42.1 | PASS |
 
-RU artifacts:
-- `strapi-catalog/src/admin/translations/ru.json` — CM + CTB + enum + displayName keys for all Wave 1 components/single types
-- Schema attribute `displayName` (RU) on page components + 6 single types
-- Bootstrap sync: `strapi-catalog/src/api/catalog/utils/sync-pages-cms-admin-labels.js` (keeps CM DB metadatas aligned with schema displayName)
+## Enum Select gap (closed)
 
-## Browser smoke (local Admin, locale `ru`)
+Strapi 5.42 CM renders enumeration options as raw `{ value }` without `formatMessage` (fixed upstream in #26837, not in 5.42.1).
 
-Opened Content Manager single types:
+**Fix (Admin-only, schema values unchanged):**
+- `strapi-catalog/src/admin/extensions/EnumerationInput.jsx` — option label via `formatMessage({ id: value })`
+- Registered in `app.js` with `app.addFields({ type: 'enumeration', Component: EnumerationInput })`
+- Flat keys in `ru.json` (`"image_only": "Только картинка"`, …) plus existing namespaced keys
+- Harness: every Wave 1 enum value has Cyrillic namespaced + flat label; Latin value must not equal label; delete `image_only` → FAIL
 
-| Single type | Sidebar / H1 | Field labels RU | English attr fallback |
-|-------------|--------------|-----------------|------------------------|
-| `index-page` | Главная | Yes (incl. nested `page.hero-media`) | none observed |
-| `hotels-page` | Отелям | Yes | none observed |
-| `dealers-page` | Дилерам | Yes (geography/packages) | none observed |
-| `contacts-page` | Контакты | Yes; nested `page.office` shows `HTML iframe карты`, `Подпись вкладки`, … | none observed |
-| `documents-page` | Документы | Yes | none observed |
-| `download-catalog-page` | Страница «Скачать каталог» (sidebar) | Yes (`Отображение`, `Слайды`, `Заголовок`, `Лид`, …) | none on labels |
+## Browser smoke (locale `ru`)
 
-Screenshot: `evidence/task5-download-catalog-ru.png`
+| Field | Options shown (no technical fallback) | Evidence |
+|-------|----------------------------------------|----------|
+| `media_display_mode` | Слайдер, Только картинка | `task5-enum-media-display-mode.png` (+ open listbox verified via CDP) |
+| `document-card.kind` | Сертификат, Документ компании | `task5-enum-document-card-kind.png` |
+| `contact-info.icon_key` | Телефон, Эл. почта, Адрес | `task5-enum-contact-info-icon-key.png` |
+| `dealer-package.value` | Стандарт, Индивидуальный, Эксклюзив | `task5-enum-dealer-package-value.png` |
 
-### Notes
+Schema/API enum **values** remain `image_only`, `certificate`, `phone`, `standard`, etc.
 
-- Enumeration **option values** in Select widgets may still show technical keys (`image_only`, `certificate`, …) while labels/translations exist in `ru.json`. Field labels themselves are Russian.
+## Admin chrome / catalog leftovers (prior same-day fix)
 
-### Follow-up (same day) — leftover English from earlier catalog stages
+- `config.translations` (not `registerTrads`) loads `ru.json`
+- Catalog CT displayNames RU; CM label sync from on-disk schemas
 
-Root cause: catalog CT/component `displayName` still English in schemas; Admin chrome keys not loaded because `registerTrads` on `app.js` is **not** applied — only `config.translations`.
+## Docs updated
 
-Fixed locally:
-- Schema RU displayNames for Product/Collection/Tag/catalog hero + catalog components + field labels
-- `src/admin/app.js` → `config.translations.ru` from `ru.json`
-- Broader CM metadata sync from on-disk schema `displayName`
-- Browser recheck: sidebar shows Продукт/Коллекция/Тег/Слайдер каталога; Home/CTB/widgets RU
+- `.planning/codebase/CONVENTIONS.md` — `config.translations` + enum flat keys + EnumerationInput
+- `.planning/phases/01-shared-page-components/01-RESEARCH.md` — remove stale `registerTrads` loader claim

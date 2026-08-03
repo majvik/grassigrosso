@@ -6,11 +6,15 @@
  * После включения `ru` каждый пользователь может выбрать русский один раз:
  * аватар (правый верх) → Profile / Профиль → Experience → Interface language → Русский.
  *
- * Важно: кастомные строки подхватываются через `config.translations`
- * (см. StrapiApp.loadTrads(customisations?.config?.translations)).
- * `registerTrads` на корневом app.js Admin не вызывает.
+ * Кастомные строки: только `config.translations` (StrapiApp.loadTrads).
+ * `registerTrads` на корневом app.js Admin не вызывает — не использовать.
+ *
+ * Enum Select: до апгрейда с #26837 регистрируем EnumerationInput через addFields,
+ * чтобы option labels шли через formatMessage(id=value), а schema values оставались
+ * техническими (image_only, certificate, …).
  */
 import ru from './translations/ru.json';
+import EnumerationInput from './extensions/EnumerationInput';
 
 export default {
   config: {
@@ -19,5 +23,7 @@ export default {
       ru,
     },
   },
-  bootstrap() {},
+  bootstrap(app) {
+    app.addFields({ type: 'enumeration', Component: EnumerationInput });
+  },
 };

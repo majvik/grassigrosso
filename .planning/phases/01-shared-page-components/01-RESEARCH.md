@@ -20,7 +20,7 @@ Stack is Strapi **5.42.1** (`@strapi/strapi`). Components are not content-types:
 |--------------------|----------------|---------|--------------|
 | `@strapi/strapi` | 5.42.1 | CMS runtime + CTB | Already in `strapi-catalog/package.json` |
 | Component schemas | `strapi-catalog/src/components/<category>/*.json` | Reusable field groups | Official Strapi model location; existing `catalog.*` |
-| Admin RU overrides | `strapi-catalog/src/admin/translations/ru.json` | Field/component labels | Existing project pattern + `registerTrads` in `admin/app.js` |
+| Admin RU overrides | `strapi-catalog/src/admin/translations/ru.json` | Field/component labels | Loaded via `config.translations` in `admin/app.js` (not `registerTrads`) |
 | Dist asset sync | `strapi-catalog/scripts/prepare-dist.cjs` | Copy `components/` into `dist/src` | Required for `strapi develop` after dist wipe |
 
 ### Supporting
@@ -162,7 +162,7 @@ Existing pattern in `strapi-catalog/src/admin/translations/ru.json` (verified ag
    Example: `catalog.filter-help-segment.variant.intro`  
    Phase 1 components have **no enums**.
 
-5. Loading: `strapi-catalog/src/admin/app.js` `registerTrads` imports `./translations/${locale}.json`. Rebuild/restart admin after `ru.json` edits (official Strapi note).
+5. Loading: `strapi-catalog/src/admin/app.js` uses `config.translations.ru` (import of `./translations/ru.json`). Do **not** rely on `registerTrads` on root `app.js` — Admin never calls it. Rebuild/restart admin after `ru.json` edits.
 
 ### Phase 1 keys to add (minimum for ADM-01)
 
@@ -271,7 +271,7 @@ strapi-catalog/src/components/
 | Problem | Don't Build | Use Instead | Why |
 |---------|-------------|-------------|-----|
 | Component registration | Custom bootstrap register API | Drop JSON under `src/components/page/` | Strapi loads folder categories automatically |
-| RU admin strings | Hardcoded admin React plugin | `ru.json` + `registerTrads` | Existing project contract |
+| RU admin strings | Hardcoded admin React plugin | `ru.json` + `config.translations` in `app.js` | Strapi merges only `config.translations` |
 | Dist schemas for develop | Manual `cp` after every edit | `prepare-dist.cjs` via `src/index.js` early sync | Already solved; AGENTS.md documents failure mode |
 | Marketing page CMS without components | Copy-paste attributes into each single type | Shared `page.*` | ADM-01 + roadmap Phase 1 goal |
 
@@ -441,7 +441,7 @@ strapi-catalog/src/components/
 
 - Repo: `strapi-catalog/src/components/catalog/*.json` — component JSON shape
 - Repo: `strapi-catalog/src/admin/translations/ru.json` — CM/CTB key pattern
-- Repo: `strapi-catalog/src/admin/app.js` — `registerTrads` + locales `ru`/`en`
+- Repo: `strapi-catalog/src/admin/app.js` — `config.translations` + locales `ru`/`en` (not `registerTrads`)
 - Repo: `strapi-catalog/scripts/prepare-dist.cjs` + `src/index.js` — dist component sync
 - Repo: `strapi-catalog/src/api/download-catalog-page/.../schema.json` — single-type + nested component reference pattern (`draftAndPublish: false`)
 - Repo: wave-1 pages + `shared-page-sections.tsx` — real field shapes
