@@ -15,21 +15,50 @@ function normalizeUploadPath(url: string): string {
   return match ? match[0] : clean
 }
 
+/** Compare upload assets ignoring @2x suffix and raster extension (png/webp/avif). */
+function normalizeUploadAssetKey(url: string): string {
+  return normalizeUploadPath(url)
+    .replace(/@2x(?=\.[^.]+$)/i, '')
+    .replace(/\.(avif|webp|png|jpe?g)$/i, '')
+}
+
+function collectUploadPathsFromSlide(slideEl: Element): string[] {
+  const attrs: string[] = []
+  const img = slideEl.querySelector('img')
+  if (img) {
+    attrs.push(img.currentSrc || '', img.getAttribute('src') || '', img.getAttribute('srcset') || '')
+  }
+  slideEl.querySelectorAll('source').forEach((source) => {
+    attrs.push(source.getAttribute('srcset') || '', source.getAttribute('src') || '')
+  })
+  const video = slideEl.querySelector('video')
+  if (video) {
+    attrs.push(video.getAttribute('src') || '', video.getAttribute('poster') || '')
+    video.querySelectorAll('source').forEach((source) => {
+      attrs.push(source.getAttribute('src') || '')
+    })
+  }
+  const joined = attrs.filter(Boolean).join(' ')
+  return joined.match(/\/uploads\/[^,\s]+/g) || []
+}
+
 function slideSrcMatchesExisting(existingSlide: Element, slide: CatalogHeroSlide): boolean {
   if (!existingSlide || !slide?.src) return false
-  const feedPath = normalizeUploadPath(String(slide.src))
-  const img = existingSlide.querySelector('img')
-  const video = existingSlide.querySelector('video')
-  if (img) {
-    const current = normalizeUploadPath(img.currentSrc || img.getAttribute('src') || '')
-    return current.endsWith(feedPath) || feedPath.endsWith(current)
-  }
-  if (video && slide.type === 'video') {
+  const feedKey = normalizeUploadAssetKey(String(slide.src))
+  if (!feedKey) return false
+
+  if (slide.type === 'video') {
+    const video = existingSlide.querySelector('video')
+    if (!video) return false
     const source = video.querySelector('source')
     const current = normalizeUploadPath(source?.getAttribute('src') || video.getAttribute('src') || '')
+    const feedPath = normalizeUploadPath(String(slide.src))
     return current.endsWith(feedPath) || feedPath.endsWith(current)
   }
-  return false
+
+  return collectUploadPathsFromSlide(existingSlide).some(
+    (path) => normalizeUploadAssetKey(path) === feedKey,
+  )
 }
 
 function renderSlide(slide: CatalogHeroSlide, index: number): string {

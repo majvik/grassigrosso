@@ -2,20 +2,34 @@ import styles from './download-catalog.module.css'
 
 const DOWNLOAD_SLIDE_COUNT = 8
 
-/** SSR/LCP fallback — must match slide #0 in Strapi + download-catalog-slides.snapshot.json */
-const DOWNLOAD_SLIDE_0_SRC = '/uploads/download_catalog_cover_4eb40d86f8.avif'
+/** SSR/LCP fallback — basename must match slide #0 in Strapi + download-catalog-slides.snapshot.json */
+const DOWNLOAD_SLIDE_0_BASE = '/uploads/download_catalog_cover_4eb40d86f8'
 
 function DownloadCatalogSlideZeroFallback() {
   return (
-    <img
-      src={DOWNLOAD_SLIDE_0_SRC}
-      alt="Каталог продукции Grassigrosso"
-      width={440}
-      height={440}
-      loading="eager"
-      fetchPriority="high"
-      decoding="async"
-    />
+    <picture>
+      <source
+        type="image/avif"
+        srcSet={`${DOWNLOAD_SLIDE_0_BASE}@2x.avif 2x, ${DOWNLOAD_SLIDE_0_BASE}.avif 1x`}
+      />
+      <source
+        type="image/webp"
+        srcSet={`${DOWNLOAD_SLIDE_0_BASE}@2x.webp 2x, ${DOWNLOAD_SLIDE_0_BASE}.webp 1x`}
+      />
+      <source
+        type="image/png"
+        srcSet={`${DOWNLOAD_SLIDE_0_BASE}@2x.png 2x, ${DOWNLOAD_SLIDE_0_BASE}.png 1x`}
+      />
+      <img
+        src={`${DOWNLOAD_SLIDE_0_BASE}.png`}
+        alt="Каталог продукции Grassigrosso"
+        width={880}
+        height={880}
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+      />
+    </picture>
   )
 }
 
