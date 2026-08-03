@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_page_discount_rows",
+  "info": {
+    "displayName": "Строка скидки",
+    "icon": "priceTag"
+  },
+  "options": {},
+  "attributes": {
+    "amount_label": {
+      "type": "string",
+      "required": true
+    },
+    "discount_label": {
+      "type": "string",
+      "required": true
+    },
+    "terms_label": {
+      "type": "string",
+      "required": true
+    },
+    "highlight": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  }
+}

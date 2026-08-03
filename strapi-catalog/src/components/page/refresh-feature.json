@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_page_refresh_features",
+  "info": {
+    "displayName": "Пункт Refresh-программы",
+    "icon": "refresh"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "text",
+      "required": false
+    },
+    "icon": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

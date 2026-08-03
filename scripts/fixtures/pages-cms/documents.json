@@ -12,7 +12,7 @@
   "certificates_title": "Официальная сертификация",
   "certificates": [
     {
-      "document_id": "declaration",
+      "document_key": "declaration",
       "title": "Евразийский Экономический Союз. Декларация о соответствии",
       "type_label": "Декларация",
       "size_label": "2.5 MB",
@@ -24,7 +24,7 @@
       }
     },
     {
-      "document_id": "certificate",
+      "document_key": "certificate",
       "title": "Результаты лабораторных испытаний «ПромМаш Тест»",
       "type_label": "Сертификат",
       "size_label": "1.8 MB",
@@ -36,7 +36,7 @@
       }
     },
     {
-      "document_id": "trademark",
+      "document_key": "trademark",
       "title": "Свидетельство на товарный знак GrassiGrosso",
       "type_label": "Товарный знак",
       "size_label": "1.2 MB",
@@ -54,7 +54,7 @@
   },
   "company_documents": [
     {
-      "document_id": "catalog",
+      "document_key": "catalog",
       "title": "Каталог продукции",
       "type_label": "PDF документ",
       "size_label": "",
@@ -66,7 +66,7 @@
       }
     },
     {
-      "document_id": "presentation",
+      "document_key": "presentation",
       "title": "Презентация компании",
       "type_label": "PDF документ",
       "size_label": "",

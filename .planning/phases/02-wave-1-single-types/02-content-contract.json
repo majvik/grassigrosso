@@ -315,7 +315,7 @@
         "displayName": "Карточка документа",
         "phase": 2,
         "attributes": {
-          "document_id": {
+          "document_key": {
             "type": "string",
             "required": true
           },
@@ -2395,7 +2395,7 @@
       "fallback": "",
       "fixture_path": "",
       "cms": null,
-      "reason": "Filename routing /api/download/:docId synced with document_id"
+      "reason": "Filename routing /api/download/:docId synced with document_key"
     },
     {
       "page": "documents",

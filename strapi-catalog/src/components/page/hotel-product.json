@@ -1,0 +1,38 @@
+{
+  "collectionName": "components_page_hotel_products",
+  "info": {
+    "displayName": "Продукт отелям",
+    "icon": "shoppingCart"
+  },
+  "options": {},
+  "attributes": {
+    "catalog_key": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "image": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "image_alt": {
+      "type": "string",
+      "required": false
+    },
+    "cta_label": {
+      "type": "string",
+      "required": false
+    }
+  }
+}

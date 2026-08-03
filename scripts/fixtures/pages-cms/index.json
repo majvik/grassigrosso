@@ -46,7 +46,7 @@
     }
   ],
   "philosophy_presentation": {
-    "document_id": "presentation",
+    "document_key": "presentation",
     "title": "Презентация компании",
     "type_label": "PDF документ",
     "size_label": "",
@@ -99,7 +99,7 @@
   "docs_title": "Сертификация и документация",
   "docs": [
     {
-      "document_id": "declaration",
+      "document_key": "declaration",
       "title": "Декларация о соответствии",
       "type_label": "Декларация",
       "size_label": "2.5 MB",

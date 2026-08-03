@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_page_geo_cities",
+  "info": {
+    "displayName": "Город географии",
+    "icon": "pinMap"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "badge": {
+      "type": "string",
+      "required": false
+    },
+    "sort_order": {
+      "type": "integer",
+      "required": false,
+      "default": 0
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_page_solution_cards",
+  "info": {
+    "displayName": "Карточка решения",
+    "icon": "puzzle"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "text",
+      "required": false
+    },
+    "href": {
+      "type": "string",
+      "required": false
+    },
+    "icon": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "collectionName": "components_page_dealer_packages",
+  "info": {
+    "displayName": "Дилерский пакет",
+    "icon": "crown"
+  },
+  "options": {},
+  "attributes": {
+    "value": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "standard",
+        "individual",
+        "exclusive"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "price": {
+      "type": "string",
+      "required": true
+    },
+    "form_option_label": {
+      "type": "string",
+      "required": true
+    },
+    "cta_label": {
+      "type": "string",
+      "required": false
+    },
+    "featured": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "features": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.list-item"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "collectionName": "components_page_document_cards",
+  "info": {
+    "displayName": "Карточка документа",
+    "icon": "file"
+  },
+  "options": {},
+  "attributes": {
+    "document_key": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "type_label": {
+      "type": "string",
+      "required": false
+    },
+    "size_label": {
+      "type": "string",
+      "required": false
+    },
+    "request_label": {
+      "type": "string",
+      "required": false
+    },
+    "request_aria_label": {
+      "type": "string",
+      "required": false
+    },
+    "kind": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "certificate",
+        "company"
+      ]
+    },
+    "file": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "files"
+      ]
+    }
+  }
+}

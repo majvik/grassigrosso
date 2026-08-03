@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Pages CMS contract harness (Phase 2 Task 1 gate + optional strict schema mode).
+ * Pages CMS contract harness (Phase 2 Task 1 gate + schema gates).
  *
  * Default mode (Task 1):
  * - Validate content-contract.json structure, definitions, rows
@@ -12,14 +12,21 @@
  * - Built-in negative checks (bad nested path, extra fixture key, schema type mismatch)
  * - Do NOT treat Phase 1 / existing download-catalog as Phase 2 progress
  *
- * Strict schema mode (Task 2+):
- * - Enabled when PAGES_CMS_SCHEMA_MODE=strict OR any phase2-only schema file exists
+ * Components mode (Task 2):
+ * - Enabled when PAGES_CMS_SCHEMA_MODE=components OR any phase2 component file exists
+ *   (and no new phase2 single-type files yet)
+ * - Requires EVERY phase2Components schema; full attribute contract compare
+ * - Missing single types still OK
+ *
+ * Strict schema mode (Task 3+):
+ * - Enabled when PAGES_CMS_SCHEMA_MODE=strict OR any new phase2 single-type file exists
  * - Requires EVERY phase2Components + phase2SingleTypes schema file
  * - Compares full normalized attribute contract (type/required/repeatable/component/allowedTypes/enum/default)
  * - Missing any required Phase 2 schema → FAIL
  *
  * Usage:
  *   npm run check:pages-cms-contract
+ *   PAGES_CMS_SCHEMA_MODE=components npm run check:pages-cms-contract
  *   PAGES_CMS_SCHEMA_MODE=strict npm run check:pages-cms-contract
  */
 import fs from 'node:fs'
@@ -263,24 +270,78 @@ function collectFixtureValueErrors(prefix, value, attrDef, components, errors) {
   }
 }
 
+/** Strapi 5 reserved attribute names that must never appear in page CMS components. */
+const STRAPI_RESERVED_ATTR_NAMES = new Set(['document_id', 'documentId'])
+
+/**
+ * @returns {string[]} human-readable hits (empty = clean)
+ */
+function collectReservedAttributeHits(c) {
+  const hits = []
+  for (const [uid, def] of Object.entries(c.definitions?.components || {})) {
+    for (const name of Object.keys(def.attributes || {})) {
+      if (STRAPI_RESERVED_ATTR_NAMES.has(name)) {
+        hits.push(`definitions.components.${uid}.attributes.${name}`)
+      }
+    }
+  }
+  return hits
+}
+
+function assertNoReservedComponentAttributes(c) {
+  for (const hit of collectReservedAttributeHits(c)) {
+    fail(`reserved Strapi attribute forbidden: ${hit}`)
+  }
+
+  const docCard = c.definitions.components['page.document-card']
+  if (!docCard?.attributes?.document_key) {
+    fail('page.document-card must expose document_key (not document_id)')
+  }
+  if (docCard?.attributes?.document_id) {
+    fail('page.document-card must not expose reserved document_id')
+  }
+
+  // Schema files on disk (Phase 1 + Phase 2 components)
+  const pageDir = abs('strapi-catalog/src/components/page')
+  if (!fs.existsSync(pageDir)) return
+  for (const file of fs.readdirSync(pageDir).filter((f) => f.endsWith('.json'))) {
+    const rel = `strapi-catalog/src/components/page/${file}`
+    const schema = readJson(rel)
+    if (!schema?.attributes) continue
+    for (const name of Object.keys(schema.attributes)) {
+      if (STRAPI_RESERVED_ATTR_NAMES.has(name)) {
+        fail(`reserved Strapi attribute forbidden in schema: ${rel}.attributes.${name}`)
+      }
+    }
+  }
+}
+
 const contractRel = '.planning/phases/02-wave-1-single-types/02-content-contract.json'
 const contractMdRel = '.planning/phases/02-wave-1-single-types/02-CONTENT-CONTRACT.md'
 const contract = readJson(contractRel)
 if (!fs.existsSync(abs(contractMdRel))) fail(`Missing ${contractMdRel}`)
 
 let mode = 'contract'
-let phase2OnlyPresent = 0
+let phase2ComponentsPresent = 0
+let phase2SingleTypesPresent = 0
 
 if (contract) {
   assertBasics(contract)
   assertDefinitions(contract)
+  assertNoReservedComponentAttributes(contract)
   assertRows(contract)
   assertFixtures(contract)
   assertNegativeChecks(contract)
-  phase2OnlyPresent = countExistingPhase2Schemas(contract)
-  if (process.env.PAGES_CMS_SCHEMA_MODE === 'strict' || phase2OnlyPresent > 0) {
+  phase2ComponentsPresent = countExistingPhase2Components(contract)
+  phase2SingleTypesPresent = countExistingPhase2SingleTypes(contract)
+  const envMode = process.env.PAGES_CMS_SCHEMA_MODE || ''
+  if (envMode === 'strict' || phase2SingleTypesPresent > 0) {
     mode = 'strict-schemas'
-    assertAllPhase2Schemas(contract)
+    assertAllPhase2Components(contract, 'strict-schemas')
+    assertAllPhase2SingleTypes(contract, 'strict-schemas')
+  } else if (envMode === 'components' || phase2ComponentsPresent > 0) {
+    mode = 'components'
+    assertAllPhase2Components(contract, 'components')
   }
 }
 
@@ -452,50 +513,100 @@ function assertNegativeChecks(c) {
   if (!requiredMismatch) {
     fail('negative-check failed: required mismatch did not produce FAIL')
   }
+
+  // Meta: reserved-field detector must FAIL when document_id is injected
+  const reservedProbe = collectReservedAttributeHits({
+    definitions: {
+      components: {
+        'page.__reserved_probe': {
+          attributes: { document_id: { type: 'string', required: true } },
+        },
+      },
+    },
+  })
+  if (!reservedProbe.some((hit) => hit.includes('document_id'))) {
+    fail('negative-check failed: reserved document_id probe did not produce FAIL')
+  }
 }
 
-function countExistingPhase2Schemas(c) {
+function countExistingPhase2Components(c) {
   let n = 0
   for (const uid of c.phase2Components) {
     if (fs.existsSync(abs(componentRel(uid)))) n += 1
   }
+  return n
+}
+
+function countExistingPhase2SingleTypes(c) {
+  let n = 0
   for (const uid of c.phase2SingleTypes) {
+    // Pre-existing download-catalog-page is not a Task 3 start signal
     if (uid === 'download-catalog-page') continue
     if (fs.existsSync(abs(singleTypeRel(uid)))) n += 1
   }
   return n
 }
 
-function assertAllPhase2Schemas(c) {
+function assertAllPhase2Components(c, gate) {
   for (const uid of c.phase2Components) {
     const rel = componentRel(uid)
-    if (!fs.existsSync(abs(rel))) fail(`strict-schemas: missing component schema ${rel}`)
-    else assertSchemaMatchesDefinition(rel, c.definitions.components[uid], 'component')
+    if (!fs.existsSync(abs(rel))) fail(`${gate}: missing component schema ${rel}`)
+    else assertSchemaMatchesDefinition(rel, c.definitions.components[uid], 'component', gate)
   }
+  assertNoCircularComponentGraph(c, gate)
+}
+
+function assertAllPhase2SingleTypes(c, gate) {
   for (const uid of c.phase2SingleTypes) {
     const rel = singleTypeRel(uid)
-    if (!fs.existsSync(abs(rel))) fail(`strict-schemas: missing single type schema ${rel}`)
-    else assertSchemaMatchesDefinition(rel, c.definitions.singleTypes[uid], 'singleType')
+    if (!fs.existsSync(abs(rel))) fail(`${gate}: missing single type schema ${rel}`)
+    else assertSchemaMatchesDefinition(rel, c.definitions.singleTypes[uid], 'singleType', gate)
   }
 }
 
-function assertSchemaMatchesDefinition(rel, def, kind) {
+function assertNoCircularComponentGraph(c, gate) {
+  const visiting = new Set()
+  const visited = new Set()
+
+  function walk(uid, stack) {
+    if (visiting.has(uid)) {
+      fail(`${gate}: circular component graph: ${[...stack, uid].join(' -> ')}`)
+      return
+    }
+    if (visited.has(uid)) return
+    const def = c.definitions.components[uid]
+    if (!def) return
+    visiting.add(uid)
+    for (const attr of Object.values(def.attributes || {})) {
+      if (attr.type === 'component' && attr.component) {
+        walk(attr.component, [...stack, uid])
+      }
+    }
+    visiting.delete(uid)
+    visited.add(uid)
+  }
+
+  for (const uid of c.phase2Components) walk(uid, [])
+}
+
+function assertSchemaMatchesDefinition(rel, def, kind, gate = 'schema') {
   const schema = readJson(rel)
   if (!schema || !def) return
   if (kind === 'singleType' && schema.kind !== 'singleType') fail(`${rel}: kind must be singleType`)
+  if (kind === 'component' && !schema.info?.displayName) fail(`${rel}: displayName required`)
   const defAttrs = def.attributes || {}
   const schemaAttrs = schema.attributes || {}
   for (const name of Object.keys(defAttrs)) {
     if (!schemaAttrs[name]) {
-      fail(`${rel}: missing attribute ${name} from contract definition`)
+      fail(`${gate}: ${rel}: missing attribute ${name} from contract definition`)
       continue
     }
     const mismatch = compareNormalizedAttrs(defAttrs[name], schemaAttrs[name], `${rel}.attributes.${name}`)
-    if (mismatch) fail(`strict-schemas: ${mismatch}`)
+    if (mismatch) fail(`${gate}: ${mismatch}`)
   }
   for (const name of Object.keys(schemaAttrs)) {
     if (!defAttrs[name]) {
-      fail(`${rel}: schema has attribute "${name}" not present in contract definition`)
+      fail(`${gate}: ${rel}: schema has attribute "${name}" not present in contract definition`)
     }
   }
 }
@@ -559,7 +670,8 @@ console.log(
   ` rows=${contract?.rows?.length ?? 0}` +
     ` phase1Components=${contract?.phase1Components?.length ?? 0}` +
     ` phase2Components=${contract?.phase2Components?.length ?? 0}` +
-    ` phase2OnlySchemaFiles=${phase2OnlyPresent}` +
+    ` phase2ComponentFiles=${phase2ComponentsPresent}` +
+    ` phase2SingleTypeFiles=${phase2SingleTypesPresent}` +
     ` fixtures=${Object.keys(contract?.fixtures || {}).length}` +
     ` negativeChecks=ok`,
 )

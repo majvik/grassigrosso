@@ -19,12 +19,17 @@
 
 | Mode | When | Schema expectation |
 |------|------|--------------------|
-| `contract` | Task 1 (default) | Phase 1 schemas + RU full coverage + fixtures; Phase 2 schemas **not** required |
-| `strict-schemas` | `PAGES_CMS_SCHEMA_MODE=strict` **or** any Phase-2-only schema file appears | **All** `phase2Components` + `phase2SingleTypes` must exist; each attribute compared to contract (`type`/`required`/`repeatable`/`component`/`allowedTypes`/`enum`/`default`); missing any → FAIL |
+| `contract` | Task 1 (default, no Phase 2 schema files) | Phase 1 schemas + RU full coverage + fixtures; Phase 2 schemas **not** required |
+| `components` | `PAGES_CMS_SCHEMA_MODE=components` **or** any `phase2Components` file exists (and no new Wave 1 single types yet) | **All 16** `phase2Components` must exist and match contract attrs; missing single types still OK |
+| `strict-schemas` | `PAGES_CMS_SCHEMA_MODE=strict` **or** any new Wave 1 single-type file appears | **All** `phase2Components` + `phase2SingleTypes` must exist; full attribute contract compare; missing any → FAIL |
 
-Phase 1 components and the pre-existing `download-catalog-page` are **never** counted as Phase 2 Task 2 progress.
+Phase 1 components and the pre-existing `download-catalog-page` are **never** counted as Task 2/3 progress.
 
-Built-in negative checks (must themselves FAIL correctly): bad nested CMS path, extra fixture key, schema type/required mismatch.
+npm shortcuts: `check:pages-cms-components`, `check:pages-cms-strict`.
+
+Built-in negative checks (must themselves FAIL correctly): bad nested CMS path, extra fixture key, schema type/required mismatch, reserved `document_id` probe.
+
+Regression: any `document_id` / `documentId` in component definitions or `strapi-catalog/src/components/page/*.json` → harness FAIL. Use `document_key` on `page.document-card`.
 
 ## Pages (6)
 

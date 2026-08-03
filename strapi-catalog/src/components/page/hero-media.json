@@ -1,0 +1,54 @@
+{
+  "collectionName": "components_page_hero_medias",
+  "info": {
+    "displayName": "Hero с видео",
+    "icon": "landscape"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "title_tm": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "cta_label": {
+      "type": "string",
+      "required": false
+    },
+    "poster": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "poster_alt": {
+      "type": "string",
+      "required": false
+    },
+    "video_desktop": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "videos"
+      ]
+    },
+    "video_mobile": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "videos"
+      ]
+    }
+  }
+}

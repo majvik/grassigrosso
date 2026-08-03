@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_page_testimonials",
+  "info": {
+    "displayName": "Отзыв",
+    "icon": "quote"
+  },
+  "options": {},
+  "attributes": {
+    "tag": {
+      "type": "string",
+      "required": false
+    },
+    "company": {
+      "type": "string",
+      "required": true
+    },
+    "author_name": {
+      "type": "string",
+      "required": false
+    },
+    "author_role": {
+      "type": "string",
+      "required": false
+    },
+    "rating": {
+      "type": "integer",
+      "required": false,
+      "default": 5
+    },
+    "text": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

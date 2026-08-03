@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_page_hotel_categories",
+  "info": {
+    "displayName": "Категория отеля",
+    "icon": "layer"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "text",
+      "required": true
+    },
+    "active": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  }
+}

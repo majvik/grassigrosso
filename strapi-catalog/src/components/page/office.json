@@ -1,0 +1,54 @@
+{
+  "collectionName": "components_page_offices",
+  "info": {
+    "displayName": "Офис",
+    "icon": "house"
+  },
+  "options": {},
+  "attributes": {
+    "slug": {
+      "type": "string",
+      "required": true
+    },
+    "tab_label": {
+      "type": "string",
+      "required": true
+    },
+    "badge": {
+      "type": "string",
+      "required": false
+    },
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "region": {
+      "type": "string",
+      "required": false
+    },
+    "address": {
+      "type": "string",
+      "required": true
+    },
+    "phone": {
+      "type": "string",
+      "required": false
+    },
+    "phone_href": {
+      "type": "string",
+      "required": false
+    },
+    "email": {
+      "type": "string",
+      "required": false
+    },
+    "schedule": {
+      "type": "string",
+      "required": false
+    },
+    "map_iframe_html": {
+      "type": "text",
+      "required": true
+    }
+  }
+}
