@@ -1,0 +1,196 @@
+{
+  "version": 1,
+  "updated": "2026-08-03",
+  "pages": ["index", "hotels", "dealers", "contacts", "documents", "download-catalog"],
+  "requiredComponents": [
+    "page.hero",
+    "page.section",
+    "page.faq-item",
+    "page.list-item",
+    "page.hero-media",
+    "page.stat",
+    "page.geo-city",
+    "page.office",
+    "page.document-card",
+    "page.contact-info",
+    "page.solution-card",
+    "page.collection-card",
+    "page.testimonial",
+    "page.hotel-category",
+    "page.hotel-product",
+    "page.discount-row",
+    "page.refresh-feature",
+    "page.offer-card",
+    "page.requirement-card",
+    "page.dealer-package",
+    "page.media-srcset"
+  ],
+  "requiredSingleTypes": [
+    "index-page",
+    "hotels-page",
+    "dealers-page",
+    "contacts-page",
+    "documents-page",
+    "download-catalog-page"
+  ],
+  "downloadCatalogPreserveAttrs": [
+    "media_display_mode",
+    "slider_autoplay_ms",
+    "slides"
+  ],
+  "rows": [
+    {"page":"index","section":"hero","source":"IndexPage.tsx:7-15","cms":"page.hero-media.title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Grassigrosso"},
+    {"page":"index","section":"hero","source":"IndexPage.tsx:9-11","cms":"page.hero-media.title_tm","ownership":"cms","hook":"aria-label","fallback":"TSX","fixture":"Торговая марка"},
+    {"page":"index","section":"hero","source":"IndexPage.tsx:13-15","cms":"page.hero-media.description","ownership":"cms","hook":"","fallback":"TSX","fixture":"Продуманные решения…"},
+    {"page":"index","section":"hero","source":"IndexPage.tsx:18-34","cms":"page.hero-media.cta_label","ownership":"cms","hook":"#heroCommercialOfferLink","fallback":"TSX","fixture":"Получить подробную информацию"},
+    {"page":"index","section":"hero","source":"IndexPage.tsx:18-34","cms":null,"ownership":"code","reason":"Commercial offer modal trigger id/behavior","hook":"#heroCommercialOfferLink, data-open-commercial-offer","fallback":"","fixture":""},
+    {"page":"index","section":"hero","source":"IndexPage.tsx:37-68","cms":"page.hero-media.video_desktop","ownership":"cms","hook":".hero-video--desktop","fallback":"TSX sources","fixture":"/grassigrosso-silent.mp4"},
+    {"page":"index","section":"hero","source":"IndexPage.tsx:52-68","cms":"page.hero-media.video_mobile","ownership":"cms","hook":".hero-video--mobile","fallback":"TSX sources","fixture":"/grassigrosso-silent-mobile.webm"},
+    {"page":"index","section":"hero","source":"IndexPage.tsx:39,54,69-78","cms":"page.hero-media.poster","ownership":"cms","hook":".hero-poster","fallback":"TSX","fixture":"/grassigrosso-poster.avif"},
+    {"page":"index","section":"hero","source":"IndexPage.tsx:78","cms":"page.hero-media.poster_alt","ownership":"cms","hook":"","fallback":"TSX","fixture":"Grassigrosso"},
+    {"page":"index","section":"hero","source":"IndexPage.tsx:80","cms":null,"ownership":"code","reason":"Play button chrome/behavior","hook":".hero-play-btn","fallback":"","fixture":""},
+
+    {"page":"index","section":"solutions","source":"IndexPage.tsx:96","cms":"index-page.solutions_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Решения для бизнеса"},
+    {"page":"index","section":"solutions","source":"IndexPage.tsx:97-160","cms":"page.solution-card[]","ownership":"cms","hook":"","fallback":"TSX cards","fixture":"title+text+image+href per card"},
+
+    {"page":"index","section":"philosophy","source":"IndexPage.tsx:167","cms":"index-page.philosophy_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Наша философия"},
+    {"page":"index","section":"philosophy","source":"IndexPage.tsx:168-220","cms":"page.solution-card[]|document-card presentation","ownership":"cms","hook":"data-document=presentation","fallback":"TSX","fixture":"presentation card + copy"},
+
+    {"page":"index","section":"collections","source":"IndexPage.tsx:226","cms":"index-page.collections_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Коллекции"},
+    {"page":"index","section":"collections","source":"IndexPage.tsx:227-231","cms":"index-page.collections_subtitle","ownership":"cms","hook":"","fallback":"TSX","fixture":"collections subtitle"},
+    {"page":"index","section":"collections","source":"IndexPage.tsx:233","cms":"index-page.collections_link_label","ownership":"cms","hook":"","fallback":"TSX","fixture":"В каталог"},
+    {"page":"index","section":"collections","source":"IndexPage.tsx:233","cms":"index-page.collections_link_href","ownership":"cms","hook":"","fallback":"TSX","fixture":"/catalog"},
+    {"page":"index","section":"collections","source":"IndexPage.tsx:242-395","cms":"page.collection-card[]","ownership":"cms","hook":"collections slider","fallback":"TSX","fixture":"name+image+features[]+href"},
+    {"page":"index","section":"collections","source":"IndexPage.tsx:397-410","cms":null,"ownership":"code","reason":"Slider nav/progress mechanics","hook":".collections-nav","fallback":"","fixture":""},
+
+    {"page":"index","section":"partners","source":"IndexPage.tsx:413","cms":"index-page.partners_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Партнеры и технологии"},
+    {"page":"index","section":"partners","source":"IndexPage.tsx:414-430","cms":"index-page.partners_image_desktop","ownership":"cms","hook":".partners-img-normal","fallback":"TSX","fixture":"partners collage desktop"},
+    {"page":"index","section":"partners","source":"IndexPage.tsx:425-430","cms":"index-page.partners_image_mobile","ownership":"cms","hook":".partners-img-mobile","fallback":"TSX","fixture":"partners collage mobile"},
+
+    {"page":"index","section":"testimonials","source":"IndexPage.tsx:433","cms":"index-page.testimonials_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Нам доверяют"},
+    {"page":"index","section":"testimonials","source":"IndexPage.tsx:434-600","cms":"page.testimonial[]","ownership":"cms","hook":".testimonial-card","fallback":"TSX","fixture":"tag+company+author+rating+text"},
+
+    {"page":"index","section":"docs","source":"IndexPage.tsx:716","cms":"index-page.docs_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Сертификация и документация"},
+    {"page":"index","section":"docs","source":"IndexPage.tsx:717+","cms":"page.document-card[]","ownership":"cms","hook":"data-document, data-document-request-trigger","fallback":"TSX","fixture":"stable document ids"},
+
+    {"page":"hotels","section":"hero","source":"HotelsPage.tsx:102","cms":"page.hero.title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Сон, о котором хочется написать в отзыве"},
+    {"page":"hotels","section":"hero","source":"HotelsPage.tsx:103-106","cms":"page.hero.description","ownership":"cms","hook":"","fallback":"TSX","fixture":"hero description"},
+    {"page":"hotels","section":"hero","source":"HotelsPage.tsx:108","cms":"page.hero.cta_label","ownership":"cms","hook":"data-open-commercial-offer","fallback":"TSX","fixture":"Скачать каталог"},
+    {"page":"hotels","section":"hero","source":"HotelsPage.tsx:108","cms":null,"ownership":"code","reason":"Commercial offer modal behavior","hook":"data-open-commercial-offer","fallback":"","fixture":""},
+    {"page":"hotels","section":"hero","source":"HotelsPage.tsx:117-122","cms":"page.hero.image","ownership":"cms","hook":"","fallback":"TSX","fixture":"/hotels-hero.png"},
+    {"page":"hotels","section":"hero","source":"HotelsPage.tsx:122","cms":"page.hero.image_alt","ownership":"cms","hook":"","fallback":"TSX","fixture":"Интерьер спальни"},
+
+    {"page":"hotels","section":"stats","source":"HotelsPage.tsx:131-138","cms":"page.stat[]","ownership":"cms","hook":".stats-grid","fallback":"TSX","fixture":"label+value rows"},
+    {"page":"hotels","section":"stats","source":"HotelsPage.tsx:138","cms":"hotels-page.stats_note","ownership":"cms","hook":".stats-note","fallback":"TSX","fixture":"* При заключении договора…"},
+
+    {"page":"hotels","section":"categories","source":"HotelsPage.tsx:144","cms":"hotels-page.categories_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Решения по категории отеля"},
+    {"page":"hotels","section":"categories","source":"HotelsPage.tsx:3-21,148-159","cms":"page.hotel-category[]","ownership":"cms","hook":"data-text, .category-active","fallback":"TSX","fixture":"name+text+active"},
+    {"page":"hotels","section":"categories","source":"HotelsPage.tsx:152","cms":null,"ownership":"code","reason":"Category arrow chrome asset","hook":".category-arrow","fallback":"","fixture":"/arrow-category.svg"},
+
+    {"page":"hotels","section":"products","source":"HotelsPage.tsx:23-46,169-194","cms":"page.hotel-product[]","ownership":"cms","hook":"data-catalog, data-open-catalog","fallback":"TSX","fixture":"boxspring|accessories + media srcsets"},
+    {"page":"hotels","section":"products","source":"HotelsPage.tsx:178","cms":null,"ownership":"code","reason":"Catalog request modal keyed by data-catalog","hook":"data-open-catalog","fallback":"","fixture":""},
+
+    {"page":"hotels","section":"discount","source":"HotelsPage.tsx:198","cms":"hotels-page.discount_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Система скидок от объема"},
+    {"page":"hotels","section":"discount","source":"HotelsPage.tsx:199","cms":"hotels-page.discount_subtitle","ownership":"cms","hook":"","fallback":"TSX","fixture":"discount subtitle"},
+    {"page":"hotels","section":"discount","source":"HotelsPage.tsx:203-207","cms":"hotels-page.discount_headers","ownership":"cms","hook":"","fallback":"TSX","fixture":"Сумма/Скидка/Условия"},
+    {"page":"hotels","section":"discount","source":"HotelsPage.tsx:209-211","cms":"page.discount-row[]","ownership":"cms","hook":".discount-row","fallback":"TSX","fixture":"amount+badge+terms+highlight"},
+    {"page":"hotels","section":"discount","source":"HotelsPage.tsx:214","cms":"hotels-page.discount_note","ownership":"cms","hook":"","fallback":"TSX","fixture":"* Точную стоимость…"},
+
+    {"page":"hotels","section":"contact","source":"HotelsPage.tsx:218-224","cms":"contact block titles+info","ownership":"cms","hook":"#contact-form","fallback":"TSX","fixture":"Доброе утро! + hotels@"},
+    {"page":"hotels","section":"contact","source":"HotelsPage.tsx:87-93","cms":null,"ownership":"code","reason":"Shared form field ids/labels","hook":"data-contact-form","fallback":"","fixture":""},
+    {"page":"hotels","section":"contact","source":"contact-forms.js","cms":null,"ownership":"code","reason":"Email routing","hook":"Страница \"Отелям\"","fallback":"","fixture":"hotels@"},
+
+    {"page":"hotels","section":"refresh","source":"HotelsPage.tsx:227","cms":"hotels-page.refresh_badge","ownership":"cms","hook":"","fallback":"TSX","fixture":"Refresh-программа"},
+    {"page":"hotels","section":"refresh","source":"HotelsPage.tsx:228","cms":"hotels-page.refresh_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Плановая замена матрасов"},
+    {"page":"hotels","section":"refresh","source":"HotelsPage.tsx:229","cms":"hotels-page.refresh_description","ownership":"cms","hook":"","fallback":"TSX","fixture":"refresh description"},
+    {"page":"hotels","section":"refresh","source":"HotelsPage.tsx:231-233","cms":"page.refresh-feature[]","ownership":"cms","hook":"","fallback":"TSX","fixture":"title+text+icon"},
+    {"page":"hotels","section":"refresh","source":"HotelsPage.tsx:235","cms":"hotels-page.refresh_cta_label","ownership":"cms","hook":"data-open-commercial-offer=seasonal","fallback":"TSX","fixture":"Подключить Refresh-программу"},
+    {"page":"hotels","section":"refresh","source":"HotelsPage.tsx:235","cms":null,"ownership":"code","reason":"Seasonal commercial offer modal variant","hook":"data-open-commercial-offer=seasonal","fallback":"","fixture":""},
+
+    {"page":"hotels","section":"faq","source":"HotelsPage.tsx:247","cms":"hotels-page.faq_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Часто задаваемые вопросы"},
+    {"page":"hotels","section":"faq","source":"HotelsPage.tsx:48-62","cms":"page.faq-item[]","ownership":"cms","hook":"data-faq-item","fallback":"TSX","fixture":"3 FAQ items"},
+
+    {"page":"dealers","section":"hero","source":"DealersPage.tsx:70","cms":"page.hero.title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Дилерская программа Grassigrosso"},
+    {"page":"dealers","section":"hero","source":"DealersPage.tsx:71","cms":"page.hero.description","ownership":"cms","hook":"","fallback":"TSX","fixture":"Станьте официальным дилером…"},
+    {"page":"dealers","section":"hero","source":"DealersPage.tsx:72","cms":"page.hero.cta_label","ownership":"cms","hook":"href=#contact-form","fallback":"TSX","fixture":"Стать дилером"},
+    {"page":"dealers","section":"hero","source":"DealersPage.tsx:72","cms":"page.hero.cta_url","ownership":"cms","hook":"","fallback":"TSX","fixture":"#contact-form"},
+    {"page":"dealers","section":"hero","source":"DealersPage.tsx:76-80","cms":"page.hero.image","ownership":"cms","hook":"","fallback":"TSX","fixture":"/dealers-hero.png"},
+    {"page":"dealers","section":"stats","source":"DealersPage.tsx:87-91","cms":"page.stat[]","ownership":"cms","hook":"","fallback":"TSX","fixture":"Партнеров 250+ …"},
+
+    {"page":"dealers","section":"conditions","source":"DealersPage.tsx:97","cms":"dealers-page.conditions_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Условия участия"},
+    {"page":"dealers","section":"conditions","source":"DealersPage.tsx:97","cms":"dealers-page.conditions_subtitle","ownership":"cms","hook":"","fallback":"TSX","fixture":"Простые шаги…"},
+    {"page":"dealers","section":"conditions","source":"DealersPage.tsx:99-101","cms":"page.list-item[]","ownership":"cms","hook":".condition-item","fallback":"TSX","fixture":"3 condition titles"},
+    {"page":"dealers","section":"conditions","source":"DealersPage.tsx:103","cms":"dealers-page.conditions_icon","ownership":"cms","hook":"","fallback":"TSX","fixture":"/icon-hand-pointer.svg"},
+
+    {"page":"dealers","section":"offers","source":"DealersPage.tsx:107","cms":"dealers-page.offers_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Что мы предлагаем"},
+    {"page":"dealers","section":"offers","source":"DealersPage.tsx:107","cms":"dealers-page.offers_subtitle","ownership":"cms","hook":"","fallback":"TSX","fixture":"Комплексная поддержка…"},
+    {"page":"dealers","section":"offers","source":"DealersPage.tsx:110-116","cms":"page.offer-card[]","ownership":"cms","hook":"","fallback":"TSX","fixture":"title+icon+bullets[]"},
+
+    {"page":"dealers","section":"geography","source":"DealersPage.tsx:122","cms":"dealers-page.geography_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"География дилеров"},
+    {"page":"dealers","section":"geography","source":"DealersPage.tsx:122","cms":"dealers-page.geography_subtitle","ownership":"cms","hook":"","fallback":"TSX","fixture":"Наши дилеры работают…"},
+    {"page":"dealers","section":"geography","source":"DealersPage.tsx:123","cms":"dealers-page.geography_map_image","ownership":"cms","hook":"#geographyMapImg","fallback":"TSX","fixture":"/Map.svg"},
+    {"page":"dealers","section":"geography","source":"DealersPage.tsx:3-11,125+","cms":"page.geo-city[]","ownership":"cms","hook":".geography-cities","fallback":"TSX","fixture":"name + optional badge скоро"},
+    {"page":"dealers","section":"geography","source":"geography-effects.js","cms":null,"ownership":"code","reason":"Map animation/marquee mechanics","hook":"#geographyMapContainer","fallback":"","fixture":""},
+
+    {"page":"dealers","section":"quality","source":"DealersPage.tsx:136-160","cms":"dealers-page.quality_* + media","ownership":"cms","hook":"","fallback":"TSX","fixture":"title+body+images"},
+
+    {"page":"dealers","section":"requirements","source":"DealersPage.tsx:164","cms":"dealers-page.requirements_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Требования к дилерам"},
+    {"page":"dealers","section":"requirements","source":"DealersPage.tsx:164","cms":"dealers-page.requirements_subtitle","ownership":"cms","hook":"","fallback":"TSX","fixture":"Для успешного сотрудничества…"},
+    {"page":"dealers","section":"requirements","source":"DealersPage.tsx:167-168","cms":"page.requirement-card[]","ownership":"cms","hook":"","fallback":"TSX","fixture":"title+icon+bullets[]"},
+
+    {"page":"dealers","section":"packages","source":"DealersPage.tsx:173","cms":"dealers-page.packages_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Дилерские пакеты"},
+    {"page":"dealers","section":"packages","source":"DealersPage.tsx:173","cms":"dealers-page.packages_subtitle","ownership":"cms","hook":"","fallback":"TSX","fixture":"Выберите подходящий уровень…"},
+    {"page":"dealers","section":"packages","source":"DealersPage.tsx:175-177","cms":"page.dealer-package[]","ownership":"cms","hook":"data-package","fallback":"TSX","fixture":"value standard|individual|exclusive + features"},
+    {"page":"dealers","section":"packages","source":"DealersPage.tsx:50-58","cms":"page.dealer-package.form_option_label","ownership":"cms","hook":"#dealer-package option[value]","fallback":"derived title+price","fixture":"СТАНДАРТ – От 100 000 р"},
+    {"page":"dealers","section":"packages","source":"page-bootstrap.js","cms":null,"ownership":"code","reason":"Package preset allowlist must match package.value","hook":"data-package","fallback":"","fixture":"standard|individual|exclusive"},
+
+    {"page":"dealers","section":"contact","source":"DealersPage.tsx:181-186","cms":"contact titles+info+package field chrome","ownership":"cms","hook":"#contact-form,#dealer-package","fallback":"TSX","fixture":"Стать дилером"},
+    {"page":"dealers","section":"contact","source":"shared-page-sections","cms":null,"ownership":"code","reason":"Shared field ids; select name=package","hook":"name=package","fallback":"","fixture":""},
+    {"page":"dealers","section":"contact","source":"contact-forms.js","cms":null,"ownership":"code","reason":"Email routing","hook":"Страница \"Дилерам\"","fallback":"","fixture":"b2b@"},
+
+    {"page":"dealers","section":"faq","source":"DealersPage.tsx:189","cms":"dealers-page.faq_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Часто задаваемые вопросы"},
+    {"page":"dealers","section":"faq","source":"DealersPage.tsx:13-16","cms":"page.faq-item[]","ownership":"cms","hook":"data-faq-item","fallback":"TSX","fixture":"3 FAQ items"},
+
+    {"page":"contacts","section":"hero","source":"ContactsPage.tsx:93","cms":"page.hero.title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Контакты"},
+    {"page":"contacts","section":"hero","source":"ContactsPage.tsx:94","cms":"page.hero.description","ownership":"cms","hook":"","fallback":"TSX","fixture":"Свяжитесь с нами…"},
+    {"page":"contacts","section":"hero","source":"ContactsPage.tsx:97-101","cms":"page.hero.image","ownership":"cms","hook":"","fallback":"TSX","fixture":"/contacts-hero.png"},
+
+    {"page":"contacts","section":"offices","source":"ContactsPage.tsx:108","cms":"contacts-page.offices_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Наши офисы"},
+    {"page":"contacts","section":"offices","source":"ContactsPage.tsx:3-52","cms":"page.office[]","ownership":"cms","hook":"data-office","fallback":"TSX","fixture":"main|voronezh|lnr|dnr fields"},
+
+    {"page":"contacts","section":"map","source":"ContactsPage.tsx:152","cms":"contacts-page.map_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Как нас найти"},
+    {"page":"contacts","section":"map","source":"contacts-maps.js:3-8","cms":"page.office.map_iframe_html","ownership":"cms","hook":"#map-{id}, data-map-frame","fallback":"CURRENT runtime uses Yandex JS lat/lng; migrate to iframe HTML per user decision; seed may generate iframe from lat/lng","fixture":"<iframe src=https://yandex.ru/map-widget/...>"},
+    {"page":"contacts","section":"map","source":"contacts-maps.js:3-8","cms":"page.office.map_center_lat/lng/zoom/balloon_*","ownership":"cms","hook":"","fallback":"Legacy fields until iframe migration complete OR derived only for seed","fixture":"44.970737,34.152577,16"},
+    {"page":"contacts","section":"map","source":"ContactsPage.tsx:155-163","cms":null,"ownership":"code","reason":"Tab/frame switcher mechanics","hook":"data-map-tab, data-map-frame","fallback":"","fixture":""},
+    {"page":"contacts","section":"map","source":"contacts-maps.js:59-65","cms":null,"ownership":"code","reason":"Yandex API key/loader until iframe migration","hook":"VITE_YANDEX_MAPS_API_KEY","fallback":"","fixture":""},
+    {"page":"contacts","section":"map","source":"API-06","cms":null,"ownership":"code","reason":"Phase 3 normalizes iframe HTML → allowlisted HTTPS URL; React never gets raw HTML","hook":"feed/proxy","fallback":"","fixture":""},
+
+    {"page":"contacts","section":"contact","source":"ContactsPage.tsx:168-172","cms":"contact titles+info","ownership":"cms","hook":"#contact-form","fallback":"TSX","fixture":"sales@ from primary office"},
+    {"page":"contacts","section":"contact","source":"contact-forms.js","cms":null,"ownership":"code","reason":"Email routing + shared fields","hook":"Страница \"Контакты\"","fallback":"","fixture":""},
+
+    {"page":"documents","section":"hero","source":"DocumentsPage.tsx:54-64","cms":"page.hero","ownership":"cms","hook":"","fallback":"TSX","fixture":"Документы и сертификаты"},
+    {"page":"documents","section":"certificates","source":"DocumentsPage.tsx:73","cms":"documents-page.certificates_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"Официальная сертификация"},
+    {"page":"documents","section":"certificates","source":"DocumentsPage.tsx:3-21,81","cms":"page.document-card[]","ownership":"cms","hook":"data-document=declaration|certificate|trademark","fallback":"TSX","fixture":"stable ids synced to DOCUMENT_REQUEST_FILES"},
+    {"page":"documents","section":"certificates","source":"resource-modals.js/server.cjs","cms":null,"ownership":"code","reason":"Filename routing /api/download/:docId must stay synced with card.id","hook":"data-document","fallback":"","fixture":"declaration→Декларация.pdf"},
+
+    {"page":"documents","section":"company","source":"DocumentsPage.tsx:102","cms":"documents-page.company_title","ownership":"cms","hook":"","fallback":"TSX","fixture":"О компании Grassigrosso"},
+    {"page":"documents","section":"company","source":"DocumentsPage.tsx:24-26,110","cms":"page.document-card[]","ownership":"cms","hook":"data-document=catalog|presentation","fallback":"TSX","fixture":"catalog, presentation"},
+
+    {"page":"documents","section":"help","source":"DocumentsPage.tsx:136-141","cms":"documents-page.help_title/body/cta","ownership":"cms","hook":"data-open-help-modal","fallback":"TSX","fixture":"Нужна помощь…"},
+    {"page":"documents","section":"help","source":"resource-modals.js","cms":null,"ownership":"code","reason":"Help modal + page=Документы (помощь)","hook":"data-open-help-modal","fallback":"","fixture":""},
+
+    {"page":"documents","section":"faq","source":"DocumentsPage.tsx:147-151","cms":"faq_title + page.faq-item[]","ownership":"cms","hook":"data-faq-item","fallback":"TSX","fixture":"3 FAQ"},
+
+    {"page":"download-catalog","section":"shell","source":"DownloadCatalogPage.tsx:148","cms":"download-catalog-page.back_label","ownership":"cms","hook":".catalogue-new-shared-back","fallback":"TSX","fixture":"Назад в каталог"},
+    {"page":"download-catalog","section":"shell","source":"DownloadCatalogPage.tsx:148","cms":"download-catalog-page.back_href","ownership":"cms","hook":"","fallback":"TSX","fixture":"/catalog"},
+    {"page":"download-catalog","section":"title","source":"DownloadCatalogPage.tsx:158","cms":"download-catalog-page.title","ownership":"cms","hook":"#download-catalog-title","fallback":"TSX","fixture":"Скачать каталог"},
+    {"page":"download-catalog","section":"lead","source":"TBD render slot","cms":"download-catalog-page.lead","ownership":"cms","hook":"","fallback":"empty until FE defines slot","fixture":""},
+    {"page":"download-catalog","section":"form","source":"DownloadCatalogPage.tsx:180","cms":"download-catalog-page.submit_label","ownership":"cms","hook":"button[type=submit]","fallback":"TSX","fixture":"Скачать каталог"},
+    {"page":"download-catalog","section":"pdf","source":"server.cjs DOCUMENT_REQUEST_FILES.catalog","cms":"download-catalog-page.catalog_pdf","ownership":"cms","hook":"data-download-doc=catalog","fallback":"public/documents/Catalog_v1.2.pdf until CMS media wired","fixture":"Catalog_v1.2.pdf"},
+    {"page":"download-catalog","section":"pdf","source":"contact-forms.js","cms":null,"ownership":"code","reason":"Download flow hook must stay data-download-doc=catalog","hook":"data-download-doc=catalog","fallback":"","fixture":"catalog"},
+    {"page":"download-catalog","section":"slider","source":"download-catalog-page schema","cms":"slides/media_display_mode/slider_autoplay_ms","ownership":"cms","hook":"setupDownloadCatalogHero","fallback":"snapshot","fixture":"image_only + cover avif"},
+    {"page":"download-catalog","section":"slider","source":"DownloadCatalogPage.tsx:3-91","cms":null,"ownership":"code","reason":"Slider scaffolding/nav/dots LCP dimensions","hook":"catalog-hero-*","fallback":"","fixture":""},
+    {"page":"download-catalog","section":"form","source":"DownloadCatalogPage.tsx:166-175","cms":null,"ownership":"code","reason":"Shared field ids/labels/privacy/honeypot","hook":"data-contact-form","fallback":"","fixture":""},
+    {"page":"download-catalog","section":"form","source":"contact-forms.js/server.cjs","cms":null,"ownership":"code","reason":"Email routing Скачать каталог","hook":"getPageName","fallback":"","fixture":"sales@"}
+  ]
+}
