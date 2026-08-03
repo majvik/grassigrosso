@@ -89,4 +89,4 @@
 
 ---
 *Requirements defined: 2026-08-03*
-*Last updated: 2026-08-03 — Phase 3 Complete (A–E accepted `ad0d279`); Phase 4 FE-* pending*
+*Last updated: 2026-08-04 — Phase 5A coverage matrix frozen (`05-COVERAGE.md`); QA-* still Pending until Phase B/C*

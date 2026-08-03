@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 4E harden — content-aware uploads fingerprint (path+size+SHA-256); awaiting accept. No Phase 5. No commit / sync-seed / push unless asked.
+**Current focus:** Phase 5A — coverage matrix DONE; ready for review/accept. No Phase B / no code / no commit unless asked.
 
 ## Current Position
 
-Phase: 4 of 6 (React Hydrate) — Phase E harden in progress (not accepted)
-Plan: 04-01 Phase E harden (uploads guard content fingerprint)
-Status: fingerprint detects additions/missing/changed; cleanup deletes additions only; negatives covered by probe
-Last activity: 2026-08-04 — Phase E fingerprint harden (size+SHA-256)
+Phase: 5 of 6 (Local Acceptance Gate) — Phase A complete (planning)
+Plan: 05-01 + `05-COVERAGE.md`
+Status: matrix 45 rows (covered 26 / partial 6 / gap 11 / deferred 2 / unowned 0)
+Last activity: 2026-08-04 — Phase A coverage freeze
 
-Progress: [██████████] Phases 1–4 code complete; Phase 4E not closed until accept after clean content-aware gate
+Progress: [██████████] Phases 1–4 complete; Phase 5A matrix frozen; Phase B blocked on accept
 
 ## Performance Metrics
 
@@ -25,26 +25,29 @@ Progress: [██████████] Phases 1–4 code complete; Phase 4E 
 | 1. Shared Page Components | 1/1 | Complete |
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) |
 | 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) |
-| 4. React Hydrate | 1/1 | E harden (content FP) — not accepted |
+| 4. React Hydrate | 1/1 | Complete (local; FE-01…05; `2d7ca10`) |
+| 5. Local Acceptance Gate | 0/1 | Phase A DONE — awaiting accept |
+| 6. Legal Pages | 0/TBD | Not started |
 
 ## Accumulated Context
 
 ### Decisions
 
-- Page content only via Node `GET /api/pages/:slug`
-- Full `check:pages-cms-phase-e` must not leave working-tree drift (uploads originals + Strapi `thumbnail_/small_/medium_/large_` derivatives)
-- Uploads fingerprint is path+size+SHA-256; cleanup deletes additions only; missing/changed → FAIL
+- D1–D4 locked and affirmed with Phase 5 design/plan
+- Phase A = coverage matrix only; Phase B implements D1–D4 after separate affirm
 - Local-only: no push/PR/deploy; no sync-seed unless asked
 
 ### Pending Todos
 
-- User affirms Phase 4E after content-fingerprint harden → then Phase 5 (QA-*)
-- Commit harden only when explicitly asked
+- User accepts Phase A (`05-COVERAGE.md`)
+- Separate affirm before Phase B implementation
+- Commit planning only when asked
 
 ### Blockers/Concerns
 
-Phase E / Phase 5 not closed. Prior name-only fingerprint rejected; content fingerprint harden verified locally 2026-08-04.
+Phase B gaps (11): D1, D1-neg, D2, D2-post, D3, D4, DEF-uploads-502, QA-02, R5-2, R5-3, R5-8.
 
 ## Session Continuity
 
-See plan Phase E harden notes. Re-run after content FP: probe PASS (sentinel + delete/change negatives), full gate PASS, porcelain before===after, 0 untracked uploads.
+- Coverage: `.planning/phases/05-local-acceptance/05-COVERAGE.md`
+- Design/plan: `docs/superpowers/specs|plans/2026-08-04-pages-cms-local-acceptance*`
