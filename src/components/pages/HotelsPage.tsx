@@ -145,8 +145,9 @@ export function HotelsPage() {
 
       <section className="product-cards-section">
         {data.products.map((card, index) => {
+          const cmsImage = mediaUrl(card.image)
           const picture = HOTELS_PRODUCT_PICTURE[card.catalog_key]
-          const imgSrc = mediaUrl(card.image) || picture?.src || ''
+          const alt = card.image_alt || card.title
           return (
             <div key={card.catalog_key}>
               {index > 0 ? <div className="section-divider" /> : null}
@@ -162,15 +163,16 @@ export function HotelsPage() {
                   </a>
                 </div>
                 <div className="product-card-image">
-                  {picture ? (
+                  {cmsImage ? (
+                    // CMS media owns the slot: no legacy <source> (they would win over img src).
+                    <img src={cmsImage} alt={alt} />
+                  ) : picture ? (
                     <picture>
                       <source type="image/avif" srcSet={picture.avif} />
                       <source type="image/webp" srcSet={picture.webp} />
                       <source type={picture.fallbackType} srcSet={picture.fallback} />
-                      <img src={imgSrc} alt={card.image_alt || card.title} />
+                      <img src={picture.src} alt={alt} />
                     </picture>
-                  ) : imgSrc ? (
-                    <img src={imgSrc} alt={card.image_alt || card.title} />
                   ) : null}
                 </div>
               </div>

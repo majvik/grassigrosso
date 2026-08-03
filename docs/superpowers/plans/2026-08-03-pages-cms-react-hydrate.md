@@ -1,7 +1,7 @@
 # Pages CMS Phase 4 — React hydrate (execution plan)
 
 **Date:** 2026-08-03
-**Status:** Phase A–B accepted; Phase C DONE (local) — awaiting accept. No push / no `strapi:sync-seed`.
+**Status:** Phase A–B accepted; Phase C harden (product `currentSrc`) DONE (local) — awaiting accept. No push / no `strapi:sync-seed`.
 **Design:** [2026-08-03-pages-cms-react-hydrate-design.md](../specs/2026-08-03-pages-cms-react-hydrate-design.md)
 **GSD phase:** `.planning/phases/04-react-hydrate/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -36,7 +36,7 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 | Design + plan draft v2 | merge/lifecycle/DOM locks | affirmed |
 | Phase A | client + merge + unit harness | DONE — accepted |
 | Phase B | index + download-catalog texts + DOM slice | DONE — accepted (`a537e6f` + `825deb0`) |
-| Phase C | hotels + dealers + DOM slice | DONE — awaiting accept |
+| Phase C | hotels + dealers + DOM slice | DONE — harden (product currentSrc) awaiting accept |
 | Phase D | contacts + documents + map + DOM slice | not started |
 | Phase E | full unit + DOM (all 6) + FE-* docs | not started |
 

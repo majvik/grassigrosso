@@ -299,25 +299,37 @@ function criticalHooksExpr(slug) {
     }))()`
   }
   if (slug === 'hotels') {
-    return `(() => ({
-      commercial: !!document.querySelector('[data-open-commercial-offer]'),
-      seasonal: !!document.querySelector('[data-open-commercial-offer="seasonal"]'),
-      openCatalog: document.querySelectorAll('[data-open-catalog]').length,
-      catalogs: [...document.querySelectorAll('[data-catalog]')].map((el) => el.getAttribute('data-catalog')),
-      form: !!document.querySelector('[data-contact-form]'),
-      honeypot: !!document.querySelector('#website'),
-      topLevelSections: [...document.querySelectorAll('[data-react-root][data-react-page="hotels"] > section')]
-        .map((el) => el.className),
-      categories: document.querySelectorAll('.category-item').length,
-      products: document.querySelectorAll('.product-card').length,
-      discountRows: document.querySelectorAll('.discount-row').length,
-      faq: document.querySelectorAll('[data-faq-item]').length,
-      heroTitle: (document.querySelector('.page-hero-title')?.textContent || '').trim(),
-      contactTitle: (document.querySelector('.contact-section .section-title')?.textContent || '').trim(),
-      heroImg: document.querySelector('.page-hero-image img')?.getAttribute('src') || '',
-      mainText: (document.querySelector('main')?.innerText || '').trim().length,
-      rawHtml: document.documentElement.innerHTML.includes('map_iframe_html'),
-    }))()`
+    return `(() => {
+      const productImages = [...document.querySelectorAll('.product-card[data-catalog]')].map((card) => {
+        const img = card.querySelector('.product-card-image img')
+        return {
+          key: card.getAttribute('data-catalog'),
+          src: img?.getAttribute('src') || '',
+          currentSrc: img?.currentSrc || '',
+          sourceCount: card.querySelectorAll('.product-card-image source').length,
+        }
+      })
+      return {
+        commercial: !!document.querySelector('[data-open-commercial-offer]'),
+        seasonal: !!document.querySelector('[data-open-commercial-offer="seasonal"]'),
+        openCatalog: document.querySelectorAll('[data-open-catalog]').length,
+        catalogs: [...document.querySelectorAll('[data-catalog]')].map((el) => el.getAttribute('data-catalog')),
+        form: !!document.querySelector('[data-contact-form]'),
+        honeypot: !!document.querySelector('#website'),
+        topLevelSections: [...document.querySelectorAll('[data-react-root][data-react-page="hotels"] > section')]
+          .map((el) => el.className),
+        categories: document.querySelectorAll('.category-item').length,
+        products: document.querySelectorAll('.product-card').length,
+        discountRows: document.querySelectorAll('.discount-row').length,
+        faq: document.querySelectorAll('[data-faq-item]').length,
+        heroTitle: (document.querySelector('.page-hero-title')?.textContent || '').trim(),
+        contactTitle: (document.querySelector('.contact-section .section-title')?.textContent || '').trim(),
+        heroImg: document.querySelector('.page-hero-image img')?.getAttribute('src') || '',
+        productImages,
+        mainText: (document.querySelector('main')?.innerText || '').trim().length,
+        rawHtml: document.documentElement.innerHTML.includes('map_iframe_html'),
+      }
+    })()`
   }
   return `(() => ({
     map: !!document.querySelector('#geographyMapContainer'),
@@ -420,6 +432,17 @@ function assertGeometryKeys(label, before, after, map) {
   }
 }
 
+function productImageByKey(snap, key) {
+  return (snap?.productImages || []).find((item) => item.key === key) || null
+}
+
+function assertCurrentSrcIncludes(label, product, needle) {
+  assert(
+    String(product?.currentSrc || '').includes(needle),
+    `${label}: currentSrc must include ${needle}, got ${JSON.stringify(product)}`,
+  )
+}
+
 function assertFirstPaintBaseline(slug, snap) {
   if (slug === 'index') {
     assert(snap?.baselineCount === 3, `${slug} baseline: expected 3 certification cards, got ${snap?.baselineCount}`)
@@ -472,6 +495,13 @@ function assertFirstPaintBaseline(slug, snap) {
     assert(snap?.commercial && snap?.seasonal && snap?.form && snap?.honeypot, `${slug} baseline: hooks`)
     assert(snap?.openCatalog === 2, `${slug} baseline: open-catalog hooks`)
     assert(String(snap?.heroTitle || '').includes('Сон, о котором хочется написать в отзыве'), `${slug} baseline: hero`)
+    // Defaults include product.image URLs → CMS slot path (no legacy <source>).
+    const boxspring = productImageByKey(snap, 'boxspring')
+    const accessories = productImageByKey(snap, 'accessories')
+    assert(boxspring?.sourceCount === 0, `${slug} baseline: boxspring must not use legacy sources when image set`)
+    assert(accessories?.sourceCount === 0, `${slug} baseline: accessories must not use legacy sources when image set`)
+    assertCurrentSrcIncludes(`${slug} baseline boxspring`, boxspring, 'boxspring')
+    assertCurrentSrcIncludes(`${slug} baseline accessories`, accessories, 'accessories')
   } else {
     assert(
       JSON.stringify(snap?.topLevelSections) === JSON.stringify(DEALERS_SECTIONS),
@@ -598,6 +628,21 @@ async function runPageScenarios(slug) {
         image: { url: '/uploads/cms-hotels-hero-marker.png' },
       }
       divergent.contact_section_title = 'CMS Hotels Contact Marker'
+      divergent.products = divergent.products.map((product) => {
+        if (product.catalog_key === 'boxspring') {
+          return {
+            ...product,
+            image: { url: '/uploads/cms-hotels-boxspring-marker.png' },
+          }
+        }
+        if (product.catalog_key === 'accessories') {
+          return {
+            ...product,
+            image: { url: '/uploads/cms-hotels-accessories-marker.png' },
+          }
+        }
+        return product
+      })
     } else {
       divergent.hero = {
         ...divergent.hero,
@@ -628,6 +673,21 @@ async function runPageScenarios(slug) {
         evaluate,
         `${slug} success hydrate`,
         `document.querySelector('.page-hero-title')?.textContent?.trim() === 'CMS Hotels Title Marker'`,
+        15000,
+      )
+      await waitFor(
+        evaluate,
+        `${slug} product currentSrc CMS`,
+        `(() => {
+          const box = document.querySelector('[data-catalog="boxspring"] .product-card-image img')
+          const acc = document.querySelector('[data-catalog="accessories"] .product-card-image img')
+          const boxOk = (box?.currentSrc || '').includes('cms-hotels-boxspring-marker')
+          const accOk = (acc?.currentSrc || '').includes('cms-hotels-accessories-marker')
+          const noLegacy =
+            document.querySelectorAll('[data-catalog="boxspring"] .product-card-image source').length === 0 &&
+            document.querySelectorAll('[data-catalog="accessories"] .product-card-image source').length === 0
+          return boxOk && accOk && noLegacy
+        })()`,
         15000,
       )
     } else {
@@ -690,6 +750,14 @@ async function runPageScenarios(slug) {
         `${slug} success: hero image (${ok?.heroImg})`,
       )
       assert(ok?.commercial && ok?.form && ok?.seasonal, `${slug} success: hooks`)
+      {
+        const boxspring = productImageByKey(ok, 'boxspring')
+        const accessories = productImageByKey(ok, 'accessories')
+        assert(boxspring?.sourceCount === 0, `${slug} success: CMS boxspring must drop legacy sources`)
+        assert(accessories?.sourceCount === 0, `${slug} success: CMS accessories must drop legacy sources`)
+        assertCurrentSrcIncludes(`${slug} success boxspring`, boxspring, 'cms-hotels-boxspring-marker')
+        assertCurrentSrcIncludes(`${slug} success accessories`, accessories, 'cms-hotels-accessories-marker')
+      }
       assertGeometryKeys(`${slug} success FE-05`, geoBaseline, geoAfter, {
         cta: ['left', 'width'],
         products: ['left', 'width'],
@@ -722,6 +790,45 @@ async function runPageScenarios(slug) {
       })
     }
     console.log(`  ${slug} success: PASS`, JSON.stringify({ geoBaseline, geoAfter }))
+  }
+
+  // --- Hotels: null product.image → code-owned responsive <picture> (fresh navigation; success cache) ---
+  if (slug === 'hotels') {
+    const nullImages = structuredClone(parityPayload)
+    nullImages.products = nullImages.products.map((product) => ({ ...product, image: null }))
+    await navigateWithMock(cdp, slug, {
+      mode: 'json',
+      status: 200,
+      body: envelope(nullImages, 'strapi'),
+    })
+    await waitFor(evaluate, `${slug} null-image paint`, hooksReadyExpr(slug), 15000)
+    await waitFor(
+      evaluate,
+      `${slug} null-image responsive`,
+      `(() => {
+        const box = document.querySelector('[data-catalog="boxspring"] .product-card-image')
+        const acc = document.querySelector('[data-catalog="accessories"] .product-card-image')
+        const boxSources = box?.querySelectorAll('source').length || 0
+        const accSources = acc?.querySelectorAll('source').length || 0
+        const boxSrc = box?.querySelector('img')?.currentSrc || ''
+        const accSrc = acc?.querySelector('img')?.currentSrc || ''
+        return (
+          boxSources >= 3 &&
+          accSources >= 3 &&
+          boxSrc.includes('boxspring') &&
+          accSrc.includes('accessories')
+        )
+      })()`,
+      15000,
+    )
+    const fallback = await evaluate(criticalHooksExpr(slug))
+    const boxFallback = productImageByKey(fallback, 'boxspring')
+    const accFallback = productImageByKey(fallback, 'accessories')
+    assert(boxFallback?.sourceCount >= 3, `${slug} null-image: boxspring needs legacy sources`)
+    assert(accFallback?.sourceCount >= 3, `${slug} null-image: accessories needs legacy sources`)
+    assertCurrentSrcIncludes(`${slug} null-image boxspring`, boxFallback, 'boxspring')
+    assertCurrentSrcIncludes(`${slug} null-image accessories`, accFallback, 'accessories')
+    console.log(`  ${slug} null-image fallback: PASS`, JSON.stringify({ boxFallback, accFallback }))
   }
 
   // --- FE-05 content-equal parity hydrate ---
