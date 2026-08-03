@@ -161,6 +161,13 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 - `.env.example`: `PAGES_STRAPI_CACHE_TTL_MS` / `PAGES_STRAPI_CACHE_STALE_MS`
 - `npm run check:pages-api` → PASS
 
+### Post-fix harden (2026-08-03)
+
+- Shared `lib/pages-cms-snapshots.cjs` `verifyPagesSnapshotSet` used by exporter + N5
+- Atomic export: validate all six → stage temp → verify → swap with rollback; late-slug failure leaves snapshots untouched
+- `check:pages-api` exports to harness snapshot dir only (`PAGES_CMS_SNAPSHOT_DIR`); tracked `public/pages-*` stays clean
+- Harness runs `check:catalog-api` against owned Node (async, no spawnSync with in-process Strapi)
+
 ---
 
 ## Phase E — Isolation & full local gate

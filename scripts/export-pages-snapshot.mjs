@@ -1,39 +1,40 @@
 #!/usr/bin/env node
 /**
  * Export six pages CMS disk snapshots from Node GET /api/pages/:slug.
- * Accepts only source=strapi (N3). Writes canonical `data` only + manifest sha256 (N5).
+ * Accepts only source=strapi (N3).
+ * Atomic publish: validate all responses → stage → verify (N5) → swap with rollback.
  *
  * Usage:
  *   PAGES_API_BASE_URL=http://127.0.0.1:3000 npm run pages:export-snapshot
  */
-import crypto from 'node:crypto'
-import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { validateNodeEnvelope, validateSnapshotPayload } from './pages-cms/envelope.mjs'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname, '..')
-const publicDir = path.join(rootDir, 'public')
+const defaultPublicDir = path.join(rootDir, 'public')
 
 const { PAGES_CMS_SLUGS } = require(path.join(
   rootDir,
   'strapi-catalog/src/api/pages-cms/utils/map-allowlist.js',
 ))
-const { snapshotFilenameForSlug } = require(path.join(rootDir, 'lib/pages-cms-api.cjs'))
+const {
+  writePagesSnapshotsAtomic,
+  verifyPagesSnapshotSet,
+  PAGES_SNAPSHOT_MANIFEST_NAME,
+  fingerprintPagesSnapshotDir,
+} = require(path.join(rootDir, 'lib/pages-cms-snapshots.cjs'))
 
-const baseUrl = String(process.env.PAGES_API_BASE_URL || process.env.CATALOG_API_BASE_URL || 'http://127.0.0.1:3000').replace(
-  /\/+$/,
-  '',
-)
-
-function sha256(text) {
-  return crypto.createHash('sha256').update(text).digest('hex')
+function defaultBaseUrl() {
+  return String(
+    process.env.PAGES_API_BASE_URL || process.env.CATALOG_API_BASE_URL || 'http://127.0.0.1:3000',
+  ).replace(/\/+$/, '')
 }
 
-async function fetchPage(slug) {
+async function fetchPageFromBase(baseUrl, slug) {
   const url = `${baseUrl}/api/pages/${encodeURIComponent(slug)}`
   const response = await fetch(url, { headers: { Accept: 'application/json' } })
   const text = await response.text()
@@ -49,19 +50,31 @@ async function fetchPage(slug) {
   return body
 }
 
-async function writeSnapshot(filename, canonical) {
-  const text = `${JSON.stringify(canonical, null, 2)}\n`
-  await fs.writeFile(path.join(publicDir, filename), text, 'utf8')
-  return sha256(text)
-}
+/**
+ * Fetch + validate all six pages, then atomically publish.
+ * Late-slug failures never write tracked snapshots (staging only after full validation).
+ *
+ * @param {{
+ *   baseUrl?: string,
+ *   publicDir?: string,
+ *   fetchPage?: (slug: string) => Promise<object>,
+ * }} [opts]
+ */
+export async function exportPagesSnapshots(opts = {}) {
+  const targetDir = opts.publicDir || defaultPublicDir
+  const baseUrl = (opts.baseUrl || defaultBaseUrl()).replace(/\/+$/, '')
+  const fetchOne = opts.fetchPage || ((slug) => fetchPageFromBase(baseUrl, slug))
+  const before = fingerprintPagesSnapshotDir(targetDir)
 
-async function main() {
-  /** @type {Record<string, string>} */
-  const hashes = {}
-  await fs.mkdir(publicDir, { recursive: true })
-
+  /** @type {Array<{ slug: string, body: object }>} */
+  const fetched = []
   for (const slug of PAGES_CMS_SLUGS) {
-    const body = await fetchPage(slug)
+    fetched.push({ slug, body: await fetchOne(slug) })
+  }
+
+  /** @type {Record<string, object>} */
+  const canonicalBySlug = {}
+  for (const { slug, body } of fetched) {
     const envelopeFails = validateNodeEnvelope(body, slug)
     if (envelopeFails.length) {
       throw new Error(`${slug}: invalid node envelope:\n - ${envelopeFails.join('\n - ')}`)
@@ -75,22 +88,34 @@ async function main() {
     if (snapshotFails.length) {
       throw new Error(`${slug}: canonical data invalid:\n - ${snapshotFails.join('\n - ')}`)
     }
-    const filename = snapshotFilenameForSlug(slug)
-    hashes[slug] = await writeSnapshot(filename, body.data)
+    canonicalBySlug[slug] = body.data
   }
 
-  const manifest = {
-    syncedAt: new Date().toISOString(),
-    slugs: [...PAGES_CMS_SLUGS],
-    sha256BySlug: hashes,
-  }
-  const manifestText = `${JSON.stringify(manifest, null, 2)}\n`
-  await fs.writeFile(path.join(publicDir, 'pages-snapshot.manifest.json'), manifestText, 'utf8')
+  writePagesSnapshotsAtomic(targetDir, canonicalBySlug)
 
-  console.log(`pages snapshot exported: ${PAGES_CMS_SLUGS.length} slugs (source=strapi)`)
+  const verifyFails = verifyPagesSnapshotSet({
+    manifestPath: path.join(targetDir, PAGES_SNAPSHOT_MANIFEST_NAME),
+    snapshotsDir: targetDir,
+    expectedSlugs: [...PAGES_CMS_SLUGS],
+  })
+  if (verifyFails.length) {
+    throw new Error(`post-publish verify failed:\n - ${verifyFails.join('\n - ')}`)
+  }
+
+  return { publicDir: targetDir, before, after: fingerprintPagesSnapshotDir(targetDir) }
 }
 
-main().catch((error) => {
-  console.error(`pages:export-snapshot failed: ${error.message}`)
-  process.exit(1)
-})
+async function main() {
+  await exportPagesSnapshots()
+  console.log(`pages snapshot exported: ${PAGES_CMS_SLUGS.length} slugs (source=strapi, atomic)`)
+}
+
+const isDirectRun =
+  Boolean(process.argv[1]) && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
+
+if (isDirectRun) {
+  main().catch((error) => {
+    console.error(`pages:export-snapshot failed: ${error.message}`)
+    process.exit(1)
+  })
+}
