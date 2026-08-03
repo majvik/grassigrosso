@@ -80,22 +80,13 @@ async function main() {
   const uploadUrls = new Set()
   collectUploadUrls(catalogBody, uploadUrls)
   collectUploadUrls(heroBody, uploadUrls)
-  assert(uploadUrls.size > 0, 'expected catalog/hero /uploads references')
-
-  const pageUploadUrls = new Set()
-  collectUploadUrls(indexBody, pageUploadUrls)
+  collectUploadUrls(indexBody, uploadUrls)
   for (const slug of ['hotels', 'dealers', 'contacts', 'documents', 'download-catalog']) {
     const r = await fetch(`${nodeBase}/api/pages/${slug}`)
-    if (r.ok) collectUploadUrls(await r.json(), pageUploadUrls)
+    assert(r.status === 200, `page ${slug} HTTP ${r.status}`)
+    collectUploadUrls(await r.json(), uploadUrls)
   }
-  // Pages fixtures may reference media absent from disk (local seed drift).
-  // Assert all catalog/hero refs + page refs that exist on disk.
-  const fsMod = await import('node:fs')
-  const uploadsRoot = path.join(root, 'strapi-catalog/public/uploads')
-  for (const urlPath of pageUploadUrls) {
-    const file = path.basename(urlPath)
-    if (fsMod.existsSync(path.join(uploadsRoot, file))) uploadUrls.add(urlPath)
-  }
+  assert(uploadUrls.size > 0, 'expected /uploads references from catalog+pages')
 
   // 2) Stop only owned Strapi
   await stack.stopStrapiOnly()
@@ -189,10 +180,6 @@ async function main() {
   assert(miss.status !== 502, 'missing must not be 502')
 
   assertForbiddenPortsUntouched(stack.baselineListeners)
-  assert(
-    gitPorcelain() === stack.baselinePorcelain,
-    'porcelain drifted after degraded gate',
-  )
 }
 
 try {
@@ -205,6 +192,8 @@ try {
   } catch {
     /* ignore */
   }
+  const baselineListeners = stack?.baselineListeners
+  const baselinePorcelain = stack?.baselinePorcelain
   try {
     if (stack) await stack.dispose()
   } catch {
@@ -213,6 +202,19 @@ try {
   const cleaned = cleanupAndAssertUploadsRestored(uploadsDir, uploadsBefore)
   if (!cleaned.ok) {
     failures.push(`uploads not restored: ${formatUploadsDiff(cleaned.diff)}`)
+  }
+  if (baselineListeners) {
+    try {
+      assertForbiddenPortsUntouched(baselineListeners)
+    } catch (err) {
+      failures.push(err instanceof Error ? err.message : String(err))
+    }
+  }
+  if (baselinePorcelain != null) {
+    assert(
+      gitPorcelain() === baselinePorcelain,
+      'porcelain drifted after degraded gate',
+    )
   }
 }
 

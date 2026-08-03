@@ -75,6 +75,11 @@ async function handleMessage(msg) {
       send({ id, ok: true, type: 'restored' });
       return;
     }
+    if (msg.type === 'get-index-solutions-title') {
+      const value = await withIndexDoc(async (_docs, existing) => existing.solutions_title);
+      send({ id, ok: true, type: 'title', value });
+      return;
+    }
     throw new Error(`unknown type ${msg.type}`);
   } catch (err) {
     send({ id, ok: false, error: String(err && err.message ? err.message : err) });

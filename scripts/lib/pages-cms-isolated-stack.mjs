@@ -131,18 +131,15 @@ export async function startIsolatedPagesCmsStack(options = {}) {
 
   const workDir = fs.mkdtempSync(path.join(root, '.tmp', 'phase5-stack-'))
   const dbPath = path.join(workDir, 'data.db')
-  const localDb = path.join(strapiRoot, '.tmp', 'data.db')
   const seedDb = path.join(strapiRoot, 'database', 'seed', 'data.db')
-  const sourceDb =
-    fs.existsSync(localDb) && sqliteHasIndexPages(localDb)
-      ? localDb
-      : seedDb
-  if (!fs.existsSync(sourceDb)) throw new Error(`source db missing: ${sourceDb}`)
-  fs.copyFileSync(sourceDb, dbPath)
+  if (!fs.existsSync(seedDb)) throw new Error(`seed db missing: ${seedDb}`)
+  fs.copyFileSync(seedDb, dbPath)
   const snapshotDir = path.join(workDir, 'snapshots')
   fs.mkdirSync(snapshotDir, { recursive: true })
 
-  if (!sqliteHasIndexPages(dbPath)) {
+  // Always seed pages fixtures so referenced /uploads exist on disk (D4 must not hide misses).
+  // Signal-only smoke can skip seeding to avoid mutating uploads and keep the gate fast.
+  if (options.seedFixtures !== false) {
     await seedHarnessDb(dbPath)
   }
 
@@ -299,7 +296,11 @@ export async function startIsolatedPagesCmsStack(options = {}) {
     forceKillTree(strapi)
   }
 
+  let disposed = false
   async function dispose() {
+    if (disposed) return
+    disposed = true
+    removeSignalHandlers()
     try {
       await stopStrapiOnly()
     } catch {
@@ -308,6 +309,7 @@ export async function startIsolatedPagesCmsStack(options = {}) {
     killTree(node)
     killTree(vite)
     await delay(300)
+    forceKillTree(strapi)
     forceKillTree(node)
     forceKillTree(vite)
     try {
@@ -315,6 +317,45 @@ export async function startIsolatedPagesCmsStack(options = {}) {
     } catch {
       /* ignore */
     }
+  }
+
+  /** Sync teardown for SIGINT/SIGTERM — try/finally alone is not enough. */
+  function syncTeardownOwned() {
+    disposed = true
+    forceKillTree(strapi)
+    forceKillTree(node)
+    forceKillTree(vite)
+    for (let i = 0; i < 10; i++) {
+      try {
+        fs.rmSync(workDir, { recursive: true, force: true })
+        if (!fs.existsSync(workDir)) break
+      } catch {
+        /* retry while SQLite locks clear */
+      }
+      const { spawnSync } = require('node:child_process')
+      spawnSync(process.execPath, ['-e', 'Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,50)'])
+    }
+  }
+
+  const onSigInt = () => {
+    removeSignalHandlers()
+    syncTeardownOwned()
+    process.exit(130)
+  }
+  const onSigTerm = () => {
+    removeSignalHandlers()
+    syncTeardownOwned()
+    process.exit(143)
+  }
+  function removeSignalHandlers() {
+    process.removeListener('SIGINT', onSigInt)
+    process.removeListener('SIGTERM', onSigTerm)
+  }
+
+  const installSignals = options.installSignalHandlers !== false
+  if (installSignals) {
+    process.on('SIGINT', onSigInt)
+    process.on('SIGTERM', onSigTerm)
   }
 
   return {
@@ -328,22 +369,12 @@ export async function startIsolatedPagesCmsStack(options = {}) {
     ipc,
     stopStrapiOnly,
     dispose,
+    syncTeardownOwned,
     baselineListeners,
     baselinePorcelain,
-  }
-}
-
-function sqliteHasIndexPages(dbFile) {
-  try {
-    const { spawnSync } = require('node:child_process')
-    const r = spawnSync(
-      'sqlite3',
-      [dbFile, 'SELECT solutions_title FROM index_pages LIMIT 1;'],
-      { encoding: 'utf8' },
-    )
-    return r.status === 0 && String(r.stdout || '').trim().length > 0
-  } catch {
-    return false
+    get strapiStopped() {
+      return strapiStopped
+    },
   }
 }
 
@@ -365,7 +396,10 @@ async function seedHarnessDb(dbPath) {
   try {
     const { createStrapi } = require(path.join(strapiRoot, 'node_modules/@strapi/strapi'))
     const { seedPagesCmsFromFixtures } = require(path.join(root, 'scripts/pages-cms/seed-core.cjs'))
-    const fixturesDir = path.join(root, 'strapi-catalog/src/api/pages-cms/fixtures')
+    const { resolveFixtureMediaUrl } = await import(
+      path.join(root, 'scripts/pages-cms/media-resolve.mjs')
+    )
+    const fixturesDir = path.join(root, 'scripts/fixtures/pages-cms')
     const fixturesBySlug = {}
     for (const name of fs.readdirSync(fixturesDir)) {
       if (!name.endsWith('.json')) continue
@@ -380,16 +414,8 @@ async function seedHarnessDb(dbPath) {
       await seedPagesCmsFromFixtures(app, {
         fixturesBySlug,
         resolveMedia: (url) => {
-          const rel = String(url).replace(/^\/+/, '')
-          const candidates = [
-            path.join(root, 'public', rel),
-            path.join(strapiRoot, 'public', rel),
-            path.join(root, rel),
-          ]
-          for (const absolutePath of candidates) {
-            if (fs.existsSync(absolutePath)) return { absolutePath }
-          }
-          throw new Error(`media not found for ${url}`)
+          const resolved = resolveFixtureMediaUrl(url, { repoRoot: root })
+          return { absolutePath: resolved.absolutePath }
         },
       })
     } finally {

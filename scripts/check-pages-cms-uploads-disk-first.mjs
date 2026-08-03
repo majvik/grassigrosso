@@ -14,7 +14,6 @@ import { createRequire } from 'node:module'
 const require = createRequire(import.meta.url)
 const {
   resolveSafeUploadPath,
-  createUploadsDiskFirstMiddleware,
   NOT_FOUND_BODY,
   defaultUploadsRoot,
 } = require('../lib/uploads-disk-first.cjs')
@@ -38,6 +37,29 @@ function freePort() {
   })
 }
 
+function rawRequest(port, reqPath, { method = 'GET', headers = {} } = {}) {
+  return new Promise((resolve, reject) => {
+    const req = http.request(
+      { host: '127.0.0.1', port, path: reqPath, method, headers },
+      (res) => {
+        const chunks = []
+        res.on('data', (c) => chunks.push(c))
+        res.on('end', () => {
+          const body = Buffer.concat(chunks)
+          resolve({
+            status: res.statusCode,
+            headers: res.headers,
+            body,
+            text: body.toString('utf8'),
+          })
+        })
+      },
+    )
+    req.on('error', reject)
+    req.end()
+  })
+}
+
 // --- Path safety unit tests ---
 {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'uploads-d1-'))
@@ -50,6 +72,11 @@ function freePort() {
   fs.symlinkSync(outside, path.join(nested, 'escape-link.png'))
   fs.mkdirSync(path.join(nested, 'subdir'))
 
+  const outsideDir = path.join(tmp, 'outside-dir')
+  fs.mkdirSync(outsideDir)
+  fs.writeFileSync(path.join(outsideDir, 'secret.png'), 'leaked')
+  fs.symlinkSync(outsideDir, path.join(nested, 'linked-dir'))
+
   assert(resolveSafeUploadPath(nested, '/uploads/ok.png').ok, 'hit ok.png')
   assert(resolveSafeUploadPath(nested, '/uploads/missing.png').reason === 'missing', 'missing')
   assert(resolveSafeUploadPath(nested, '/uploads/../outside.png').reason === 'traversal', 'plain traversal')
@@ -61,6 +88,10 @@ function freePort() {
   assert(
     resolveSafeUploadPath(nested, '/uploads/escape-link.png').reason === 'symlink-escape',
     'symlink escape',
+  )
+  assert(
+    resolveSafeUploadPath(nested, '/uploads/linked-dir/secret.png').reason === 'symlink-escape',
+    'directory-symlink escape',
   )
   assert(
     resolveSafeUploadPath(nested, '/uploads/%E0%A4%A').reason === 'malformed-encoding',
@@ -120,12 +151,34 @@ try {
     assert(hit.status === 200, `disk hit expected 200, got ${hit.status}`)
     const buf = Buffer.from(await hit.arrayBuffer())
     assert(buf.length > 0, 'disk hit body empty')
+    const fileSize = buf.length
     const ct = hit.headers.get('content-type') || ''
     assert(/image\//.test(ct) || /octet-stream/.test(ct), `unexpected content-type ${ct}`)
     assert((hit.headers.get('cache-control') || '').includes('max-age'), 'missing cache-control')
 
-    const head = await fetch(`http://127.0.0.1:${nodePort}/uploads/${sample}`, { method: 'HEAD' })
+    const head = await rawRequest(nodePort, `/uploads/${sample}`, { method: 'HEAD' })
     assert(head.status === 200, `HEAD expected 200, got ${head.status}`)
+    assert(head.body.length === 0, `HEAD body must be empty, got ${head.body.length} bytes`)
+    const headLen = Number(head.headers['content-length'] || 0)
+    assert(headLen === fileSize, `HEAD Content-Length ${headLen} !== ${fileSize}`)
+
+    const rangeEnd = Math.min(9, fileSize - 1)
+    const ranged = await rawRequest(nodePort, `/uploads/${sample}`, {
+      headers: { Range: `bytes=0-${rangeEnd}` },
+    })
+    assert(ranged.status === 206, `range expected 206, got ${ranged.status}`)
+    const cr = String(ranged.headers['content-range'] || '')
+    assert(
+      cr === `bytes 0-${rangeEnd}/${fileSize}`,
+      `Content-Range expected bytes 0-${rangeEnd}/${fileSize}, got ${cr}`,
+    )
+    assert(ranged.body.length === rangeEnd + 1, `range body length ${ranged.body.length}`)
+    assert(ranged.body.equals(buf.subarray(0, rangeEnd + 1)), 'range bytes mismatch')
+
+    const unsat = await rawRequest(nodePort, `/uploads/${sample}`, {
+      headers: { Range: `bytes=${fileSize + 10}-${fileSize + 20}` },
+    })
+    assert(unsat.status === 416, `unsatisfiable range expected 416, got ${unsat.status}`)
 
     const missToken = `phase5_missing_${Date.now()}.avif`
     const miss = await fetch(`http://127.0.0.1:${nodePort}/uploads/${missToken}`)
@@ -135,27 +188,9 @@ try {
     assert(!String(miss.status).startsWith('5'), 'miss must not be 5xx')
     assert(missText.includes('Upload not found') || missText === NOT_FOUND_BODY, 'controlled 404 body')
 
-    // fetch() normalizes ../ before the wire — use raw http path for traversal negatives.
-    async function rawGet(reqPath) {
-      return new Promise((resolve, reject) => {
-        http
-          .get({ host: '127.0.0.1', port: nodePort, path: reqPath }, (res) => {
-            const chunks = []
-            res.on('data', (c) => chunks.push(c))
-            res.on('end', () =>
-              resolve({
-                status: res.statusCode,
-                body: Buffer.concat(chunks).toString('utf8'),
-                reject: res.headers['x-uploads-reject'],
-              }),
-            )
-          })
-          .on('error', reject)
-      })
-    }
-    const trav = await rawGet('/uploads/%2e%2e/package.json')
+    const trav = await rawRequest(nodePort, '/uploads/%2e%2e/package.json')
     assert(trav.status === 404, `encoded traversal expected 404, got ${trav.status}`)
-    const travPlain = await rawGet('/uploads/../package.json')
+    const travPlain = await rawRequest(nodePort, '/uploads/../package.json')
     assert(travPlain.status === 404, `plain traversal expected 404, got ${travPlain.status}`)
   }
 } finally {

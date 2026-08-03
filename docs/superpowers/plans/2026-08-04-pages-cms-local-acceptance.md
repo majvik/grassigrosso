@@ -1,7 +1,7 @@
 # Pages CMS Phase 5 — Local acceptance gate (execution plan)
 
 **Date:** 2026-08-04
-**Status:** Phase B Complete (D1–D4) — **awaiting accept**; Phase C not started; no push / no sync-seed
+**Status:** Phase B harden (blockers 1–6) — **awaiting re-accept**; Phase C not started; no push / no sync-seed
 **Design:** [2026-08-04-pages-cms-local-acceptance-design.md](../specs/2026-08-04-pages-cms-local-acceptance-design.md)
 **GSD phase:** `.planning/phases/05-local-acceptance/`
 **Locality:** local commits only when asked; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -39,7 +39,7 @@ Rejected: proxy-on-error uploads; restart-Strapi-as-fix; foreign process kill.
 | Design amend | uploads-502 incident | superseded by D1–D4 lock |
 | Design + plan lock D1–D4 | design/plan | Affirmed (user) |
 | Phase A | `05-COVERAGE.md` matrix | DONE — accepted |
-| Phase B | D1 code + D2/D3/D4 harnesses | DONE — uploads-disk-first / live-edit / degraded-media PASS |
+| Phase B | D1 code + D2/D3/D4 harnesses | HARDENED — disk-first realpath+Range; signal teardown; restore verify; no missing-media hide |
 | Phase C | aggregator + closeout | not started |
 
 ### Phase map

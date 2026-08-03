@@ -1,10 +1,10 @@
 # Phase 5 — Coverage matrix (QA-01)
 
-**Date:** 2026-08-04  
-**Status:** Phase A Complete (local planning) — awaiting accept before Phase B  
-**Design decisions D1–D4:** Affirmed with Phase 5 design/plan  
-**Design:** [2026-08-04-pages-cms-local-acceptance-design.md](../../../docs/superpowers/specs/2026-08-04-pages-cms-local-acceptance-design.md)  
-**Plan:** [2026-08-04-pages-cms-local-acceptance.md](../../../docs/superpowers/plans/2026-08-04-pages-cms-local-acceptance.md)  
+**Date:** 2026-08-04
+**Status:** Phase A Complete (local planning) — awaiting accept before Phase B
+**Design decisions D1–D4:** Affirmed with Phase 5 design/plan
+**Design:** [2026-08-04-pages-cms-local-acceptance-design.md](../../../docs/superpowers/specs/2026-08-04-pages-cms-local-acceptance-design.md)
+**Plan:** [2026-08-04-pages-cms-local-acceptance.md](../../../docs/superpowers/plans/2026-08-04-pages-cms-local-acceptance.md)
 **Locked decisions:** D1–D4 (disk-first uploads, isolated stack, IPC mutation, degraded media+DOM)
 
 ## Status legend
@@ -70,11 +70,11 @@ Remaining **gap** rows (Phase C only): QA-02, R5-2 (milestone aggregator + recor
 | ID | Topic | Owner | Status | Evidence / notes |
 |----|-------|-------|--------|------------------|
 | D1 | Disk-first `/uploads` GET/HEAD + path safety + MIME/Cache/HEAD/Range + miss 404 | `check:pages-cms-uploads-disk-first` + `lib/uploads-disk-first.cjs` | covered | Phase B 2026-08-04 |
-| D1-neg | Traversal / encoded traversal / directory / symlink escape / malformed encoding | `check:pages-cms-uploads-disk-first` | covered | Phase B 2026-08-04 |
-| D2 | Isolated dynamic ports; never `:1337`/`:3000`/`:5174`; owned PIDs only; finally | `scripts/lib/pages-cms-isolated-stack.mjs` (used by live-edit + degraded) | covered | Phase B 2026-08-04 |
-| D2-post | Pre/post default listeners + porcelain unchanged | isolated-stack asserts in live-edit + degraded | covered | Phase B 2026-08-04 |
-| D3 | Live mutation via IPC → document service; TTL=0; DOM; restore in finally | `check:pages-cms-live-edit` | covered | Phase B 2026-08-04 |
-| D4 | Stop only owned Strapi; snapshot JSON 200; referenced uploads 200; CDP naturalWidth + network; missing 404 | `check:pages-cms-degraded-media` | covered | Phase B 2026-08-04 |
+| D1-neg | Traversal / encoded traversal / directory / leaf+**directory symlink** escape / malformed encoding | `check:pages-cms-uploads-disk-first` | covered | Harden: always `realpath(candidate)` |
+| D2 | Isolated dynamic ports; never `:1337`/`:3000`/`:5174`; owned PIDs only; **SIGINT/SIGTERM** sync teardown | `scripts/lib/pages-cms-isolated-stack.mjs` + `check:pages-cms-stack-signal` | covered | Harden: signal handlers |
+| D2-post | Pre/post default listeners + porcelain unchanged | isolated-stack asserts + signal gate | covered | After uploads cleanup |
+| D3 | Live mutation via IPC → document service; TTL=0; DOM; restore verified (IPC+Node); **injected post-mutation failure** | `check:pages-cms-live-edit` | covered | Restore failure fails gate |
+| D4 | Stop only owned Strapi; snapshot JSON 200; **all** referenced uploads 200 (missing → FAIL); CDP naturalWidth + network; miss 404 | `check:pages-cms-degraded-media` | covered | No `existsSync` hide |
 
 ## Known defects / regressions (Phases 3–4 + incident)
 
@@ -134,5 +134,5 @@ Phase B implemented D1–D4. Remaining for Phase C affirm only:
 
 ---
 
-*Phase A coverage freeze: 2026-08-04 — 45 rows; unowned 0*  
+*Phase A coverage freeze: 2026-08-04 — 45 rows; unowned 0*
 *Phase B update: 2026-08-04 — D1–D4 covered; gaps left: QA-02, R5-2*
