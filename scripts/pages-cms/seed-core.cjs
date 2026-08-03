@@ -184,7 +184,7 @@ async function countPagesCmsUploads(strapi) {
  * }} opts
  */
 async function seedPagesCmsFromFixtures(strapi, opts) {
-  const { fixturesBySlug, resolveMedia } = opts;
+  const { fixturesBySlug, resolveMedia, injectFailureAfterMutation = false } = opts;
   const catalogBefore = await captureCatalogGuard(strapi);
   const uploadsBefore = await countPagesCmsUploads(strapi);
 
@@ -216,6 +216,7 @@ async function seedPagesCmsFromFixtures(strapi, opts) {
     mediaIdsByUrl[url] = await findOrUploadByHash(strapi, absolutePath, url);
   }
 
+  let mutationStarted = false;
   for (const slug of PAGES_CMS_SLUGS) {
     const raw =
       slug === 'download-catalog'
@@ -223,6 +224,12 @@ async function seedPagesCmsFromFixtures(strapi, opts) {
         : fixturesBySlug[slug];
     const data = materialize(raw, mediaIdsByUrl);
     await upsertPage(strapi, slug, data);
+    mutationStarted = true;
+    if (injectFailureAfterMutation) {
+      const err = new Error('injected failure after mutation');
+      err.code = 'PAGES_CMS_INJECTED_FAILURE';
+      throw err;
+    }
   }
 
   const catalogAfter = await assertCatalogGuard(strapi, catalogBefore);
@@ -234,6 +241,7 @@ async function seedPagesCmsFromFixtures(strapi, opts) {
     uploadsBefore,
     uploadsAfter,
     catalog: catalogAfter,
+    mutationStarted,
   };
 }
 

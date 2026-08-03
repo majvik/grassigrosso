@@ -2,15 +2,17 @@
 /**
  * Seed six Wave 1 page single types from fixtures into local Strapi .tmp/data.db.
  *
- * - Backs up .tmp/data.db before mutation
+ * - SQLite-safe backup (better-sqlite3 backup + WAL/SHM clear on restore)
  * - Preflights all media (FAIL before DB writes if missing)
- * - On seed error after mutation: restores backup
+ * - On seed error after mutation: restore DB + remove new pages_cms upload files
  * - Does NOT run strapi:sync-seed
+ * - Does NOT kill processes on :1337 — exits with instructions if busy
  *
  * Usage:
  *   node scripts/seed-pages-cms-from-fixtures.mjs
  *   node scripts/seed-pages-cms-from-fixtures.mjs --preflight-only
- *   node scripts/seed-pages-cms-from-fixtures.mjs --restore-backup <path>
+ *   node scripts/seed-pages-cms-from-fixtures.mjs --restore-backup [path]
+ *   PAGES_CMS_SEED_INJECT_FAILURE=1 node scripts/seed-pages-cms-from-fixtures.mjs
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -24,6 +26,7 @@ const root = path.resolve(__dirname, '..')
 const strapiRoot = path.join(root, 'strapi-catalog')
 const dbPath = path.join(strapiRoot, '.tmp/data.db')
 const backupDir = path.join(strapiRoot, '.tmp/pages-cms-seed-backups')
+const uploadsDir = path.join(strapiRoot, 'public/uploads')
 const fixturesDir = path.join(root, 'scripts/fixtures/pages-cms')
 
 const { PAGES_CMS_SLUGS } = require(path.join(
@@ -31,6 +34,8 @@ const { PAGES_CMS_SLUGS } = require(path.join(
   'src/api/pages-cms/utils/map-allowlist.js',
 ))
 const { seedPagesCmsFromFixtures } = require('./pages-cms/seed-core.cjs')
+const { createSqliteBackup, restoreSqliteBackup } = require('./pages-cms/sqlite-backup.cjs')
+const { snapshotUploadsFs, removeUploadFsDiff } = require('./pages-cms/db-inspect.cjs')
 const { syncDistRuntimeAssets } = require(path.join(strapiRoot, 'scripts/prepare-dist.cjs'))
 
 function readFixtures() {
@@ -68,23 +73,6 @@ function assertDbExists() {
   }
 }
 
-function createBackup() {
-  fs.mkdirSync(backupDir, { recursive: true })
-  const stamp = new Date().toISOString().replace(/[:.]/g, '-')
-  const dest = path.join(backupDir, `data.db.before-pages-cms-seed.${stamp}`)
-  fs.copyFileSync(dbPath, dest)
-  // Also keep a stable "last" pointer for restore
-  const last = path.join(backupDir, 'data.db.last-before-seed')
-  fs.copyFileSync(dbPath, last)
-  return { dest, last }
-}
-
-function restoreBackup(backupPath) {
-  if (!fs.existsSync(backupPath)) throw new Error(`Backup not found: ${backupPath}`)
-  fs.copyFileSync(backupPath, dbPath)
-  console.error(`Restored ${dbPath} from ${backupPath}`)
-}
-
 function portInUse(port) {
   try {
     const { execFileSync } = require('node:child_process')
@@ -96,6 +84,18 @@ function portInUse(port) {
   } catch {
     return false
   }
+}
+
+function refuseIfPortBusy() {
+  if (!portInUse(1337)) return
+  console.error(
+    [
+      'Refusing to seed: port :1337 is in use.',
+      'Stop your local Strapi/dev process yourself, then re-run.',
+      'This script will not kill processes.',
+    ].join('\n'),
+  )
+  process.exit(1)
 }
 
 async function withStrapi(fn) {
@@ -114,10 +114,24 @@ async function withStrapi(fn) {
   }
 }
 
+function rollback(backupPath, uploadsBefore) {
+  restoreSqliteBackup(dbPath, backupPath)
+  const removed = removeUploadFsDiff(uploadsDir, uploadsBefore)
+  return { removedUploadFiles: removed }
+}
+
 async function main() {
   const args = process.argv.slice(2)
   if (args[0] === '--restore-backup') {
-    restoreBackup(args[1] || path.join(backupDir, 'data.db.last-before-seed'))
+    refuseIfPortBusy()
+    const backupPath = args[1] || path.join(backupDir, 'data.db.last-before-pages-cms-seed')
+    const uploadsBefore = snapshotUploadsFs(uploadsDir)
+    restoreSqliteBackup(dbPath, backupPath)
+    // restore-backup alone does not delete upload files unless --prune-uploads-diff given
+    if (args.includes('--prune-uploads-diff')) {
+      removeUploadFsDiff(uploadsDir, uploadsBefore)
+    }
+    console.log(JSON.stringify({ ok: true, restored: backupPath }, null, 2))
     return
   }
 
@@ -147,32 +161,43 @@ async function main() {
     return
   }
 
-  if (portInUse(1337)) {
-    console.error(
-      'Strapi appears to be listening on :1337. Stop it before seed (exclusive .tmp/data.db access).',
-    )
-    process.exit(1)
-  }
+  refuseIfPortBusy()
 
-  const backup = createBackup()
-  console.log(`Backup: ${backup.dest}`)
+  const uploadsBefore = snapshotUploadsFs(uploadsDir)
+  const backup = await createSqliteBackup(dbPath, backupDir, 'pages-cms-seed')
+  console.error(`Backup: ${backup.backupPath}`)
+
+  const injectFailureAfterMutation =
+    process.env.PAGES_CMS_SEED_INJECT_FAILURE === '1' || args.includes('--inject-failure')
 
   try {
     const result = await withStrapi(async (strapi) =>
       seedPagesCmsFromFixtures(strapi, {
         fixturesBySlug,
         resolveMedia: (url) => resolveFixtureMediaUrl(url, { repoRoot: root }),
+        injectFailureAfterMutation,
       }),
     )
-    console.log(JSON.stringify({ ok: true, backup: backup.dest, ...result }, null, 2))
+    console.log(JSON.stringify({ ok: true, backup: backup.backupPath, ...result }, null, 2))
   } catch (error) {
     console.error(`Seed FAILED: ${error.message}`)
     try {
-      restoreBackup(backup.last)
+      const rolled = rollback(backup.lastPath, uploadsBefore)
+      console.error(
+        JSON.stringify(
+          {
+            restored: true,
+            backup: backup.lastPath,
+            removedUploadFiles: rolled.removedUploadFiles.length,
+          },
+          null,
+          2,
+        ),
+      )
     } catch (restoreError) {
       console.error(`Restore also failed: ${restoreError.message}`)
     }
-    process.exit(1)
+    process.exit(error.code === 'PAGES_CMS_INJECTED_FAILURE' ? 42 : 1)
   }
 }
 

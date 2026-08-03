@@ -1,7 +1,7 @@
 # Pages CMS Phase 3 — feeds, proxy & seed (execution plan)
 
 **Date:** 2026-08-03
-**Status:** IN PROGRESS — Phase A+B complete; Phase C next
+**Status:** IN PROGRESS — Phase A accepted; Phase B harness green (pending acceptance); Phase C next
 **Design:** [2026-08-03-pages-cms-feeds-proxy-seed-design.md](../specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md)
 **GSD phase:** `.planning/phases/03-feeds-proxy-seed/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -34,7 +34,7 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 | Spec + plan v1 | `5f76aa0` | superseded by revision |
 | Spec + plan revision | `4cf5b13` | affirmed |
 | Phase A fix | `4ed8476` | PASS — texts isolation + Strapi utils |
-| Phase B | `npm run check:pages-cms-phase-b` | PASS — seed×2, missing-file, catalog IDs, backup |
+| Phase B | `npm run check:pages-cms-phase-b` | DONE (harness) — N6 + inject-rollback + no-kill; pending user accept |
 | Phase C+ | — | not started |
 
 ---
@@ -85,6 +85,13 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 - Catalog product count unchanged
 - **Do not** run `strapi:sync-seed`
 - Feeds may still be absent; parity via Admin/entity read or interim entity dump is OK until Phase C
+
+### Post-fix (2026-08-03 harden)
+
+- Harness refuses busy `:1337` (no `pkill`/`kill`)
+- N6: component-row counts before/#1/#2, orphans=0, content-addressed logical digests (per-page root + `*_pages_cmps` trees + nested links + component values + media file identities; surrogate ids stripped), stable Upload rows
+- Injected-failure after first mutation: SQLite-safe restore (`backup()` + WAL/SHM clear) + prune new `pages_cms_*` under `public/uploads`
+- `npm run check:pages-cms-phase-b` → PASS (`components=60 orphans=0 injectRollback=ok`)
 
 ---
 

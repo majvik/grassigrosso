@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 /**
- * Phase B gate: media preflight, seed×2 idempotency, missing-file negative,
- * catalog identity stability. No strapi:sync-seed. No feeds/server.cjs.
+ * Phase B hard gate:
+ * - missing-file negative (pre-mutation)
+ * - refuse busy :1337 (no process kill)
+ * - N6: component-row counts, orphans, logical digests, upload stability across seed×2
+ * - injected-failure rollback: DB + catalog + upload rows + upload FS derivatives
+ * No strapi:sync-seed. No feeds/server.cjs.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -15,12 +19,22 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
 const strapiRoot = path.join(root, 'strapi-catalog')
 const dbPath = path.join(strapiRoot, '.tmp/data.db')
+const uploadsDir = path.join(strapiRoot, 'public/uploads')
 const seedScript = path.join(root, 'scripts/seed-pages-cms-from-fixtures.mjs')
 
 const { PAGES_CMS_SLUGS } = require(path.join(strapiRoot, 'src/api/pages-cms/utils/map-allowlist.js'))
 const { DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS } = require(
   path.join(strapiRoot, 'src/api/pages-cms/utils/deep-populate.js'),
 )
+const {
+  countPageComponentRows,
+  findOrphanPageComponents,
+  countPagesCmsUploadRows,
+  listPagesCmsUploadRows,
+  catalogGuardFromDb,
+  pageEntityDigests,
+  snapshotUploadsFs,
+} = require('./pages-cms/db-inspect.cjs')
 
 const failures = []
 function fail(message) {
@@ -31,12 +45,11 @@ function assert(cond, message) {
 }
 
 function runNode(args, opts = {}) {
-  const result = spawnSync(process.execPath, args, {
+  return spawnSync(process.execPath, args, {
     cwd: root,
     encoding: 'utf8',
     env: { ...process.env, ...(opts.env || {}) },
   })
-  return result
 }
 
 function portInUse(port) {
@@ -46,18 +59,56 @@ function portInUse(port) {
   return result.status === 0 && Boolean(result.stdout && result.stdout.trim())
 }
 
-function stopStrapiIfNeeded() {
-  if (!portInUse(1337)) return false
-  spawnSync('pkill', ['-f', 'strapi develop'], { encoding: 'utf8' })
-  spawnSync('bash', ['-lc', 'pids=$(lsof -t -iTCP:1337 -sTCP:LISTEN 2>/dev/null || true); [ -n "$pids" ] && kill $pids || true'], {
-    encoding: 'utf8',
-  })
-  // wait up to ~15s
-  for (let i = 0; i < 30; i += 1) {
-    if (!portInUse(1337)) return true
-    spawnSync('sleep', ['0.5'])
+function snapshotState(label) {
+  return {
+    label,
+    components: countPageComponentRows(dbPath),
+    orphans: findOrphanPageComponents(dbPath),
+    uploadRows: countPagesCmsUploadRows(dbPath),
+    uploadNames: listPagesCmsUploadRows(dbPath).map((r) => r.name),
+    catalog: catalogGuardFromDb(dbPath),
+    digests: pageEntityDigests(dbPath),
+    uploadFs: snapshotUploadsFs(uploadsDir),
   }
-  return !portInUse(1337)
+}
+
+function assertStateEqual(before, after, context) {
+  assert(
+    before.components.total === after.components.total,
+    `${context}: component total ${before.components.total} → ${after.components.total}`,
+  )
+  assert(
+    JSON.stringify(before.components.counts) === JSON.stringify(after.components.counts),
+    `${context}: component-row counts drifted`,
+  )
+  assert(after.orphans.length === 0, `${context}: orphan page components: ${after.orphans.length}`)
+  assert(
+    before.orphans.length === after.orphans.length,
+    `${context}: orphan count drifted ${before.orphans.length} → ${after.orphans.length}`,
+  )
+  assert(before.uploadRows === after.uploadRows, `${context}: upload rows ${before.uploadRows} → ${after.uploadRows}`)
+  assert(
+    JSON.stringify(before.uploadNames) === JSON.stringify(after.uploadNames),
+    `${context}: upload names drifted`,
+  )
+  assert(
+    JSON.stringify(before.catalog) === JSON.stringify(after.catalog),
+    `${context}: catalog guard drifted`,
+  )
+  assert(
+    JSON.stringify(before.digests) === JSON.stringify(after.digests),
+    `${context}: logical page digests drifted (roots/links/components/media)`,
+  )
+  assert(
+    JSON.stringify(before.uploadFs) === JSON.stringify(after.uploadFs),
+    `${context}: upload FS pages_cms_* drifted (${after.uploadFs.length - before.uploadFs.length})`,
+  )
+}
+
+function parseSeedStdout(stdout) {
+  const start = stdout.lastIndexOf('\n{') >= 0 ? stdout.lastIndexOf('\n{') + 1 : stdout.indexOf('{')
+  if (start < 0) throw new Error(`no JSON in seed stdout: ${stdout.slice(0, 400)}`)
+  return JSON.parse(stdout.slice(start))
 }
 
 assert(fs.existsSync(dbPath), `missing ${dbPath}`)
@@ -82,21 +133,34 @@ assert(fs.existsSync(dbPath), `missing ${dbPath}`)
   assert(payload.mediaCount > 0, 'preflight mediaCount')
 }
 
-// Ensure exclusive DB access
-{
-  const stopped = stopStrapiIfNeeded()
-  if (portInUse(1337)) {
-    fail('Could not free :1337 for exclusive seed access')
-  } else if (stopped) {
-    // ok
-  }
+// --- Refuse busy port (never kill) ---
+if (portInUse(1337)) {
+  fail(
+    'port :1337 is in use — stop Strapi yourself, then re-run check:pages-cms-phase-b (harness will not kill processes)',
+  )
+  console.error('check:pages-cms-phase-b FAILED')
+  for (const f of failures) console.error(` - ${f}`)
+  process.exit(1)
 }
 
-function parseSeedStdout(stdout) {
-  const start = stdout.indexOf('{')
-  if (start < 0) throw new Error(`no JSON in seed stdout: ${stdout.slice(0, 400)}`)
-  return JSON.parse(stdout.slice(start))
+const beforeAll = snapshotState('before')
+assert(beforeAll.orphans.length === 0, `pre-existing orphan page components: ${JSON.stringify(beforeAll.orphans.slice(0, 5))}`)
+
+// --- Injected-failure rollback regression ---
+{
+  const beforeInject = snapshotState('before-inject')
+  const injected = runNode([seedScript, '--inject-failure'], {
+    env: { PAGES_CMS_SEED_INJECT_FAILURE: '1' },
+  })
+  assert(injected.status === 42, `inject-failure expected exit 42, got ${injected.status}: ${injected.stderr || injected.stdout}`)
+  assert(/injected failure after mutation/.test(injected.stderr || ''), 'inject message missing')
+  assert(/"restored":\s*true/.test(injected.stderr || injected.stdout || ''), 'restore marker missing')
+  const afterInject = snapshotState('after-inject-restore')
+  assertStateEqual(beforeInject, afterInject, 'inject-failure rollback')
 }
+
+// --- Seed ×2 with N6 ---
+const afterInjectBaseline = snapshotState('baseline-before-seed1')
 
 const first = runNode([seedScript])
 assert(first.status === 0, `seed #1 failed: ${first.stderr || first.stdout}`)
@@ -106,6 +170,9 @@ try {
 } catch (error) {
   fail(`seed #1 parse: ${error.message}`)
 }
+const after1 = snapshotState('after-seed1')
+assert(after1.orphans.length === 0, `orphans after seed #1: ${JSON.stringify(after1.orphans.slice(0, 5))}`)
+assert(after1.components.total > 0, 'component rows should exist after seed #1')
 
 const second = runNode([seedScript])
 assert(second.status === 0, `seed #2 failed: ${second.stderr || second.stdout}`)
@@ -115,27 +182,23 @@ try {
 } catch (error) {
   fail(`seed #2 parse: ${error.message}`)
 }
+const after2 = snapshotState('after-seed2')
+
+assertStateEqual(after1, after2, 'N6 seed×2')
+assert(after2.orphans.length === 0, 'N6 orphans after seed #2')
 
 if (firstJson && secondJson) {
   assert(firstJson.ok && secondJson.ok, 'seed ok flags')
-  assert(
-    firstJson.uploadsAfter === secondJson.uploadsAfter,
-    `upload row count drifted across seed×2: ${firstJson.uploadsAfter} → ${secondJson.uploadsAfter}`,
-  )
+  assert(firstJson.uploadsAfter === secondJson.uploadsAfter, 'seed JSON uploadsAfter drift')
   assert(
     secondJson.uploadsAfter === secondJson.uploadsBefore ||
       secondJson.uploadsAfter === firstJson.uploadsAfter,
-    'second seed should not create new pages-cms uploads (idempotent)',
+    'second seed must not create new pages-cms uploads',
   )
-  assert(
-    JSON.stringify(firstJson.catalog?.productSample) === JSON.stringify(secondJson.catalog?.productSample),
-    'catalog product sample drifted',
-  )
-  assert(firstJson.catalog?.productCount === secondJson.catalog?.productCount, 'catalog productCount drifted')
-  assert(firstJson.mediaFiles === secondJson.mediaFiles, 'mediaFiles count drifted')
+  assert(firstJson.catalog?.productCount === secondJson.catalog?.productCount, 'catalog productCount drift')
 }
 
-// download-catalog fixture still has slides in file, but seed texts path must not require slide media from uploads cover for texts-only
+// download-catalog texts isolation still holds for media collection
 {
   const fixture = JSON.parse(
     fs.readFileSync(path.join(root, 'scripts/fixtures/pages-cms/download-catalog.json'), 'utf8'),
@@ -148,17 +211,18 @@ if (firstJson && secondJson) {
   void media_display_mode
   void slider_autoplay_ms
   const urls = collectMediaUrls(texts)
-  assert(
-    !urls.some((u) => u.includes('download_catalog_cover')),
-    'texts-only media set must not include slide cover',
-  )
+  assert(!urls.some((u) => u.includes('download_catalog_cover')), 'texts-only must not include slide cover')
   assert(urls.includes('/documents/Catalog_v1.2.pdf'), 'texts media includes catalog_pdf')
 }
 
 assert(PAGES_CMS_SLUGS.length === 6, 'six slugs')
-
-// sync-seed must not have been invoked by this harness
 assert(!process.env.PAGES_CMS_RAN_SYNC_SEED, 'strapi:sync-seed must not run')
+
+// catalog must remain stable vs pre-seed baseline for product identities
+assert(
+  JSON.stringify(afterInjectBaseline.catalog) === JSON.stringify(after2.catalog),
+  'catalog identities changed across Phase B seeds',
+)
 
 if (failures.length) {
   console.error('check:pages-cms-phase-b FAILED')
@@ -168,5 +232,5 @@ if (failures.length) {
 
 console.log('check:pages-cms-phase-b PASS')
 console.log(
-  ` seed×2 ok uploads=${secondJson?.uploadsAfter} products=${secondJson?.catalog?.productCount} mediaFiles=${secondJson?.mediaFiles}`,
+  ` N6 ok components=${after2.components.total} orphans=0 uploads=${after2.uploadRows} products=${after2.catalog.productCount} injectRollback=ok`,
 )
