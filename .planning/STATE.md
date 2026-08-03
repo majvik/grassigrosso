@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-08-03)
 Phase: 2 of 6 (Wave 1 Single Types) — PLANNING ONLY
 Plan: 02-01 drafted, not executed
 Status: Original Phase 2 rejected as lossy; corrected plan requires content-contract matrix + fixtures before schemas — waiting for explicit «кодить Phase 2»
-Last activity: 2026-08-03 — Plan audit against current TSX/runtime completed
+Last activity: 2026-08-03 — Baseline committed locally (`f84c6f1`), full local build passed, Cursor handoff prepared
 
 Progress: [█░░░░░░░░░] 17% (Phase 1 done; Phase 2 approved design, not executed)
 
@@ -69,4 +69,4 @@ Recent decisions affecting current work:
 Last session: 2026-08-03
 Stopped at: Completed 01-01-PLAN.md — SUMMARY written
 Resume file: None
-Next: `/gsd-execute-phase 2` or plan Phase 2 when ready
+Next: read `.planning/CURSOR-HANDOFF.md`; after explicit approval execute Phase 2 starting with `02-CONTENT-CONTRACT.md` and a persistent automated schema-contract test harness

@@ -5,6 +5,9 @@ node_modules
 # Build output
 dist
 dist-ssr
+.tmp/
+__pycache__/
+*.py[cod]
 
 # Logs
 logs
