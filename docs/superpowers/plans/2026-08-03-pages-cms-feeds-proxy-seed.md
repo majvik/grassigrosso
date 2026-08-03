@@ -1,7 +1,7 @@
 # Pages CMS Phase 3 — feeds, proxy & seed (execution plan)
 
 **Date:** 2026-08-03
-**Status:** REVISED — awaiting final affirm to start Phase A (no implementation yet)
+**Status:** IN PROGRESS — Phase A complete; Phase B next
 **Design:** [2026-08-03-pages-cms-feeds-proxy-seed-design.md](../specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md)
 **GSD phase:** `.planning/phases/03-feeds-proxy-seed/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -32,8 +32,9 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 | Step | Command / artifact | Result |
 |------|--------------------|--------|
 | Spec + plan v1 | `5f76aa0` | superseded by revision |
-| Spec + plan revision (envelope, cache, seed order, media, populate, map, scope, negatives) | this doc + design | AWAITING FINAL AFFIRM |
-| Implementation | — | BLOCKED until affirm |
+| Spec + plan revision | `4cf5b13` | affirmed |
+| Phase A | `npm run check:pages-cms-phase-a` + strict | PASS — map hosts=`yandex.ru`, path=`/map-widget/`, N8=12, envelopes+populate |
+| Phase B+ | — | not started |
 
 ---
 

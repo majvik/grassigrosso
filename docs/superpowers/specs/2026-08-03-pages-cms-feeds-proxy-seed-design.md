@@ -126,8 +126,8 @@ Accept only if **all** hold:
 4. Scheme **https** only.
 5. **No** username/password (credentials) in URL.
 6. **No** non-default port (reject explicit port ≠ 443).
-7. Host is an **exact** allowlisted hostname (no wildcard `*.yandex.ru`). Initial allowlist locked to hosts used by fixtures, e.g. `yandex.ru` and `yandex.com` **only if** fixtures/need require them — prefer the minimal set proven by fixtures (`yandex.ru` for current contacts fixtures).
-8. Pathname matches exact prefix/pattern **`/map-widget/`** (and allowed suffix under that tree); reject other paths.
+7. Host is an **exact** allowlisted hostname (no wildcards). **Locked Phase A list:** `yandex.ru` only (matches contacts fixtures). Expanding hosts requires a deliberate allowlist change + harness update.
+8. Pathname must start with **`/map-widget/`** (locked prefix); reject other paths.
 9. Malformed HTML/URL, multiple iframes, wrong host/path → `map_embed_url: null` (and still no HTML field in public payload).
 
 Public canonical `data` contains **only** `map_embed_url` for map (string or null), never `map_iframe_html`.
