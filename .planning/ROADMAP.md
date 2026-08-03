@@ -61,10 +61,10 @@ Plans:
   5. Браузер/фронт по-прежнему не ходит в Strapi напрямую за page-контентом
   6. Неизвестный slug получает 404; пустой/404 Strapi не затирает последний валидный snapshot; ответ содержит диагностический source
   7. Map iframe нормализован до allowlisted HTTPS URL на feed/proxy boundary; raw HTML не передаётся React
-**Plans**: TBD
+**Plans**: 1 plan (AWAITING REVIEW — no code until Superpowers approved)
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md — Feeds, proxy, snapshots, seed ([design](../docs/superpowers/specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md), [execution](../docs/superpowers/plans/2026-08-03-pages-cms-feeds-proxy-seed.md))
 
 ### Phase 4: React Hydrate
 **Goal**: Публичные страницы волны 1 показывают CMS-контент через hydrate, сохраняя визуал и контракт email-форм.

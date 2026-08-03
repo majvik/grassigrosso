@@ -8,11 +8,11 @@
 ### Schema & Admin (RU)
 
 - [x] **ADM-01**: Shared компоненты `page.*` (hero, section, faq-item, list-item) с русскими лейблами
-- [ ] **ADM-02**: Single types волны 1: Главная, Отелям, Дилерам, Контакты, Документы — displayName и поля на русском
-- [ ] **ADM-03**: `download-catalog-page` расширен title/lead/CTA/PDF; существующие слайды сохранены
-- [ ] **ADM-04**: Полные ключи в `strapi-catalog/src/admin/translations/ru.json` (content-manager + content-type-builder); в админке нет английских fallback у новых типов
-- [ ] **ADM-05**: Content-contract matrix покрывает все текущие render inputs волны 1; каждый элемент помечен CMS-owned или обоснованно code-owned
-- [ ] **ADM-06**: Репрезентативные fixtures всех single types проходят schema validation до начала feed/frontend-фаз
+- [x] **ADM-02**: Single types волны 1: Главная, Отелям, Дилерам, Контакты, Документы — displayName и поля на русском
+- [x] **ADM-03**: `download-catalog-page` расширен title/lead/CTA/PDF; существующие слайды сохранены
+- [x] **ADM-04**: Полные ключи в `strapi-catalog/src/admin/translations/ru.json` (content-manager + content-type-builder); в админке нет английских fallback у новых типов
+- [x] **ADM-05**: Content-contract matrix покрывает все текущие render inputs волны 1; каждый элемент помечен CMS-owned или обоснованно code-owned
+- [x] **ADM-06**: Репрезентативные fixtures всех single types проходят schema validation до начала feed/frontend-фаз
 
 ### Feeds & Proxy
 
@@ -59,11 +59,11 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | ADM-01 | Phase 1 | Complete |
-| ADM-02 | Phase 2 | Pending |
-| ADM-03 | Phase 2 | Pending |
-| ADM-04 | Phase 2 | Pending |
-| ADM-05 | Phase 2 | Pending |
-| ADM-06 | Phase 2 | Pending |
+| ADM-02 | Phase 2 | Complete |
+| ADM-03 | Phase 2 | Complete |
+| ADM-04 | Phase 2 | Complete |
+| ADM-05 | Phase 2 | Complete |
+| ADM-06 | Phase 2 | Complete |
 | API-01 | Phase 3 | Pending |
 | API-02 | Phase 3 | Pending |
 | API-03 | Phase 3 | Pending |
