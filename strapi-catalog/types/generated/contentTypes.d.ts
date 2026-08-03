@@ -485,7 +485,7 @@ export interface ApiCatalogNewHeroCatalogNewHero
   extends Struct.SingleTypeSchema {
   collectionName: 'catalog_new_heroes';
   info: {
-    displayName: 'Catalog (new) hero slider';
+    displayName: '\u0421\u043B\u0430\u0439\u0434\u0435\u0440 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430';
     pluralName: 'catalog-new-heroes';
     singularName: 'catalog-new-hero';
   };
@@ -522,7 +522,7 @@ export interface ApiCatalogShareHelpCatalogShareHelp
   extends Struct.CollectionTypeSchema {
   collectionName: 'catalog_share_helps';
   info: {
-    displayName: '\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u043A share';
+    displayName: '\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u00AB\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F\u00BB';
     pluralName: 'catalog-share-helps';
     singularName: 'catalog-share-help';
   };
@@ -563,7 +563,7 @@ export interface ApiCatalogShareHelpCatalogShareHelp
 export interface ApiCollectionCollection extends Struct.CollectionTypeSchema {
   collectionName: 'collections';
   info: {
-    displayName: 'Collection';
+    displayName: '\u041A\u043E\u043B\u043B\u0435\u043A\u0446\u0438\u044F';
     pluralName: 'collections';
     singularName: 'collection';
   };
@@ -1115,7 +1115,7 @@ export interface ApiMattressTypeOptionMattressTypeOption
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
-    displayName: 'Product';
+    displayName: '\u041F\u0440\u043E\u0434\u0443\u043A\u0442';
     pluralName: 'products';
     singularName: 'product';
   };
@@ -1235,7 +1235,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
 export interface ApiTagTag extends Struct.CollectionTypeSchema {
   collectionName: 'tags';
   info: {
-    displayName: 'Tag';
+    displayName: '\u0422\u0435\u0433';
     pluralName: 'tags';
     singularName: 'tag';
   };

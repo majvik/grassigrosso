@@ -1,16 +1,18 @@
 {
   "collectionName": "components_catalog_filter_help_summary_items",
   "info": {
-    "displayName": "Filter help summary item",
+    "displayName": "Пункт «Если коротко»",
     "icon": "bulletList"
   },
   "options": {},
   "attributes": {
     "lead": {
+      "displayName": "Текст",
       "type": "text",
       "required": true
     },
     "highlight": {
+      "displayName": "Акцент (жирным)",
       "type": "string",
       "required": true
     }

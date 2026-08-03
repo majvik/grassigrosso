@@ -15,7 +15,7 @@
       "required": true,
       "repeatable": false,
       "component": "page.hero-media",
-      "displayName": "Hero-блок"
+      "displayName": "Шапка"
     },
     "solutions_title": {
       "type": "string",

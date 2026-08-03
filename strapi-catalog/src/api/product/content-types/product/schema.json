@@ -4,23 +4,26 @@
   "info": {
     "singularName": "product",
     "pluralName": "products",
-    "displayName": "Product"
+    "displayName": "Продукт"
   },
   "options": {
     "draftAndPublish": false
   },
   "attributes": {
     "name": {
+      "displayName": "Название",
       "type": "string",
       "required": true
     },
     "slug": {
+      "displayName": "URL-идентификатор",
       "type": "uid",
       "targetField": "name",
       "required": true,
       "unique": true
     },
     "collection": {
+      "displayName": "Коллекция",
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::collection.collection"
@@ -29,7 +32,12 @@
       "displayName": "Жесткость",
       "type": "enumeration",
       "required": true,
-      "enum": ["мягкий", "средний", "жесткий", "разная_жесткость_сторон"],
+      "enum": [
+        "мягкий",
+        "средний",
+        "жесткий",
+        "разная_жесткость_сторон"
+      ],
       "default": "средний"
     },
     "firmness_option": {
@@ -42,7 +50,13 @@
       "displayName": "Тип конструкции",
       "type": "enumeration",
       "required": true,
-      "enum": ["пружинный", "беспружинный", "топер", "двухсторонние", "односторонние"],
+      "enum": [
+        "пружинный",
+        "беспружинный",
+        "топер",
+        "двухсторонние",
+        "односторонние"
+      ],
       "default": "беспружинный"
     },
     "mattress_type_option": {
@@ -52,17 +66,25 @@
       "target": "api::mattress-type-option.mattress-type-option"
     },
     "height_cm": {
+      "displayName": "Высота (см)",
       "type": "decimal",
       "required": true
     },
     "max_load_kg": {
+      "displayName": "Макс. нагрузка (кг)",
       "type": "integer",
       "required": true
     },
     "load_range": {
       "displayName": "Макс. нагрузка на спальное место",
       "type": "enumeration",
-      "enum": ["до_120_кг", "до_160_кг", "до_180_кг", "свыше_160_кг", "свыше_180_кг"]
+      "enum": [
+        "до_120_кг",
+        "до_160_кг",
+        "до_180_кг",
+        "свыше_160_кг",
+        "свыше_180_кг"
+      ]
     },
     "load_range_option": {
       "displayName": "Макс. нагрузка на спальное место (справочник)",
@@ -73,7 +95,11 @@
     "height_range": {
       "displayName": "Высота матраса",
       "type": "enumeration",
-      "enum": ["компактные_до_16_см", "средние_16_22_см", "высокие_от_23_см"]
+      "enum": [
+        "компактные_до_16_см",
+        "средние_16_22_см",
+        "высокие_от_23_см"
+      ]
     },
     "height_range_option": {
       "displayName": "Высота матраса (справочник)",
@@ -91,7 +117,14 @@
     "fillings": {
       "displayName": "Состав / Наполнитель",
       "type": "enumeration",
-      "enum": ["кокос", "латекс", "орто_пена", "с_эффектом_памяти", "нано_пена", "форплит"]
+      "enum": [
+        "кокос",
+        "латекс",
+        "орто_пена",
+        "с_эффектом_памяти",
+        "нано_пена",
+        "форплит"
+      ]
     },
     "filling_options": {
       "displayName": "Состав / Наполнитель (справочник)",
@@ -106,27 +139,35 @@
       "target": "api::feature-option.feature-option"
     },
     "image_url": {
+      "displayName": "URL изображения",
       "type": "string"
     },
     "media": {
+      "displayName": "Медиа",
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "gallery": {
+      "displayName": "Галерея",
       "type": "component",
       "repeatable": true,
       "component": "catalog.product-gallery-item"
     },
     "is_active": {
+      "displayName": "Активен",
       "type": "boolean",
       "default": true
     },
     "sort_order": {
+      "displayName": "Порядок сортировки",
       "type": "integer",
       "default": 0
     },
     "tags": {
+      "displayName": "Теги",
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::tag.tag"

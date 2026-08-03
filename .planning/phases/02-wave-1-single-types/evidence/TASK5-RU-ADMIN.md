@@ -31,4 +31,13 @@ Screenshot: `evidence/task5-download-catalog-ru.png`
 ### Notes
 
 - Enumeration **option values** in Select widgets may still show technical keys (`image_only`, `certificate`, …) while labels/translations exist in `ru.json`. Field labels themselves are Russian.
-- Unrelated catalog single type `Catalog (new) hero slider` remains English (out of Wave 1 page CMS scope).
+
+### Follow-up (same day) — leftover English from earlier catalog stages
+
+Root cause: catalog CT/component `displayName` still English in schemas; Admin chrome keys not loaded because `registerTrads` on `app.js` is **not** applied — only `config.translations`.
+
+Fixed locally:
+- Schema RU displayNames for Product/Collection/Tag/catalog hero + catalog components + field labels
+- `src/admin/app.js` → `config.translations.ru` from `ru.json`
+- Broader CM metadata sync from on-disk schema `displayName`
+- Browser recheck: sidebar shows Продукт/Коллекция/Тег/Слайдер каталога; Home/CTB/widgets RU

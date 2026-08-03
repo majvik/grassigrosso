@@ -4,17 +4,19 @@
   "info": {
     "singularName": "tag",
     "pluralName": "tags",
-    "displayName": "Tag"
+    "displayName": "Тег"
   },
   "options": {
     "draftAndPublish": false
   },
   "attributes": {
     "name": {
+      "displayName": "Название",
       "type": "string",
       "required": true
     },
     "slug": {
+      "displayName": "URL-идентификатор",
       "type": "uid",
       "targetField": "name",
       "required": true,

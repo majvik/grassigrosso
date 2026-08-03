@@ -1,30 +1,42 @@
 {
   "collectionName": "components_catalog_filter_help_segments",
   "info": {
-    "displayName": "Filter help segment",
+    "displayName": "Сегмент подсказки фильтра",
     "icon": "file"
   },
   "options": {},
   "attributes": {
     "variant": {
+      "displayName": "Тип блока",
       "type": "enumeration",
-      "enum": ["intro", "heading", "paragraph", "listItem", "numberedListItem"],
+      "enum": [
+        "intro",
+        "heading",
+        "paragraph",
+        "listItem",
+        "numberedListItem"
+      ],
       "default": "paragraph",
       "required": true
     },
     "list_index": {
+      "displayName": "Номер пункта",
       "type": "integer",
       "min": 1
     },
     "body": {
+      "displayName": "Текст",
       "type": "text",
       "required": false
     },
     "photo": {
+      "displayName": "Фото",
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }

@@ -5,22 +5,19 @@
  * Локаль `en` нельзя убрать из сборки — она fallback и дефолт при первом входе.
  * После включения `ru` каждый пользователь может выбрать русский один раз:
  * аватар (правый верх) → Profile / Профиль → Experience → Interface language → Русский.
+ *
+ * Важно: кастомные строки подхватываются через `config.translations`
+ * (см. StrapiApp.loadTrads(customisations?.config?.translations)).
+ * `registerTrads` на корневом app.js Admin не вызывает.
  */
+import ru from './translations/ru.json';
+
 export default {
   config: {
     locales: ['ru', 'en'],
-  },
-  async registerTrads({ locales }) {
-    return Promise.all(
-      locales.map(async (locale) => {
-        try {
-          const { default: data } = await import(`./translations/${locale}.json`)
-          return { data, locale }
-        } catch {
-          return { data: {}, locale }
-        }
-      })
-    )
+    translations: {
+      ru,
+    },
   },
   bootstrap() {},
 };

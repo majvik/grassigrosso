@@ -4,18 +4,20 @@
   "info": {
     "singularName": "catalog-new-hero",
     "pluralName": "catalog-new-heroes",
-    "displayName": "Catalog (new) hero slider"
+    "displayName": "Слайдер каталога"
   },
   "options": {
     "draftAndPublish": false
   },
   "attributes": {
     "autoplay_ms": {
+      "displayName": "Автопрокрутка (мс)",
       "type": "integer",
       "default": 6500,
       "min": 2500
     },
     "slides": {
+      "displayName": "Слайды",
       "type": "component",
       "repeatable": true,
       "component": "catalog.hero-slide"

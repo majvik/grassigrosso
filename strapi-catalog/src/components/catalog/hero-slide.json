@@ -1,30 +1,41 @@
 {
   "collectionName": "components_catalog_hero_slides",
   "info": {
-    "displayName": "Catalog hero slide",
+    "displayName": "Слайд hero каталога",
     "icon": "landscape"
   },
   "options": {},
   "attributes": {
     "slide_image": {
+      "displayName": "Изображение слайда",
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "slide_video": {
+      "displayName": "Видео слайда",
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["videos", "files"]
+      "allowedTypes": [
+        "videos",
+        "files"
+      ]
     },
     "poster": {
+      "displayName": "Постер",
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "alt_text": {
+      "displayName": "Alt текст",
       "type": "string",
       "required": false
     }

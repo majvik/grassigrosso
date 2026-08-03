@@ -3,7 +3,7 @@ import type { Schema, Struct } from '@strapi/strapi';
 export interface CatalogFilterHelpSegment extends Struct.ComponentSchema {
   collectionName: 'components_catalog_filter_help_segments';
   info: {
-    displayName: 'Filter help segment';
+    displayName: '\u0421\u0435\u0433\u043C\u0435\u043D\u0442 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438 \u0444\u0438\u043B\u044C\u0442\u0440\u0430';
     icon: 'file';
   };
   attributes: {
@@ -27,7 +27,7 @@ export interface CatalogFilterHelpSegment extends Struct.ComponentSchema {
 export interface CatalogFilterHelpSummaryItem extends Struct.ComponentSchema {
   collectionName: 'components_catalog_filter_help_summary_items';
   info: {
-    displayName: 'Filter help summary item';
+    displayName: '\u041F\u0443\u043D\u043A\u0442 \u00AB\u0415\u0441\u043B\u0438 \u043A\u043E\u0440\u043E\u0442\u043A\u043E\u00BB';
     icon: 'bulletList';
   };
   attributes: {
@@ -39,7 +39,7 @@ export interface CatalogFilterHelpSummaryItem extends Struct.ComponentSchema {
 export interface CatalogHeroSlide extends Struct.ComponentSchema {
   collectionName: 'components_catalog_hero_slides';
   info: {
-    displayName: 'Catalog hero slide';
+    displayName: '\u0421\u043B\u0430\u0439\u0434 hero \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430';
     icon: 'landscape';
   };
   attributes: {
@@ -53,7 +53,7 @@ export interface CatalogHeroSlide extends Struct.ComponentSchema {
 export interface CatalogProductGalleryItem extends Struct.ComponentSchema {
   collectionName: 'components_catalog_product_gallery_items';
   info: {
-    displayName: 'Product gallery item';
+    displayName: '\u042D\u043B\u0435\u043C\u0435\u043D\u0442 \u0433\u0430\u043B\u0435\u0440\u0435\u0438 \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u0430';
     icon: 'picture';
   };
   attributes: {
@@ -178,7 +178,7 @@ export interface PageGeoCity extends Struct.ComponentSchema {
 export interface PageHero extends Struct.ComponentSchema {
   collectionName: 'components_page_heroes';
   info: {
-    displayName: 'Hero \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B';
+    displayName: '\u0428\u0430\u043F\u043A\u0430 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B';
     icon: 'landscape';
   };
   attributes: {
@@ -194,7 +194,7 @@ export interface PageHero extends Struct.ComponentSchema {
 export interface PageHeroMedia extends Struct.ComponentSchema {
   collectionName: 'components_page_hero_medias';
   info: {
-    displayName: 'Hero \u0441 \u0432\u0438\u0434\u0435\u043E';
+    displayName: '\u0428\u0430\u043F\u043A\u0430 \u0441 \u0432\u0438\u0434\u0435\u043E';
     icon: 'landscape';
   };
   attributes: {

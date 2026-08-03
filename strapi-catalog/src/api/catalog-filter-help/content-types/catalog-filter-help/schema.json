@@ -11,6 +11,7 @@
   },
   "attributes": {
     "filter_key": {
+      "displayName": "Ключ фильтра",
       "type": "enumeration",
       "enum": [
         "collection",
@@ -26,24 +27,29 @@
       "unique": true
     },
     "modal_title": {
+      "displayName": "Заголовок модалки",
       "type": "string",
       "required": true
     },
     "summary_title": {
+      "displayName": "Заголовок блока «Если коротко»",
       "type": "string",
       "default": "Если коротко"
     },
     "summary_items": {
+      "displayName": "Если коротко",
       "type": "component",
       "repeatable": true,
       "component": "catalog.filter-help-summary-item"
     },
     "segments": {
+      "displayName": "Сегменты",
       "type": "component",
       "repeatable": true,
       "component": "catalog.filter-help-segment"
     },
     "is_active": {
+      "displayName": "Активен",
       "type": "boolean",
       "default": true
     }

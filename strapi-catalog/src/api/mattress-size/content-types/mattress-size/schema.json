@@ -11,21 +11,25 @@
   },
   "attributes": {
     "name": {
+      "displayName": "Название",
       "type": "string",
       "required": true,
       "unique": true
     },
     "slug": {
+      "displayName": "URL-идентификатор",
       "type": "uid",
       "targetField": "name",
       "required": true,
       "unique": true
     },
     "sort_order": {
+      "displayName": "Порядок сортировки",
       "type": "integer",
       "default": 0
     },
     "products": {
+      "displayName": "Продукты",
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::product.product",
