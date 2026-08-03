@@ -33,42 +33,6 @@ export const DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS = [
   'slider_autoplay_ms',
 ] as const
 
-/** Stable key field for behavior-bound arrays (design §2). */
-export const BEHAVIOR_BOUND_ARRAYS: Readonly<Record<string, string>> = {
-  packages: 'value',
-  certificates: 'document_key',
-  company_documents: 'document_key',
-  docs: 'document_key',
-  offices: 'slug',
-  products: 'catalog_key',
-  contact_info: 'icon_key',
-}
-
-/** @deprecated use CONTENT_ARRAY_ITEMS from descriptors; kept for quick Set checks */
-export const CONTENT_ONLY_ARRAYS = new Set([
-  'solutions',
-  'philosophy_cards',
-  'collections',
-  'features',
-  'testimonials',
-  'stats',
-  'categories',
-  'discount_rows',
-  'refresh_features',
-  'faq_items',
-  'conditions',
-  'offers',
-  'bullets',
-  'geography_cities',
-  'requirements',
-])
-
-/** String fields that may apply CMS empty string (design §1) — also in ROOT_FIELD_HINTS. */
-export const OPTIONAL_EMPTY_STRING_KEYS = new Set(['note', 'href', 'text', 'region', 'image_alt'])
-
-/** Only nullable string in public contract. */
-export const NULLABLE_STRING_KEYS = new Set(['map_embed_url'])
-
 export const PAGES_API_TIMEOUT_MS_DEFAULT = 10_000
 export let PAGES_API_TIMEOUT_MS = PAGES_API_TIMEOUT_MS_DEFAULT
 

@@ -1,16 +1,15 @@
 /**
  * Atomic typed merge of CMS page data onto hardcoded fallback (Phase 4A).
- * See docs/superpowers/specs/2026-08-03-pages-cms-react-hydrate-design.md §1–§2.
+ * Field rules come from content-contract schemas (canonical path / component type).
+ * See design §1–§2.
  */
-import {
-  BEHAVIOR_ARRAY_ITEMS,
-  CONTENT_ARRAY_ITEMS,
-  ROOT_FIELD_HINTS,
-  resolveItemDescriptor,
-  type FieldDesc,
-  type ItemDescName,
-} from './pages-cms-descriptors'
 import type { PagesCmsSlug } from './pages-cms-constants'
+import {
+  getPageRootSchema,
+  resolveComponentSchema,
+  resolveFieldDesc,
+  type FieldDesc,
+} from './pages-cms-schema'
 import { isPlainObject } from './pages-cms-validate'
 
 export type MergeSuccess<T> = { ok: true; value: T }
@@ -65,7 +64,6 @@ function parseMedia(
   const out: Record<string, unknown> = { url: cms.url }
   for (const [k, v] of Object.entries(cms)) {
     if (k === 'url') continue
-    // media objects only allow string/number/boolean extras already on payload; unknown extras reject
     if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
       out[k] = v
     } else {
@@ -75,10 +73,25 @@ function parseMedia(
   return out
 }
 
+/** Test/harness helper: apply a single field descriptor (schema-derived positives/negatives). */
+export function applyFieldDescForTests(
+  path: string,
+  cms: unknown,
+  desc: FieldDesc,
+): MergeResult<unknown> {
+  try {
+    return { ok: true, value: parseByDescriptor(path, cms, desc) }
+  } catch (err) {
+    if (err instanceof MergeReject) return { ok: false, reason: err.reason }
+    return { ok: false, reason: err instanceof Error ? err.message : 'failed' }
+  }
+}
+
 function parseByDescriptor(path: string, cms: unknown, desc: FieldDesc): unknown {
-  switch (desc.kind) {
+  const resolved = resolveFieldDesc(desc)
+  switch (resolved.kind) {
     case 'string':
-      return parseString(path, cms, desc)
+      return parseString(path, cms, resolved)
     case 'nullableString':
       return parseNullableString(path, cms)
     case 'boolean':
@@ -90,19 +103,22 @@ function parseByDescriptor(path: string, cms: unknown, desc: FieldDesc): unknown
       }
       return cms
     case 'media':
-      return parseMedia(path, cms, desc)
+      return parseMedia(path, cms, resolved)
     case 'object':
-      return parseObjectByDescriptor(path, cms, desc.fields)
+      return parseObjectReplace(path, cms, resolved.fields)
     case 'contentArray':
-      return parseContentArray(path, cms, desc.item)
+      return parseContentArray(path, cms, resolved.component)
     case 'behaviorArray':
-      throw new MergeReject(`${path}: behavior arrays must be merged against fallback`)
+      throw new MergeReject(`${path}: behavior arrays require fallback merge`)
+    case 'component':
+      return parseByDescriptor(path, cms, resolveComponentSchema(resolved.component))
     default:
       throw new MergeReject(`${path}: unknown descriptor kind`)
   }
 }
 
-function parseObjectByDescriptor(
+/** Content-only / full CMS object: allowlist from schema; required fields must be present. */
+function parseObjectReplace(
   path: string,
   cms: unknown,
   fields: Record<string, FieldDesc>,
@@ -114,27 +130,9 @@ function parseObjectByDescriptor(
   const out: Record<string, unknown> = {}
   for (const [key, fieldDesc] of Object.entries(fields)) {
     const childPath = path ? `${path}.${key}` : key
+    const resolved = resolveFieldDesc(fieldDesc)
     if (!(key in cms)) {
-      if (fieldDesc.kind === 'string' && fieldDesc.optional) {
-        out[key] = fieldDesc.optionalEmpty ? '' : undefined
-        if (out[key] === undefined) delete out[key]
-        continue
-      }
-      if (
-        (fieldDesc.kind === 'boolean' || fieldDesc.kind === 'number' || fieldDesc.kind === 'media') &&
-        fieldDesc.optional
-      ) {
-        if (fieldDesc.kind === 'media') out[key] = null
-        continue
-      }
-      if (fieldDesc.kind === 'contentArray') {
-        out[key] = []
-        continue
-      }
-      if (fieldDesc.kind === 'nullableString') {
-        out[key] = null
-        continue
-      }
+      if (isOptionalDesc(resolved)) continue
       throw new MergeReject(`${childPath}: missing required field`)
     }
     out[key] = parseByDescriptor(childPath, cms[key], fieldDesc)
@@ -142,9 +140,21 @@ function parseObjectByDescriptor(
   return out
 }
 
-function parseContentArray(path: string, cms: unknown, itemName: ItemDescName): unknown[] {
+function isOptionalDesc(desc: FieldDesc): boolean {
+  const r = resolveFieldDesc(desc)
+  if (r.kind === 'string' || r.kind === 'boolean' || r.kind === 'number' || r.kind === 'nullableString') {
+    return Boolean(r.optional)
+  }
+  if (r.kind === 'media') return r.optional
+  if (r.kind === 'contentArray') return true
+  if (r.kind === 'behaviorArray') return true
+  if (r.kind === 'object' || r.kind === 'component') return true
+  return false
+}
+
+function parseContentArray(path: string, cms: unknown, componentUid: string): unknown[] {
   if (!Array.isArray(cms)) throw new MergeReject(`${path}: expected array`)
-  const itemDesc = resolveItemDescriptor(itemName)
+  const itemDesc = resolveComponentSchema(componentUid)
   return cms.map((item, i) => parseByDescriptor(`${path}[${i}]`, item, itemDesc))
 }
 
@@ -153,13 +163,13 @@ function mergeBehaviorArray(
   fallback: unknown[],
   cms: unknown,
   stableKey: string,
-  itemName: ItemDescName,
+  componentUid: string,
 ): unknown[] {
   if (!Array.isArray(cms)) throw new MergeReject(`${path}: expected array`)
   if (cms.length === 0) throw new MergeReject(`${path}: empty array not allowed for behavior-bound`)
 
-  const itemDesc = resolveItemDescriptor(itemName)
-  if (itemDesc.kind !== 'object') throw new MergeReject(`${path}: item descriptor must be object`)
+  const itemDesc = resolveComponentSchema(componentUid)
+  if (itemDesc.kind !== 'object') throw new MergeReject(`${path}: item schema must be object`)
 
   const fallbackKeys: string[] = []
   const fallbackByKey = new Map<string, Record<string, unknown>>()
@@ -185,8 +195,6 @@ function mergeBehaviorArray(
     }
     if (cmsByKey.has(id)) throw new MergeReject(`${path}: duplicate ${stableKey}=${id}`)
     if (!fallbackByKey.has(id)) throw new MergeReject(`${path}: unknown ${stableKey}=${id}`)
-    // Partial CMS patch: unknown keys reject; present keys must match descriptor.
-    // Missing keys are filled from fallback during mergeObjectWithHints.
     for (const key of Object.keys(item)) {
       if (!(key in itemDesc.fields)) {
         throw new MergeReject(`${path}[${i}].${key}: unknown key`)
@@ -200,25 +208,25 @@ function mergeBehaviorArray(
     if (!cmsByKey.has(id)) throw new MergeReject(`${path}: missing ${stableKey}=${id}`)
   }
 
-  return fallbackKeys.map((id) => {
-    const fb = fallbackByKey.get(id)!
-    const cm = cmsByKey.get(id)!
-    return mergeObjectWithHints(fb, cm, `${path}[${id}]`, itemDesc.fields)
-  })
+  return fallbackKeys.map((id) =>
+    mergeObjectWithSchema(fallbackByKey.get(id)!, cmsByKey.get(id)!, itemDesc.fields, `${path}[${id}]`),
+  )
 }
 
 /**
- * Merge CMS onto fallback twin using optional field hints for media/nullability.
- * Unknown CMS keys (not in fallback) reject. Descriptor fields (when provided)
- * enforce type rules for present CMS keys.
+ * Merge CMS patch onto fallback twin using schema field map (no key-name media inference).
  */
-function mergeObjectWithHints(
+function mergeObjectWithSchema(
   fallback: Record<string, unknown>,
   cms: Record<string, unknown>,
+  fields: Record<string, FieldDesc>,
   path: string,
-  itemFields?: Record<string, FieldDesc>,
 ): Record<string, unknown> {
   for (const key of Object.keys(cms)) {
+    if (!(key in fields)) {
+      throw new MergeReject(`${path ? `${path}.` : ''}${key}: unknown key`)
+    }
+    // CMS may only patch keys that exist on fallback for page roots / behavior items
     if (!(key in fallback)) {
       throw new MergeReject(`${path ? `${path}.` : ''}${key}: unknown key`)
     }
@@ -227,25 +235,19 @@ function mergeObjectWithHints(
   const out: Record<string, unknown> = {}
   for (const key of Object.keys(fallback)) {
     const childPath = path ? `${path}.${key}` : key
+    const fieldDesc = fields[key]
+    if (!fieldDesc) {
+      // Fallback has a key not in schema — coverage gate should catch; keep fallback copy
+      out[key] = cloneUnknown(fallback[key])
+      continue
+    }
     if (!(key in cms)) {
       out[key] = cloneUnknown(fallback[key])
       continue
     }
 
-    const hint: FieldDesc | undefined =
-      itemFields?.[key] ||
-      ROOT_FIELD_HINTS[key] ||
-      (key in BEHAVIOR_ARRAY_ITEMS
-        ? {
-            kind: 'behaviorArray',
-            key: BEHAVIOR_ARRAY_ITEMS[key].key,
-            item: BEHAVIOR_ARRAY_ITEMS[key].item,
-          }
-        : key in CONTENT_ARRAY_ITEMS
-          ? { kind: 'contentArray', item: CONTENT_ARRAY_ITEMS[key] }
-          : undefined)
+    const resolved = resolveFieldDesc(fieldDesc)
 
-    // Stable identity fields: must match fallback exactly
     if (
       (key === 'document_key' ||
         key === 'value' ||
@@ -261,60 +263,47 @@ function mergeObjectWithHints(
       continue
     }
 
-    if (hint) {
-      if (hint.kind === 'behaviorArray') {
-        if (!Array.isArray(fallback[key])) throw new MergeReject(`${childPath}: fallback not array`)
-        out[key] = mergeBehaviorArray(
-          childPath,
-          fallback[key] as unknown[],
-          cms[key],
-          hint.key,
-          hint.item,
-        )
-        continue
-      }
-      if (hint.kind === 'contentArray') {
-        out[key] = parseContentArray(childPath, cms[key], hint.item)
-        continue
-      }
-      out[key] = parseByDescriptor(childPath, cms[key], hint)
+    if (resolved.kind === 'behaviorArray') {
+      if (!Array.isArray(fallback[key])) throw new MergeReject(`${childPath}: fallback not array`)
+      out[key] = mergeBehaviorArray(
+        childPath,
+        fallback[key] as unknown[],
+        cms[key],
+        resolved.key,
+        resolved.component,
+      )
+      continue
+    }
+    if (resolved.kind === 'contentArray') {
+      out[key] = parseContentArray(childPath, cms[key], resolved.component)
+      continue
+    }
+    if (resolved.kind === 'object') {
+      if (!isPlainObject(cms[key])) throw new MergeReject(`${childPath}: expected object`)
+      if (!isPlainObject(fallback[key])) throw new MergeReject(`${childPath}: fallback not object`)
+      out[key] = mergeObjectWithSchema(
+        fallback[key] as Record<string, unknown>,
+        cms[key] as Record<string, unknown>,
+        resolved.fields,
+        childPath,
+      )
+      continue
+    }
+    if (resolved.kind === 'component') {
+      const comp = resolveComponentSchema(resolved.component)
+      if (comp.kind !== 'object') throw new MergeReject(`${childPath}: bad component schema`)
+      if (!isPlainObject(cms[key])) throw new MergeReject(`${childPath}: expected object`)
+      if (!isPlainObject(fallback[key])) throw new MergeReject(`${childPath}: fallback not object`)
+      out[key] = mergeObjectWithSchema(
+        fallback[key] as Record<string, unknown>,
+        cms[key] as Record<string, unknown>,
+        comp.fields,
+        childPath,
+      )
       continue
     }
 
-    // Infer from fallback type for plain scalars/objects without hint
-    const fb = fallback[key]
-    if (typeof fb === 'string') {
-      out[key] = parseString(childPath, cms[key], { kind: 'string' })
-      continue
-    }
-    if (typeof fb === 'boolean') {
-      out[key] = parseByDescriptor(childPath, cms[key], { kind: 'boolean' })
-      continue
-    }
-    if (typeof fb === 'number') {
-      out[key] = parseByDescriptor(childPath, cms[key], { kind: 'number' })
-      continue
-    }
-    if (isMediaObject(fb)) {
-      // Media without explicit hint: treat as required (null rejects)
-      out[key] = parseMedia(childPath, cms[key], { kind: 'media', optional: false })
-      continue
-    }
-    if (Array.isArray(fb)) {
-      throw new MergeReject(
-        `${childPath}: array not classified as content-only or behavior-bound`,
-      )
-    }
-    if (isPlainObject(fb)) {
-      if (!isPlainObject(cms[key])) throw new MergeReject(`${childPath}: expected object`)
-      out[key] = mergeObjectWithHints(fb, cms[key], childPath)
-      continue
-    }
-    if (fb === null) {
-      // Fallback null is not "media" — only nullableString keys via hints allowed
-      throw new MergeReject(`${childPath}: cannot merge onto null fallback without field hint`)
-    }
-    throw new MergeReject(`${childPath}: unsupported fallback type`)
+    out[key] = parseByDescriptor(childPath, cms[key], fieldDesc)
   }
   return out
 }
@@ -323,7 +312,7 @@ function mergeObjectWithHints(
  * Atomic merge. On any violation returns ok:false and does not partially apply.
  */
 export function mergePageContent<T extends Record<string, unknown>>(
-  _slug: PagesCmsSlug,
+  slug: PagesCmsSlug,
   fallback: T,
   data: unknown,
 ): MergeResult<T> {
@@ -331,7 +320,11 @@ export function mergePageContent<T extends Record<string, unknown>>(
     if (!isPlainObject(data)) {
       return { ok: false, reason: 'cms data must be a plain object' }
     }
-    const value = mergeObjectWithHints(fallback, data, '') as T
+    const root = getPageRootSchema(slug)
+    if (root.kind !== 'object') {
+      return { ok: false, reason: 'page root schema must be object' }
+    }
+    const value = mergeObjectWithSchema(fallback, data, root.fields, '') as T
     return { ok: true, value }
   } catch (err) {
     if (err instanceof MergeReject) return { ok: false, reason: err.reason }

@@ -26,6 +26,7 @@ await esbuild.build({
 
 const {
   mergePageContent,
+  applyFieldDescForTests,
   validateNodeEnvelope,
   fetchPageContent,
   prefetchPageContent,
@@ -37,6 +38,11 @@ const {
   BEHAVIOR_BOUND_ARRAYS,
   BEHAVIOR_ARRAY_ITEMS,
   setPagesApiTimeoutMsForTests,
+  PAGES_CMS_SLUGS,
+  getPageRootSchema,
+  resolveComponentSchema,
+  collectUndescribedFixturePaths,
+  listRequiredMediaPaths,
 } = await import(pathToFileURL(outfile).href)
 
 try {
@@ -87,6 +93,141 @@ function assertUnchanged(fallback, before, label) {
   assert(deepEqual(fallback, before), `${label}: fallback must be unchanged after reject`)
 }
 
+// --- Coverage gate: every fixture path classified by schema ---
+{
+  for (const slug of PAGES_CMS_SLUGS) {
+    const data = readFixture(slug)
+    const undescribed = collectUndescribedFixturePaths(slug, data)
+    assert(
+      undescribed.length === 0,
+      `${slug} coverage: ${undescribed.slice(0, 5).join('; ')}`,
+    )
+  }
+}
+
+// --- Positive parity: merge(fixture, fixture) ok for all six ---
+{
+  for (const slug of PAGES_CMS_SLUGS) {
+    const fixture = readFixture(slug)
+    const before = structuredClone(fixture)
+    const merged = mergePageContent(slug, fixture, structuredClone(fixture))
+    assert(merged.ok, `parity ${slug}: ${merged.ok === false ? merged.reason : ''}`)
+    assertUnchanged(fixture, before, `parity ${slug}`)
+    if (merged.ok) {
+      // Spot-check behavior + content arrays survived
+      assert(deepEqual(merged.value, fixture), `parity ${slug} value equals fixture`)
+    }
+  }
+}
+
+// --- Schema-derived string/media policy ---
+{
+  const hotelsRoot = getPageRootSchema('hotels')
+  assert(hotelsRoot.kind === 'object', 'hotels root object')
+  const heroDesc = resolveComponentSchema('page.hero')
+  assert(heroDesc.kind === 'object', 'page.hero object')
+  assert(heroDesc.fields.image.kind === 'media' && heroDesc.fields.image.optional === true, 'hero.image optional')
+  assert(
+    heroDesc.fields.description.kind === 'string' && heroDesc.fields.description.optionalEmpty === true,
+    'hero.description optionalEmpty',
+  )
+
+  const productDesc = resolveComponentSchema('page.hotel-product')
+  assert(productDesc.kind === 'object' && productDesc.fields.image.optional === true, 'product.image optional')
+  const collectionDesc = resolveComponentSchema('page.collection-card')
+  assert(
+    collectionDesc.kind === 'object' && collectionDesc.fields.image.optional === true,
+    'collection.image optional',
+  )
+  const heroMedia = resolveComponentSchema('page.hero-media')
+  assert(heroMedia.kind === 'object', 'hero-media')
+  for (const k of ['poster', 'video_desktop', 'video_mobile']) {
+    assert(heroMedia.fields[k]?.kind === 'media' && heroMedia.fields[k].optional === true, `${k} optional media`)
+  }
+
+  // optional hero.image null accept
+  const hotels = readFixture('hotels')
+  const beforeH = structuredClone(hotels)
+  const heroImgNull = mergePageContent('hotels', hotels, {
+    hero: { ...hotels.hero, image: null },
+  })
+  assert(heroImgNull.ok, `optional hero.image null: ${heroImgNull.ok === false ? heroImgNull.reason : ''}`)
+  assertUnchanged(hotels, beforeH, 'hero.image null')
+
+  // product / collection image null accept
+  const productNull = mergePageContent('hotels', hotels, {
+    products: hotels.products.map((p) => ({ ...p, image: null })),
+  })
+  assert(productNull.ok, `optional product.image null: ${productNull.ok === false ? productNull.reason : ''}`)
+
+  const index = readFixture('index')
+  const beforeI = structuredClone(index)
+  const collNull = mergePageContent('index', index, {
+    collections: index.collections.map((c) => ({ ...c, image: null })),
+  })
+  assert(collNull.ok, `optional collection.image null: ${collNull.ok === false ? collNull.reason : ''}`)
+  assertUnchanged(index, beforeI, 'collection.image null')
+
+  const posterNull = mergePageContent('index', index, {
+    hero: { ...index.hero, poster: null, video_desktop: null, video_mobile: null },
+  })
+  assert(posterNull.ok, `optional poster/video null: ${posterNull.ok === false ? posterNull.reason : ''}`)
+
+  // optional string ""
+  const descEmpty = mergePageContent('hotels', hotels, {
+    hero: { ...hotels.hero, description: '' },
+  })
+  assert(descEmpty.ok, `optional hero.description "": ${descEmpty.ok === false ? descEmpty.reason : ''}`)
+
+  // required string ""
+  const titleEmpty = mergePageContent('hotels', hotels, {
+    hero: { ...hotels.hero, title: '' },
+  })
+  assert(!titleEmpty.ok, 'required hero.title "" must reject')
+  assertUnchanged(hotels, beforeH, 'required title empty')
+
+  // required media null — none in wave-1 schemas; assert + synthetic
+  const requiredMedia = PAGES_CMS_SLUGS.flatMap((s) => listRequiredMediaPaths(s))
+  assert(requiredMedia.length === 0, `unexpected required media: ${requiredMedia.join(',')}`)
+  const synth = applyFieldDescForTests('synth.image', null, { kind: 'media', optional: false })
+  assert(!synth.ok, 'synthetic required media null must reject')
+  const synthOpt = applyFieldDescForTests('synth.image', null, { kind: 'media', optional: true })
+  assert(synthOpt.ok && synthOpt.value === null, 'synthetic optional media null accept')
+
+  // unknown key on each major descriptor type
+  for (const uid of [
+    'page.hero',
+    'page.hero-media',
+    'page.list-item',
+    'page.faq-item',
+    'page.hotel-product',
+    'page.collection-card',
+    'page.dealer-package',
+    'page.office',
+    'page.contact-info',
+    'page.document-card',
+  ]) {
+    const desc = resolveComponentSchema(uid)
+    assert(desc.kind === 'object', uid)
+    const sample = {}
+    for (const [k, f] of Object.entries(desc.fields)) {
+      if (f.kind === 'string' && !f.optional) sample[k] = 'x'
+      else if (f.kind === 'nullableString') sample[k] = null
+      else if (f.kind === 'boolean') sample[k] = false
+      else if (f.kind === 'number') sample[k] = 1
+      else if (f.kind === 'media') sample[k] = null
+      else if (f.kind === 'contentArray') sample[k] = []
+      else if (f.kind === 'behaviorArray') sample[k] = []
+      else if (f.kind === 'component' || f.kind === 'object') {
+        /* skip nested for unknown-key probe */
+      }
+    }
+    sample.__unknown__ = true
+    const hit = applyFieldDescForTests(uid, sample, desc)
+    assert(!hit.ok, `${uid} unknown key must reject`)
+  }
+}
+
 // --- Merge: identity / absence ---
 {
   const fallback = readFixture('dealers')
@@ -124,10 +265,9 @@ function assertUnchanged(fallback, before, label) {
   const nullTitle = mergePageContent('dealers', fallback, {
     faq_items: [{ question: null, answer: 'a' }],
   })
-  assert(!nullTitle.ok, 'contentOnlyItem title/question null must reject')
+  assert(!nullTitle.ok, 'contentOnlyItem question null must reject')
   assertUnchanged(fallback, before, 'contentOnly null title')
 
-  // list-item title null (conditions)
   const nullListTitle = mergePageContent('dealers', fallback, {
     conditions: [{ title: null }],
   })
@@ -140,7 +280,6 @@ function assertUnchanged(fallback, before, label) {
   assert(!unknownField.ok, 'unknown field inside content-only item must reject')
   assertUnchanged(fallback, before, 'contentOnly unknown field')
 
-  // arbitrary null must not be treated as media
   const nullAsMedia = mergePageContent('dealers', fallback, {
     faq_items: [{ question: 'q', answer: 'a', open_by_default: null }],
   })
@@ -148,36 +287,23 @@ function assertUnchanged(fallback, before, label) {
   assertUnchanged(fallback, before, 'null boolean')
 }
 
-// --- Media nullability by path ---
+// --- optional media null on offers.icon / documents.file ---
 {
-  const hotels = readFixture('hotels')
-  const before = structuredClone(hotels)
-  const requiredNull = mergePageContent('hotels', hotels, {
-    products: hotels.products.map((p) => ({ ...p, image: null })),
-  })
-  assert(!requiredNull.ok, 'required media null must reject')
-  assertUnchanged(hotels, before, 'required media null')
-
   const dealers = readFixture('dealers')
   const beforeD = structuredClone(dealers)
-  // icon on offers is optional media
   const optionalNull = mergePageContent('dealers', dealers, {
     offers: dealers.offers.map((o) => ({ ...o, icon: null })),
   })
   assert(optionalNull.ok, `optional media null must accept: ${optionalNull.ok === false ? optionalNull.reason : ''}`)
-  assert(deepEqual(dealers, beforeD), 'optional media accept must not mutate input fallback')
-  if (optionalNull.ok) {
-    assert(optionalNull.value.offers[0].icon === null, 'optional media null applied')
-  }
+  assertUnchanged(dealers, beforeD, 'optional media accept')
 
-  // document file optional
   const docs = readFixture('documents')
   const beforeDocs = structuredClone(docs)
   const fileNull = mergePageContent('documents', docs, {
     certificates: docs.certificates.map((c) => ({ ...c, file: null })),
   })
   assert(fileNull.ok, `optional file null: ${fileNull.ok === false ? fileNull.reason : ''}`)
-  assertUnchanged(docs, beforeDocs, 'optional file (fallback identity)')
+  assertUnchanged(docs, beforeDocs, 'optional file')
 }
 
 // --- Merge: null only for map_embed_url among strings ---
@@ -554,6 +680,6 @@ if (failures.length) {
 
 console.log('check:pages-cms-hydrate PASS')
 console.log(
-  ' merge=ok descriptors=ok lifecycle=timeout+json behaviorBound=' +
+  ' coverage=ok parity=6 schemaMedia=path lifecycle=timeout+json behaviorBound=' +
     Object.keys(BEHAVIOR_ARRAY_ITEMS).length,
 )

@@ -66,7 +66,7 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 - Harness: `npm run check:pages-cms-hydrate` — descriptors for content-only items; path-specific media nullability; data-driven behavior-bound negatives (all 7 paths × pages); timeout/abort + invalid JSON + retry
 - Wired into `check:pages-cms` companion
 - Evidence: hydrate/isolation/typecheck PASS; no `src/components/pages/*` edits
-- Harden: removed content-only self-as-schema and `isMediaShape(null)` hole
+- Harden: schema-derived descriptors from content-contract (component/path); coverage gate + fixture parity×6; no key-based media inference; offices `map_embed_url` public override
 
 ### Verify
 
