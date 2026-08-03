@@ -24,7 +24,14 @@ const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
 const strapiRoot = path.join(root, 'strapi-catalog')
-const dbPath = path.join(strapiRoot, '.tmp/data.db')
+const defaultDbPath = path.join(strapiRoot, '.tmp/data.db')
+const dbPath = process.env.DATABASE_FILENAME
+  ? path.resolve(
+      path.isAbsolute(process.env.DATABASE_FILENAME)
+        ? process.env.DATABASE_FILENAME
+        : path.join(strapiRoot, process.env.DATABASE_FILENAME),
+    )
+  : defaultDbPath
 const backupDir = path.join(strapiRoot, '.tmp/pages-cms-seed-backups')
 const uploadsDir = path.join(strapiRoot, 'public/uploads')
 const fixturesDir = path.join(root, 'scripts/fixtures/pages-cms')
@@ -87,6 +94,9 @@ function portInUse(port) {
 }
 
 function refuseIfPortBusy() {
+  // Isolated harness DB (Phase 5 aggregator) does not touch live :1337 SQLite.
+  if (dbPath !== defaultDbPath) return
+  if (process.env.PAGES_CMS_SEED_ALLOW_BUSY_PORT === '1') return
   if (!portInUse(1337)) return
   console.error(
     [

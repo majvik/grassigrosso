@@ -408,6 +408,7 @@ const externalBase = process.env.PAGES_API_BASE_URL
   : null
 
 const CHECK_NODE_PORT = String(process.env.PAGES_API_CHECK_PORT || '3011')
+const CHECK_STRAPI_PORT = Number(process.env.PAGES_API_STRAPI_PORT || 1337)
 const CHECK_NODE_BASE = `http://127.0.0.1:${CHECK_NODE_PORT}`
 const harnessSnapshotDir = fs.mkdtempSync(path.join(root, '.tmp', 'pages-harness-snapshots-'))
 
@@ -432,8 +433,10 @@ async function shutdown() {
 
 try {
   if (!externalBase) {
-    if (portInUse(1337)) {
-      fail('port :1337 is in use — stop Strapi yourself (harness will not kill processes)')
+    if (portInUse(CHECK_STRAPI_PORT)) {
+      fail(
+        `port :${CHECK_STRAPI_PORT} is in use — stop that listener yourself or set PAGES_API_STRAPI_PORT to a free port (harness will not kill processes)`,
+      )
     }
     if (portInUse(Number(CHECK_NODE_PORT))) {
       fail(
@@ -442,12 +445,21 @@ try {
     }
     if (failures.length) throw new Error('ports busy')
 
+    if (process.env.PAGES_API_DATABASE_FILENAME) {
+      process.env.DATABASE_FILENAME = process.env.PAGES_API_DATABASE_FILENAME
+      console.log(`  pages-api harness DB: ${process.env.DATABASE_FILENAME}`)
+    }
+
     const seeded = spawnSync(process.execPath, [seedScript], { cwd: root, encoding: 'utf8' })
     assert(seeded.status === 0, `seed failed: ${seeded.stderr || seeded.stdout}`)
 
     syncDistRuntimeAssets(strapiRoot)
     const prevCwd = process.cwd()
     process.chdir(strapiRoot)
+    const prevHost = process.env.HOST
+    const prevPort = process.env.PORT
+    process.env.HOST = '127.0.0.1'
+    process.env.PORT = String(CHECK_STRAPI_PORT)
     const { createStrapi } = require(path.join(strapiRoot, 'node_modules/@strapi/strapi'))
     strapiApp = await createStrapi({
       appDir: strapiRoot,
@@ -455,12 +467,16 @@ try {
     }).load()
     await strapiApp.listen()
     process.chdir(prevCwd)
+    if (prevHost == null) delete process.env.HOST
+    else process.env.HOST = prevHost
+    if (prevPort == null) delete process.env.PORT
+    else process.env.PORT = prevPort
 
     const nodeEnv = {
       ...process.env,
       NODE_ENV: 'development',
       PORT: CHECK_NODE_PORT,
-      STRAPI_URL: 'http://127.0.0.1:1337',
+      STRAPI_URL: `http://127.0.0.1:${CHECK_STRAPI_PORT}`,
       PAGES_STRAPI_CACHE_TTL_MS: '0',
       PAGES_STRAPI_CACHE_STALE_MS: '0',
       CATALOG_STRAPI_CACHE_TTL_MS: '0',

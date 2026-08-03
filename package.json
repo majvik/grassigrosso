@@ -32,6 +32,7 @@
     "check:pages-cms-live-edit": "node scripts/check-pages-cms-live-edit.mjs",
     "check:pages-cms-degraded-media": "node scripts/check-pages-cms-degraded-media.mjs",
     "check:pages-cms-stack-signal": "node scripts/check-pages-cms-stack-signal.mjs",
+    "check:pages-cms-phase-5": "node scripts/check-pages-cms-phase-5.mjs",
     "check:pages-cms-phase-a": "node scripts/check-pages-cms-phase-a.mjs",
     "check:pages-cms-phase-b": "node scripts/check-pages-cms-phase-b.mjs",
     "check:pages-cms-phase-c": "node scripts/check-pages-cms-phase-c.mjs",

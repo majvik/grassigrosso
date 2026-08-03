@@ -1,7 +1,7 @@
 # Phase 5 — Coverage matrix (QA-01)
 
 **Date:** 2026-08-04
-**Status:** Phase A Complete (local planning) — awaiting accept before Phase B
+**Status:** Phase C Complete — QA-01…03 closed; aggregator PASS (`05-SUITE-RESULTS.md`)
 **Design decisions D1–D4:** Affirmed with Phase 5 design/plan
 **Design:** [2026-08-04-pages-cms-local-acceptance-design.md](../../../docs/superpowers/specs/2026-08-04-pages-cms-local-acceptance-design.md)
 **Plan:** [2026-08-04-pages-cms-local-acceptance.md](../../../docs/superpowers/plans/2026-08-04-pages-cms-local-acceptance.md)
@@ -18,18 +18,18 @@
 
 **Owner** = primary npm script / artifact responsible for the assert. Future harness names match the plan (TBD filenames allowed; decision IDs are binding).
 
-## Summary counts (Phase A freeze)
+## Summary counts (Phase C closeout)
 
 | Status | Count |
 |--------|------:|
-| covered | 37 |
-| partial | 4 |
-| gap | 2 |
+| covered | 43 |
+| partial | 0 |
+| gap | 0 |
 | deferred | 2 |
 | **Total rows** | **45** |
 | **unowned / blank** | **0** |
 
-Remaining **gap** rows (Phase C only): QA-02, R5-2 (milestone aggregator + recorded suite). **partial**: QA-01, QA-03, R5-1, R5-7 (closeout attestation).
+Remaining **deferred** only: LEG-01, LEG-02 (Phase 6).
 
 ---
 
@@ -59,9 +59,9 @@ Remaining **gap** rows (Phase C only): QA-02, R5-2 (milestone aggregator + recor
 
 | ID | Topic | Owner | Status | Evidence / notes |
 |----|-------|-------|--------|------------------|
-| QA-01 | Every branch/defect has automated regression | This matrix + Phase B gap fill + Phase C aggregator | partial | Matrix freezes owners; **gaps must close** before Complete |
-| QA-02 | Full relevant suite recorded green locally | Future `check:pages-cms-phase-5` + plan verify table | gap | Aggregator + recorded results = Phase C |
-| QA-03 | No push/PR/deploy/remote mutation without ask | Process attestation in plan/STATE; harness D2 must not touch foreign ports | partial | Process rule exists; **D2** automates non-interference; attestation filled at closeout |
+| QA-01 | Every branch/defect has automated regression | This matrix + Phase B gap fill + Phase C aggregator | covered | Closeout 2026-08-04 — unowned 0; gaps closed |
+| QA-02 | Full relevant suite recorded green locally | `check:pages-cms-phase-5` + `05-SUITE-RESULTS.md` | covered | Aggregator PASS 2026-08-04 |
+| QA-03 | No push/PR/deploy/remote mutation without ask | Process attestation in `05-SUITE-RESULTS.md`; D2 non-interference | covered | Attested; listeners unchanged |
 | LEG-01 | Privacy/terms/cookies single types | Phase 6 plan (TBD) | deferred | Out of Phase 5 |
 | LEG-02 | Legal hydrate `legal-content.tsx` | Phase 6 plan (TBD) | deferred | Out of Phase 5 |
 
@@ -94,13 +94,13 @@ Remaining **gap** rows (Phase C only): QA-02, R5-2 (milestone aggregator + recor
 
 | ID | Criterion | Owner | Status | Evidence / notes |
 |----|-----------|-------|--------|------------------|
-| R5-1 | Every added branch / fixed defect has automated test | This matrix (QA-01) | partial | Freeze done; gaps remain |
-| R5-2 | Full suite + typecheck/build/API/UI recorded in plan | Phase C aggregator + plan table | gap | |
+| R5-1 | Every added branch / fixed defect has automated test | This matrix (QA-01) | covered | Phase C closeout |
+| R5-2 | Full suite + typecheck/build/API/UI recorded in plan | `check:pages-cms-phase-5` + `05-SUITE-RESULTS.md` | covered | PASS 2026-08-04 |
 | R5-3 | Live Strapi field change → Node → React | **D3** `check:pages-cms-live-edit` | covered | Phase B |
 | R5-4 | Strapi down → valid snapshot **and** referenced media usable | **D1 + D4** | covered | Phase B (JSON+media+CDP) |
-| R5-5 | Catalog / download-catalog checks do not regress | `check:catalog-api` (+ UI/perf when stack up); slides via existing download-catalog checks | covered | Must be **re-recorded** in Phase C table |
+| R5-5 | Catalog / download-catalog checks do not regress | `check:catalog-api` + `check:catalog-ui` (Phase C suite) | covered | Re-recorded PASS in `05-SUITE-RESULTS.md` |
 | R5-6 | Manual browser smoke supplemental only | Process / plan attestation | covered | Policy locked in design |
-| R5-7 | No push / PR / remote deploy / remote mutation | QA-03 attestation | partial | Filled at closeout; D2 prevents foreign port use |
+| R5-7 | No push / PR / remote deploy / remote mutation | QA-03 attestation | covered | Attested in `05-SUITE-RESULTS.md` |
 | R5-8 | Degraded gate does not kill foreign processes; restores state | **D2** | covered | Phase B |
 
 ## Companion / aggregator owners (reference)
@@ -116,23 +116,22 @@ Remaining **gap** rows (Phase C only): QA-02, R5-2 (milestone aggregator + recor
 | `typecheck` / `build` | Record in Phase C |
 | Future phase-5 aggregator | Compose above + D2/D3/D4; record results |
 
-## Phase A verify
+## Phase C verify
 
 | Check | Result |
 |-------|--------|
-| Blank / unowned rows | **0** |
-| D1–D4 rows present | **yes** (D1, D1-neg, D2, D2-post, D3, D4) |
-| Uploads-502 incident row | **DEF-uploads-502** → gap → D1+D4 |
-| Production / test runtime code changed | **no** (planning only) |
-| Phase B started | **no** |
+| Aggregator `check:pages-cms-phase-5` | **PASS** |
+| Suite results artifact | `05-SUITE-RESULTS.md` |
+| Listeners / uploads / porcelain | **unchanged** |
+| Push / `strapi:sync-seed` | **not performed** |
+| QA-01…03 | **covered** |
 
 ## Gap freeze (Phase B input) — DONE 2026-08-04
 
-Phase B implemented D1–D4. Remaining for Phase C affirm only:
-
-1. Phase C aggregator (**QA-02**, **R5-2**) + attest **QA-03** / **R5-7** / refresh **QA-01**/**R5-1**
+Phase B implemented D1–D4. Phase C closed QA-02 / R5-2 and attested QA-03 / R5-7.
 
 ---
 
 *Phase A coverage freeze: 2026-08-04 — 45 rows; unowned 0*
-*Phase B update: 2026-08-04 — D1–D4 covered; gaps left: QA-02, R5-2*
+*Phase B update: 2026-08-04 — D1–D4 covered*
+*Phase C closeout: 2026-08-04 — aggregator PASS; QA-01…03 Complete*

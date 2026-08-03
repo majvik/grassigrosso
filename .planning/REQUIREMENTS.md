@@ -33,9 +33,9 @@
 
 ### Local acceptance gate
 
-- [ ] **QA-01**: Каждая новая/изменённая логика покрыта автоматическими тестами; каждый баг имеет regression test
-- [ ] **QA-02**: Все релевантные tests/typecheck/build/API/UI checks проходят локально, команды и результаты записаны в plan
-- [ ] **QA-03**: До отдельного явного разрешения пользователя не выполняются push, PR, remote deploy или remote mutation; проверка ведётся только локально
+- [x] **QA-01**: Каждая новая/изменённая логика покрыта автоматическими тестами; каждый баг имеет regression test
+- [x] **QA-02**: Все релевантные tests/typecheck/build/API/UI checks проходят локально, команды и результаты записаны в plan
+- [x] **QA-03**: До отдельного явного разрешения пользователя не выполняются push, PR, remote deploy или remote mutation; проверка ведётся только локально
 
 ## v2 Requirements
 
@@ -75,9 +75,9 @@
 | FE-03 | Phase 4 | Complete — hydrate unit + `check:routes` assert routing keys unchanged (2026-08-04) |
 | FE-04 | Phase 4 | Complete — DOM hooks (`data-catalog`, `data-package`, `data-document`, map tabs/frames) (2026-08-04) |
 | FE-05 | Phase 4 | Complete — delayed first-paint + content-equal geometry ≤1px in hydrate-dom (2026-08-04) |
-| QA-01 | Every phase + Phase 5 gate | Pending |
-| QA-02 | Every phase + Phase 5 gate | Pending |
-| QA-03 | Every phase + Phase 5 gate | Pending |
+| QA-01 | Every phase + Phase 5 gate | Complete — `05-COVERAGE.md` + aggregator 2026-08-04 |
+| QA-02 | Every phase + Phase 5 gate | Complete — `check:pages-cms-phase-5` + `05-SUITE-RESULTS.md` |
+| QA-03 | Every phase + Phase 5 gate | Complete — attested no push / no sync-seed; listeners unchanged |
 | LEG-01 | Phase 6 | Pending |
 | LEG-02 | Phase 6 | Pending |
 
@@ -89,4 +89,4 @@
 
 ---
 *Requirements defined: 2026-08-03*
-*Last updated: 2026-08-04 — Phase 5A coverage matrix frozen (`05-COVERAGE.md`); QA-* still Pending until Phase B/C*
+*Last updated: 2026-08-04 — Phase 5 Complete locally; QA-01…03 closed (`check:pages-cms-phase-5` PASS)*

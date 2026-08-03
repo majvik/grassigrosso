@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 5B DONE locally (D1–D4). Phase C not started. No push / no `strapi:sync-seed`.
+**Current focus:** Phase 5 Complete locally (A–C). Phase 6 not started. No push / no `strapi:sync-seed`.
 
 ## Current Position
 
-Phase: 5 of 6 (Local Acceptance Gate) — Phase B complete (local)
+Phase: 5 of 6 (Local Acceptance Gate) — **Complete (local)**
 Plan: 05-01
-Status: D1–D4 automated gates PASS; remaining gaps QA-02 / R5-2 (Phase C aggregator)
-Last activity: 2026-08-04 — Phase B D1–D4 implementation
+Status: Aggregator `check:pages-cms-phase-5` PASS; QA-01…03 covered; suite recorded in `05-SUITE-RESULTS.md`
+Last activity: 2026-08-04 — Phase C closeout
 
-Progress: [██████████] Phases 1–4 complete; Phase 5A+B local; Phase C / 6 not started
+Progress: [██████████] Phases 1–5 complete (local); Phase 6 not started
 
 ## Performance Metrics
 
@@ -23,24 +23,26 @@ Progress: [██████████] Phases 1–4 complete; Phase 5A+B loc
 | Phase | Plans | Status |
 |-------|-------|--------|
 | 1–4 | … | Complete (local) |
-| 5. Local Acceptance Gate | 0/1 | Phase B DONE — awaiting accept; Phase C not started |
+| 5. Local Acceptance Gate | 1/1 | Complete (local; no push) |
 | 6. Legal Pages | 0/TBD | Not started |
 
 ## Accumulated Context
 
 ### Decisions
 
-- D1 disk-first `/uploads` shipped (`lib/uploads-disk-first.cjs` + `server.cjs`)
-- D2 isolated stack helper; D3 live-edit IPC; D4 degraded media+CDP
-- Planning commit: `90a6ddf`; Phase B code commit pending/this session
+- D1 disk-first `/uploads` (`lib/uploads-disk-first.cjs` + `server.cjs`)
+- D2 isolated stack + SIGINT/SIGTERM observe-only gate
+- D3 live-edit IPC + verified restore; D4 degraded media+CDP
+- Phase C aggregator composes suite; pages-api uses isolated ports/DB when `:1337` busy
 
 ### Pending Todos
 
-- User accepts Phase B
-- Phase C affirm before aggregator / QA-* Complete
+- User affirm Phase 5 closeout (optional)
+- Phase 6 legal — not started
 - No push / sync-seed unless asked
 
 ## Session Continuity
 
-- Gates: `check:pages-cms-uploads-disk-first`, `check:pages-cms-live-edit`, `check:pages-cms-degraded-media`
-- Coverage: `.planning/phases/05-local-acceptance/05-COVERAGE.md` (gaps: QA-02, R5-2)
+- Aggregator: `npm run check:pages-cms-phase-5`
+- Results: `.planning/phases/05-local-acceptance/05-SUITE-RESULTS.md`
+- Coverage: `.planning/phases/05-local-acceptance/05-COVERAGE.md`

@@ -14,7 +14,7 @@ Milestone **v1.1** делает маркетинговые тексты волн
 - [x] **Phase 2: Wave 1 Single Types** - Single types страниц + расширение download-catalog + полный `ru.json`
 - [x] **Phase 3: Feeds, Proxy & Seed** - Публичные feeds, `GET /api/pages/:slug`, snapshots, seed из React
 - [x] **Phase 4: React Hydrate** - Волны 1 страницы берут контент из Node API без поломки layout и email-routing
-- [ ] **Phase 5: Local Acceptance Gate** - Полное автотестовое покрытие и локальный green verify; без push/deploy
+- [x] **Phase 5: Local Acceptance Gate** - Полное автотестовое покрытие и локальный green verify; без push/deploy
 - [ ] **Phase 6: Legal Pages** - Privacy / terms / cookies в CMS + hydrate `legal-content.tsx`
 
 ## Phase Details
@@ -95,10 +95,10 @@ Plans:
   6. Ручной browser smoke выполнен только как дополнительная проверка и не является единственным доказательством
   7. Не выполнялись `git push`, PR, remote deploy, remote smoke с mutation или изменения Timeweb/dev/prod
   8. Degraded-mode gate не убивает чужие процессы и восстанавливает исходное состояние слушателей
-**Plans**: 1 plan (Phase A matrix DONE — awaiting accept; Phase B not started)
+**Plans**: 1 plan (Phase A–C DONE locally 2026-08-04; no push / no sync-seed)
 
 Plans:
-- [ ] 05-01-PLAN.md — Local acceptance gate ([design](../docs/superpowers/specs/2026-08-04-pages-cms-local-acceptance-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-local-acceptance.md), [coverage](phases/05-local-acceptance/05-COVERAGE.md)) — Phase A matrix DONE (awaiting accept); Phase B not started
+- [x] 05-01-PLAN.md — Local acceptance gate ([design](../docs/superpowers/specs/2026-08-04-pages-cms-local-acceptance-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-local-acceptance.md), [coverage](phases/05-local-acceptance/05-COVERAGE.md), [suite](phases/05-local-acceptance/05-SUITE-RESULTS.md)) — Complete local; aggregator PASS
 
 ### Phase 6: Legal Pages
 **Goal**: Юрист/редактор обновляет privacy, terms и cookies в админке; сайт гидрирует `legal-content` без отдельного CMS-бандла.
@@ -125,7 +125,7 @@ Plans:
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) | 2026-08-03 |
 | 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) | 2026-08-03 |
 | 4. React Hydrate | 1/1 | Complete (local; FE-01…05; `2d7ca10`; no push) | 2026-08-04 |
-| 5. Local Acceptance Gate | 0/1 | Phase A matrix DONE — awaiting accept | - |
+| 5. Local Acceptance Gate | 1/1 | Complete (local; `check:pages-cms-phase-5` PASS) | 2026-08-04 |
 | 6. Legal Pages | 0/TBD | Not started | - |
 
 ---

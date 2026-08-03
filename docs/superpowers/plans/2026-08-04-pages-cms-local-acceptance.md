@@ -1,7 +1,7 @@
 # Pages CMS Phase 5 — Local acceptance gate (execution plan)
 
 **Date:** 2026-08-04
-**Status:** Phase B harden (blockers 1–6) — **awaiting re-accept**; Phase C not started; no push / no sync-seed
+**Status:** Phase C Complete — aggregator PASS; QA-01…03 closeout recorded; Phase 5 local Complete; no push / no sync-seed
 **Design:** [2026-08-04-pages-cms-local-acceptance-design.md](../specs/2026-08-04-pages-cms-local-acceptance-design.md)
 **GSD phase:** `.planning/phases/05-local-acceptance/`
 **Locality:** local commits only when asked; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -25,11 +25,10 @@ Rejected: proxy-on-error uploads; restart-Strapi-as-fix; foreign process kill.
 ## Global gates
 
 - Work only in the local workspace.
-- Design/plan D1–D4 affirmed; **Phase A affirmed and executed** (coverage matrix).
-- **No Phase B implementation** until separate Phase B affirm.
+- Design/plan D1–D4 affirmed; **Phase A–C executed**; Phase B accepted (`dd0825e`+`8beedda`+`26b15d4`).
 - Do not commit planning unless user asks.
 - After each phase step: run listed verify; record PASS/FAIL here.
-- Do not mark QA-01…03 Complete until Phase C full gate is green and attested.
+- QA-01…03 Complete — Phase C aggregator green and attested (`05-SUITE-RESULTS.md`).
 
 ## Progress log
 
@@ -39,16 +38,16 @@ Rejected: proxy-on-error uploads; restart-Strapi-as-fix; foreign process kill.
 | Design amend | uploads-502 incident | superseded by D1–D4 lock |
 | Design + plan lock D1–D4 | design/plan | Affirmed (user) |
 | Phase A | `05-COVERAGE.md` matrix | DONE — accepted |
-| Phase B | D1 code + D2/D3/D4 harnesses | HARDENED — disk-first realpath+Range; signal teardown; restore verify; no missing-media hide |
-| Phase C | aggregator + closeout | not started |
+| Phase B | D1 code + D2/D3/D4 harnesses | DONE — accepted (`dd0825e` + `8beedda` + `26b15d4`) |
+| Phase C | aggregator + closeout | DONE — `check:pages-cms-phase-5` PASS; `05-SUITE-RESULTS.md` |
 
 ### Phase map
 
 | Phase | Goal | Status |
 |-------|------|--------|
 | A | Coverage matrix + gap freeze (D1–D4 rows) | DONE — accepted |
-| B | Implement D1 + harnesses D2/D3/D4 | DONE — awaiting accept |
-| C | Aggregator + recorded suite + closeout | not started |
+| B | Implement D1 + harnesses D2/D3/D4 | DONE — accepted |
+| C | Aggregator + recorded suite + closeout | DONE — aggregator PASS |
 
 ---
 
@@ -126,20 +125,21 @@ Rejected: proxy-on-error uploads; restart-Strapi-as-fix; foreign process kill.
 2. Fill final verify table; update STATE/ROADMAP/REQUIREMENTS only after user accept.
 3. Attest: push / `strapi:sync-seed` not performed.
 
-### Verify (final — fill on execution)
+### Verify (final — recorded 2026-08-04)
 
 | Command | Expected | Result |
 |---------|----------|--------|
-| Coverage matrix complete | no gaps unowned | |
-| D1 disk-first + negatives | PASS | |
-| D2 isolated stack safety | PASS | |
-| D3 live-edit + restore | PASS | |
-| D4 degraded JSON+media+CDP+404 | PASS | |
-| Phase E / embedded suite | PASS + uploads self-clean | |
-| Isolation / routes / typecheck / build | PASS | |
-| Catalog API (+ UI when harness Vite up) | PASS | |
-| Porcelain / default listeners | unchanged | |
-| Push / `strapi:sync-seed` | **not performed** | |
+| Coverage matrix complete | no gaps unowned | PASS — QA-01…03 / R5-1/2/7 covered |
+| D1 disk-first + negatives | PASS | PASS |
+| D2 isolated stack safety | PASS | PASS (SIGINT+SIGTERM observe-only) |
+| D3 live-edit + restore | PASS | PASS |
+| D4 degraded JSON+media+CDP+404 | PASS | PASS |
+| Phase E / embedded suite | PASS + uploads self-clean | PASS (`pages-api` isolated ports when `:1337` busy) |
+| Isolation / routes / typecheck / build | PASS | PASS |
+| Catalog API (+ UI when harness Vite up) | PASS | PASS (`catalog-api` + `catalog-ui`) |
+| Porcelain / default listeners | unchanged | PASS |
+| Push / `strapi:sync-seed` | **not performed** | **not performed** |
+| Aggregator | PASS | **`npm run check:pages-cms-phase-5` PASS** → `05-SUITE-RESULTS.md` |
 
 ---
 
