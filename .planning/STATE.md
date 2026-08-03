@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 4B harden delivered (parity fixtures/snapshots, certification baseline, catalog_pdf download). Awaiting accept before C. No `strapi:sync-seed` / no push unless asked.
+**Current focus:** Phase 4C (Hotels + Dealers) delivered locally — awaiting accept before D. No `strapi:sync-seed` / no push unless asked.
 
 ## Current Position
 
-Phase: 4 of 6 (React Hydrate) — Phase B harden complete, awaiting accept
-Plan: 04-01 Phase B harden DONE
-Status: hydrate unit (defaultsParity+catalogPdf) + hydrate-dom + isolation + typecheck green; section height stable on parity
-Last activity: 2026-08-03 — Phase B harden
+Phase: 4 of 6 (React Hydrate) — Phase C complete, awaiting accept
+Plan: 04-01 Phase C DONE
+Status: hydrate unit + hydrate-dom (index, download-catalog, hotels, dealers) + isolation + typecheck green
+Last activity: 2026-08-04 — Phase C hotels/dealers hydrate
 
-Progress: [██████████] Phase 3 done; Phase 4A accepted; Phase 4B harden local done
+Progress: [██████████] Phase 3 done; Phase 4A–B accepted; Phase 4C local done
 
 ## Performance Metrics
 
@@ -25,7 +25,7 @@ Progress: [██████████] Phase 3 done; Phase 4A accepted; Phas
 | 1. Shared Page Components | 1/1 | Complete |
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) |
 | 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) |
-| 4. React Hydrate | 0/1 | Phase B harden — awaiting accept |
+| 4. React Hydrate | 0/1 | Phase C done — awaiting accept |
 
 ## Accumulated Context
 
@@ -35,19 +35,20 @@ Progress: [██████████] Phase 3 done; Phase 4A accepted; Phas
 - Index fixtures/snapshots must match React CMS defaults (content-equal parity)
 - Index certification marketing cards are code-owned; CMS `docs` separate
 - download-catalog: texts via pages API; slides unchanged; `catalog_pdf` preferred for download with `/api/download/catalog` fallback
+- Hydrate fills existing baseline slots only (no invented sections/cards)
+- Hotels: `catalog_key` + `icon_key` behavior-bound; categories CTA / product picture sources / refresh image code-owned
+- Dealers: `packages.value` + `icon_key` behavior-bound; quality video/play code-owned (`quality_image` poster/merge-only)
 - Local-only: no push/PR/deploy; no sync-seed unless asked
 
 ### Pending Todos
 
-- User affirms Phase 4B harden → start Phase C (hotels + dealers + DOM slice)
+- User affirms Phase 4C → start Phase D (contacts + documents + map)
 - Optional later: re-seed local Strapi `.tmp` from updated fixtures (no sync-seed unless asked)
 
 ### Blockers/Concerns
 
-None — blocked only on Phase B accept before C.
+None — blocked only on Phase C accept before D.
 
 ## Session Continuity
 
-Last session: 2026-08-03
-Stopped at: Phase 4B harden complete — awaiting accept
-Next: Phase C after accept (still no push / sync-seed)
+See agent transcript and `docs/superpowers/plans/2026-08-03-pages-cms-react-hydrate.md` progress log.

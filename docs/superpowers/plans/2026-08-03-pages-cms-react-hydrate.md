@@ -1,7 +1,7 @@
 # Pages CMS Phase 4 — React hydrate (execution plan)
 
 **Date:** 2026-08-03
-**Status:** Phase A accepted; Phase B harden DONE (local) — awaiting accept. No push / no `strapi:sync-seed`.
+**Status:** Phase A–B accepted; Phase C DONE (local) — awaiting accept. No push / no `strapi:sync-seed`.
 **Design:** [2026-08-03-pages-cms-react-hydrate-design.md](../specs/2026-08-03-pages-cms-react-hydrate-design.md)
 **GSD phase:** `.planning/phases/04-react-hydrate/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -17,6 +17,7 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 - Map: `map_embed_url` → iframe `src` only; no HTML.
 - download-catalog texts via pages API; slides unchanged.
 - Email / behavioral keys code-owned.
+- **Hydrate fills existing baseline slots only** — no new sections/cards from CMS arrays beyond baseline UI.
 - No hydrate code until this plan is affirmed.
 
 ## Global gates
@@ -34,8 +35,8 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 | Design + plan draft v1 | Option B sketch | superseded by v2 |
 | Design + plan draft v2 | merge/lifecycle/DOM locks | affirmed |
 | Phase A | client + merge + unit harness | DONE — accepted |
-| Phase B | index + download-catalog texts + DOM slice | DONE — harden (parity/baseline/PDF) awaiting accept |
-| Phase C | hotels + dealers + DOM slice | not started |
+| Phase B | index + download-catalog texts + DOM slice | DONE — accepted (`a537e6f` + `825deb0`) |
+| Phase C | hotels + dealers + DOM slice | DONE — awaiting accept |
 | Phase D | contacts + documents + map + DOM slice | not started |
 | Phase E | full unit + DOM (all 6) + FE-* docs | not started |
 
@@ -123,11 +124,19 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 
 ### Verify
 
-| Command | Expected |
-|---------|----------|
-| Hydrate unit + DOM (hotels + dealers) | PASS |
-| Email key assert | unchanged |
-| Isolation + typecheck | PASS |
+| Command | Expected | Result (2026-08-04) |
+|---------|----------|---------------------|
+| Hydrate unit + DOM (hotels + dealers) | PASS | PASS (unit + DOM 4 pages) |
+| Email key assert | unchanged | PASS (hydrate unit) |
+| Isolation + typecheck | PASS | PASS |
+
+### Delivered
+
+- `hotels-page-defaults.ts` / `dealers-page-defaults.ts` + `usePageCms` in page components
+- Fixtures/snapshots synced from defaults; quality video code-owned
+- Slot allowlists: hotels 7 sections, dealers 9; no new cards/sections
+- Prefetch hotels/dealers in `main.js`
+- DOM: delayed/404/503/network/invalid/success/FE-05 for hotels+dealers (keeps index+download-catalog)
 
 ---
 

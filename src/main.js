@@ -29,12 +29,18 @@ import { initTestimonialsSlider } from './testimonials-slider'
 
 const isCatalogPage = document.body.dataset.page === 'catalog'
 const isDownloadCatalogPage = document.body.dataset.page === 'download-catalog'
-const pagesCmsPrefetchSlug =
-  document.body.dataset.page === 'index'
-    ? 'index'
-    : document.body.dataset.page === 'download-catalog'
-      ? 'download-catalog'
-      : null
+const pagesCmsPrefetchSlug = (() => {
+  const page = document.body.dataset.page
+  if (
+    page === 'index' ||
+    page === 'download-catalog' ||
+    page === 'hotels' ||
+    page === 'dealers'
+  ) {
+    return page
+  }
+  return null
+})()
 
 const reactEntryPromise = document.querySelector('[data-react-root]')
   ? import('./react-entry').catch((error) => {
@@ -102,7 +108,7 @@ if (isDownloadCatalogPage) {
   })
 }
 
-// Wave-1 pages CMS texts (Phase 4B): early Node /api/pages/:slug prefetch.
+// Wave-1 pages CMS texts (Phase 4B/C): early Node /api/pages/:slug prefetch.
 if (pagesCmsPrefetchSlug) {
   void import('./pages/pages-api')
     .then((mod) => {

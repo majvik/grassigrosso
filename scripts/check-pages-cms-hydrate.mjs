@@ -653,25 +653,33 @@ function assertUnchanged(fallback, before, label) {
   assert(updates === 1, 'cancelled guard must not run')
 }
 
-// --- Phase B: defaults ↔ fixture ↔ snapshot CMS projection parity ---
+// --- Phase B/C: defaults ↔ fixture ↔ snapshot CMS projection parity ---
 {
-  const defaultsOut = path.join(os.tmpdir(), `pages-cms-defaults-${process.pid}.mjs`)
-  await esbuild.build({
-    entryPoints: [path.join(root, 'src/components/pages/index-page-defaults.ts')],
-    bundle: true,
-    platform: 'node',
-    format: 'esm',
-    outfile: defaultsOut,
-    packages: 'bundle',
-    logLevel: 'silent',
-  })
-  const { INDEX_PAGE_DEFAULTS } = await import(pathToFileURL(defaultsOut).href)
-  try {
-    fs.unlinkSync(defaultsOut)
-  } catch {
-    /* ignore */
+  async function bundleDefaults(entry, exportName, loader) {
+    const outfile = path.join(os.tmpdir(), `pages-cms-defaults-${process.pid}-${exportName}.mjs`)
+    await esbuild.build({
+      entryPoints: [path.join(root, entry)],
+      bundle: true,
+      platform: 'node',
+      format: 'esm',
+      outfile,
+      packages: 'bundle',
+      logLevel: 'silent',
+      ...(loader ? { loader } : {}),
+    })
+    const mod = await import(pathToFileURL(outfile).href)
+    try {
+      fs.unlinkSync(outfile)
+    } catch {
+      /* ignore */
+    }
+    return mod[exportName]
   }
 
+  const INDEX_PAGE_DEFAULTS = await bundleDefaults(
+    'src/components/pages/index-page-defaults.ts',
+    'INDEX_PAGE_DEFAULTS',
+  )
   const indexProjection = JSON.parse(JSON.stringify(INDEX_PAGE_DEFAULTS))
   const indexFixture = readFixture('index')
   const indexSnap = JSON.parse(
@@ -690,23 +698,61 @@ function assertUnchanged(fallback, before, label) {
   assert(indexProjection.collections.length === 5, 'index defaults: 5 collections')
   assert(indexProjection.testimonials.length === 14, 'index defaults: 14 testimonials')
 
-  const dlDefaultsOut = path.join(os.tmpdir(), `pages-cms-dl-defaults-${process.pid}.mjs`)
-  await esbuild.build({
-    entryPoints: [path.join(root, 'src/components/pages/DownloadCatalogPage.tsx')],
-    bundle: true,
-    platform: 'node',
-    format: 'esm',
-    outfile: dlDefaultsOut,
-    packages: 'bundle',
-    logLevel: 'silent',
-    loader: { '.css': 'empty' },
-  })
-  const { DOWNLOAD_CATALOG_TEXT_DEFAULTS } = await import(pathToFileURL(dlDefaultsOut).href)
-  try {
-    fs.unlinkSync(dlDefaultsOut)
-  } catch {
-    /* ignore */
-  }
+  const HOTELS_PAGE_DEFAULTS = await bundleDefaults(
+    'src/components/pages/hotels-page-defaults.ts',
+    'HOTELS_PAGE_DEFAULTS',
+  )
+  const hotelsProjection = JSON.parse(JSON.stringify(HOTELS_PAGE_DEFAULTS))
+  const hotelsFixture = readFixture('hotels')
+  const hotelsSnap = JSON.parse(
+    fs.readFileSync(path.join(root, 'public/pages-hotels.snapshot.json'), 'utf8'),
+  )
+  assert(deepEqual(hotelsProjection, hotelsFixture), 'hotels defaults must equal fixture')
+  assert(deepEqual(hotelsProjection, hotelsSnap), 'hotels defaults must equal snapshot')
+  assert(hotelsProjection.products.length === 2, 'hotels defaults: 2 products')
+  assert(
+    hotelsProjection.products.map((p) => p.catalog_key).join(',') === 'boxspring,accessories',
+    'hotels defaults: catalog_key order',
+  )
+  assert(
+    hotelsProjection.contact_info.map((i) => i.icon_key).join(',') === 'phone,email,location',
+    'hotels defaults: contact icon_key order',
+  )
+  assert(hotelsProjection.categories.length === 4, 'hotels defaults: 4 categories')
+  assert(hotelsProjection.discount_rows.length === 3, 'hotels defaults: 3 discount rows')
+  assert(hotelsProjection.faq_items.length === 3, 'hotels defaults: 3 faq')
+
+  const DEALERS_PAGE_DEFAULTS = await bundleDefaults(
+    'src/components/pages/dealers-page-defaults.ts',
+    'DEALERS_PAGE_DEFAULTS',
+  )
+  const dealersProjection = JSON.parse(JSON.stringify(DEALERS_PAGE_DEFAULTS))
+  const dealersFixture = readFixture('dealers')
+  const dealersSnap = JSON.parse(
+    fs.readFileSync(path.join(root, 'public/pages-dealers.snapshot.json'), 'utf8'),
+  )
+  assert(deepEqual(dealersProjection, dealersFixture), 'dealers defaults must equal fixture')
+  assert(deepEqual(dealersProjection, dealersSnap), 'dealers defaults must equal snapshot')
+  assert(dealersProjection.packages.length === 3, 'dealers defaults: 3 packages')
+  assert(
+    dealersProjection.packages.map((p) => p.value).join(',') ===
+      'standard,individual,exclusive',
+    'dealers defaults: packages.value order',
+  )
+  assert(
+    dealersProjection.contact_info.map((i) => i.icon_key).join(',') === 'phone,email,location',
+    'dealers defaults: contact icon_key order',
+  )
+  assert(dealersProjection.geography_cities.length === 43, 'dealers defaults: 43 cities')
+  assert(dealersProjection.offers.length === 2, 'dealers defaults: 2 offers')
+  assert(dealersProjection.requirements.length === 2, 'dealers defaults: 2 requirements')
+  assert(dealersProjection.faq_items.length === 3, 'dealers defaults: 3 faq')
+
+  const DOWNLOAD_CATALOG_TEXT_DEFAULTS = await bundleDefaults(
+    'src/components/pages/DownloadCatalogPage.tsx',
+    'DOWNLOAD_CATALOG_TEXT_DEFAULTS',
+    { '.css': 'empty' },
+  )
   const dlProjection = JSON.parse(JSON.stringify(DOWNLOAD_CATALOG_TEXT_DEFAULTS))
   const dlTextsFixture = readFixture('download-catalog')
   const dlSnap = JSON.parse(
@@ -719,6 +765,28 @@ function assertUnchanged(fallback, before, label) {
       `download-catalog fixture texts.${key} must match defaults`,
     )
   }
+}
+
+// --- Phase C: email routing keys for hotels/dealers unchanged ---
+{
+  const contactForms = fs.readFileSync(path.join(root, 'src/contact-forms.js'), 'utf8')
+  const server = fs.readFileSync(path.join(root, 'server.cjs'), 'utf8')
+  assert(
+    /hotels:\s*'Страница "Отелям"'/.test(contactForms),
+    'getPageName hotels key must stay Страница "Отелям"',
+  )
+  assert(
+    /dealers:\s*'Страница "Дилерам"'/.test(contactForms),
+    'getPageName dealers key must stay Страница "Дилерам"',
+  )
+  assert(
+    /'Страница "Отелям"'\s*:\s*\[['"]hotels@grassigrosso\.com['"]\]/.test(server),
+    'PAGE_EMAIL_ROUTING hotels label unchanged',
+  )
+  assert(
+    /'Страница "Дилерам"'\s*:\s*\[['"]b2b@grassigrosso\.com['"]\]/.test(server),
+    'PAGE_EMAIL_ROUTING dealers label unchanged',
+  )
 }
 
 // --- catalog_pdf download href resolution ---
