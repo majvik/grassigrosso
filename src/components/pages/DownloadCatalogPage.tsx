@@ -3,7 +3,7 @@ import styles from './download-catalog.module.css'
 const DOWNLOAD_SLIDE_COUNT = 8
 
 /** SSR/LCP fallback — must match slide #0 in Strapi + download-catalog-slides.snapshot.json */
-const DOWNLOAD_SLIDE_0_SRC = '/uploads/download_slide_01_994ae3c66a.avif'
+const DOWNLOAD_SLIDE_0_SRC = '/uploads/download_catalog_cover_4eb40d86f8.avif'
 
 function DownloadCatalogSlideZeroFallback() {
   return (
@@ -11,7 +11,7 @@ function DownloadCatalogSlideZeroFallback() {
       src={DOWNLOAD_SLIDE_0_SRC}
       alt="Каталог продукции Grassigrosso"
       width={440}
-      height={612}
+      height={440}
       loading="eager"
       fetchPriority="high"
       decoding="async"

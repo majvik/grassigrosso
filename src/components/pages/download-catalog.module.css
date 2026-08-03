@@ -7,7 +7,7 @@
 .media {
   position: relative;
   width: 100%;
-  aspect-ratio: 110 / 153;
+  aspect-ratio: 1 / 1;
   border-radius: 16px;
   overflow: hidden;
   background: var(--color-surface-muted);
