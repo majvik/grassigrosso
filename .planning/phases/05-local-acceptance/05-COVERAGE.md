@@ -22,14 +22,14 @@
 
 | Status | Count |
 |--------|------:|
-| covered | 26 |
-| partial | 6 |
-| gap | 11 |
+| covered | 37 |
+| partial | 4 |
+| gap | 2 |
 | deferred | 2 |
 | **Total rows** | **45** |
 | **unowned / blank** | **0** |
 
-Phase B blockers for closeout = all **gap** rows (11). **partial** rows must be upgraded by Phase B/C evidence or reclassified covered after recorded green gate.
+Remaining **gap** rows (Phase C only): QA-02, R5-2 (milestone aggregator + recorded suite). **partial**: QA-01, QA-03, R5-1, R5-7 (closeout attestation).
 
 ---
 
@@ -44,7 +44,7 @@ Phase B blockers for closeout = all **gap** rows (11). **partial** rows must be 
 | ADM-05 | Content-contract matrix CMS vs code-owned | `.planning/phases/02-wave-1-single-types/02-CONTENT-CONTRACT.md` + hydrate behavior-bound asserts | covered | Contract doc + `check:pages-cms-hydrate` behaviorBound |
 | ADM-06 | Fixtures schema validation | `check:pages-cms-strict` (fixtures) | covered | Fixtures=6 in strict gate |
 | API-01 | Public feed per page slug | `check:pages-cms-phase-c` + `check:pages-api` | covered | Seeded feed integration |
-| API-02 | Node `GET /api/pages/:slug` cache + disk snapshot | `check:pages-api` | partial | JSON/source paths covered (N2/N2b/disk-snapshot); **media under Strapi-down not covered** → see D1/D4 |
+| API-02 | Node `GET /api/pages/:slug` cache + disk snapshot | `check:pages-api` + `check:pages-cms-degraded-media` | covered | JSON + Strapi-down media (D4) |
 | API-03 | Export snapshots + manifest | `check:pages-api` (atomic export / N3/N5) + `pages:export-snapshot` | covered | Tracked public clean assert in pages-api |
 | API-04 | Idempotent seed from fixtures/React | `check:pages-cms-phase-b` | covered | Seed1/seed2 idempotency + uploads FS snapshot |
 | API-05 | Allowlist slug; no snapshot clobber; source field | `check:pages-api` (N1–N5) | covered | 404 unknown; unusable Strapi; corrupt snapshot; late-slug |
@@ -69,12 +69,12 @@ Phase B blockers for closeout = all **gap** rows (11). **partial** rows must be 
 
 | ID | Topic | Owner | Status | Evidence / notes |
 |----|-------|-------|--------|------------------|
-| D1 | Disk-first `/uploads` GET/HEAD + path safety + MIME/Cache/HEAD/Range + miss 404 | Future disk-first in `server.cjs` (+ helper) + dedicated negatives in degraded/uploads harness | gap | **Not implemented**; today proxy→Strapi (incident class) |
-| D1-neg | Traversal / encoded traversal / directory / symlink escape / malformed encoding | Same as D1 owner (automated negatives) | gap | Phase B with D1 |
-| D2 | Isolated dynamic ports; never `:1337`/`:3000`/`:5174`; owned PIDs only; finally | Future isolated-stack helper used by live-edit + degraded | gap | Phase B |
-| D2-post | Pre/post default listeners + porcelain unchanged | D2 helper asserts | gap | Phase B |
-| D3 | Live mutation via IPC → document service; TTL=0; DOM; restore in finally | Future `check-pages-cms-live-edit.mjs` (name TBD) | gap | No Admin JWT / public perms / prod test endpoint |
-| D4 | Stop only owned Strapi; snapshot JSON 200; all referenced uploads 200; CDP naturalWidth **and** `/uploads` network; missing 404 non-empty | Future `check-pages-cms-degraded-media.mjs` (name TBD) | gap | Extends API-02 beyond JSON |
+| D1 | Disk-first `/uploads` GET/HEAD + path safety + MIME/Cache/HEAD/Range + miss 404 | `check:pages-cms-uploads-disk-first` + `lib/uploads-disk-first.cjs` | covered | Phase B 2026-08-04 |
+| D1-neg | Traversal / encoded traversal / directory / symlink escape / malformed encoding | `check:pages-cms-uploads-disk-first` | covered | Phase B 2026-08-04 |
+| D2 | Isolated dynamic ports; never `:1337`/`:3000`/`:5174`; owned PIDs only; finally | `scripts/lib/pages-cms-isolated-stack.mjs` (used by live-edit + degraded) | covered | Phase B 2026-08-04 |
+| D2-post | Pre/post default listeners + porcelain unchanged | isolated-stack asserts in live-edit + degraded | covered | Phase B 2026-08-04 |
+| D3 | Live mutation via IPC → document service; TTL=0; DOM; restore in finally | `check:pages-cms-live-edit` | covered | Phase B 2026-08-04 |
+| D4 | Stop only owned Strapi; snapshot JSON 200; referenced uploads 200; CDP naturalWidth + network; missing 404 | `check:pages-cms-degraded-media` | covered | Phase B 2026-08-04 |
 
 ## Known defects / regressions (Phases 3–4 + incident)
 
@@ -84,7 +84,7 @@ Phase B blockers for closeout = all **gap** rows (11). **partial** rows must be 
 | DEF-contacts-hidden | Map tab `[hidden]` + tab switching | `check:pages-cms-hydrate-dom` (contacts map tabs / null-map) | covered | `a7f5816` |
 | DEF-hotels-currentsrc | Product CMS image via `currentSrc`, not legacy `<source>` | `check:pages-cms-hydrate-dom` (hotels null-image / currentSrc) | covered | `02d254b` |
 | DEF-uploads-drift | Full gate must not leave generated uploads / fingerprint missing/changed | `scripts/lib/pages-cms-uploads-guard.mjs` via `check:pages-cms-phase-e` | covered | `2d7ca10` content fingerprint |
-| DEF-uploads-502 | Strapi down → snapshot JSON OK but `/uploads` 502 → broken hero/cards | **D1 + D4** | gap | Incident 2026-08-04; restart Strapi ≠ fix |
+| DEF-uploads-502 | Strapi down → snapshot JSON OK but `/uploads` 502 → broken hero/cards | **D1 + D4** (`check:pages-cms-degraded-media`) | covered | Regression closed Phase B 2026-08-04 |
 | DEF-isolation | `src/` must not call Strapi / `:1337` / `VITE_STRAPI_*` | `check:pages-cms-isolation` | covered | Phase 3E / Phase 4 companion |
 | DEF-catalog-scope | Pages CMS must not regress catalog schemas/feeds | `check:pages-cms-catalog-scope` + `check:catalog-api` | covered | Scope gate + catalog API |
 | DEF-index-slots | Hydrate fills baseline slots only (no invented sections) | `check:pages-cms-hydrate-dom` (index slot lock) | covered | Phase 4B |
@@ -96,12 +96,12 @@ Phase B blockers for closeout = all **gap** rows (11). **partial** rows must be 
 |----|-----------|-------|--------|------------------|
 | R5-1 | Every added branch / fixed defect has automated test | This matrix (QA-01) | partial | Freeze done; gaps remain |
 | R5-2 | Full suite + typecheck/build/API/UI recorded in plan | Phase C aggregator + plan table | gap | |
-| R5-3 | Live Strapi field change → Node → React | **D3** | gap | |
-| R5-4 | Strapi down → valid snapshot **and** referenced media usable | **D1 + D4** (JSON also `check:pages-api`) | partial | JSON covered; media+CDP+network **gap** |
+| R5-3 | Live Strapi field change → Node → React | **D3** `check:pages-cms-live-edit` | covered | Phase B |
+| R5-4 | Strapi down → valid snapshot **and** referenced media usable | **D1 + D4** | covered | Phase B (JSON+media+CDP) |
 | R5-5 | Catalog / download-catalog checks do not regress | `check:catalog-api` (+ UI/perf when stack up); slides via existing download-catalog checks | covered | Must be **re-recorded** in Phase C table |
 | R5-6 | Manual browser smoke supplemental only | Process / plan attestation | covered | Policy locked in design |
 | R5-7 | No push / PR / remote deploy / remote mutation | QA-03 attestation | partial | Filled at closeout; D2 prevents foreign port use |
-| R5-8 | Degraded gate does not kill foreign processes; restores state | **D2** | gap | |
+| R5-8 | Degraded gate does not kill foreign processes; restores state | **D2** | covered | Phase B |
 
 ## Companion / aggregator owners (reference)
 
@@ -126,16 +126,13 @@ Phase B blockers for closeout = all **gap** rows (11). **partial** rows must be 
 | Production / test runtime code changed | **no** (planning only) |
 | Phase B started | **no** |
 
-## Gap freeze (Phase B input)
+## Gap freeze (Phase B input) — DONE 2026-08-04
 
-Ordered work implied by this matrix (implementation only after Phase B affirm):
+Phase B implemented D1–D4. Remaining for Phase C affirm only:
 
-1. **D1** (+ D1-neg) — disk-first `/uploads` in Node  
-2. **D2** (+ D2-post) — isolated stack helper  
-3. **D3** — IPC live-edit harness  
-4. **D4** — degraded media+DOM+network (+ closes DEF-uploads-502, upgrades API-02 / R5-4)  
-5. Phase C — aggregator (**QA-02**, **R5-2**) + attest **QA-03** / **R5-7**
+1. Phase C aggregator (**QA-02**, **R5-2**) + attest **QA-03** / **R5-7** / refresh **QA-01**/**R5-1**
 
 ---
 
-*Phase A coverage freeze: 2026-08-04 — 45 rows; unowned 0*
+*Phase A coverage freeze: 2026-08-04 — 45 rows; unowned 0*  
+*Phase B update: 2026-08-04 — D1–D4 covered; gaps left: QA-02, R5-2*

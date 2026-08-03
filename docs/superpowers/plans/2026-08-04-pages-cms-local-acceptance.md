@@ -1,7 +1,7 @@
 # Pages CMS Phase 5 — Local acceptance gate (execution plan)
 
 **Date:** 2026-08-04
-**Status:** Phase A Complete (coverage matrix) — **awaiting accept**; Phase B not started; no implementation; do not commit until asked
+**Status:** Phase B Complete (D1–D4) — **awaiting accept**; Phase C not started; no push / no sync-seed
 **Design:** [2026-08-04-pages-cms-local-acceptance-design.md](../specs/2026-08-04-pages-cms-local-acceptance-design.md)
 **GSD phase:** `.planning/phases/05-local-acceptance/`
 **Locality:** local commits only when asked; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -38,16 +38,16 @@ Rejected: proxy-on-error uploads; restart-Strapi-as-fix; foreign process kill.
 | Design + plan draft | initial | superseded |
 | Design amend | uploads-502 incident | superseded by D1–D4 lock |
 | Design + plan lock D1–D4 | design/plan | Affirmed (user) |
-| Phase A | `05-COVERAGE.md` matrix | DONE — 45 rows; covered 26 / partial 6 / gap 11 / deferred 2; unowned 0 |
-| Phase B | D1 code + D2/D3/D4 harnesses | not started (needs affirm) |
+| Phase A | `05-COVERAGE.md` matrix | DONE — accepted |
+| Phase B | D1 code + D2/D3/D4 harnesses | DONE — uploads-disk-first / live-edit / degraded-media PASS |
 | Phase C | aggregator + closeout | not started |
 
 ### Phase map
 
 | Phase | Goal | Status |
 |-------|------|--------|
-| A | Coverage matrix + gap freeze (D1–D4 rows) | DONE — awaiting accept |
-| B | Implement D1 + harnesses D2/D3/D4 | blocked on Phase A accept + Phase B affirm |
+| A | Coverage matrix + gap freeze (D1–D4 rows) | DONE — accepted |
+| B | Implement D1 + harnesses D2/D3/D4 | DONE — awaiting accept |
 | C | Aggregator + recorded suite + closeout | not started |
 
 ---
@@ -103,16 +103,16 @@ Rejected: proxy-on-error uploads; restart-Strapi-as-fix; foreign process kill.
 
 ### Verify
 
-| Check | Expected |
-|-------|----------|
-| D1 disk-first positives + path negatives | PASS |
-| D2: default ports untouched; porcelain match | PASS |
-| D3 live-edit + finally restore | PASS |
-| D4 snapshot JSON 200 after owned Strapi stop | PASS |
-| D4 referenced uploads 200 | PASS |
-| D4 CDP naturalWidth + network | PASS |
-| D4 missing → 404 non-empty | PASS |
-| `check:pages-cms-isolation` | PASS |
+| Check | Expected | Result (2026-08-04) |
+|-------|----------|---------------------|
+| D1 disk-first positives + path negatives | PASS | PASS (`check:pages-cms-uploads-disk-first`) |
+| D2: default ports untouched; porcelain match | PASS | PASS (live-edit + degraded) |
+| D3 live-edit + finally restore | PASS | PASS (`check:pages-cms-live-edit`) |
+| D4 snapshot JSON 200 after owned Strapi stop | PASS | PASS |
+| D4 referenced uploads 200 | PASS | PASS |
+| D4 CDP naturalWidth + network | PASS | PASS |
+| D4 missing → 404 non-empty | PASS | PASS |
+| `check:pages-cms-isolation` | PASS | (unchanged; no src/ Strapi) |
 
 ---
 

@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 5A — coverage matrix DONE; ready for review/accept. No Phase B / no code / no commit unless asked.
+**Current focus:** Phase 5B DONE locally (D1–D4). Phase C not started. No push / no `strapi:sync-seed`.
 
 ## Current Position
 
-Phase: 5 of 6 (Local Acceptance Gate) — Phase A complete (planning)
-Plan: 05-01 + `05-COVERAGE.md`
-Status: matrix 45 rows (covered 26 / partial 6 / gap 11 / deferred 2 / unowned 0)
-Last activity: 2026-08-04 — Phase A coverage freeze
+Phase: 5 of 6 (Local Acceptance Gate) — Phase B complete (local)
+Plan: 05-01
+Status: D1–D4 automated gates PASS; remaining gaps QA-02 / R5-2 (Phase C aggregator)
+Last activity: 2026-08-04 — Phase B D1–D4 implementation
 
-Progress: [██████████] Phases 1–4 complete; Phase 5A matrix frozen; Phase B blocked on accept
+Progress: [██████████] Phases 1–4 complete; Phase 5A+B local; Phase C / 6 not started
 
 ## Performance Metrics
 
@@ -22,32 +22,25 @@ Progress: [██████████] Phases 1–4 complete; Phase 5A matri
 
 | Phase | Plans | Status |
 |-------|-------|--------|
-| 1. Shared Page Components | 1/1 | Complete |
-| 2. Wave 1 Single Types | 1/1 | Complete (accepted) |
-| 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) |
-| 4. React Hydrate | 1/1 | Complete (local; FE-01…05; `2d7ca10`) |
-| 5. Local Acceptance Gate | 0/1 | Phase A DONE — awaiting accept |
+| 1–4 | … | Complete (local) |
+| 5. Local Acceptance Gate | 0/1 | Phase B DONE — awaiting accept; Phase C not started |
 | 6. Legal Pages | 0/TBD | Not started |
 
 ## Accumulated Context
 
 ### Decisions
 
-- D1–D4 locked and affirmed with Phase 5 design/plan
-- Phase A = coverage matrix only; Phase B implements D1–D4 after separate affirm
-- Local-only: no push/PR/deploy; no sync-seed unless asked
+- D1 disk-first `/uploads` shipped (`lib/uploads-disk-first.cjs` + `server.cjs`)
+- D2 isolated stack helper; D3 live-edit IPC; D4 degraded media+CDP
+- Planning commit: `90a6ddf`; Phase B code commit pending/this session
 
 ### Pending Todos
 
-- User accepts Phase A (`05-COVERAGE.md`)
-- Separate affirm before Phase B implementation
-- Commit planning only when asked
-
-### Blockers/Concerns
-
-Phase B gaps (11): D1, D1-neg, D2, D2-post, D3, D4, DEF-uploads-502, QA-02, R5-2, R5-3, R5-8.
+- User accepts Phase B
+- Phase C affirm before aggregator / QA-* Complete
+- No push / sync-seed unless asked
 
 ## Session Continuity
 
-- Coverage: `.planning/phases/05-local-acceptance/05-COVERAGE.md`
-- Design/plan: `docs/superpowers/specs|plans/2026-08-04-pages-cms-local-acceptance*`
+- Gates: `check:pages-cms-uploads-disk-first`, `check:pages-cms-live-edit`, `check:pages-cms-degraded-media`
+- Coverage: `.planning/phases/05-local-acceptance/05-COVERAGE.md` (gaps: QA-02, R5-2)

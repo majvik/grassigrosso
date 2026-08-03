@@ -32,10 +32,15 @@ const INTERNAL_API_PREFIXES = [
 ];
 
 /** Пути, которые проксируются на Strapi — тело не трогаем express.json (иначе upstream получает пустой POST). */
+/** `/uploads` is disk-first locally (D1) — not proxied. */
+const {
+  createUploadsDiskFirstMiddleware,
+  defaultUploadsRoot,
+} = require('./lib/uploads-disk-first.cjs');
+
 const STRAPI_PROXY_PATH_PREFIXES = [
   '/admin',
   '/upload',
-  '/uploads',
   '/content-manager',
   '/content-type-builder',
   '/i18n',
@@ -1325,7 +1330,15 @@ app.get('/api/pages/:slug', async (req, res) => {
   }
 });
 
-// Прокси медиа и админки Strapi: в dev тоже (иначе /uploads уходит в Vite и ломает каталог).
+// Disk-first /uploads (Phase 5 D1): serve from strapi-catalog/public/uploads without Strapi.
+// Miss → 404; never proxy. GET/HEAD only.
+app.use(
+  createUploadsDiskFirstMiddleware({
+    uploadsRoot: defaultUploadsRoot(__dirname),
+  }),
+);
+
+// Прокси админки / upload API Strapi (не /uploads — см. disk-first выше).
 if (STRAPI_URL) {
   const strapiProxy = createStrapiProxy();
   app.use(STRAPI_PROXY_PATH_PREFIXES, strapiProxy);
