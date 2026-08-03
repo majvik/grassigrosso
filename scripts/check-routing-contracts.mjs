@@ -39,7 +39,7 @@ const requiredHtmlSnippets = [
   ['Yandex.Metrika script', 'mc.yandex.ru/metrika/tag.js'],
   ['main stylesheet', '<link rel="stylesheet" href="./src/style.css" />'],
   ['apple touch icon', '<link rel="apple-touch-icon"'],
-  ['site manifest', '<link rel="manifest" href="./public/site.webmanifest" />'],
+  ['site manifest', '<link rel="manifest" href="/site.webmanifest" />'],
   ['preloader', 'id="preloader"'],
   ['cookie banner', 'class="cookie-banner"'],
   ['main module script', '<script type="module" src="./src/main.js"></script>'],

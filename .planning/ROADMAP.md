@@ -11,7 +11,7 @@ Milestone **v1.1** делает маркетинговые тексты волн
 - Decimal phases (e.g. 2.1): Urgent insertions via `/gsd-insert-phase`
 
 - [x] **Phase 1: Shared Page Components** - Переиспользуемые `page.*` блоки с русскими лейблами
-- [ ] **Phase 2: Wave 1 Single Types** - Single types страниц + расширение download-catalog + полный `ru.json`
+- [x] **Phase 2: Wave 1 Single Types** - Single types страниц + расширение download-catalog + полный `ru.json`
 - [ ] **Phase 3: Feeds, Proxy & Seed** - Публичные feeds, `GET /api/pages/:slug`, snapshots, seed из React
 - [ ] **Phase 4: React Hydrate** - Волны 1 страницы берут контент из Node API без поломки layout и email-routing
 - [ ] **Phase 5: Local Acceptance Gate** - Полное автотестовое покрытие и локальный green verify; без push/deploy
@@ -44,10 +44,10 @@ Plans:
   5. Для каждой страницы есть проверенная матрица current TSX/runtime input → CMS field или явно code-owned contract
   6. Репрезентативный fixture каждой страницы проходит schema validation; сложные карточки/таблицы/медиа не сведены к lossy `page.section`
   7. Русские названия подтверждены скриншотом/браузерным smoke работающей Admin UI, а не только наличием ключей в JSON
-**Plans**: 1 plan (AWAITING USER APPROVAL — do not execute)
+**Plans**: 1 plan
 
 Plans:
-- [ ] 02-01-PLAN.md — Wave 1 single types + extra page.* + download-catalog texts/PDF + RU (see 02-RESEARCH.md)
+- [x] 02-01-PLAN.md — Wave 1 single types + extra page.* + download-catalog texts/PDF + RU (see 02-RESEARCH.md)
 
 ### Phase 3: Feeds, Proxy & Seed
 **Goal**: Сайт получает контент страниц только через Node (`/api/pages/:slug`) с cache и disk snapshot; Strapi заполнен текущим hardcoded-контентом.
