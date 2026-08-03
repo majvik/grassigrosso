@@ -33,7 +33,7 @@ Phase 2 deferred feeds/proxy/seed. Catalog has the operational pattern; Phase 3 
 
 ## Locked decisions (including approved open points)
 
-1. **download-catalog:** separate **texts** feed; existing slides feed (`GET /api/download-catalog-feed` / Node `/api/download-catalog/slides`) **unchanged**.
+1. **download-catalog:** separate **texts** feed; existing slides feed (`GET /api/download-catalog-feed` / Node `/api/download-catalog/slides`) **unchanged**. Canonical `/api/pages/download-catalog` / texts feed `data` may contain only `title`, `lead`, `submit_label`, `catalog_pdf`, `back_label`, `back_href`. Presence of `slides`, `media_display_mode`, or `slider_autoplay_ms` is a hard FAIL.
 2. **`map_iframe_html`:** stripped in **Strapi feed** output; Node re-validates boundary (defense in depth). Public payload exposes only `map_embed_url`.
 3. **`source`:** only `strapi | memory-cache | disk-snapshot` (never `stale-cache` on the pages API).
 4. **Seed:** writes **only** local `strapi-catalog/.tmp/data.db`. Do **not** run `strapi:sync-seed` in Phase 3 unless the user explicitly requests it later.
@@ -79,6 +79,7 @@ Any other `:slug` → **404** JSON.
 - Contacts: normalize map → `map_embed_url`; **remove** `map_iframe_html` from `data`.
 - Prefer AVIF via existing `prefer-avif` where sibling files exist.
 - download-catalog **texts** feed must not alter slides feed payload/behavior.
+- Runtime utils live in `strapi-catalog/src/api/pages-cms/utils/` (copied by `prepare-dist` into `dist/src/…`); harness imports those sources. Envelope validators stay under `scripts/pages-cms/`.
 
 ### Node proxy & cache lifecycle (API-02, API-05)
 

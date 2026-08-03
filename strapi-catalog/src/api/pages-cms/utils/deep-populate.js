@@ -1,13 +1,12 @@
+'use strict';
+
+const { SLUG_TO_UID, PAGES_CMS_SLUGS } = require('./map-allowlist');
+
 /**
- * Explicit deep-populate descriptors for Wave 1 single types.
- * Do not use populate=* as the contract — feeds must pass these objects.
+ * Explicit deep-populate for Wave 1 page feeds.
+ * download-catalog = texts/PDF only (slides live in download-catalog-feed).
  */
-import { SLUG_TO_UID } from './constants.mjs'
-
-/** @typedef {{ populate?: Record<string, true | PopulateNode> } | true} PopulateNode */
-
-/** @type {Record<string, Record<string, true | { populate: Record<string, true | { populate?: Record<string, true> }> }>>} */
-export const DEEP_POPULATE_BY_SLUG = Object.freeze({
+const DEEP_POPULATE_BY_SLUG = Object.freeze({
   index: {
     hero: {
       populate: {
@@ -78,18 +77,11 @@ export const DEEP_POPULATE_BY_SLUG = Object.freeze({
   },
   'download-catalog': {
     catalog_pdf: true,
-    slides: {
-      populate: {
-        slide_image: true,
-        slide_video: true,
-        poster: true,
-      },
-    },
   },
-})
+});
 
-/** Dotted paths the integration harness must see after populate (Phase C). */
-export const POPULATE_ASSERT_PATHS_BY_SLUG = Object.freeze({
+/** Paths integration harness asserts after populate (texts feed — no slides). */
+const POPULATE_ASSERT_PATHS_BY_SLUG = Object.freeze({
   index: [
     'hero',
     'hero.poster',
@@ -155,48 +147,56 @@ export const POPULATE_ASSERT_PATHS_BY_SLUG = Object.freeze({
     'faq_items',
   ],
   'download-catalog': [
+    'title',
+    'lead',
+    'submit_label',
     'catalog_pdf',
-    'media_display_mode',
-    'slides',
-    'slides.slide_image',
-    'slides.slide_video',
-    'slides.poster',
+    'back_label',
+    'back_href',
   ],
-})
+});
 
-/**
- * @param {string} slug
- */
-export function getDeepPopulateForSlug(slug) {
-  const populate = DEEP_POPULATE_BY_SLUG[slug]
-  if (!populate) throw new Error(`No deep populate descriptor for slug: ${slug}`)
+/** Keys forbidden on download-catalog texts/canonical payloads (slides feed owns these). */
+const DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS = Object.freeze([
+  'slides',
+  'media_display_mode',
+  'slider_autoplay_ms',
+]);
+
+function getDeepPopulateForSlug(slug) {
+  const populate = DEEP_POPULATE_BY_SLUG[slug];
+  if (!populate) throw new Error(`No deep populate descriptor for slug: ${slug}`);
   return {
     uid: SLUG_TO_UID[slug],
     populate,
     assertPaths: POPULATE_ASSERT_PATHS_BY_SLUG[slug],
-  }
+  };
 }
 
-/**
- * Ensure descriptor never uses populate=* sentinel.
- * @param {unknown} node
- * @param {string} path
- * @param {string[]} failures
- */
-export function assertNoStarPopulate(node, path, failures) {
+function assertNoStarPopulate(node, path, failures) {
   if (node === '*') {
-    failures.push(`${path}: populate=* is forbidden`)
-    return
+    failures.push(`${path}: populate=* is forbidden`);
+    return;
   }
-  if (!node || typeof node !== 'object') return
+  if (!node || typeof node !== 'object') return;
   if (Array.isArray(node)) {
-    node.forEach((item, i) => assertNoStarPopulate(item, `${path}[${i}]`, failures))
-    return
+    node.forEach((item, i) => assertNoStarPopulate(item, `${path}[${i}]`, failures));
+    return;
   }
   for (const [key, value] of Object.entries(node)) {
     if (key === 'populate' && value === '*') {
-      failures.push(`${path}.populate: * is forbidden`)
+      failures.push(`${path}.populate: * is forbidden`);
     }
-    assertNoStarPopulate(value, `${path}.${key}`, failures)
+    assertNoStarPopulate(value, `${path}.${key}`, failures);
   }
 }
+
+module.exports = {
+  DEEP_POPULATE_BY_SLUG,
+  POPULATE_ASSERT_PATHS_BY_SLUG,
+  DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS,
+  PAGES_CMS_SLUGS,
+  SLUG_TO_UID,
+  getDeepPopulateForSlug,
+  assertNoStarPopulate,
+};

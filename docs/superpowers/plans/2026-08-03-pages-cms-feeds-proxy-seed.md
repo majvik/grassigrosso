@@ -33,7 +33,8 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 |------|--------------------|--------|
 | Spec + plan v1 | `5f76aa0` | superseded by revision |
 | Spec + plan revision | `4cf5b13` | affirmed |
-| Phase A | `npm run check:pages-cms-phase-a` + strict | PASS — map hosts=`yandex.ru`, path=`/map-widget/`, N8=12, envelopes+populate |
+| Phase A | `a63dd8c` | superseded — texts/slides mix + scripts runtime |
+| Phase A fix | download-catalog texts isolation + Strapi `pages-cms/utils` runtime | PASS — phase-a + strict + distUtils |
 | Phase B+ | — | not started |
 
 ---

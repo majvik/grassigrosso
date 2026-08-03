@@ -1,21 +1,35 @@
 /**
- * Envelope + canonical page-content validators (Phase A).
- *
- * - Strapi feed: { data: <canonical> }  — no source
- * - Disk snapshot file: <canonical> only — no source, no wrapper
- * - Node GET /api/pages/:slug: { data, source } where source ∈ PAGES_CMS_SOURCES
+ * Envelope + canonical validators (test/harness only — not Strapi runtime).
  */
-import { PAGES_CMS_SLUGS, PAGES_CMS_SOURCES } from './constants.mjs'
-import { normalizeMapIframeHtml } from './normalize-map-iframe.mjs'
+import { createRequire } from 'node:module'
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
 
-/** Required top-level keys on canonical page content (fixture baseline). */
+const require = createRequire(import.meta.url)
+const strapiPagesCmsUtils = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../../strapi-catalog/src/api/pages-cms/utils',
+)
+
+const { normalizeMapIframeHtml } = require(path.join(strapiPagesCmsUtils, 'normalize-map-iframe.js'))
+const { PAGES_CMS_SLUGS } = require(path.join(strapiPagesCmsUtils, 'map-allowlist.js'))
+const { DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS } = require(
+  path.join(strapiPagesCmsUtils, 'deep-populate.js'),
+)
+
+/** Node response source vocabulary (API-05). */
+export const PAGES_CMS_SOURCES = Object.freeze(['strapi', 'memory-cache', 'disk-snapshot'])
+
+export { PAGES_CMS_SLUGS, DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS, normalizeMapIframeHtml }
+
+/** Required top-level keys on canonical page content. */
 export const CANONICAL_REQUIRED_KEYS = Object.freeze({
   index: ['hero', 'solutions', 'collections', 'testimonials', 'docs'],
   hotels: ['hero', 'stats', 'categories', 'products', 'faq_items'],
   dealers: ['hero', 'stats', 'offers', 'packages', 'faq_items'],
   contacts: ['hero', 'offices', 'contact_info'],
   documents: ['hero', 'certificates', 'company_documents', 'faq_items'],
-  'download-catalog': ['title', 'submit_label', 'media_display_mode', 'slides'],
+  'download-catalog': ['title', 'lead', 'submit_label', 'catalog_pdf', 'back_label', 'back_href'],
 })
 
 /**
@@ -27,7 +41,6 @@ function isPlainObject(value) {
 }
 
 /**
- * Walk object/arrays; collect paths where key === map_iframe_html.
  * @param {unknown} node
  * @param {string} prefix
  * @param {string[]} out
@@ -39,9 +52,9 @@ function collectMapIframePaths(node, prefix, out) {
   }
   if (!isPlainObject(node)) return
   for (const [key, value] of Object.entries(node)) {
-    const path = prefix ? `${prefix}.${key}` : key
-    if (key === 'map_iframe_html') out.push(path)
-    collectMapIframePaths(value, path, out)
+    const pathKey = prefix ? `${prefix}.${key}` : key
+    if (key === 'map_iframe_html') out.push(pathKey)
+    collectMapIframePaths(value, pathKey, out)
   }
 }
 
@@ -66,6 +79,16 @@ export function validateCanonicalPageContent(data, slug) {
     if (!(key in data)) failures.push(`${slug}: missing required key "${key}"`)
   }
 
+  if (slug === 'download-catalog') {
+    for (const key of DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS) {
+      if (key in data) {
+        failures.push(
+          `${slug}: texts canonical must not include "${key}" (slides feed owns slider fields)`,
+        )
+      }
+    }
+  }
+
   const htmlPaths = []
   collectMapIframePaths(data, '', htmlPaths)
   for (const p of htmlPaths) {
@@ -87,7 +110,6 @@ export function validateCanonicalPageContent(data, slug) {
         failures.push(`${slug}: offices[${i}].map_embed_url must be string|null`)
       }
       if (typeof url === 'string') {
-        // Re-validate allowlist by wrapping as single iframe src
         const roundTrip = normalizeMapIframeHtml(`<iframe src="${url}"></iframe>`)
         if (roundTrip !== url) {
           failures.push(`${slug}: offices[${i}].map_embed_url failed allowlist re-check`)
@@ -104,7 +126,6 @@ export function validateCanonicalPageContent(data, slug) {
 }
 
 /**
- * Strapi feed response shape.
  * @param {unknown} body
  * @param {string} slug
  * @returns {string[]}
@@ -128,7 +149,6 @@ export function validateFeedEnvelope(body, slug) {
 }
 
 /**
- * Disk snapshot = canonical only.
  * @param {unknown} body
  * @param {string} slug
  * @returns {string[]}
@@ -140,7 +160,6 @@ export function validateSnapshotPayload(body, slug) {
     return failures
   }
   if ('source' in body) failures.push(`${slug} snapshot: must not include source`)
-  // Snapshot must not be wrapped as { data }
   if (
     Object.keys(body).length === 1 &&
     'data' in body &&
@@ -156,7 +175,6 @@ export function validateSnapshotPayload(body, slug) {
 }
 
 /**
- * Node GET /api/pages/:slug response.
  * @param {unknown} body
  * @param {string} slug
  * @returns {string[]}
@@ -185,7 +203,6 @@ export function validateNodeEnvelope(body, slug) {
 }
 
 /**
- * Build public canonical contacts payload from CMS/fixture shape.
  * @param {Record<string, unknown>} fixture
  */
 export function contactsFixtureToCanonical(fixture) {
@@ -199,6 +216,17 @@ export function contactsFixtureToCanonical(fixture) {
         }
       })
     : fixture.offices
-  const { ...rest } = fixture
-  return { ...rest, offices }
+  return { ...fixture, offices }
+}
+
+/**
+ * Strip slider-owned fields from download-catalog fixture → texts canonical.
+ * @param {Record<string, unknown>} fixture
+ */
+export function downloadCatalogFixtureToTextsCanonical(fixture) {
+  const out = { ...fixture }
+  for (const key of DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS) {
+    delete out[key]
+  }
+  return out
 }
