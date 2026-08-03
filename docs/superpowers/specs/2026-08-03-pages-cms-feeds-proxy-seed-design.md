@@ -1,10 +1,10 @@
 # Pages CMS Phase 3 — feeds, proxy & seed (design)
 
 **Date:** 2026-08-03
-**Status:** draft — awaiting review (no application code until approved)
+**Status:** ready for approval — open points locked; eight mandatory revisions applied; **no application code until user affirms this revision**
 **Depends on:** Phase 2 accepted (`9fc8711` + `cbf1230`)
 **Requirements:** API-01 … API-06 (+ QA-01/02/03 locality)
-**Non-goals this phase:** React hydrate (Phase 4), legal pages (Phase 6), push/deploy
+**Non-goals this phase:** React hydrate (Phase 4), legal pages (Phase 6), push/deploy, `strapi:sync-seed` unless separately requested
 
 ## Problem
 
@@ -15,124 +15,198 @@ Wave 1 page content now lives in Strapi single types + fixtures, but the public 
 3. Without Node cache + disk snapshots, cold start / Strapi outage would 502 page content (same class of failure catalog already solved).
 4. Contacts stores editor `map_iframe_html`; raw HTML must never reach React.
 5. Fixtures validate schemas, but production-like seed + committed snapshots are not yet a repeatable local pipeline.
+6. Fixture media is `{ url }` paths; Strapi media fields need Upload entities — seed must resolve that gap without duplicates or catalog mutation.
 
 ## Hypotheses
 
 | # | Hypothesis | Measurement |
 |---|------------|-------------|
-| H1 | Per-page Strapi feeds mirror fixture shapes (plus normalized map URL) and are enough for Node to assemble one JSON per slug | Curl six Strapi feed URLs; schema/fixture parity harness |
+| H1 | Per-page Strapi feeds mirror fixture shapes (plus `map_embed_url`) once single types are seeded | Seed → curl six feeds → deep-populate harness |
 | H2 | Single allowlisted Node route `GET /api/pages/:slug` is safer than six public Node routes | Unknown slug → 404; only six slugs succeed |
-| H3 | Catalog fallback chain ports cleanly: live Strapi → memory cache → disk snapshot; empty/404 must not overwrite last-good | Stop Strapi / force empty feed; assert source + body |
-| H4 | Map normalization at feed/proxy boundary removes XSS/HTML injection path | Malicious iframe fixture → omit or null `map_embed_url`; never raw HTML in Node response |
-| H5 | Idempotent seed from six fixtures fills Admin to fixture parity without wiping catalog | Re-run seed twice; page fields match; catalog product count unchanged |
+| H3 | Fresh TTL + stale retention + disk snapshot covers outage without infinite memory age | Assert `source` transitions under controlled TTL/stale windows |
+| H4 | Strict map allowlist removes XSS/HTML injection | Malicious/malformed iframe → null `map_embed_url`; no HTML in public JSON |
+| H5 | Idempotent seed + media import fills Admin without wiping catalog or orphaning components | Seed ×2; stable component/media row counts; product count unchanged |
 
 ## Root cause (planning)
 
-Phase 2 correctly deferred feeds/proxy/seed. Catalog already has the operational pattern (`server.cjs` cache + `catalog:export-snapshot` + refuse-empty export). Phase 3 must **reuse that pattern for pages**, not invent a second fallback model — with page-specific differences: slug allowlist, map URL normalization, and `source` vocabulary locked to `strapi | memory-cache | disk-snapshot` (API-05; no `stale-cache` alias in the public page contract).
+Phase 2 deferred feeds/proxy/seed. Catalog has the operational pattern; Phase 3 reuses it for pages with page-specific contracts: response envelope, dual TTL/stale cache, slug allowlist, deep populate, media seed, and `source` vocabulary locked to `strapi | memory-cache | disk-snapshot`.
 
-## Locked decisions
+## Locked decisions (including approved open points)
+
+1. **download-catalog:** separate **texts** feed; existing slides feed (`GET /api/download-catalog-feed` / Node `/api/download-catalog/slides`) **unchanged**.
+2. **`map_iframe_html`:** stripped in **Strapi feed** output; Node re-validates boundary (defense in depth). Public payload exposes only `map_embed_url`.
+3. **`source`:** only `strapi | memory-cache | disk-snapshot` (never `stale-cache` on the pages API).
+4. **Seed:** writes **only** local `strapi-catalog/.tmp/data.db`. Do **not** run `strapi:sync-seed` in Phase 3 unless the user explicitly requests it later.
+
+---
+
+### Response envelope
+
+Canonical **page content** is the CMS/fixture-shaped object (after map normalization and media URL shaping).
+
+| Layer | Shape |
+|-------|--------|
+| Strapi feed | `{ "data": { /* canonical page content */ } }` — **no** `source` |
+| Disk snapshot file | **only** canonical page content (the inner `data` object), **no** `source` |
+| Node `GET /api/pages/:slug` | `{ "data": { /* canonical */ }, "source": "strapi" \| "memory-cache" \| "disk-snapshot" }` |
+| Header | `X-Pages-Source: <same as body.source>` |
+
+Rules:
+
+- Node adds the **current** `source` at respond time; never persists `source` into snapshot files.
+- Memory cache stores **canonical `data` only** (not a previous envelope’s `source`).
+- Exporter calls Node (or equivalent) and **accepts a slug only when `source === "strapi"`**. Responses with `memory-cache` or `disk-snapshot` → **FAIL** that export (prevent accidental re-export of degraded content).
+- Snapshot write = serialize canonical `data` from that strapi-sourced response.
 
 ### Slugs (allowlist)
 
-Exactly six:
+| Slug | Strapi single type | Fixture | Texts feed (indicative path) |
+|------|--------------------|---------|------------------------------|
+| `index` | `index-page` | `scripts/fixtures/pages-cms/index.json` | `/api/index-page-feed` |
+| `hotels` | `hotels-page` | `…/hotels.json` | `/api/hotels-page-feed` |
+| `dealers` | `dealers-page` | `…/dealers.json` | `/api/dealers-page-feed` |
+| `contacts` | `contacts-page` | `…/contacts.json` | `/api/contacts-page-feed` |
+| `documents` | `documents-page` | `…/documents.json` | `/api/documents-page-feed` |
+| `download-catalog` | `download-catalog-page` | `…/download-catalog.json` | `/api/download-catalog-page-feed` (texts/PDF; **not** slides) |
 
-| Slug | Strapi single type | Fixture |
-|------|--------------------|---------|
-| `index` | `index-page` | `scripts/fixtures/pages-cms/index.json` |
-| `hotels` | `hotels-page` | `…/hotels.json` |
-| `dealers` | `dealers-page` | `…/dealers.json` |
-| `contacts` | `contacts-page` | `…/contacts.json` |
-| `documents` | `documents-page` | `…/documents.json` |
-| `download-catalog` | `download-catalog-page` | `…/download-catalog.json` |
+Any other `:slug` → **404** JSON.
 
-Any other `:slug` → **404** JSON (not catalog fallback, not empty 200).
+### Strapi feeds (API-01, API-06)
 
-### Strapi feeds (API-01)
+- One public read-only feed per page (permissions pattern as catalog feeds).
+- Feed returns envelope `{ data }` where `data` matches public canonical shape.
+- **Deep populate contract** (explicit, not relying on shallow `populate=*` alone): every nested component and media attribute required by the six fixtures must be listed in a shared populate descriptor; harness fails if any nested media/component is missing after seed.
+- Contacts: normalize map → `map_embed_url`; **remove** `map_iframe_html` from `data`.
+- Prefer AVIF via existing `prefer-avif` where sibling files exist.
+- download-catalog **texts** feed must not alter slides feed payload/behavior.
 
-- One public feed endpoint per page (preferred for clarity and permissions), e.g. `GET /api/index-page-feed`, …, or a single internal router that still exposes six stable paths.
-- Feeds are **read-only**, public (same permission style as `download-catalog-feed` / `catalog-feed`).
-- Response body = CMS content shaped for consumers: fixture field names as the baseline, plus feed-only derived fields where required (`map_embed_url` per office).
-- `download-catalog` feed for **page texts/PDF** is distinct from existing `GET /api/download-catalog-feed` (slides). Do not break slides feed/proxy. Page proxy may either call a new texts feed or compose slides + texts; composition must be documented in the plan and covered by tests.
-- Prefer AVIF substitution for media URLs using existing `prefer-avif` util where applicable (parity with catalog feeds).
+### Node proxy & cache lifecycle (API-02, API-05)
 
-### Node proxy (API-02, API-05)
+`GET /api/pages/:slug` only.
 
-- `GET /api/pages/:slug` in `server.cjs` only.
-- Allowlist gate first.
-- Fallback chain:
+**Env (document in `.env.example`):**
+
+| Variable | Role | Default sketch |
+|----------|------|----------------|
+| `PAGES_STRAPI_CACHE_TTL_MS` | Fresh window: within this age, Node may answer immediately with `source: memory-cache` without calling Strapi | Prod ~45000; local `0` unless set |
+| `PAGES_STRAPI_CACHE_STALE_MS` | Additional retention after fresh expiry: on Strapi failure/unusable body, still serve memory as `memory-cache`; after this limit, memory entry is not usable → try disk | Prod e.g. 24h; local `0` unless set |
+
+**Lifecycle:**
 
 ```
-Strapi live (fresh) → memory-cache (TTL) → disk-snapshot → 502/503 with diagnostic body
+1. Allowlist slug else 404
+2. If memory entry age ≤ fresh TTL → return { data, source: "memory-cache" }
+3. Else try Strapi feed:
+   - usable → update memory; return { data, source: "strapi" }
+   - unusable / error → if memory age ≤ fresh+stale → { data, source: "memory-cache" }
+                     → else disk snapshot → { data, source: "disk-snapshot" }
+                     → else diagnostic 503
 ```
 
-- Response always includes `source`: `strapi` | `memory-cache` | `disk-snapshot` when a body is served.
-- Mirror catalog header pattern with `X-Pages-Source` (or reuse a shared helper; name locked in implementation plan verify).
-- **Never** replace a valid in-memory entry or disk snapshot with empty payload / Strapi 404 / HTTP error body.
-- Cache TTL: reuse env pattern — e.g. `PAGES_STRAPI_CACHE_TTL_MS` (default prod 45s like catalog; local 0 unless set). Document in `.env.example`.
-- Fresh Strapi success with non-empty validated payload updates memory cache.
+**Usable Strapi body:** HTTP 2xx, `data` object present, passes per-slug validators (required roots, non-empty where defined). Invalid/empty → **do not** update memory cache.
+
+**Corrupted / unreadable disk snapshot** → diagnostic **503** (do not return empty 200). Manifest hash mismatch on verify/export → **FAIL**.
 
 ### Disk snapshots (API-03)
 
-- Files under `public/`, e.g. `pages-<slug>.snapshot.json` (six files) + `pages-snapshot.manifest.json`.
-- Exporter: `npm run pages:export-snapshot` (Node hits **local** `GET /api/pages/:slug` with Strapi up, same idea as `catalog:export-snapshot`).
-- Refuse export if any allowlisted slug returns empty/invalid payload.
-- Manifest: `syncedAt`, per-slug sha256, optional content hashes; committed with snapshots.
-- Vite/build already copies `public/` → `dist/`; Node reads `dist/` then `public/` like catalog.
+- `public/pages-<slug>.snapshot.json` = canonical `data` only.
+- `public/pages-snapshot.manifest.json`: `syncedAt`, per-slug sha256 of file bytes, list of slugs.
+- Exporter: `npm run pages:export-snapshot`; requires all six Node responses `source=strapi` and valid `data`; refuse empty/invalid; refuse non-strapi sources.
+- Read order: `dist/` then `public/` (catalog parity).
 
-### Empty / 404 protection
+### Map allowlist (API-06) — strict
 
-Treat as unusable Strapi results (do not write cache, do not overwrite snapshot on export):
+Shared util used by Strapi feed **and** re-run at Node boundary before respond.
 
-- HTTP non-2xx
-- `data: null` / missing required root keys for that slug
-- Explicit empty sentinel (define per type: e.g. missing `hero` where required)
+Accept only if **all** hold:
 
-Automated tests must cover: with seeded snapshot present, forced Strapi failure still returns disk body with `source: disk-snapshot`.
+1. Input string parses to **exactly one** `<iframe>` (no extras).
+2. No `srcdoc` (reject if present).
+3. `src` is a well-formed absolute URL.
+4. Scheme **https** only.
+5. **No** username/password (credentials) in URL.
+6. **No** non-default port (reject explicit port ≠ 443).
+7. Host is an **exact** allowlisted hostname (no wildcard `*.yandex.ru`). Initial allowlist locked to hosts used by fixtures, e.g. `yandex.ru` and `yandex.com` **only if** fixtures/need require them — prefer the minimal set proven by fixtures (`yandex.ru` for current contacts fixtures).
+8. Pathname matches exact prefix/pattern **`/map-widget/`** (and allowed suffix under that tree); reject other paths.
+9. Malformed HTML/URL, multiple iframes, wrong host/path → `map_embed_url: null` (and still no HTML field in public payload).
 
-### Map iframe normalization (API-06)
+Public canonical `data` contains **only** `map_embed_url` for map (string or null), never `map_iframe_html`.
 
-- Input: `page.office.map_iframe_html` (CMS / fixture).
-- Feed (or shared util used by feed **and** asserted at Node boundary) extracts `src` from a single iframe.
-- Allow only **HTTPS** URLs whose host is on an explicit allowlist (start with Yandex map widget hosts already used in fixtures, e.g. `yandex.ru` / `*.yandex.ru` map-widget paths — finalize list in implementation; reject everything else).
-- Output field for consumers: `map_embed_url` (string | null). **Omit** raw `map_iframe_html` from public Node JSON (or strip before send) so React never sees HTML.
-- No `dangerouslySetInnerHTML` in Phase 3 (no React work); contract is for Phase 4.
+### Media seed (API-04) — required design
 
-### Seed (API-04)
+Fixtures use `{ "url": "/…" }` for media. Strapi media attributes need Upload plugin file entities.
 
-- Idempotent script: load six fixtures into the six single types (local Strapi `.tmp/data.db`).
-- Does **not** replace catalog collections/products.
-- Re-run produces same logical content (update-in-place / upsert single types).
-- After seed: optional path documents `strapi:sync-seed` for DB commit **only when user asks**; Phase 3 default is local verify + page snapshot export, not remote deploy.
-- Media in fixtures that reference `/uploads/…` must exist or be documented as public static paths; seed must not invent broken media contracts.
+**Resolution rules:**
 
-### Frontend invariant (regression)
+1. Classify URL:
+   - `/uploads/<file>` → file under `strapi-catalog/public/uploads/`
+   - other root paths (`/dealers-hero.png`, `/documents/…`, …) → file under project `public/` (or documented static root used by the site)
+2. If the filesystem file is **missing** → seed **FAIL** (hard stop for that run).
+3. Compute content hash (e.g. sha256 of bytes). Look up existing Upload row by stable key (hash and/or normalized filename + folder). If found → **reuse** id (no duplicate file row).
+4. If not found → create Upload entity once, pointing at the existing file path (or copy into uploads with deterministic name — implementation chooses one strategy and tests it; prefer reuse-in-place for `/uploads/` already in Strapi public).
+5. Wire media attributes on single types/components to those ids.
+6. **Component arrays:** upsert by stable identity (fixture order + slug/key fields such as office `slug`, document `document_key`, package `value`). Second seed must **not** append duplicates or leave orphan component rows; assert component-row counts stable (or explicitly replaced set equal).
+7. **Catalog guard:** seed touches only the six page single types (+ upload files they reference). Product/collection/filter catalog rows must be unchanged (count + sample identity asserts).
+8. Seed target DB: **`strapi-catalog/.tmp/data.db` only**. No `strapi:sync-seed` in this phase.
 
-- No new `VITE_STRAPI_*` and no browser fetch to `:1337` / `/api/*-feed` for pages.
-- Grep/harness: `src/` must not call Strapi page feeds directly; only future Phase 4 may call Node `/api/pages/:slug`.
+### Feed population
+
+- Shared deep-populate descriptor per single type covering all nested components/media used by fixtures.
+- Integration harness after seed curls each feed and asserts nested media URLs/ids and nested component arrays for all six pages.
+- `populate=*` alone is **not** accepted as the populate contract.
+
+### Catalog scope gate (conflict resolution)
+
+Current `check:pages-cms-catalog-scope` forbids **any** `server.cjs` change (Task 6 Admin RU window). Phase 3 **will** add `/api/pages/:slug` to `server.cjs`.
+
+**Before Phase D (Node proxy):**
+
+- Narrow the harness so that:
+  - **Allowed:** additive page-proxy / pages-cache / pages-snapshot helpers and `GET /api/pages/:slug` in `server.cjs`.
+  - **Still forbidden / compared:** catalog feed route/controller/service runtime contracts; catalog disk snapshot filenames; catalog cache key behavior; `src/catalog/**` listing runtime; accidental edits to catalog handlers.
+- Prefer extracting shared cache helpers or scoping diff assertions to catalog blocks / behavioral regression via `check:catalog-api` (mandatory every phase after Node changes).
+- Claiming “catalog-scope still green” without this narrowing is invalid.
+
+### Negative scenarios (must be automated)
+
+| # | Scenario | Expected |
+|---|----------|----------|
+| N1 | Unknown slug | 404 |
+| N2 | Invalid/empty Strapi response | Memory cache **not** updated; fallback per lifecycle |
+| N3 | Exporter sees `memory-cache` or `disk-snapshot` | Reject / FAIL |
+| N4 | Corrupted snapshot JSON | Diagnostic 503 |
+| N5 | Manifest sha256 mismatch vs file | FAIL |
+| N6 | Seed ×2 | Same logical content; stable component/media row counts; no catalog product drift |
+| N7 | download texts feed change | Slides feed payload/contract unchanged |
+| N8 | Map reject cases | `srcdoc`, multi-iframe, bad host/path/port/credentials → `map_embed_url` null; no HTML in `data` |
 
 ## Success criteria
 
-1. Six public Strapi page feeds return fixture-parity JSON (plus `map_embed_url` where applicable).
-2. `GET /api/pages/:slug` allowlist works; unknown slug → 404.
-3. Live / memory-cache / disk-snapshot sources observed and asserted in automated tests.
-4. Empty/404 Strapi cannot wipe memory cache or exporter overwrite of good snapshots.
-5. Map HTML never appears in Node page JSON; only allowlisted HTTPS embed URLs.
-6. Idempotent seed from six fixtures verified twice locally.
-7. `pages:export-snapshot` writes six snapshots + manifest; refuse-empty.
-8. Regression suite: pages API + fallback + allowlist + no direct frontend→Strapi; existing `check:catalog-api` / pages-cms-strict still PASS.
-9. Local commits only; no push/PR/deploy.
+1. Envelope contract held at feed / snapshot / Node layers.
+2. Six feeds return canonical `data` with deep nested media/components after seed.
+3. Node allowlist + dual TTL/stale cache + disk fallback with correct `source`.
+4. Exporter only persists strapi-sourced canonical `data`; refuse degraded sources and empty bodies.
+5. Strict map allowlist; public JSON has only `map_embed_url`.
+6. Media seed idempotent; missing file FAIL; no catalog mutation.
+7. Catalog API regression PASS; catalog-scope harness updated before page proxy lands.
+8. All negatives N1–N8 covered by automated tests.
+9. Local commits only; no push/PR/deploy; no `strapi:sync-seed` unless separately ordered.
 
-## Open points for review (must resolve before coding)
+## Execution order (locked)
 
-1. **download-catalog composition:** separate texts feed vs extend slides feed vs Node merges two Strapi calls — recommend **separate texts feed** + keep slides feed unchanged; Node `/api/pages/download-catalog` returns texts (+ optional slides reference) without breaking `/api/download-catalog/slides`.
-2. **Public JSON: strip vs keep `map_iframe_html`:** recommend **strip** on feed output.
-3. **`source: memory-cache` vs catalog `stale-cache`:** API-05 locks page vocabulary to `memory-cache`; implement page path with that name even if catalog keeps `stale-cache`.
-4. Seed writes into local `.tmp` only vs also updating `database/seed/data.db` in the same phase — recommend **local `.tmp` + tests first**; `strapi:sync-seed` as explicit optional Task when content is accepted.
+| Phase | Focus |
+|-------|--------|
+| **A** | Contracts, validators, map normalization (+ unit negatives) |
+| **B** | Idempotent local seed + media resolution |
+| **C** | Strapi feeds + seeded integration / deep-populate tests |
+| **D** | Narrow catalog-scope harness → Node proxy / cache / snapshots / exporter |
+| **E** | Frontend isolation + full local regression |
 
 ## Non-goals
 
 - React hydrate / changing page TSX consumers
 - Email routing / `getPageName` changes
 - Legal single types
-- Changing catalog snapshot filenames or catalog `source` strings
+- Changing catalog snapshot filenames or catalog `source` string vocabulary
+- `strapi:sync-seed` / committing `database/seed/data.db` without explicit user request
 - Push, Timeweb env mutation, remote smoke

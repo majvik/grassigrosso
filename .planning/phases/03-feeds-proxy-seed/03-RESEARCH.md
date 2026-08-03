@@ -1,6 +1,6 @@
 # Phase 3 research — Feeds, Proxy & Seed
 
-**Status:** Planning (awaiting Superpowers review)
+**Status:** Planning — Superpowers revision applied; awaiting final affirm before Phase A
 **Design:** [docs/superpowers/specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md](../../../docs/superpowers/specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md)
 **Execution plan:** [docs/superpowers/plans/2026-08-03-pages-cms-feeds-proxy-seed.md](../../../docs/superpowers/plans/2026-08-03-pages-cms-feeds-proxy-seed.md)
 

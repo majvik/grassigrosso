@@ -1,132 +1,154 @@
 # Pages CMS Phase 3 — feeds, proxy & seed (execution plan)
 
 **Date:** 2026-08-03
-**Status:** AWAITING REVIEW — do not implement until approved
+**Status:** REVISED — awaiting final affirm to start Phase A (no implementation yet)
 **Design:** [2026-08-03-pages-cms-feeds-proxy-seed-design.md](../specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md)
 **GSD phase:** `.planning/phases/03-feeds-proxy-seed/`
-**Locality:** local commits only; **no push / PR / deploy**
+**Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
 
 ## Objective
 
-Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with memory cache + disk snapshot fallback, map URL normalization, idempotent fixture seed, snapshot exporter + manifest, and automated regression gates — without React hydrate.
+Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TTL + stale retention + disk snapshot fallback, map URL normalization, idempotent fixture+media seed into local `.tmp`, snapshot exporter + manifest, and automated regression gates — without React hydrate.
+
+## Locked product decisions
+
+- Separate download-catalog **texts** feed; slides feed unchanged.
+- Strip `map_iframe_html` in Strapi feed; Node re-checks; public field = `map_embed_url` only.
+- Envelope: feed `{ data }`; snapshot = canonical `data` only; Node `{ data, source }`.
+- `source` ∈ {`strapi`,`memory-cache`,`disk-snapshot`}.
+- Env: `PAGES_STRAPI_CACHE_TTL_MS` + `PAGES_STRAPI_CACHE_STALE_MS`.
+- Exporter accepts only Node responses with `source=strapi`.
+- Seed → `.tmp/data.db` only.
 
 ## Global gates
 
 - Work only in the local workspace.
 - Every new behavior has an automated test before the phase is marked complete.
-- After each phase below: run listed verify commands; record PASS/FAIL in this file’s progress log.
-- Do not start Phase 4 hydrate until this plan’s final verify is green and user accepts Phase 3.
+- After each phase: run listed verify; record PASS/FAIL in the progress log.
+- Do not start Phase 4 hydrate until final verify is green and user accepts Phase 3.
 
 ## Progress log
 
 | Step | Command / artifact | Result |
 |------|--------------------|--------|
-| Spec + plan authored | `docs/superpowers/specs|plans/2026-08-03-pages-cms-feeds-proxy-seed*` | DRAFT — awaiting review |
-| Implementation | — | BLOCKED until review |
+| Spec + plan v1 | `5f76aa0` | superseded by revision |
+| Spec + plan revision (envelope, cache, seed order, media, populate, map, scope, negatives) | this doc + design | AWAITING FINAL AFFIRM |
+| Implementation | — | BLOCKED until affirm |
 
 ---
 
-## Phase A — Feed contract & harness (no server wiring yet)
+## Phase A — Contracts, validators, map normalization
 
-**Goal:** Lock JSON shapes and negative cases before controllers land.
+**Goal:** Lock shapes and pure functions before DB/API wiring.
 
 ### Tasks
 
-1. Document per-slug response schema (TypeScript types or JSON Schema / assert helpers) derived from `scripts/fixtures/pages-cms/*.json` + `map_embed_url` on contacts offices.
-2. Add harness module (e.g. `scripts/check-pages-cms-feeds-contract.mjs` or extend pages-cms contract) that:
-   - lists allowlist slugs
-   - asserts fixture → expected public shape rules (strip `map_iframe_html`, require `map_embed_url` when input valid)
-   - negative: bad iframe host → `map_embed_url` null / omitted
-3. Implement shared util `normalizeMapIframeHtml(html) → string | null` under `strapi-catalog` (or `lib/`) with unit tests via node assert script — **no** React.
+1. Define canonical page-content validators per slug (from fixtures + `map_embed_url`).
+2. Document envelope rules in harness comments/asserts:
+   - feed-shaped `{ data }`
+   - snapshot = `data` only
+   - node-shaped `{ data, source }`
+3. Implement `normalizeMapIframeHtml` with **strict** allowlist (HTTPS, no credentials, no non-443 port, exact hosts, `/map-widget/…`, single iframe, reject `srcdoc` / multi-iframe / malformed).
+4. Unit harness: positives from contacts fixtures; negatives for all reject classes → `null`.
+5. Deep-populate **descriptor** stubs per single type (used later by feeds + integration harness).
 
 ### Verify
 
-- `node <harness>` PASS including negatives
-- `npm run check:pages-cms-strict` PASS (unchanged)
-- No `server.cjs` page route yet (diff limited to util + harness + types/docs)
+- Map/unit + contract harness PASS (incl. N8-style negatives)
+- `npm run check:pages-cms-strict` PASS
+- Diff: **no** `server.cjs` page route, **no** seed writers, **no** feed controllers yet
 
 ---
 
-## Phase B — Strapi public feeds (API-01, API-06)
+## Phase B — Idempotent local seed + media resolution
 
-**Goal:** Six readable feeds from single types.
+**Goal:** Fill six single types in `.tmp` so feeds can prove fixture parity.
 
 ### Tasks
 
-1. Add feed routes/controllers for: index, hotels, dealers, contacts, documents, download-catalog **texts** (keep `download-catalog-feed` slides intact).
-2. Controllers load published/draft policy consistent with existing catalog feeds; map media URLs through `prefer-avif` where files exist.
-3. Contacts feed applies map normalization; public payload excludes raw iframe HTML.
-4. Public permissions for new feed routes (same pattern as existing catalog feeds).
+1. Seed script: upsert six fixtures into local Strapi `.tmp/data.db`.
+2. Media pipeline:
+   - resolve `{url}` → filesystem (`public/` vs `strapi-catalog/public/uploads/`)
+   - missing file → **FAIL**
+   - idempotent Upload lookup by hash/stable name; no duplicate rows on re-run
+   - attach media ids to attributes/components
+3. Component arrays: replace/upsert by stable keys; no orphan rows on seed ×2.
+4. Catalog guard asserts (product count / sample ids unchanged).
+5. Automated seed×2 test recording component + media row counts.
 
 ### Verify
 
-- Strapi develop boot PASS
-- Curl each feed → 200, shape assertions via harness
-- `GET /api/download-catalog-feed` still returns slides (`displayMode`, `slides`) — regression
+- Seed ×2 PASS (N6)
+- Missing-file negative FAIL as designed
+- Catalog product count unchanged
+- **Do not** run `strapi:sync-seed`
+- Feeds may still be absent; parity via Admin/entity read or interim entity dump is OK until Phase C
+
+---
+
+## Phase C — Strapi feeds + seeded integration
+
+**Goal:** Six public feeds with deep populate and map strip.
+
+### Tasks
+
+1. Feed routes/controllers for six pages; download-catalog = **texts** only.
+2. Apply explicit deep-populate descriptors (not shallow `populate=*` alone).
+3. Contacts: normalize map; omit `map_iframe_html` from `data`.
+4. `prefer-avif` where applicable.
+5. Public permissions for feeds.
+6. Integration harness: curl six feeds → `{ data }` validates; nested media/components present; slides feed regression (N7).
+
+### Verify
+
+- Strapi boot PASS
+- Six feeds 200 + deep asserts PASS
+- `GET /api/download-catalog-feed` slides contract unchanged PASS
 - `npm run check:pages-cms-strict` PASS
 
 ---
 
-## Phase C — Node proxy, cache, snapshots (API-02, API-03, API-05)
+## Phase D — Catalog-scope narrow → Node proxy / cache / snapshots / exporter
 
-**Goal:** Allowlisted `/api/pages/:slug` with catalog-like fallback.
+**Goal:** Safe `server.cjs` page proxy without false catalog-scope failures; full fallback chain.
 
 ### Tasks
 
-1. Implement `GET /api/pages/:slug` in `server.cjs`:
-   - allowlist → else 404
-   - fetch matching Strapi feed(s)
-   - memory cache keyed by slug; TTL via `PAGES_STRAPI_CACHE_TTL_MS`
-   - on Strapi failure / unusable body → memory-cache then disk-snapshot
-   - set body `source` + `X-Pages-Source`
-2. Disk map: `pages-<slug>.snapshot.json` + read order `dist/` then `public/`.
-3. Exporter `scripts/export-pages-snapshot.mjs` + `npm run pages:export-snapshot`; refuse empty/invalid; write `pages-snapshot.manifest.json`.
-4. `.env.example` entries for pages cache TTL.
-5. Automated API tests (`scripts/check-pages-api.mjs` or extend existing):
-   - six slugs 200 + source in {strapi, memory-cache, disk-snapshot}
-   - unknown slug 404
-   - with snapshot present and Strapi stopped / mocked failure → `disk-snapshot`
-   - empty Strapi response does not clear cache (inject/mock)
+1. **First:** update `check:pages-cms-catalog-scope` (or split pages-aware variant):
+   - allow additive `/api/pages/:slug` + pages cache/snapshot helpers in `server.cjs`
+   - still forbid catalog controller/route/service regressions and `src/catalog` listing breaks
+   - keep `check:catalog-api` mandatory
+2. Implement `GET /api/pages/:slug`:
+   - allowlist → else 404 (N1)
+   - fresh TTL / stale retention / disk fallback per design
+   - envelope `{ data, source }` + `X-Pages-Source`
+   - invalid/empty Strapi → do not update cache (N2)
+   - Node re-runs map URL validation before respond
+   - corrupted snapshot → 503 (N4)
+3. Snapshot files + manifest; exporter requires `source=strapi` only (N3); hash mismatch FAIL (N5).
+4. `.env.example`: `PAGES_STRAPI_CACHE_TTL_MS`, `PAGES_STRAPI_CACHE_STALE_MS`.
+5. `scripts/check-pages-api.mjs` covering N1–N5 and happy paths for all sources.
 
 ### Verify
 
-- `npm run check:pages-api` (new) PASS
+- Updated catalog-scope harness PASS with page-proxy diff present
+- `npm run check:pages-api` PASS
 - `npm run check:catalog-api` PASS
-- Exporter dry-run against local stack PASS; refuse-empty negative PASS
-- Manual: stop Strapi → curl page slug → disk-snapshot
+- Exporter PASS on live strapi; reject memory-cache/disk-snapshot negatives PASS
+- Stop Strapi → `disk-snapshot` (after stale exhausted or with fresh/stale=0 test config)
 
 ---
 
-## Phase D — Idempotent seed (API-04)
+## Phase E — Isolation & full local gate
 
-**Goal:** Load six fixtures into local Strapi single types safely.
-
-### Tasks
-
-1. Seed script (e.g. `scripts/seed-pages-cms-from-fixtures.mjs`) upserts six single types from fixtures.
-2. Document run order: Strapi up → seed → verify feeds → `pages:export-snapshot`.
-3. Idempotency test: run twice; second run no duplicate components / same field values.
-4. Guard: do not delete/recreate catalog products; assert product count stable if catalog API up.
-
-### Verify
-
-- Seed ×2 PASS
-- Feeds match fixture expectations (harness)
-- Catalog product count unchanged
-- `pages:export-snapshot` PASS
-
----
-
-## Phase E — Frontend isolation & full local gate
-
-**Goal:** Prove browser never talks to Strapi for pages; green suite.
+**Goal:** No frontend→Strapi page fetches; green suite; docs/requirements update.
 
 ### Tasks
 
-1. Static grep/harness: no `1337`, no `*-page-feed`, no Strapi origin in `src/` for page content (allow existing catalog Node paths only).
-2. Wire `npm run check` (or dedicated script) to include pages API + feed contract checks.
-3. Run: `check:pages-cms-strict`, `check:pages-cms-catalog-scope` (still green), `check:catalog-api`, `check:catalog-ui` (if stack up), `typecheck`, `build`.
-4. Update `.planning` progress + REQUIREMENTS API-01…06 checkboxes only after evidence recorded.
+1. Grep/harness: `src/` must not call Strapi page feeds / `:1337` for page content.
+2. Wire pages checks into `npm run check` (or documented companion scripts).
+3. Full local: strict, catalog-scope (narrowed), catalog-api, catalog-ui (if stack up), pages-api, typecheck, build, `git diff --check`.
+4. Mark API-01…06 in REQUIREMENTS only after evidence; update STATE/ROADMAP.
 5. Local commits only.
 
 ### Verify (final)
@@ -134,14 +156,12 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with memory c
 | Command | Expected |
 |---------|----------|
 | `npm run check:pages-cms-strict` | PASS |
-| `npm run check:pages-cms-catalog-scope` | PASS |
-| New pages feed/API harnesses | PASS |
+| Catalog-scope (narrowed) | PASS |
+| Pages feed/API harnesses + N1–N8 | PASS |
 | `npm run check:catalog-api` | PASS |
 | `npm run check` | PASS |
-| `npm run typecheck` | PASS |
-| `npm run build` | PASS |
-| `git diff --check` on new commits | PASS |
-| Push | **not performed** |
+| `npm run typecheck` / `npm run build` | PASS |
+| Push / `strapi:sync-seed` | **not performed** |
 
 ---
 
@@ -149,25 +169,36 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with memory c
 
 | Area | Files (indicative) |
 |------|--------------------|
-| Strapi feeds | `strapi-catalog/src/api/**/…-feed.js`, routes, permissions |
-| Map util | shared normalize helper + tests |
-| Node | `server.cjs`, `.env.example` |
-| Snapshots | `public/pages-*.snapshot.json`, `public/pages-snapshot.manifest.json` |
-| Scripts | `export-pages-snapshot.mjs`, seed script, `check-pages-api.mjs`, package.json scripts |
-| Docs | this plan progress log, `.planning/STATE.md`, REQUIREMENTS API_* |
+| Map + validators | shared util, harness scripts |
+| Seed + media | `scripts/seed-pages-cms-from-fixtures.mjs` (name TBD), upload helpers |
+| Strapi feeds | `*-page-feed` controllers/routes/permissions + populate descriptors |
+| Node | `server.cjs` pages block, `.env.example` |
+| Scope harness | `scripts/check-pages-cms-catalog-scope.mjs` (narrow before page proxy) |
+| Snapshots | `public/pages-*.snapshot.json`, `pages-snapshot.manifest.json` |
+| Docs | progress log, STATE, REQUIREMENTS API_* |
 
 ## Explicitly out of diff
 
-- `src/components/pages/*` hydrate
+- React hydrate / `src/components/pages/*` consumers
 - `getPageName` / `PAGE_EMAIL_ROUTING`
 - Legal types
 - Catalog schema runtime attrs
-- Remote deploy / Timeweb env
+- `database/seed/data.db` via sync-seed (unless user orders)
+- Remote deploy / Timeweb
 
 ## Review checklist (user)
 
-- [ ] Approve locked slug allowlist and `source` vocabulary
-- [ ] Approve download-catalog texts feed separate from slides
-- [ ] Approve strip `map_iframe_html` from public JSON
-- [ ] Approve seed scope (local `.tmp` first; sync-seed optional)
-- [ ] Then authorize Phase A implementation
+- [x] download-catalog texts feed separate; slides unchanged
+- [x] strip `map_iframe_html` in feed; Node re-check
+- [x] `source` vocabulary locked
+- [x] seed `.tmp` only; no sync-seed by default
+- [x] response envelope `{ data }` / snapshot without source / Node adds source
+- [x] fresh TTL + stale retention env vars
+- [x] phase order A→B seed→C feeds→D proxy→E
+- [x] media seed design (hash idempotency, missing FAIL, no orphans, no catalog mutation)
+- [x] deep-populate contract + harness
+- [x] strict map allowlist (no `*.yandex.ru`)
+- [x] catalog-scope narrowed before page proxy
+- [x] negatives N1–N8
+
+**Affirm to start Phase A:** user explicit go-ahead after reading this revision.
