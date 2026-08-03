@@ -1,0 +1,52 @@
+{
+  "kind": "singleType",
+  "collectionName": "contacts_pages",
+  "info": {
+    "singularName": "contacts-page",
+    "pluralName": "contacts-pages",
+    "displayName": "Контакты"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "required": true,
+      "repeatable": false,
+      "component": "page.hero"
+    },
+    "offices_title": {
+      "type": "string",
+      "required": true
+    },
+    "offices": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.office"
+    },
+    "map_title": {
+      "type": "string",
+      "required": true
+    },
+    "contact_section_title": {
+      "type": "string",
+      "required": false
+    },
+    "contact_form_title": {
+      "type": "string",
+      "required": false
+    },
+    "contact_submit_label": {
+      "type": "string",
+      "required": false
+    },
+    "contact_info": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.contact-info"
+    }
+  }
+}

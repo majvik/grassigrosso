@@ -593,6 +593,139 @@ export interface ApiCollectionCollection extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiContactsPageContactsPage extends Struct.SingleTypeSchema {
+  collectionName: 'contacts_pages';
+  info: {
+    displayName: '\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u044B';
+    pluralName: 'contacts-pages';
+    singularName: 'contacts-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    contact_form_title: Schema.Attribute.String;
+    contact_info: Schema.Attribute.Component<'page.contact-info', true>;
+    contact_section_title: Schema.Attribute.String;
+    contact_submit_label: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    hero: Schema.Attribute.Component<'page.hero', false> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::contacts-page.contacts-page'
+    > &
+      Schema.Attribute.Private;
+    map_title: Schema.Attribute.String & Schema.Attribute.Required;
+    offices: Schema.Attribute.Component<'page.office', true>;
+    offices_title: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiDealersPageDealersPage extends Struct.SingleTypeSchema {
+  collectionName: 'dealers_pages';
+  info: {
+    displayName: '\u0414\u0438\u043B\u0435\u0440\u0430\u043C';
+    pluralName: 'dealers-pages';
+    singularName: 'dealers-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    conditions: Schema.Attribute.Component<'page.list-item', true>;
+    conditions_icon: Schema.Attribute.Media<'images'>;
+    conditions_subtitle: Schema.Attribute.Text;
+    conditions_title: Schema.Attribute.String & Schema.Attribute.Required;
+    contact_form_title: Schema.Attribute.String;
+    contact_info: Schema.Attribute.Component<'page.contact-info', true>;
+    contact_package_field_label: Schema.Attribute.String;
+    contact_package_placeholder: Schema.Attribute.String;
+    contact_section_title: Schema.Attribute.String;
+    contact_submit_label: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    faq_items: Schema.Attribute.Component<'page.faq-item', true>;
+    faq_title: Schema.Attribute.String;
+    geography_cities: Schema.Attribute.Component<'page.geo-city', true>;
+    geography_map_image: Schema.Attribute.Media<'images'>;
+    geography_subtitle: Schema.Attribute.Text;
+    geography_title: Schema.Attribute.String & Schema.Attribute.Required;
+    hero: Schema.Attribute.Component<'page.hero', false> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::dealers-page.dealers-page'
+    > &
+      Schema.Attribute.Private;
+    offers: Schema.Attribute.Component<'page.offer-card', true>;
+    offers_subtitle: Schema.Attribute.Text;
+    offers_title: Schema.Attribute.String & Schema.Attribute.Required;
+    packages: Schema.Attribute.Component<'page.dealer-package', true>;
+    packages_subtitle: Schema.Attribute.Text;
+    packages_title: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    quality_body: Schema.Attribute.Text;
+    quality_image: Schema.Attribute.Media<'images'>;
+    quality_title: Schema.Attribute.String;
+    requirements: Schema.Attribute.Component<'page.requirement-card', true>;
+    requirements_subtitle: Schema.Attribute.Text;
+    requirements_title: Schema.Attribute.String & Schema.Attribute.Required;
+    stats: Schema.Attribute.Component<'page.stat', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiDocumentsPageDocumentsPage extends Struct.SingleTypeSchema {
+  collectionName: 'documents_pages';
+  info: {
+    displayName: '\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B';
+    pluralName: 'documents-pages';
+    singularName: 'documents-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    certificates: Schema.Attribute.Component<'page.document-card', true>;
+    certificates_title: Schema.Attribute.String & Schema.Attribute.Required;
+    company_documents: Schema.Attribute.Component<'page.document-card', true>;
+    company_illustration: Schema.Attribute.Media<'images'>;
+    company_title: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    faq_items: Schema.Attribute.Component<'page.faq-item', true>;
+    faq_title: Schema.Attribute.String;
+    help_body: Schema.Attribute.Text;
+    help_cta_label: Schema.Attribute.String;
+    help_title: Schema.Attribute.String & Schema.Attribute.Required;
+    hero: Schema.Attribute.Component<'page.hero', false> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::documents-page.documents-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiDownloadCatalogPageDownloadCatalogPage
   extends Struct.SingleTypeSchema {
   collectionName: 'download_catalog_pages';
@@ -762,6 +895,107 @@ export interface ApiHeightRangeOptionHeightRangeOption
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
     sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiHotelsPageHotelsPage extends Struct.SingleTypeSchema {
+  collectionName: 'hotels_pages';
+  info: {
+    displayName: '\u041E\u0442\u0435\u043B\u044F\u043C';
+    pluralName: 'hotels-pages';
+    singularName: 'hotels-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    categories: Schema.Attribute.Component<'page.hotel-category', true>;
+    categories_title: Schema.Attribute.String & Schema.Attribute.Required;
+    contact_form_title: Schema.Attribute.String;
+    contact_info: Schema.Attribute.Component<'page.contact-info', true>;
+    contact_section_title: Schema.Attribute.String;
+    contact_submit_label: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    discount_col_amount: Schema.Attribute.String;
+    discount_col_discount: Schema.Attribute.String;
+    discount_col_terms: Schema.Attribute.String;
+    discount_note: Schema.Attribute.Text;
+    discount_rows: Schema.Attribute.Component<'page.discount-row', true>;
+    discount_subtitle: Schema.Attribute.Text;
+    discount_title: Schema.Attribute.String & Schema.Attribute.Required;
+    faq_items: Schema.Attribute.Component<'page.faq-item', true>;
+    faq_title: Schema.Attribute.String;
+    hero: Schema.Attribute.Component<'page.hero', false> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::hotels-page.hotels-page'
+    > &
+      Schema.Attribute.Private;
+    products: Schema.Attribute.Component<'page.hotel-product', true>;
+    publishedAt: Schema.Attribute.DateTime;
+    refresh_badge: Schema.Attribute.String;
+    refresh_cta_label: Schema.Attribute.String;
+    refresh_description: Schema.Attribute.Text;
+    refresh_features: Schema.Attribute.Component<'page.refresh-feature', true>;
+    refresh_title: Schema.Attribute.String;
+    stats: Schema.Attribute.Component<'page.stat', true>;
+    stats_note: Schema.Attribute.Text;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiIndexPageIndexPage extends Struct.SingleTypeSchema {
+  collectionName: 'index_pages';
+  info: {
+    displayName: '\u0413\u043B\u0430\u0432\u043D\u0430\u044F';
+    pluralName: 'index-pages';
+    singularName: 'index-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    collections: Schema.Attribute.Component<'page.collection-card', true>;
+    collections_link_href: Schema.Attribute.String;
+    collections_link_label: Schema.Attribute.String;
+    collections_subtitle: Schema.Attribute.Text;
+    collections_title: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    docs: Schema.Attribute.Component<'page.document-card', true>;
+    docs_title: Schema.Attribute.String & Schema.Attribute.Required;
+    hero: Schema.Attribute.Component<'page.hero-media', false> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::index-page.index-page'
+    > &
+      Schema.Attribute.Private;
+    partners_image_desktop: Schema.Attribute.Media<'images'>;
+    partners_image_mobile: Schema.Attribute.Media<'images'>;
+    partners_title: Schema.Attribute.String & Schema.Attribute.Required;
+    philosophy_cards: Schema.Attribute.Component<'page.solution-card', true>;
+    philosophy_presentation: Schema.Attribute.Component<
+      'page.document-card',
+      false
+    >;
+    philosophy_title: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    solutions: Schema.Attribute.Component<'page.solution-card', true>;
+    solutions_title: Schema.Attribute.String & Schema.Attribute.Required;
+    testimonials: Schema.Attribute.Component<'page.testimonial', true>;
+    testimonials_title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1535,11 +1769,16 @@ declare module '@strapi/strapi' {
       'api::catalog-new-hero.catalog-new-hero': ApiCatalogNewHeroCatalogNewHero;
       'api::catalog-share-help.catalog-share-help': ApiCatalogShareHelpCatalogShareHelp;
       'api::collection.collection': ApiCollectionCollection;
+      'api::contacts-page.contacts-page': ApiContactsPageContactsPage;
+      'api::dealers-page.dealers-page': ApiDealersPageDealersPage;
+      'api::documents-page.documents-page': ApiDocumentsPageDocumentsPage;
       'api::download-catalog-page.download-catalog-page': ApiDownloadCatalogPageDownloadCatalogPage;
       'api::feature-option.feature-option': ApiFeatureOptionFeatureOption;
       'api::filling-option.filling-option': ApiFillingOptionFillingOption;
       'api::firmness-option.firmness-option': ApiFirmnessOptionFirmnessOption;
       'api::height-range-option.height-range-option': ApiHeightRangeOptionHeightRangeOption;
+      'api::hotels-page.hotels-page': ApiHotelsPageHotelsPage;
+      'api::index-page.index-page': ApiIndexPageIndexPage;
       'api::load-range-option.load-range-option': ApiLoadRangeOptionLoadRangeOption;
       'api::mattress-size.mattress-size': ApiMattressSizeMattressSize;
       'api::mattress-type-option.mattress-type-option': ApiMattressTypeOptionMattressTypeOption;

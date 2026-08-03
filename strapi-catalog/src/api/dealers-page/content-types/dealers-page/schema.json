@@ -1,0 +1,164 @@
+{
+  "kind": "singleType",
+  "collectionName": "dealers_pages",
+  "info": {
+    "singularName": "dealers-page",
+    "pluralName": "dealers-pages",
+    "displayName": "Дилерам"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "required": true,
+      "repeatable": false,
+      "component": "page.hero"
+    },
+    "stats": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.stat"
+    },
+    "conditions_title": {
+      "type": "string",
+      "required": true
+    },
+    "conditions_subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "conditions": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.list-item"
+    },
+    "conditions_icon": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "offers_title": {
+      "type": "string",
+      "required": true
+    },
+    "offers_subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "offers": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.offer-card"
+    },
+    "geography_title": {
+      "type": "string",
+      "required": true
+    },
+    "geography_subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "geography_map_image": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "geography_cities": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.geo-city"
+    },
+    "quality_title": {
+      "type": "string",
+      "required": false
+    },
+    "quality_body": {
+      "type": "text",
+      "required": false
+    },
+    "quality_image": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "requirements_title": {
+      "type": "string",
+      "required": true
+    },
+    "requirements_subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "requirements": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.requirement-card"
+    },
+    "packages_title": {
+      "type": "string",
+      "required": true
+    },
+    "packages_subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "packages": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.dealer-package"
+    },
+    "contact_section_title": {
+      "type": "string",
+      "required": false
+    },
+    "contact_form_title": {
+      "type": "string",
+      "required": false
+    },
+    "contact_submit_label": {
+      "type": "string",
+      "required": false
+    },
+    "contact_package_field_label": {
+      "type": "string",
+      "required": false
+    },
+    "contact_package_placeholder": {
+      "type": "string",
+      "required": false
+    },
+    "contact_info": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.contact-info"
+    },
+    "faq_title": {
+      "type": "string",
+      "required": false
+    },
+    "faq_items": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.faq-item"
+    }
+  }
+}

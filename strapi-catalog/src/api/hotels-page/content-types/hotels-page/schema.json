@@ -1,0 +1,126 @@
+{
+  "kind": "singleType",
+  "collectionName": "hotels_pages",
+  "info": {
+    "singularName": "hotels-page",
+    "pluralName": "hotels-pages",
+    "displayName": "Отелям"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "required": true,
+      "repeatable": false,
+      "component": "page.hero"
+    },
+    "stats": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.stat"
+    },
+    "stats_note": {
+      "type": "text",
+      "required": false
+    },
+    "categories_title": {
+      "type": "string",
+      "required": true
+    },
+    "categories": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.hotel-category"
+    },
+    "products": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.hotel-product"
+    },
+    "discount_title": {
+      "type": "string",
+      "required": true
+    },
+    "discount_subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "discount_col_amount": {
+      "type": "string",
+      "required": false
+    },
+    "discount_col_discount": {
+      "type": "string",
+      "required": false
+    },
+    "discount_col_terms": {
+      "type": "string",
+      "required": false
+    },
+    "discount_rows": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.discount-row"
+    },
+    "discount_note": {
+      "type": "text",
+      "required": false
+    },
+    "contact_section_title": {
+      "type": "string",
+      "required": false
+    },
+    "contact_form_title": {
+      "type": "string",
+      "required": false
+    },
+    "contact_submit_label": {
+      "type": "string",
+      "required": false
+    },
+    "contact_info": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.contact-info"
+    },
+    "refresh_badge": {
+      "type": "string",
+      "required": false
+    },
+    "refresh_title": {
+      "type": "string",
+      "required": false
+    },
+    "refresh_description": {
+      "type": "text",
+      "required": false
+    },
+    "refresh_features": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.refresh-feature"
+    },
+    "refresh_cta_label": {
+      "type": "string",
+      "required": false
+    },
+    "faq_title": {
+      "type": "string",
+      "required": false
+    },
+    "faq_items": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.faq-item"
+    }
+  }
+}

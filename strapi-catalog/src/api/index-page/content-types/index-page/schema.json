@@ -1,0 +1,108 @@
+{
+  "kind": "singleType",
+  "collectionName": "index_pages",
+  "info": {
+    "singularName": "index-page",
+    "pluralName": "index-pages",
+    "displayName": "Главная"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "required": true,
+      "repeatable": false,
+      "component": "page.hero-media"
+    },
+    "solutions_title": {
+      "type": "string",
+      "required": true
+    },
+    "solutions": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.solution-card"
+    },
+    "philosophy_title": {
+      "type": "string",
+      "required": true
+    },
+    "philosophy_cards": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.solution-card"
+    },
+    "philosophy_presentation": {
+      "type": "component",
+      "required": false,
+      "repeatable": false,
+      "component": "page.document-card"
+    },
+    "collections_title": {
+      "type": "string",
+      "required": true
+    },
+    "collections_subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "collections_link_label": {
+      "type": "string",
+      "required": false
+    },
+    "collections_link_href": {
+      "type": "string",
+      "required": false
+    },
+    "collections": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.collection-card"
+    },
+    "partners_title": {
+      "type": "string",
+      "required": true
+    },
+    "partners_image_desktop": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "partners_image_mobile": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "testimonials_title": {
+      "type": "string",
+      "required": true
+    },
+    "testimonials": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.testimonial"
+    },
+    "docs_title": {
+      "type": "string",
+      "required": true
+    },
+    "docs": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.document-card"
+    }
+  }
+}

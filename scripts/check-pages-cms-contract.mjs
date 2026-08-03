@@ -14,19 +14,26 @@
  *
  * Components mode (Task 2):
  * - Enabled when PAGES_CMS_SCHEMA_MODE=components OR any phase2 component file exists
- *   (and no new phase2 single-type files yet)
+ *   (and no new Wave 1 single-type files yet)
  * - Requires EVERY phase2Components schema; full attribute contract compare
  * - Missing single types still OK
  *
- * Strict schema mode (Task 3+):
- * - Enabled when PAGES_CMS_SCHEMA_MODE=strict OR any new phase2 single-type file exists
- * - Requires EVERY phase2Components + phase2SingleTypes schema file
+ * Single-types mode (Task 3):
+ * - Enabled when PAGES_CMS_SCHEMA_MODE=single-types OR any of the five new Wave 1
+ *   single types exist (and download-catalog-page is not yet extended for Task 4)
+ * - Requires EVERY phase2Components + the five new single types
+ * - Does NOT require download-catalog-page to match the full contract definition yet
+ *
+ * Strict schema mode (Task 4+):
+ * - Enabled when PAGES_CMS_SCHEMA_MODE=strict OR download-catalog-page gains Task 4 fields
+ * - Requires EVERY phase2Components + phase2SingleTypes (including extended download-catalog)
  * - Compares full normalized attribute contract (type/required/repeatable/component/allowedTypes/enum/default)
  * - Missing any required Phase 2 schema → FAIL
  *
  * Usage:
  *   npm run check:pages-cms-contract
  *   PAGES_CMS_SCHEMA_MODE=components npm run check:pages-cms-contract
+ *   PAGES_CMS_SCHEMA_MODE=single-types npm run check:pages-cms-contract
  *   PAGES_CMS_SCHEMA_MODE=strict npm run check:pages-cms-contract
  */
 import fs from 'node:fs'
@@ -335,10 +342,15 @@ if (contract) {
   phase2ComponentsPresent = countExistingPhase2Components(contract)
   phase2SingleTypesPresent = countExistingPhase2SingleTypes(contract)
   const envMode = process.env.PAGES_CMS_SCHEMA_MODE || ''
-  if (envMode === 'strict' || phase2SingleTypesPresent > 0) {
+  const downloadExtended = isDownloadCatalogExtended(contract)
+  if (envMode === 'strict' || downloadExtended) {
     mode = 'strict-schemas'
     assertAllPhase2Components(contract, 'strict-schemas')
     assertAllPhase2SingleTypes(contract, 'strict-schemas')
+  } else if (envMode === 'single-types' || phase2SingleTypesPresent > 0) {
+    mode = 'single-types'
+    assertAllPhase2Components(contract, 'single-types')
+    assertWave1PageSingleTypes(contract, 'single-types')
   } else if (envMode === 'components' || phase2ComponentsPresent > 0) {
     mode = 'components'
     assertAllPhase2Components(contract, 'components')
@@ -529,6 +541,24 @@ function assertNegativeChecks(c) {
   }
 }
 
+function wave1PageSingleTypes(c) {
+  return (c.phase2SingleTypes || []).filter((uid) => uid !== 'download-catalog-page')
+}
+
+function isDownloadCatalogExtended(c) {
+  const rel = singleTypeRel('download-catalog-page')
+  if (!fs.existsSync(abs(rel))) return false
+  // Avoid calling readJson here (it would push Missing JSON into failures); file exists
+  let schema
+  try {
+    schema = JSON.parse(fs.readFileSync(abs(rel), 'utf8'))
+  } catch {
+    return false
+  }
+  const task4Fields = ['title', 'lead', 'submit_label', 'catalog_pdf']
+  return task4Fields.every((name) => schema.attributes?.[name])
+}
+
 function countExistingPhase2Components(c) {
   let n = 0
   for (const uid of c.phase2Components) {
@@ -539,9 +569,7 @@ function countExistingPhase2Components(c) {
 
 function countExistingPhase2SingleTypes(c) {
   let n = 0
-  for (const uid of c.phase2SingleTypes) {
-    // Pre-existing download-catalog-page is not a Task 3 start signal
-    if (uid === 'download-catalog-page') continue
+  for (const uid of wave1PageSingleTypes(c)) {
     if (fs.existsSync(abs(singleTypeRel(uid)))) n += 1
   }
   return n
@@ -554,6 +582,16 @@ function assertAllPhase2Components(c, gate) {
     else assertSchemaMatchesDefinition(rel, c.definitions.components[uid], 'component', gate)
   }
   assertNoCircularComponentGraph(c, gate)
+}
+
+function assertWave1PageSingleTypes(c, gate) {
+  const uids = wave1PageSingleTypes(c)
+  if (uids.length !== 5) fail(`${gate}: expected exactly 5 Wave 1 page single types, got ${uids.length}`)
+  for (const uid of uids) {
+    const rel = singleTypeRel(uid)
+    if (!fs.existsSync(abs(rel))) fail(`${gate}: missing single type schema ${rel}`)
+    else assertSchemaMatchesDefinition(rel, c.definitions.singleTypes[uid], 'singleType', gate)
+  }
 }
 
 function assertAllPhase2SingleTypes(c, gate) {

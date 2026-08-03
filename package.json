@@ -19,6 +19,7 @@
     "check:routes": "node scripts/check-routing-contracts.mjs",
     "check:pages-cms-contract": "node scripts/check-pages-cms-contract.mjs",
     "check:pages-cms-components": "PAGES_CMS_SCHEMA_MODE=components node scripts/check-pages-cms-contract.mjs",
+    "check:pages-cms-single-types": "PAGES_CMS_SCHEMA_MODE=single-types node scripts/check-pages-cms-contract.mjs",
     "check:pages-cms-strict": "PAGES_CMS_SCHEMA_MODE=strict node scripts/check-pages-cms-contract.mjs",
     "preview": "vite preview",
     "new-page": "node scripts/new-page.mjs",

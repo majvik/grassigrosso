@@ -1,0 +1,70 @@
+{
+  "kind": "singleType",
+  "collectionName": "documents_pages",
+  "info": {
+    "singularName": "documents-page",
+    "pluralName": "documents-pages",
+    "displayName": "Документы"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "required": true,
+      "repeatable": false,
+      "component": "page.hero"
+    },
+    "certificates_title": {
+      "type": "string",
+      "required": true
+    },
+    "certificates": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.document-card"
+    },
+    "company_title": {
+      "type": "string",
+      "required": true
+    },
+    "company_illustration": {
+      "type": "media",
+      "required": false,
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "company_documents": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.document-card"
+    },
+    "help_title": {
+      "type": "string",
+      "required": true
+    },
+    "help_body": {
+      "type": "text",
+      "required": false
+    },
+    "help_cta_label": {
+      "type": "string",
+      "required": false
+    },
+    "faq_title": {
+      "type": "string",
+      "required": false
+    },
+    "faq_items": {
+      "type": "component",
+      "required": false,
+      "repeatable": true,
+      "component": "page.faq-item"
+    }
+  }
+}
