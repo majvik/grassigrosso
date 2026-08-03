@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 4 — React hydrate from `GET /api/pages/:slug`. Phase 3 complete locally. No `strapi:sync-seed` / no push unless asked.
+**Current focus:** Phase 3 E isolation harden (untracked scan + negatives), then Phase 4 hydrate. No `strapi:sync-seed` / no push unless asked.
 
 ## Current Position
 
-Phase: 4 of 6 (React Hydrate) — NEXT
-Plan: 03-01 COMPLETE; awaiting Phase 4 plan/spec
-Status: Phase 3 A–E local gate green (`check:pages-cms-phase-e`, typecheck, build)
-Last activity: 2026-08-03 — Phase E isolation + full local gate; API-01…06 marked Complete
+Phase: 3 of 6 (Feeds, Proxy & Seed) — Phase E re-accept
+Plan: 03-01 IN PROGRESS (isolation hole fix)
+Status: Isolation scans filesystem (incl. untracked); negatives for `:1337` / page-feed / `VITE_STRAPI_*`
+Last activity: 2026-08-03 — fixed isolation `git ls-files` hole; awaiting Phase E re-accept
 
-Progress: [██████████] Phase 3 done; Phase 4 not started
+Progress: [█████████░] Phase 3 pending E re-accept
 
 ## Performance Metrics
 
@@ -27,7 +27,7 @@ Progress: [██████████] Phase 3 done; Phase 4 not started
 |-------|-------|--------|
 | 1. Shared Page Components | 1/1 | Complete |
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) |
-| 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) |
+| 3. Feeds, Proxy & Seed | 1/1 | Pending Phase E re-accept |
 | 4. React Hydrate | 0/TBD | Not started |
 
 ## Accumulated Context
@@ -50,5 +50,5 @@ None for Phase 3.
 ## Session Continuity
 
 Last session: 2026-08-03
-Stopped at: Phase 3 COMPLETE — awaiting Phase E accept / Phase 4 go-ahead
-Next: Phase 4 hydrate after user accept of Phase E
+Stopped at: Phase E isolation harden (fs walk + negatives) — awaiting re-accept
+Next: Phase E re-accept → close Phase 3 → Phase 4 hydrate
