@@ -13,7 +13,7 @@ Milestone **v1.1** делает маркетинговые тексты волн
 - [x] **Phase 1: Shared Page Components** - Переиспользуемые `page.*` блоки с русскими лейблами
 - [x] **Phase 2: Wave 1 Single Types** - Single types страниц + расширение download-catalog + полный `ru.json`
 - [x] **Phase 3: Feeds, Proxy & Seed** - Публичные feeds, `GET /api/pages/:slug`, snapshots, seed из React
-- [ ] **Phase 4: React Hydrate** - Волны 1 страницы берут контент из Node API без поломки layout и email-routing
+- [x] **Phase 4: React Hydrate** - Волны 1 страницы берут контент из Node API без поломки layout и email-routing
 - [ ] **Phase 5: Local Acceptance Gate** - Полное автотестовое покрытие и локальный green verify; без push/deploy
 - [ ] **Phase 6: Legal Pages** - Privacy / terms / cookies в CMS + hydrate `legal-content.tsx`
 
@@ -77,10 +77,10 @@ Plans:
   4. Отправка форм по-прежнему использует те же значения `page` / `PAGE_EMAIL_ROUTING` — ключи не изменены CMS-слоем
   5. Сохранены стабильные hook-атрибуты/идентификаторы документов и значения dealer package; CMS управляет данными, не поведением
   6. Первый render остаётся полным fallback и не даёт пустой экран/существенный CLS до ответа API
-**Plans**: 1 plan (draft — awaiting affirm)
+**Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md — React hydrate wave 1 ([design v2](../docs/superpowers/specs/2026-08-03-pages-cms-react-hydrate-design.md), [execution v2](../docs/superpowers/plans/2026-08-03-pages-cms-react-hydrate.md)) — merge/lifecycle/DOM locked; no hydrate code until affirmed
+- [x] 04-01-PLAN.md — React hydrate wave 1 ([design v2](../docs/superpowers/specs/2026-08-03-pages-cms-react-hydrate-design.md), [execution v2](../docs/superpowers/plans/2026-08-03-pages-cms-react-hydrate.md)) — A–E local DONE 2026-08-04; no push / no sync-seed
 
 ### Phase 5: Local Acceptance Gate
 **Goal**: Доказать локально автоматическими тестами, что весь milestone работает и не регрессирует; не отправлять изменения во внешние системы.
@@ -123,7 +123,7 @@ Plans:
 | 1. Shared Page Components | 1/1 | Complete | 2026-08-03 |
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) | 2026-08-03 |
 | 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) | 2026-08-03 |
-| 4. React Hydrate | 0/1 | Phase A done — awaiting accept | - |
+| 4. React Hydrate | 1/1 | Complete (local; FE-01…05; no push) | 2026-08-04 |
 | 5. Local Acceptance Gate | 0/TBD | Not started | - |
 | 6. Legal Pages | 0/TBD | Not started | - |
 

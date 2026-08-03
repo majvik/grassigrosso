@@ -1,7 +1,7 @@
 # Pages CMS Phase 4 — React hydrate (execution plan)
 
 **Date:** 2026-08-03
-**Status:** Phase A–C accepted; Phase D DONE (local) — awaiting accept. No push / no `strapi:sync-seed`.
+**Status:** Phase A–D accepted; Phase E DONE (local) — FE-01…05 Complete. No push / no `strapi:sync-seed`.
 **Design:** [2026-08-03-pages-cms-react-hydrate-design.md](../specs/2026-08-03-pages-cms-react-hydrate-design.md)
 **GSD phase:** `.planning/phases/04-react-hydrate/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -37,8 +37,8 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 | Phase A | client + merge + unit harness | DONE — accepted |
 | Phase B | index + download-catalog texts + DOM slice | DONE — accepted (`a537e6f` + `825deb0`) |
 | Phase C | hotels + dealers + DOM slice | DONE — accepted (`97ab57e` + `02d254b`) |
-| Phase D | contacts + documents + map + DOM slice | DONE — harden (map hidden/tabs) awaiting accept |
-| Phase E | full unit + DOM (all 6) + FE-* docs | not started |
+| Phase D | contacts + documents + map + DOM slice | DONE — accepted (`72c3ab9` + `a7f5816`) |
+| Phase E | full unit + DOM (all 6) + FE-* docs | DONE — awaiting accept |
 
 ---
 
@@ -180,15 +180,33 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 
 ### Verify (final)
 
-| Command | Expected |
-|---------|----------|
-| `check:pages-cms-hydrate` | PASS |
-| `check:pages-cms-hydrate-dom` (all 6 pages × scenarios) | PASS |
-| `check:pages-cms-isolation` | PASS |
-| `check:pages-cms-phase-e` (or documented subset) | PASS |
-| `typecheck` / `build` | PASS |
-| `git diff --check` | PASS |
-| Push / `strapi:sync-seed` | **not performed** |
+| Command | Expected | Result (2026-08-04) |
+|---------|----------|---------------------|
+| `check:pages-cms-hydrate` | PASS | PASS |
+| `check:pages-cms-hydrate-dom` (all 6 pages × scenarios) | PASS | PASS |
+| `check:pages-cms-isolation` | PASS | PASS |
+| `check:pages-cms-phase-e` (full=yes) | PASS | PASS (`check:pages-api` N1–N5 + catalog-api) |
+| `typecheck` / `build` | PASS | PASS |
+| `check:routes` | PASS | PASS |
+| `check:catalog-api` (:3000) | PASS | PASS |
+| `git diff --check` | PASS | PASS (on committed tree) |
+| Push / `strapi:sync-seed` | **not performed** | **not performed** |
+
+### FE-* evidence
+
+| Req | Evidence |
+|-----|----------|
+| FE-01 | Six pages `usePageCms` + hydrate unit parity + DOM success hydrate |
+| FE-02 | Section allowlists + visual slot locks in hydrate-dom |
+| FE-03 | Hydrate email-key asserts + `check:routes` |
+| FE-04 | Hooks: catalog/package/document/map/form in DOM gate |
+| FE-05 | Delayed first-paint + content-equal geometry ≤1px; failure modes keep fallback |
+
+### Delivered
+
+- Full `check:pages-cms-phase-e` green locally
+- REQUIREMENTS FE-01…05 → Complete; ROADMAP Phase 4 → Complete (local)
+- No push / no `strapi:sync-seed`
 
 ---
 

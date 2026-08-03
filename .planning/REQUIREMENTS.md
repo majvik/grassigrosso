@@ -25,11 +25,11 @@
 
 ### Frontend
 
-- [ ] **FE-01**: React pages волны 1 гидрируют контент из Node API с fallback на текущий TSX
-- [ ] **FE-02**: Layout/визуал страниц не ломается после hydrate
-- [ ] **FE-03**: `getPageName` / `PAGE_EMAIL_ROUTING` не изменены CMS-слоем
-- [ ] **FE-04**: Стабильные `id`, `data-*`, document keys, package values и прочие runtime hooks сохранены
-- [ ] **FE-05**: Нет заметного layout shift/пустого первого кадра из-за поздней загрузки CMS; hardcoded fallback остаётся первым безопасным render
+- [x] **FE-01**: React pages волны 1 гидрируют контент из Node API с fallback на текущий TSX
+- [x] **FE-02**: Layout/визуал страниц не ломается после hydrate
+- [x] **FE-03**: `getPageName` / `PAGE_EMAIL_ROUTING` не изменены CMS-слоем
+- [x] **FE-04**: Стабильные `id`, `data-*`, document keys, package values и прочие runtime hooks сохранены
+- [x] **FE-05**: Нет заметного layout shift/пустого первого кадра из-за поздней загрузки CMS; hardcoded fallback остаётся первым безопасным render
 
 ### Local acceptance gate
 
@@ -70,11 +70,11 @@
 | API-04 | Phase 3 | Complete (`f2a1a91` / Phase B seed into `.tmp`) |
 | API-05 | Phase 3 | Complete (N1–N5 in `check:pages-api`) |
 | API-06 | Phase 3 | Complete (Phase A map allowlist + feed/Node strip) |
-| FE-01 | Phase 4 | Pending |
-| FE-02 | Phase 4 | Pending |
-| FE-03 | Phase 4 | Pending |
-| FE-04 | Phase 4 | Pending |
-| FE-05 | Phase 4 | Pending |
+| FE-01 | Phase 4 | Complete — `usePageCms` on 6 wave-1 pages; evidence `check:pages-cms-hydrate` + `check:pages-cms-hydrate-dom` (2026-08-04) |
+| FE-02 | Phase 4 | Complete — section allowlists + FE-05 geometry in hydrate-dom (2026-08-04) |
+| FE-03 | Phase 4 | Complete — hydrate unit + `check:routes` assert routing keys unchanged (2026-08-04) |
+| FE-04 | Phase 4 | Complete — DOM hooks (`data-catalog`, `data-package`, `data-document`, map tabs/frames) (2026-08-04) |
+| FE-05 | Phase 4 | Complete — delayed first-paint + content-equal geometry ≤1px in hydrate-dom (2026-08-04) |
 | QA-01 | Every phase + Phase 5 gate | Pending |
 | QA-02 | Every phase + Phase 5 gate | Pending |
 | QA-03 | Every phase + Phase 5 gate | Pending |
