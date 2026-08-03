@@ -1,7 +1,7 @@
 # Pages CMS Phase 3 — feeds, proxy & seed (execution plan)
 
 **Date:** 2026-08-03
-**Status:** IN PROGRESS — Phase A+B accepted; Phase C harness green (pending acceptance); Phase D next
+**Status:** IN PROGRESS — Phase A–C accepted; Phase D harness green (pending acceptance); Phase E next
 **Design:** [2026-08-03-pages-cms-feeds-proxy-seed-design.md](../specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md)
 **GSD phase:** `.planning/phases/03-feeds-proxy-seed/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -35,7 +35,8 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 | Spec + plan revision | `4cf5b13` | affirmed |
 | Phase A fix | `4ed8476` | PASS — texts isolation + Strapi utils |
 | Phase B | `npm run check:pages-cms-phase-b` | DONE — accepted (`f2a1a91`) |
-| Phase C | `npm run check:pages-cms-phase-c` | DONE (harness) — pending user accept |
+| Phase C | `npm run check:pages-cms-phase-c` | DONE — accepted (`26302bd`) |
+| Phase D | `npm run check:pages-api` + narrowed catalog-scope | DONE (harness) — pending user accept |
 
 ---
 
@@ -151,6 +152,14 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 - `npm run check:catalog-api` PASS
 - Exporter PASS on live strapi; reject memory-cache/disk-snapshot negatives PASS
 - Stop Strapi → `disk-snapshot` (after stale exhausted or with fresh/stale=0 test config)
+
+### Post-fix (2026-08-03)
+
+- Catalog-scope narrowed: `server.cjs` pages-aware; catalog controllers/routes/`src/catalog` still forbidden; catalog markers required
+- `GET /api/pages/:slug` via `lib/pages-cms-api.cjs`: allowlist 404 (N1), fresh/stale memory (`memory-cache`), disk fallback, map re-check, corrupt snapshot 503 (N4)
+- `pages:export-snapshot` + `public/pages-*.snapshot.json` + manifest; source=strapi only (N3); sha256 verify (N5)
+- `.env.example`: `PAGES_STRAPI_CACHE_TTL_MS` / `PAGES_STRAPI_CACHE_STALE_MS`
+- `npm run check:pages-api` → PASS
 
 ---
 

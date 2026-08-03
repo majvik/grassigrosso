@@ -1,0 +1,68 @@
+{
+  "offices_title": "Наши офисы",
+  "map_title": "Как нас найти",
+  "contact_section_title": "Доброе утро!",
+  "contact_form_title": "Форма обратной связи",
+  "contact_submit_label": "Отправить",
+  "offices": [
+    {
+      "slug": "main",
+      "tab_label": "Главный офис",
+      "badge": "Главный офис",
+      "city": "Симферополь",
+      "region": "",
+      "address": "ул. Кубанская д. 25",
+      "phone": "+ 7 (978) 248-43-80",
+      "phone_href": "tel:+79782484380",
+      "email": "sales@grassigrosso.com",
+      "schedule": "Пн-Пт: 9:00 - 18:00",
+      "map_embed_url": "https://yandex.ru/map-widget/v1/?ll=34.152577%2C44.970737&z=16"
+    },
+    {
+      "slug": "voronezh",
+      "tab_label": "Центральная Россия",
+      "badge": "Представительство",
+      "city": "Воронеж",
+      "region": "Центральная Россия",
+      "address": "ул. Остужева 43 И",
+      "phone": "+7 (978) 075-71-74",
+      "phone_href": "tel:+79780757174",
+      "email": "voronezh@grassigrosso.com",
+      "schedule": "Пн-Пт: 9:00 - 18:00",
+      "map_embed_url": "https://yandex.ru/map-widget/v1/?ll=39.297287%2C51.681129&z=16"
+    }
+  ],
+  "contact_info": [
+    {
+      "title": "Телефон",
+      "value": "+ 7 (978) 248-43-80",
+      "note": "Пн-Пт: 9:00 - 18:00 МСК",
+      "href": "tel:+79782484380",
+      "icon_key": "phone"
+    },
+    {
+      "title": "Email",
+      "value": "sales@grassigrosso.com",
+      "note": "Ответим в течение 24 часов",
+      "href": "mailto:sales@grassigrosso.com",
+      "icon_key": "email"
+    },
+    {
+      "title": "Адрес",
+      "value": "Симферополь, ул. Кубанская д. 25",
+      "note": "Главный офис",
+      "href": "",
+      "icon_key": "location"
+    }
+  ],
+  "hero": {
+    "title": "Контакты",
+    "description": "Свяжитесь с нами удобным способом.",
+    "image_alt": "Офис",
+    "cta_label": "",
+    "cta_url": "",
+    "image": {
+      "url": "/uploads/pages_cms_394469949e94cc67_contacts_hero_923e7119f9.png"
+    }
+  }
+}

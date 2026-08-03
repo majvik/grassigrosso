@@ -1,0 +1,10 @@
+{
+  "title": "Скачать каталог",
+  "lead": "Оставьте контакты — пришлём PDF каталога.",
+  "submit_label": "Скачать каталог",
+  "back_label": "Назад в каталог",
+  "back_href": "/catalog",
+  "catalog_pdf": {
+    "url": "/uploads/pages_cms_c3fa0e1e51352ae7_Catalog_v1_2_5b54dc882c.pdf"
+  }
+}

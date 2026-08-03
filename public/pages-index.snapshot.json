@@ -1,0 +1,114 @@
+{
+  "solutions_title": "Решения для бизнеса",
+  "philosophy_title": "Наша философия",
+  "collections_title": "Коллекции",
+  "collections_subtitle": "Линейки матрасов Grassigrosso",
+  "collections_link_label": "В каталог",
+  "collections_link_href": "/catalog",
+  "partners_title": "Партнеры и технологии",
+  "testimonials_title": "Нам доверяют",
+  "docs_title": "Сертификация и документация",
+  "partners_image_desktop": {
+    "url": "/uploads/pages_cms_4614c23d40cda5aa_logos_2x_normal_5fca591463.png"
+  },
+  "partners_image_mobile": {
+    "url": "/uploads/pages_cms_1313f75b45d13179_logos_2x_mobile_b46fda45ae.png"
+  },
+  "testimonials": [
+    {
+      "tag": "Дилер",
+      "company": "Кубань Матрас",
+      "author_name": "Иван",
+      "author_role": "Директор",
+      "rating": 5,
+      "text": "Надёжный партнёр."
+    }
+  ],
+  "hero": {
+    "title": "Любовь с первого утра",
+    "title_tm": "Ⓒ",
+    "description": "Мы создаем продуманные системы для сна и естественного восстановления, чтобы каждое утро начиналось легко и спокойно.",
+    "cta_label": "Получить подробную информацию",
+    "poster_alt": "Grassigrosso",
+    "poster": {
+      "url": "/uploads/pages_cms_6cdbda8ba9489589_grassigrosso_poster_07bc8da4aa.avif"
+    },
+    "video_desktop": {
+      "url": "/uploads/pages_cms_32d9ae79c3454976_grassigrosso_silent_ffb1166369.mp4"
+    },
+    "video_mobile": {
+      "url": "/uploads/pages_cms_9f9025bde9b98fe1_grassigrosso_silent_mobile_9945de3db6.mp4"
+    }
+  },
+  "solutions": [
+    {
+      "title": "Отелям",
+      "text": "Комплексные решения для гостиничного бизнеса",
+      "href": "/hotels",
+      "icon": {
+        "url": "/uploads/pages_cms_f3986c8c00532e0d_icon_hotels_f9e419a943.svg"
+      }
+    },
+    {
+      "title": "Дилерам",
+      "text": "Партнёрская программа",
+      "href": "/dealers",
+      "icon": {
+        "url": "/uploads/pages_cms_b913d99571c4410d_icon_dealers_35129a1834.svg"
+      }
+    }
+  ],
+  "philosophy_cards": [
+    {
+      "title": "Качество",
+      "text": "Контроль на каждом этапе",
+      "href": "",
+      "icon": {
+        "url": "/uploads/pages_cms_5c1c791d3d7856a1_icon_badge_0c80fc5625.svg"
+      }
+    }
+  ],
+  "philosophy_presentation": {
+    "document_key": "presentation",
+    "title": "Презентация компании",
+    "type_label": "PDF документ",
+    "size_label": "",
+    "request_label": "Запросить",
+    "request_aria_label": "Запросить презентацию компании",
+    "kind": "company",
+    "file": {
+      "url": "/uploads/pages_cms_c28902ee89483dfc_Grassigrosso_company_2cdf014cf9.pdf"
+    }
+  },
+  "collections": [
+    {
+      "name": "Classic",
+      "href": "/catalog",
+      "image_alt": "Classic",
+      "image": {
+        "url": "/uploads/pages_cms_d8d182e87077b9ec_collection_Classic_cb254c7032.png"
+      },
+      "features": [
+        {
+          "title": "Независимый блок",
+          "text": "",
+          "href": ""
+        }
+      ]
+    }
+  ],
+  "docs": [
+    {
+      "document_key": "declaration",
+      "title": "Декларация о соответствии",
+      "type_label": "Декларация",
+      "size_label": "2.5 MB",
+      "request_label": "ЗАПРОСИТЬ",
+      "request_aria_label": "Запросить декларацию",
+      "kind": "certificate",
+      "file": {
+        "url": "/uploads/pages_cms_322d850417ca10dc_cddc897c7a.pdf"
+      }
+    }
+  ]
+}

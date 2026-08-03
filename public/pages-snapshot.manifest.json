@@ -1,0 +1,19 @@
+{
+  "syncedAt": "2026-08-03T18:06:02.403Z",
+  "slugs": [
+    "index",
+    "hotels",
+    "dealers",
+    "contacts",
+    "documents",
+    "download-catalog"
+  ],
+  "sha256BySlug": {
+    "index": "291676920817af0d5bc8aefc5da0cda4a9b6e0e26538289f07aa722c2ca9dfe3",
+    "hotels": "54f6cbf85744425c319031d60b490ec1edd1b542dd12ee3c2cc6e08d1f63d31f",
+    "dealers": "5ae1af4da85dcb0c4c3959351b2694ee5cc7d0245a39d7e520b1c3ba083ba4da",
+    "contacts": "d2baad9e90aadb14635601e9de7afce88733ff52d217b4e9d774a8a3df7b5fe1",
+    "documents": "c516c3f1208cf19b1814fa60d9aa19d0ff91047b1d17497fc0f26cba1240cb6e",
+    "download-catalog": "076b49a23f1b2af991d9773c72a7a64e3b8d7a5d7fcba728f84a12e232eeeb53"
+  }
+}

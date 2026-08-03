@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 3 — Phase C harness PASS (pending accept); Phase D Node proxy next. No `server.cjs` page proxy yet. No `strapi:sync-seed`.
+**Current focus:** Phase 3 — Phase D harness PASS (pending accept); Phase E isolation/full gate next. No `strapi:sync-seed`.
 
 ## Current Position
 
 Phase: 3 of 6 (Feeds, Proxy & Seed) — IN PROGRESS
-Plan: 03-01 Phase A+B accepted; Phase C harness green
-Status: `check:pages-cms-phase-c` PASS (6 feeds + deep-populate + N7)
-Last activity: 2026-08-03 — Phase C Strapi page feeds + integration harness
+Plan: 03-01 Phase A–C accepted; Phase D harness green
+Status: `check:pages-api` PASS (N1–N5 + strapi/memory-cache/disk-snapshot)
+Last activity: 2026-08-03 — Phase D Node `/api/pages/:slug` + snapshots + narrowed catalog-scope
 
-Progress: [████████▓░] 90%
+Progress: [█████████░] 95%
 
 ## Performance Metrics
 
 **Velocity:**
 - Phase 1–2 complete locally (no push)
-- Phase 3A–3C complete locally (no push)
+- Phase 3A–3D complete locally (no push)
 
 **By Phase:**
 
@@ -28,7 +28,7 @@ Progress: [████████▓░] 90%
 |-------|-------|--------|
 | 1. Shared Page Components | 1/1 | Complete |
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) |
-| 3. Feeds, Proxy & Seed | 0/1 | A+B accepted; C harness green; D next |
+| 3. Feeds, Proxy & Seed | 0/1 | A–C accepted; D harness green; E next |
 
 ## Accumulated Context
 
@@ -36,25 +36,23 @@ Progress: [████████▓░] 90%
 
 - Phase 3 envelope + map allowlist locked in Phase A
 - download-catalog page canonical = texts/PDF only
-- Seed writes `.tmp` only; backup under `.tmp/pages-cms-seed-backups/`; restore on failure
-- SQLite backup via better-sqlite3 `backup()` + WAL/SHM clear on restore; upload FS prune on failure
-- Harness never kills `:1337` — refuses with instruction if busy
-- Media aliases map fixture URLs to existing public assets (Cyrillic PDFs, partners logos, etc.)
-- Logical digests are content-addressed (strip surrogate ids; include component trees + media file identities) for seed×2 and inject rollback
-- Six page feeds live under `api/pages-cms` (not `catalog/`) to keep catalog-scope clean
+- Seed writes `.tmp` only; backup under `.tmp/pages-cms-seed-backups/`
+- Six page feeds under `api/pages-cms` (not `catalog/`)
+- Node `GET /api/pages/:slug` + `PAGES_STRAPI_CACHE_TTL_MS` / `PAGES_STRAPI_CACHE_STALE_MS`; sources `strapi|memory-cache|disk-snapshot`
+- Catalog-scope allows additive pages proxy in `server.cjs` while preserving catalog markers
 - Local-only: no push/PR/deploy; no sync-seed unless asked
 
 ### Pending Todos
 
-- User accept Phase C
-- Phase D: narrow catalog-scope → Node `GET /api/pages/:slug` + cache/snapshots/exporter
+- User accept Phase D
+- Phase E: isolation grep + wire checks + REQUIREMENTS/ROADMAP
 
 ### Blockers/Concerns
 
-None for Phase C harness (green locally).
+None for Phase D harness (green locally).
 
 ## Session Continuity
 
 Last session: 2026-08-03
-Stopped at: Phase C harness PASS — awaiting accept
-Next: Phase D after Phase C acceptance
+Stopped at: Phase D harness PASS — awaiting accept
+Next: Phase E after Phase D acceptance

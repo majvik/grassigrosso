@@ -10,6 +10,7 @@ const { createAntiSpamProtector } = require('./lib/anti-spam.cjs');
 const { normalizeOriginList, buildCorsOptions } = require('./lib/cors-config.cjs');
 const db = require('./lib/db.cjs');
 const { buildConfirmationEmail } = require('./lib/confirmation-email.cjs');
+const { createPagesCmsApi } = require('./lib/pages-cms-api.cjs');
 require('dotenv').config();
 
 const app = express();
@@ -22,6 +23,7 @@ const APP_VERSION = String(process.env.APP_VERSION || process.env.GIT_SHA || 'de
 const INTERNAL_API_PREFIXES = [
   '/api/submit',
   '/api/catalog',
+  '/api/pages',
   '/api/download',
   '/api/unsubscribe',
   '/api/test',
@@ -106,6 +108,14 @@ function readCatalogStrapiStaleMs() {
 const CATALOG_STRAPI_CACHE_TTL_MS = readCatalogStrapiCacheTtlMs();
 const CATALOG_STRAPI_STALE_MS = readCatalogStrapiStaleMs();
 const catalogStrapiResponseCache = new Map();
+
+const pagesCmsApi = createPagesCmsApi({
+  isProd,
+  strapiUrl: STRAPI_URL,
+  rootDir: __dirname,
+});
+const PAGES_STRAPI_CACHE_TTL_MS = pagesCmsApi.ttlMs;
+const PAGES_STRAPI_CACHE_STALE_MS = pagesCmsApi.staleMs;
 
 const CATALOG_DISK_SNAPSHOT_FILES = {
   'catalog:products:full': 'catalog-products.snapshot.json',
@@ -1006,7 +1016,9 @@ console.log(`   SPAM_MIN_SUBMIT_INTERVAL_MS: ${SPAM_MIN_SUBMIT_INTERVAL_MS}`);
 console.log(`   SPAM_BLOCK_MS: ${SPAM_BLOCK_MS}`);
 console.log(`   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS.length > 0 ? CORS_ALLOWED_ORIGINS.join(', ') : '(none)'}`);
 console.log(`   DB_PATH: ${db.DB_PATH}`);
-console.log(`   CATALOG_STRAPI_CACHE_TTL_MS: ${CATALOG_STRAPI_CACHE_TTL_MS}\n`);
+console.log(`   CATALOG_STRAPI_CACHE_TTL_MS: ${CATALOG_STRAPI_CACHE_TTL_MS}`);
+console.log(`   PAGES_STRAPI_CACHE_TTL_MS: ${PAGES_STRAPI_CACHE_TTL_MS}`);
+console.log(`   PAGES_STRAPI_CACHE_STALE_MS: ${PAGES_STRAPI_CACHE_STALE_MS}\n`);
 
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -1286,6 +1298,29 @@ app.get('/api/catalog/filters', async (req, res) => {
     return res.status(502).json({
       error: 'Failed to fetch catalog filters from Strapi',
       details,
+    });
+  }
+});
+
+app.get('/api/pages/:slug', async (req, res) => {
+  const slug = String(req.params.slug || '').trim();
+  try {
+    const result = await pagesCmsApi.resolvePage(slug);
+    if (result.headers) {
+      for (const [key, value] of Object.entries(result.headers)) {
+        res.set(key, value);
+      }
+    }
+    if (result.source) {
+      res.set('X-Pages-Source', result.source);
+    }
+    return res.status(result.status).json(result.body);
+  } catch (error) {
+    console.error('❌ Ошибка /api/pages/:slug:', error);
+    return res.status(503).json({
+      error: 'Pages content unavailable',
+      slug,
+      details: String(error && error.message ? error.message : error),
     });
   }
 });

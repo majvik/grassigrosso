@@ -1,13 +1,21 @@
 #!/usr/bin/env node
 /**
- * Task 6 scope guard: catalog schemas after Admin RU work may only change displayName
- * (info.displayName / attribute.displayName). Runtime contract must match base revision.
+ * Catalog scope guard for Pages CMS Phase 3+.
+ *
+ * Still forbidden:
+ * - catalog schema runtime drift beyond displayName (vs base)
+ * - changes under catalog controllers/routes/services, src/catalog, public/catalog*
+ *
+ * Allowed (Phase D+):
+ * - additive pages proxy / cache / snapshot helpers in server.cjs
+ * - provided catalog route/cache markers remain intact
  *
  * Usage:
  *   node scripts/check-pages-cms-catalog-scope.mjs
  *   PAGES_CMS_CATALOG_SCOPE_BASE=b59f0ec^ node scripts/check-pages-cms-catalog-scope.mjs
  */
 import { execFileSync } from 'node:child_process'
+import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
@@ -18,14 +26,48 @@ const HEAD = process.env.PAGES_CMS_CATALOG_SCOPE_HEAD || 'HEAD'
 const failures = []
 const fail = (msg) => failures.push(msg)
 
-function gitShowJson(rev, rel) {
+/** Catalog invariants that must remain in server.cjs after pages proxy lands. */
+const SERVER_CATALOG_MARKERS = [
+  "app.get('/api/catalog/products'",
+  "app.get('/api/catalog/filters'",
+  "app.get('/api/catalog/hero-slides'",
+  "app.get('/api/download-catalog/slides'",
+  'CATALOG_STRAPI_CACHE_TTL_MS',
+  'CATALOG_STRAPI_STALE_MS',
+  'catalog-products.snapshot.json',
+  'catalog-filters.snapshot.json',
+  'catalog-hero.snapshot.json',
+  'download-catalog-slides.snapshot.json',
+  'resolveCatalogFallbackPayload',
+  'setCatalogStrapiCache',
+  'getCatalogStrapiCache',
+]
+
+/** Pages markers expected once Phase D proxy is present. */
+const SERVER_PAGES_MARKERS = [
+  "app.get('/api/pages/:slug'",
+  'PAGES_STRAPI_CACHE_TTL_MS',
+  'createPagesCmsApi',
+  'X-Pages-Source',
+]
+
+function gitShowText(rev, rel) {
   try {
-    const out = execFileSync('git', ['show', `${rev}:${rel}`], {
+    return execFileSync('git', ['show', `${rev}:${rel}`], {
       cwd: ROOT,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
     })
-    return JSON.parse(out)
+  } catch {
+    return null
+  }
+}
+
+function gitShowJson(rev, rel) {
+  const text = gitShowText(rev, rel)
+  if (text == null) return null
+  try {
+    return JSON.parse(text)
   } catch {
     return null
   }
@@ -90,7 +132,7 @@ for (const rel of [...paths].sort()) {
   const before = gitShowJson(BASE, rel)
   const after = gitShowJson(HEAD, rel)
   if (!before && after) {
-    fail(`${rel}: added after ${BASE} (unexpected for Task 6 catalog scope)`)
+    fail(`${rel}: added after ${BASE} (unexpected catalog schema add)`)
     continue
   }
   if (before && !after) {
@@ -109,12 +151,11 @@ for (const rel of [...paths].sort()) {
   else identical += 1
 }
 
-// Feed / routes / controllers must not change in the Admin RU window
+// Catalog runtime surfaces remain forbidden; server.cjs is pages-aware (checked below).
 const forbiddenGlobs = [
   'strapi-catalog/src/api/catalog/controllers',
   'strapi-catalog/src/api/catalog/routes',
   'strapi-catalog/src/api/catalog/services',
-  'server.cjs',
   'src/catalog',
   'public/catalog',
 ]
@@ -124,11 +165,51 @@ const changed = execFileSync('git', ['diff', '--name-only', `${BASE}..${HEAD}`, 
 })
   .split('\n')
   .filter(Boolean)
-  // Admin label sync util under catalog/utils is allowed (not a feed/route)
   .filter((f) => f !== 'strapi-catalog/src/api/catalog/utils/sync-pages-cms-admin-labels.js')
 
 for (const f of changed) {
   fail(`forbidden catalog runtime/feed change: ${f}`)
+}
+
+// server.cjs: allow pages proxy additions; require catalog markers intact
+const serverHeadPath = path.join(ROOT, 'server.cjs')
+const serverHead = fs.existsSync(serverHeadPath)
+  ? fs.readFileSync(serverHeadPath, 'utf8')
+  : gitShowText(HEAD, 'server.cjs')
+const serverBase = gitShowText(BASE, 'server.cjs')
+
+if (!serverHead) {
+  fail('server.cjs missing at HEAD')
+} else {
+  for (const marker of SERVER_CATALOG_MARKERS) {
+    if (!serverHead.includes(marker)) {
+      fail(`server.cjs missing catalog marker: ${marker}`)
+    }
+  }
+  if (serverBase) {
+    for (const marker of SERVER_CATALOG_MARKERS) {
+      if (serverBase.includes(marker) && !serverHead.includes(marker)) {
+        fail(`server.cjs removed catalog marker vs ${BASE}: ${marker}`)
+      }
+    }
+  }
+
+  const serverChanged =
+    Boolean(serverBase) && serverBase !== serverHead
+      ? true
+      : execFileSync('git', ['diff', '--name-only', `${BASE}..${HEAD}`, '--', 'server.cjs'], {
+          cwd: ROOT,
+          encoding: 'utf8',
+        }).trim() === 'server.cjs'
+
+  if (serverChanged) {
+    const missingPages = SERVER_PAGES_MARKERS.filter((m) => !serverHead.includes(m))
+    if (missingPages.length) {
+      fail(
+        `server.cjs changed without pages proxy markers (${missingPages.join(', ')}); additive /api/pages/:slug required`,
+      )
+    }
+  }
 }
 
 if (failures.length) {
@@ -139,5 +220,5 @@ if (failures.length) {
 
 console.log('check:pages-cms-catalog-scope PASS')
 console.log(
-  ` base=${BASE} head=${HEAD} schemas=${paths.size} identical=${identical} adminDisplayNameOnly=${adminOnly} feedRouteDiffs=0`,
+  ` base=${BASE} head=${HEAD} schemas=${paths.size} identical=${identical} adminDisplayNameOnly=${adminOnly} serverPagesAware=ok feedRouteDiffs=0`,
 )
