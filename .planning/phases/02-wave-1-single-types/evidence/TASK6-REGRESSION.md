@@ -1,8 +1,8 @@
 # Task 6 — Regression & scope gate (Wave 1)
 
-Date: 2026-08-03  
-Branch: `catalogue`  
-Base for catalog schema compare: `b59f0ec^` (pre Admin leftover-RU commit)  
+Date: 2026-08-03
+Branch: `catalogue`
+Base for catalog schema compare: `b59f0ec^` (pre Admin leftover-RU commit)
 HEAD at verify: includes Task 5 enum fix `d83c981` + Task 6 harness/docs
 
 ## Gate results
