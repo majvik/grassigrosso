@@ -10,4 +10,8 @@ export {
   pagesApiPath,
 } from '../../src/pages/pages-api.ts'
 export { createMountGuard } from '../../src/pages/pages-cms-mount-guard.ts'
-export { BEHAVIOR_BOUND_ARRAYS } from '../../src/pages/pages-cms-constants.ts'
+export {
+  BEHAVIOR_BOUND_ARRAYS,
+  setPagesApiTimeoutMsForTests,
+} from '../../src/pages/pages-cms-constants.ts'
+export { BEHAVIOR_ARRAY_ITEMS, CONTENT_ARRAY_ITEMS } from '../../src/pages/pages-cms-descriptors.ts'

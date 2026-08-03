@@ -33,7 +33,7 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 |------|--------------------|--------|
 | Design + plan draft v1 | Option B sketch | superseded by v2 |
 | Design + plan draft v2 | merge/lifecycle/DOM locks | affirmed |
-| Phase A | client + merge + unit harness | DONE — `check:pages-cms-hydrate` PASS |
+| Phase A | client + merge + unit harness | DONE (harden descriptors) — awaiting accept |
 | Phase B | index + download-catalog texts + DOM slice | not started |
 | Phase C | hotels + dealers + DOM slice | not started |
 | Phase D | contacts + documents + map + DOM slice | not started |
@@ -62,10 +62,11 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 
 ### Post-fix (Phase A)
 
-- Modules: `src/pages/pages-api.ts`, `pages-cms-validate.ts`, `pages-cms-merge.ts`, `pages-cms-mount-guard.ts`, `use-page-cms.ts`
-- Harness: `npm run check:pages-cms-hydrate` (esbuild bundle of harness entry; no React in unit path)
+- Modules: `src/pages/pages-api.ts`, `pages-cms-validate.ts`, `pages-cms-merge.ts`, `pages-cms-descriptors.ts`, `pages-cms-mount-guard.ts`, `use-page-cms.ts`
+- Harness: `npm run check:pages-cms-hydrate` — descriptors for content-only items; path-specific media nullability; data-driven behavior-bound negatives (all 7 paths × pages); timeout/abort + invalid JSON + retry
 - Wired into `check:pages-cms` companion
-- Evidence: merge/lifecycle/mountGuard/isolation PASS; `typecheck` PASS; no `src/components/pages/*` edits
+- Evidence: hydrate/isolation/typecheck PASS; no `src/components/pages/*` edits
+- Harden: removed content-only self-as-schema and `isMediaShape(null)` hole
 
 ### Verify
 

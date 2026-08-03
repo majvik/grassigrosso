@@ -35,6 +35,8 @@ const {
   pagesApiPath,
   createMountGuard,
   BEHAVIOR_BOUND_ARRAYS,
+  BEHAVIOR_ARRAY_ITEMS,
+  setPagesApiTimeoutMsForTests,
 } = await import(pathToFileURL(outfile).href)
 
 try {
@@ -81,6 +83,10 @@ function deepEqual(a, b) {
   return JSON.stringify(a) === JSON.stringify(b)
 }
 
+function assertUnchanged(fallback, before, label) {
+  assert(deepEqual(fallback, before), `${label}: fallback must be unchanged after reject`)
+}
+
 // --- Merge: identity / absence ---
 {
   const fallback = readFixture('dealers')
@@ -107,14 +113,80 @@ function deepEqual(a, b) {
   const before = structuredClone(fallback)
   const merged = mergePageContent('dealers', fallback, { packages_title: '' })
   assert(!merged.ok, 'empty required string must reject')
-  assert(deepEqual(fallback, before), 'reject must not mutate fallback')
+  assertUnchanged(fallback, before, 'empty required string')
 }
 
-// --- Merge: null only for map_embed_url ---
+// --- Content-only descriptor negatives ---
+{
+  const fallback = readFixture('dealers')
+  const before = structuredClone(fallback)
+
+  const nullTitle = mergePageContent('dealers', fallback, {
+    faq_items: [{ question: null, answer: 'a' }],
+  })
+  assert(!nullTitle.ok, 'contentOnlyItem title/question null must reject')
+  assertUnchanged(fallback, before, 'contentOnly null title')
+
+  // list-item title null (conditions)
+  const nullListTitle = mergePageContent('dealers', fallback, {
+    conditions: [{ title: null }],
+  })
+  assert(!nullListTitle.ok, 'contentOnlyItem.title = null must reject')
+  assertUnchanged(fallback, before, 'conditions title null')
+
+  const unknownField = mergePageContent('dealers', fallback, {
+    faq_items: [{ question: 'q', answer: 'a', extranea: true }],
+  })
+  assert(!unknownField.ok, 'unknown field inside content-only item must reject')
+  assertUnchanged(fallback, before, 'contentOnly unknown field')
+
+  // arbitrary null must not be treated as media
+  const nullAsMedia = mergePageContent('dealers', fallback, {
+    faq_items: [{ question: 'q', answer: 'a', open_by_default: null }],
+  })
+  assert(!nullAsMedia.ok, 'null boolean must reject (not media)')
+  assertUnchanged(fallback, before, 'null boolean')
+}
+
+// --- Media nullability by path ---
+{
+  const hotels = readFixture('hotels')
+  const before = structuredClone(hotels)
+  const requiredNull = mergePageContent('hotels', hotels, {
+    products: hotels.products.map((p) => ({ ...p, image: null })),
+  })
+  assert(!requiredNull.ok, 'required media null must reject')
+  assertUnchanged(hotels, before, 'required media null')
+
+  const dealers = readFixture('dealers')
+  const beforeD = structuredClone(dealers)
+  // icon on offers is optional media
+  const optionalNull = mergePageContent('dealers', dealers, {
+    offers: dealers.offers.map((o) => ({ ...o, icon: null })),
+  })
+  assert(optionalNull.ok, `optional media null must accept: ${optionalNull.ok === false ? optionalNull.reason : ''}`)
+  assert(deepEqual(dealers, beforeD), 'optional media accept must not mutate input fallback')
+  if (optionalNull.ok) {
+    assert(optionalNull.value.offers[0].icon === null, 'optional media null applied')
+  }
+
+  // document file optional
+  const docs = readFixture('documents')
+  const beforeDocs = structuredClone(docs)
+  const fileNull = mergePageContent('documents', docs, {
+    certificates: docs.certificates.map((c) => ({ ...c, file: null })),
+  })
+  assert(fileNull.ok, `optional file null: ${fileNull.ok === false ? fileNull.reason : ''}`)
+  assertUnchanged(docs, beforeDocs, 'optional file (fallback identity)')
+}
+
+// --- Merge: null only for map_embed_url among strings ---
 {
   const fallback = readFixture('contacts')
+  const before = structuredClone(fallback)
   const bad = mergePageContent('contacts', fallback, { map_title: null })
   assert(!bad.ok, 'null on normal string must reject')
+  assertUnchanged(fallback, before, 'map_title null')
 
   const office = fallback.offices[0]
   const cms = {
@@ -137,71 +209,140 @@ function deepEqual(a, b) {
   assert(contentEmpty.ok, `content-only []: ${contentEmpty.ok === false ? contentEmpty.reason : ''}`)
   if (contentEmpty.ok) assert(contentEmpty.value.faq_items.length === 0, 'content-only empty applied')
 
-  const behaviorEmpty = mergePageContent('dealers', structuredClone(fallback), { packages: [] })
+  const before = structuredClone(fallback)
+  const behaviorEmpty = mergePageContent('dealers', fallback, { packages: [] })
   assert(!behaviorEmpty.ok, 'behavior-bound [] must reject')
+  assertUnchanged(fallback, before, 'behavior empty')
 }
 
-// --- Merge: behavior-bound unknown / duplicate / missing key ---
+// --- Behavior-bound: data-driven for all paths ---
 {
-  const fallback = readFixture('dealers')
-  const basePkgs = fallback.packages.map((p) => ({ ...p }))
+  /** @type {{ slug: string, arrayKey: string, stableKey: string, getFallback: () => any }[]} */
+  const cases = [
+    {
+      slug: 'dealers',
+      arrayKey: 'packages',
+      stableKey: 'value',
+      getFallback: () => readFixture('dealers'),
+    },
+    {
+      slug: 'documents',
+      arrayKey: 'certificates',
+      stableKey: 'document_key',
+      getFallback: () => readFixture('documents'),
+    },
+    {
+      slug: 'documents',
+      arrayKey: 'company_documents',
+      stableKey: 'document_key',
+      getFallback: () => readFixture('documents'),
+    },
+    {
+      slug: 'index',
+      arrayKey: 'docs',
+      stableKey: 'document_key',
+      getFallback: () => readFixture('index'),
+    },
+    {
+      slug: 'contacts',
+      arrayKey: 'offices',
+      stableKey: 'slug',
+      getFallback: () => readFixture('contacts'),
+    },
+    {
+      slug: 'hotels',
+      arrayKey: 'products',
+      stableKey: 'catalog_key',
+      getFallback: () => readFixture('hotels'),
+    },
+    {
+      slug: 'hotels',
+      arrayKey: 'contact_info',
+      stableKey: 'icon_key',
+      getFallback: () => readFixture('hotels'),
+    },
+    {
+      slug: 'dealers',
+      arrayKey: 'contact_info',
+      stableKey: 'icon_key',
+      getFallback: () => readFixture('dealers'),
+    },
+    {
+      slug: 'contacts',
+      arrayKey: 'contact_info',
+      stableKey: 'icon_key',
+      getFallback: () => readFixture('contacts'),
+    },
+  ]
 
-  const unknown = mergePageContent('dealers', structuredClone(fallback), {
-    packages: [...basePkgs, { ...basePkgs[0], value: 'enterprise', title: 'X' }],
-  })
-  assert(!unknown.ok, 'unknown package value must reject')
+  assert(
+    Object.keys(BEHAVIOR_ARRAY_ITEMS).sort().join(',') ===
+      Object.keys(BEHAVIOR_BOUND_ARRAYS).sort().join(','),
+    'BEHAVIOR_ARRAY_ITEMS keys must match BEHAVIOR_BOUND_ARRAYS',
+  )
 
-  const dup = mergePageContent('dealers', structuredClone(fallback), {
-    packages: [basePkgs[0], { ...basePkgs[0] }, basePkgs[1], basePkgs[2]],
-  })
-  assert(!dup.ok, 'duplicate package value must reject')
+  for (const c of cases) {
+    assert(
+      BEHAVIOR_ARRAY_ITEMS[c.arrayKey]?.key === c.stableKey,
+      `${c.arrayKey} stable key config`,
+    )
+    const fallback = c.getFallback()
+    const items = fallback[c.arrayKey]
+    assert(Array.isArray(items) && items.length > 0, `${c.slug}.${c.arrayKey} fixture array`)
+    const before = structuredClone(fallback)
+    const cloneItems = () => items.map((x) => ({ ...x }))
 
-  const missing = mergePageContent('dealers', structuredClone(fallback), {
-    packages: basePkgs.slice(0, 2),
-  })
-  assert(!missing.ok, 'missing package value must reject')
+    const empty = mergePageContent(c.slug, fallback, { [c.arrayKey]: [] })
+    assert(!empty.ok, `${c.slug}.${c.arrayKey} empty must reject`)
+    assertUnchanged(fallback, before, `${c.arrayKey} empty`)
 
-  const reorderedCms = {
+    const unknown = mergePageContent(c.slug, fallback, {
+      [c.arrayKey]: [
+        ...cloneItems(),
+        { ...items[0], [c.stableKey]: `__unknown_${c.arrayKey}__` },
+      ],
+    })
+    assert(!unknown.ok, `${c.slug}.${c.arrayKey} unknown must reject`)
+    assertUnchanged(fallback, before, `${c.arrayKey} unknown`)
+
+    const dup = mergePageContent(c.slug, fallback, {
+      [c.arrayKey]: [items[0], { ...items[0] }, ...items.slice(1)],
+    })
+    assert(!dup.ok, `${c.slug}.${c.arrayKey} duplicate must reject`)
+    assertUnchanged(fallback, before, `${c.arrayKey} duplicate`)
+
+    if (items.length > 1) {
+      const missing = mergePageContent(c.slug, fallback, {
+        [c.arrayKey]: cloneItems().slice(0, -1),
+      })
+      assert(!missing.ok, `${c.slug}.${c.arrayKey} missing must reject`)
+      assertUnchanged(fallback, before, `${c.arrayKey} missing`)
+    }
+  }
+
+  // positive reorder on packages
+  const dealers = readFixture('dealers')
+  const basePkgs = dealers.packages.map((p) => ({ ...p }))
+  const ordered = mergePageContent('dealers', structuredClone(dealers), {
     packages: [basePkgs[2], basePkgs[0], basePkgs[1]].map((p) => ({
       ...p,
       title: `T-${p.value}`,
     })),
-  }
-  const ordered = mergePageContent('dealers', structuredClone(fallback), reorderedCms)
+  })
   assert(ordered.ok, `reorder cms: ${ordered.ok === false ? ordered.reason : ''}`)
   if (ordered.ok) {
     assert(
       ordered.value.packages.map((p) => p.value).join(',') ===
-        fallback.packages.map((p) => p.value).join(','),
+        dealers.packages.map((p) => p.value).join(','),
       'behavior-bound order stays fallback order',
     )
-    assert(ordered.value.packages[0].title === 'T-standard', 'CMS title merged on matched key')
   }
-}
-
-// --- Merge: document_key / offices.slug / catalog_key ---
-{
-  for (const [arr, key] of Object.entries(BEHAVIOR_BOUND_ARRAYS)) {
-    assert(typeof key === 'string' && key.length > 0, `behavior key for ${arr}`)
-  }
-  const docs = readFixture('documents')
-  const badDoc = mergePageContent('documents', docs, {
-    certificates: docs.certificates.map((c, i) =>
-      i === 0 ? { ...c, document_key: 'nope' } : { ...c },
-    ),
-  })
-  assert(!badDoc.ok, 'illegal document_key must reject')
-
-  const hotels = readFixture('hotels')
-  const badCat = mergePageContent('hotels', hotels, {
-    products: [{ ...hotels.products[0], catalog_key: 'unknown-catalog' }],
-  })
-  assert(!badCat.ok, 'unknown catalog_key must reject')
 }
 
 // --- Merge: slides bleed on download-catalog ---
 {
   const texts = readFixture('download-catalog')
+  const before = structuredClone(texts)
   const withSlides = { ...texts, slides: [{ alt_text: 'x' }] }
   const envFails = validateNodeEnvelope(
     { data: withSlides, source: 'strapi' },
@@ -213,6 +354,7 @@ function deepEqual(a, b) {
   )
   const mergeSlides = mergePageContent('download-catalog', texts, withSlides)
   assert(!mergeSlides.ok, 'merge must reject unknown slides key vs texts fallback')
+  assertUnchanged(texts, before, 'slides bleed')
 }
 
 // --- Validator: required roots / source ---
@@ -261,9 +403,7 @@ function deepEqual(a, b) {
   assert(getPagesApiCacheStateForTests('index') === 'success', 'success cached')
 
   resetPagesApiCacheForTests()
-  calls = 0
   setPagesApiFetchForTests(async () => {
-    calls += 1
     return { ok: false, status: 503, async json() { return {} } }
   })
   let threw = false
@@ -284,6 +424,67 @@ function deepEqual(a, b) {
   const retry = await fetchPageContent('hotels')
   assert(retry.source === 'memory-cache', 'retry after clear works')
 
+  // invalid JSON
+  resetPagesApiCacheForTests()
+  setPagesApiFetchForTests(async () => ({
+    ok: true,
+    async json() {
+      throw new SyntaxError('Unexpected token')
+    },
+  }))
+  threw = false
+  try {
+    await fetchPageContent('contacts')
+  } catch {
+    threw = true
+  }
+  assert(threw, 'invalid JSON must reject')
+  assert(getPagesApiCacheStateForTests('contacts') === 'missing', 'invalid JSON cleared')
+  setPagesApiFetchForTests(async () => ({
+    ok: true,
+    async json() {
+      return { data: readFixture('contacts'), source: 'strapi' }
+    },
+  }))
+  const afterJson = await fetchPageContent('contacts')
+  assert(afterJson.source === 'strapi', 'retry after invalid JSON works')
+
+  // timeout / abort
+  resetPagesApiCacheForTests()
+  setPagesApiTimeoutMsForTests(40)
+  setPagesApiFetchForTests(async (_url, init) => {
+    await new Promise((resolve, reject) => {
+      const t = setTimeout(resolve, 200)
+      init?.signal?.addEventListener('abort', () => {
+        clearTimeout(t)
+        reject(Object.assign(new Error('aborted'), { name: 'AbortError' }))
+      })
+    })
+    return {
+      ok: true,
+      async json() {
+        return { data: readFixture('documents'), source: 'strapi' }
+      },
+    }
+  })
+  threw = false
+  try {
+    await fetchPageContent('documents')
+  } catch {
+    threw = true
+  }
+  assert(threw, 'timeout/abort must reject')
+  assert(getPagesApiCacheStateForTests('documents') === 'missing', 'timeout cleared')
+  setPagesApiTimeoutMsForTests(null)
+  setPagesApiFetchForTests(async () => ({
+    ok: true,
+    async json() {
+      return { data: readFixture('documents'), source: 'disk-snapshot' }
+    },
+  }))
+  const afterTimeout = await fetchPageContent('documents')
+  assert(afterTimeout.source === 'disk-snapshot', 'retry after timeout works')
+
   resetPagesApiCacheForTests()
   setPagesApiFetchForTests(async () => ({
     ok: true,
@@ -293,17 +494,17 @@ function deepEqual(a, b) {
   }))
   threw = false
   try {
-    await fetchPageContent('contacts')
+    await fetchPageContent('index')
   } catch {
     threw = true
   }
   assert(threw, 'invalid envelope rejects')
-  assert(getPagesApiCacheStateForTests('contacts') === 'missing', 'invalid not cached')
+  assert(getPagesApiCacheStateForTests('index') === 'missing', 'invalid not cached')
 
   resetPagesApiCacheForTests()
-  calls = 0
+  let prefCalls = 0
   setPagesApiFetchForTests(async (url) => {
-    calls += 1
+    prefCalls += 1
     assert(String(url).startsWith('/api/pages/'), 'prefetch only /api/pages/')
     return {
       ok: true,
@@ -314,9 +515,10 @@ function deepEqual(a, b) {
   })
   prefetchPageContent('documents')
   await fetchPageContent('documents')
-  assert(calls === 1, 'prefetch+fetch share in-flight')
+  assert(prefCalls === 1, 'prefetch+fetch share in-flight')
 
   setPagesApiFetchForTests(null)
+  setPagesApiTimeoutMsForTests(null)
   resetPagesApiCacheForTests()
 }
 
@@ -352,6 +554,6 @@ if (failures.length) {
 
 console.log('check:pages-cms-hydrate PASS')
 console.log(
-  ' merge=ok lifecycle=ok mountGuard=ok pagesApiIsolation=ok behaviorBound=' +
-    Object.keys(BEHAVIOR_BOUND_ARRAYS).length,
+  ' merge=ok descriptors=ok lifecycle=timeout+json behaviorBound=' +
+    Object.keys(BEHAVIOR_ARRAY_ITEMS).length,
 )

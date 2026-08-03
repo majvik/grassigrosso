@@ -3,10 +3,12 @@ export {
   PAGES_CMS_SOURCES,
   CANONICAL_REQUIRED_KEYS,
   BEHAVIOR_BOUND_ARRAYS,
-  CONTENT_ONLY_ARRAYS,
   type PagesCmsSlug,
   type PagesCmsSource,
+  setPagesApiTimeoutMsForTests,
 } from './pages-cms-constants'
+
+export { BEHAVIOR_ARRAY_ITEMS, CONTENT_ARRAY_ITEMS } from './pages-cms-descriptors'
 
 export {
   validateCanonicalPageContent,

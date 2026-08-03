@@ -44,7 +44,7 @@ export const BEHAVIOR_BOUND_ARRAYS: Readonly<Record<string, string>> = {
   contact_info: 'icon_key',
 }
 
-/** Content-only array field names (design §2). Nested `features` / `bullets` included. */
+/** @deprecated use CONTENT_ARRAY_ITEMS from descriptors; kept for quick Set checks */
 export const CONTENT_ONLY_ARRAYS = new Set([
   'solutions',
   'philosophy_cards',
@@ -63,13 +63,18 @@ export const CONTENT_ONLY_ARRAYS = new Set([
   'requirements',
 ])
 
-/** String fields that may apply CMS empty string (design §1). */
+/** String fields that may apply CMS empty string (design §1) — also in ROOT_FIELD_HINTS. */
 export const OPTIONAL_EMPTY_STRING_KEYS = new Set(['note', 'href', 'text', 'region', 'image_alt'])
 
 /** Only nullable string in public contract. */
 export const NULLABLE_STRING_KEYS = new Set(['map_embed_url'])
 
-export const PAGES_API_TIMEOUT_MS = 10_000
+export const PAGES_API_TIMEOUT_MS_DEFAULT = 10_000
+export let PAGES_API_TIMEOUT_MS = PAGES_API_TIMEOUT_MS_DEFAULT
+
+export function setPagesApiTimeoutMsForTests(ms: number | null): void {
+  PAGES_API_TIMEOUT_MS = ms === null ? PAGES_API_TIMEOUT_MS_DEFAULT : Math.max(1, ms)
+}
 
 export function isPagesCmsSlug(value: string): value is PagesCmsSlug {
   return (PAGES_CMS_SLUGS as readonly string[]).includes(value)
