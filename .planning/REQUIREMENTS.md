@@ -16,12 +16,12 @@
 
 ### Feeds & Proxy
 
-- [ ] **API-01**: Публичный feed на каждый page single type (или единый feed по slug)
-- [ ] **API-02**: Node `GET /api/pages/:slug` с cache + disk snapshot fallback
-- [ ] **API-03**: Export snapshots в `public/pages-*.snapshot.json` (или эквивалент) + manifest
-- [ ] **API-04**: Идемпотентный seed текущего hardcoded-контента из React в Strapi
-- [ ] **API-05**: Page proxy использует allowlist slug, не заменяет валидный snapshot пустым/404-ответом и сообщает источник (`strapi`, `memory-cache`, `disk-snapshot`)
-- [ ] **API-06**: Map iframe из CMS преобразуется feed-слоем в allowlisted HTTPS embed URL; произвольный HTML не отдаётся фронту
+- [x] **API-01**: Публичный feed на каждый page single type (или единый feed по slug)
+- [x] **API-02**: Node `GET /api/pages/:slug` с cache + disk snapshot fallback
+- [x] **API-03**: Export snapshots в `public/pages-*.snapshot.json` (или эквивалент) + manifest
+- [x] **API-04**: Идемпотентный seed текущего hardcoded-контента из React в Strapi
+- [x] **API-05**: Page proxy использует allowlist slug, не заменяет валидный snapshot пустым/404-ответом и сообщает источник (`strapi`, `memory-cache`, `disk-snapshot`)
+- [x] **API-06**: Map iframe из CMS преобразуется feed-слоем в allowlisted HTTPS embed URL; произвольный HTML не отдаётся фронту
 
 ### Frontend
 
@@ -64,12 +64,12 @@
 | ADM-04 | Phase 2 | Complete |
 | ADM-05 | Phase 2 | Complete |
 | ADM-06 | Phase 2 | Complete |
-| API-01 | Phase 3 | Pending |
-| API-02 | Phase 3 | Pending |
-| API-03 | Phase 3 | Pending |
-| API-04 | Phase 3 | Pending |
-| API-05 | Phase 3 | Pending |
-| API-06 | Phase 3 | Pending |
+| API-01 | Phase 3 | Complete (`26302bd` feeds; gate `check:pages-cms-phase-c`) |
+| API-02 | Phase 3 | Complete (`27d6550` / `ead6d4d` Node proxy + cache/disk) |
+| API-03 | Phase 3 | Complete (`pages:export-snapshot` + `public/pages-*.snapshot.json`) |
+| API-04 | Phase 3 | Complete (`f2a1a91` / Phase B seed into `.tmp`) |
+| API-05 | Phase 3 | Complete (N1–N5 in `check:pages-api`) |
+| API-06 | Phase 3 | Complete (Phase A map allowlist + feed/Node strip) |
 | FE-01 | Phase 4 | Pending |
 | FE-02 | Phase 4 | Pending |
 | FE-03 | Phase 4 | Pending |
@@ -89,4 +89,4 @@
 
 ---
 *Requirements defined: 2026-08-03*
-*Last updated: 2026-08-03 after roadmap (ADM-04 → Phase 2 only)*
+*Last updated: 2026-08-03 — Phase 3 API-01…06 marked Complete after Phase E local gate*

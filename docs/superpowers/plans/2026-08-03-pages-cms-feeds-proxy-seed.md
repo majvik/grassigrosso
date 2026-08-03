@@ -1,7 +1,7 @@
 # Pages CMS Phase 3 — feeds, proxy & seed (execution plan)
 
 **Date:** 2026-08-03
-**Status:** IN PROGRESS — Phase A–C accepted; Phase D harness green (pending acceptance); Phase E next
+**Status:** DONE — Phase 3 complete locally (A–E); Phase 4 hydrate next. No push / no `strapi:sync-seed`.
 **Design:** [2026-08-03-pages-cms-feeds-proxy-seed-design.md](../specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md)
 **GSD phase:** `.planning/phases/03-feeds-proxy-seed/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -36,7 +36,8 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 | Phase A fix | `4ed8476` | PASS — texts isolation + Strapi utils |
 | Phase B | `npm run check:pages-cms-phase-b` | DONE — accepted (`f2a1a91`) |
 | Phase C | `npm run check:pages-cms-phase-c` | DONE — accepted (`26302bd`) |
-| Phase D | `npm run check:pages-api` + narrowed catalog-scope | DONE (harness) — pending user accept |
+| Phase D | `npm run check:pages-api` + narrowed catalog-scope | DONE — accepted (`ead6d4d`) |
+| Phase E | `npm run check:pages-cms-phase-e` + typecheck + build | DONE — isolation + full local gate |
 
 ---
 
@@ -193,6 +194,14 @@ Deliver Strapi page feeds, allowlisted Node `GET /api/pages/:slug` with fresh TT
 | `npm run check` | PASS |
 | `npm run typecheck` / `npm run build` | PASS |
 | Push / `strapi:sync-seed` | **not performed** |
+
+### Post-fix (2026-08-03)
+
+- Isolation: `check:pages-cms-isolation` — `src/` has no `:1337` / page-feed / `VITE_STRAPI_*`
+- Companion: `npm run check:pages-cms` (fast) / `check:pages-cms-phase-e` (full + `check:pages-api`)
+- Wired: `check:pages-cms-isolation` into `npm run check`
+- Evidence: `check:pages-cms-phase-e` PASS; `typecheck` PASS; `build` PASS; `git diff --check` PASS
+- REQUIREMENTS API-01…06 marked Complete; ROADMAP Phase 3 Complete (local only)
 
 ---
 

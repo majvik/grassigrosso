@@ -12,7 +12,7 @@ Milestone **v1.1** делает маркетинговые тексты волн
 
 - [x] **Phase 1: Shared Page Components** - Переиспользуемые `page.*` блоки с русскими лейблами
 - [x] **Phase 2: Wave 1 Single Types** - Single types страниц + расширение download-catalog + полный `ru.json`
-- [ ] **Phase 3: Feeds, Proxy & Seed** - Публичные feeds, `GET /api/pages/:slug`, snapshots, seed из React
+- [x] **Phase 3: Feeds, Proxy & Seed** - Публичные feeds, `GET /api/pages/:slug`, snapshots, seed из React
 - [ ] **Phase 4: React Hydrate** - Волны 1 страницы берут контент из Node API без поломки layout и email-routing
 - [ ] **Phase 5: Local Acceptance Gate** - Полное автотестовое покрытие и локальный green verify; без push/deploy
 - [ ] **Phase 6: Legal Pages** - Privacy / terms / cookies в CMS + hydrate `legal-content.tsx`
@@ -61,10 +61,10 @@ Plans:
   5. Браузер/фронт по-прежнему не ходит в Strapi напрямую за page-контентом
   6. Неизвестный slug получает 404; пустой/404 Strapi не затирает последний валидный snapshot; ответ содержит диагностический source
   7. Map iframe нормализован до allowlisted HTTPS URL на feed/proxy boundary; raw HTML не передаётся React
-**Plans**: 1 plan (REVISED — awaiting final affirm; no code until affirmed)
+**Plans**: 1 plan
 
 Plans:
-- [ ] 03-01-PLAN.md — Feeds, proxy, snapshots, seed ([design](../docs/superpowers/specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md), [execution](../docs/superpowers/plans/2026-08-03-pages-cms-feeds-proxy-seed.md))
+- [x] 03-01-PLAN.md — Feeds, proxy, snapshots, seed ([design](../docs/superpowers/specs/2026-08-03-pages-cms-feeds-proxy-seed-design.md), [execution](../docs/superpowers/plans/2026-08-03-pages-cms-feeds-proxy-seed.md)) — accepted through Phase E local gate 2026-08-03
 
 ### Phase 4: React Hydrate
 **Goal**: Публичные страницы волны 1 показывают CMS-контент через hydrate, сохраняя визуал и контракт email-форм.
@@ -121,8 +121,8 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Shared Page Components | 1/1 | Complete | 2026-08-03 |
-| 2. Wave 1 Single Types | 0/1 | In progress (Tasks 1–5 done; Task 6 next) | - |
-| 3. Feeds, Proxy & Seed | 0/TBD | Not started | - |
+| 2. Wave 1 Single Types | 1/1 | Complete (accepted) | 2026-08-03 |
+| 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) | 2026-08-03 |
 | 4. React Hydrate | 0/TBD | Not started | - |
 | 5. Local Acceptance Gate | 0/TBD | Not started | - |
 | 6. Legal Pages | 0/TBD | Not started | - |
