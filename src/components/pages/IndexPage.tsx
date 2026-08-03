@@ -1,5 +1,6 @@
 import { usePageCms } from '@/pages/use-page-cms'
 import {
+  INDEX_CERTIFICATION_CARDS,
   INDEX_HIDDEN_COLLECTION_NAMES,
   INDEX_PAGE_DEFAULTS,
   INDEX_PHILOSOPHY_DESCRIPTION,
@@ -291,7 +292,11 @@ export function IndexPage() {
         <h2 className="section-title">{data.testimonials_title}</h2>
         <div className="testimonials-grid">
           {data.testimonials.map((item, index) => (
-            <div className="testimonial-card" key={`${item.company}-${item.author_name}-${index}`}>
+            <div
+              className="testimonial-card"
+              data-testimonial-index={String(index)}
+              key={`${item.company}-${item.author_name}-${index}`}
+            >
               {item.tag ? <span className="testimonial-tag">{item.tag}</span> : null}
               <h3 className="testimonial-company">{item.company}</h3>
               <div className="testimonial-author">
@@ -313,35 +318,56 @@ export function IndexPage() {
             <img src="/arrow-medium.svg" alt="" className="arrow-medium" />
           </a>
         </div>
-        <div className="certification-grid">
-          {data.docs.map((doc) => (
+        <div className="certification-grid" data-certification-baseline="">
+          {INDEX_CERTIFICATION_CARDS.map((card) => (
             <div
               className="certification-card"
-              data-document={doc.document_key}
-              data-document-card=""
-              key={doc.document_key}
+              data-certification-baseline-card=""
+              key={card.title}
             >
               <div className="certification-image">
-                <img src="/document.svg" alt="" />
+                <img src={card.image} alt={card.image_alt} />
               </div>
               <div className="certification-content">
-                <h3 className="certification-title">{doc.title}</h3>
+                <h3 className="certification-title">{card.title}</h3>
                 <p className="certification-text">
-                  {doc.type_label}
-                  {doc.size_label ? ` · ${doc.size_label}` : ''}
+                  <MultilineText text={card.text} />
                 </p>
-                <a
-                  href="#"
-                  className="certification-link"
-                  data-document-request-trigger
-                  aria-label={doc.request_aria_label || doc.request_label || doc.title}
-                >
-                  {doc.request_label || 'ЗАПРОСИТЬ'}
-                </a>
               </div>
             </div>
           ))}
         </div>
+        {data.docs.length > 0 ? (
+          <div className="certification-docs" data-index-docs="">
+            {data.docs.map((doc) => (
+              <div
+                className="certification-card"
+                data-document={doc.document_key}
+                data-document-card=""
+                key={doc.document_key}
+              >
+                <div className="certification-image">
+                  <img src="/document.svg" alt="" />
+                </div>
+                <div className="certification-content">
+                  <h3 className="certification-title">{doc.title}</h3>
+                  <p className="certification-text">
+                    {doc.type_label}
+                    {doc.size_label ? ` · ${doc.size_label}` : ''}
+                  </p>
+                  <a
+                    href="#"
+                    className="certification-link"
+                    data-document-request-trigger
+                    aria-label={doc.request_aria_label || doc.request_label || doc.title}
+                  >
+                    {doc.request_label || 'ЗАПРОСИТЬ'}
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </section>
     </>
   )

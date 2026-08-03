@@ -653,6 +653,101 @@ function assertUnchanged(fallback, before, label) {
   assert(updates === 1, 'cancelled guard must not run')
 }
 
+// --- Phase B: defaults ↔ fixture ↔ snapshot CMS projection parity ---
+{
+  const defaultsOut = path.join(os.tmpdir(), `pages-cms-defaults-${process.pid}.mjs`)
+  await esbuild.build({
+    entryPoints: [path.join(root, 'src/components/pages/index-page-defaults.ts')],
+    bundle: true,
+    platform: 'node',
+    format: 'esm',
+    outfile: defaultsOut,
+    packages: 'bundle',
+    logLevel: 'silent',
+  })
+  const { INDEX_PAGE_DEFAULTS } = await import(pathToFileURL(defaultsOut).href)
+  try {
+    fs.unlinkSync(defaultsOut)
+  } catch {
+    /* ignore */
+  }
+
+  const indexProjection = JSON.parse(JSON.stringify(INDEX_PAGE_DEFAULTS))
+  const indexFixture = readFixture('index')
+  const indexSnap = JSON.parse(
+    fs.readFileSync(path.join(root, 'public/pages-index.snapshot.json'), 'utf8'),
+  )
+  assert(
+    deepEqual(indexProjection, indexFixture),
+    'index defaults CMS projection must equal fixture',
+  )
+  assert(
+    deepEqual(indexProjection, indexSnap),
+    'index defaults CMS projection must equal public snapshot (content-equal parity)',
+  )
+  assert(indexProjection.solutions.length === 3, 'index defaults: 3 solutions')
+  assert(indexProjection.philosophy_cards.length === 2, 'index defaults: 2 philosophy cards')
+  assert(indexProjection.collections.length === 5, 'index defaults: 5 collections')
+  assert(indexProjection.testimonials.length === 14, 'index defaults: 14 testimonials')
+
+  const dlDefaultsOut = path.join(os.tmpdir(), `pages-cms-dl-defaults-${process.pid}.mjs`)
+  await esbuild.build({
+    entryPoints: [path.join(root, 'src/components/pages/DownloadCatalogPage.tsx')],
+    bundle: true,
+    platform: 'node',
+    format: 'esm',
+    outfile: dlDefaultsOut,
+    packages: 'bundle',
+    logLevel: 'silent',
+    loader: { '.css': 'empty' },
+  })
+  const { DOWNLOAD_CATALOG_TEXT_DEFAULTS } = await import(pathToFileURL(dlDefaultsOut).href)
+  try {
+    fs.unlinkSync(dlDefaultsOut)
+  } catch {
+    /* ignore */
+  }
+  const dlProjection = JSON.parse(JSON.stringify(DOWNLOAD_CATALOG_TEXT_DEFAULTS))
+  const dlTextsFixture = readFixture('download-catalog')
+  const dlSnap = JSON.parse(
+    fs.readFileSync(path.join(root, 'public/pages-download-catalog.snapshot.json'), 'utf8'),
+  )
+  assert(deepEqual(dlProjection, dlSnap), 'download-catalog defaults must equal snapshot')
+  for (const key of Object.keys(dlProjection)) {
+    assert(
+      deepEqual(dlProjection[key], dlTextsFixture[key]),
+      `download-catalog fixture texts.${key} must match defaults`,
+    )
+  }
+}
+
+// --- catalog_pdf download href resolution ---
+{
+  const { resolveDocumentDownloadHref, isSafePublicDownloadUrl } = await import(
+    pathToFileURL(path.join(root, 'src/document-download.mjs')).href
+  )
+  assert(isSafePublicDownloadUrl('/uploads/x.pdf'), 'uploads pdf safe')
+  assert(!isSafePublicDownloadUrl('https://evil.example/x.pdf'), 'external absolute unsafe')
+  assert(!isSafePublicDownloadUrl('javascript:alert(1)'), 'javascript unsafe')
+  const form = {
+    getAttribute: (name) => (name === 'data-catalog-pdf' ? '/uploads/cms-catalog.pdf' : null),
+    dataset: { catalogPdf: '/uploads/cms-catalog.pdf' },
+  }
+  assert(
+    resolveDocumentDownloadHref('catalog', form) === '/uploads/cms-catalog.pdf',
+    'catalog prefers CMS pdf',
+  )
+  assert(
+    resolveDocumentDownloadHref('catalog', { getAttribute: () => '', dataset: {} }) ===
+      '/api/download/catalog',
+    'catalog falls back to code-owned route',
+  )
+  assert(
+    resolveDocumentDownloadHref('presentation', form) === '/api/download/presentation',
+    'non-catalog ignores CMS pdf attr',
+  )
+}
+
 // --- Source isolation ---
 {
   const apiSrc = fs.readFileSync(path.join(root, 'src/pages/pages-api.ts'), 'utf8')
@@ -671,5 +766,6 @@ if (failures.length) {
 console.log('check:pages-cms-hydrate PASS')
 console.log(
   ' coverage=ok parity=6 schemaMedia=path lifecycle=timeout+json behaviorBound=' +
-    Object.keys(BEHAVIOR_ARRAY_ITEMS).length,
+    Object.keys(BEHAVIOR_ARRAY_ITEMS).length +
+    ' defaultsParity=ok catalogPdf=ok',
 )

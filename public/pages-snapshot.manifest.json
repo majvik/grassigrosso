@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-08-03T18:06:02.403Z",
+  "syncedAt": "2026-08-03T20:55:33.218Z",
   "slugs": [
     "index",
     "hotels",
@@ -9,7 +9,7 @@
     "download-catalog"
   ],
   "sha256BySlug": {
-    "index": "291676920817af0d5bc8aefc5da0cda4a9b6e0e26538289f07aa722c2ca9dfe3",
+    "index": "0820704d1ec6607698415b531c3d71b86f120d5999fafe41d4f071e729664e0f",
     "hotels": "54f6cbf85744425c319031d60b490ec1edd1b542dd12ee3c2cc6e08d1f63d31f",
     "dealers": "5ae1af4da85dcb0c4c3959351b2694ee5cc7d0245a39d7e520b1c3ba083ba4da",
     "contacts": "d2baad9e90aadb14635601e9de7afce88733ff52d217b4e9d774a8a3df7b5fe1",

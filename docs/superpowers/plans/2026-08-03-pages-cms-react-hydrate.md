@@ -1,7 +1,7 @@
 # Pages CMS Phase 4 — React hydrate (execution plan)
 
 **Date:** 2026-08-03
-**Status:** Phase A accepted (`686c584` + hydrate import fix); Phase B DONE (local) — awaiting accept. No push / no `strapi:sync-seed`.
+**Status:** Phase A accepted; Phase B harden DONE (local) — awaiting accept. No push / no `strapi:sync-seed`.
 **Design:** [2026-08-03-pages-cms-react-hydrate-design.md](../specs/2026-08-03-pages-cms-react-hydrate-design.md)
 **GSD phase:** `.planning/phases/04-react-hydrate/`
 **Locality:** local commits only; **no push / PR / deploy**; **no `strapi:sync-seed`** unless separately requested
@@ -34,7 +34,7 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 | Design + plan draft v1 | Option B sketch | superseded by v2 |
 | Design + plan draft v2 | merge/lifecycle/DOM locks | affirmed |
 | Phase A | client + merge + unit harness | DONE — accepted |
-| Phase B | index + download-catalog texts + DOM slice | DONE — awaiting accept |
+| Phase B | index + download-catalog texts + DOM slice | DONE — harden (parity/baseline/PDF) awaiting accept |
 | Phase C | hotels + dealers + DOM slice | not started |
 | Phase D | contacts + documents + map + DOM slice | not started |
 | Phase E | full unit + DOM (all 6) + FE-* docs | not started |
@@ -94,15 +94,17 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 
 - `IndexPage` + `DownloadCatalogPage` texts via `usePageCms`; slides path untouched
 - `INDEX_PAGE_DEFAULTS` / `DOWNLOAD_CATALOG_TEXT_DEFAULTS`; critical hooks preserved
-- `main.js` prefetch for `index` + `download-catalog`; `index.html` `data-page="index"`
-- `npm run check:pages-cms-hydrate-dom` — delayed / failure / success / FE-05 for both pages
-- Evidence: hydrate unit + DOM + isolation + typecheck PASS; no hotels/dealers/contacts/documents wiring
+- Fixtures + `public/pages-{index,download-catalog}.snapshot.json` synced from defaults (`pages:sync-defaults-fixtures`); unit gate defaults↔fixture↔snapshot
+- Code-owned `INDEX_CERTIFICATION_CARDS` (3) restored for first paint; CMS `docs` separate
+- `catalog_pdf` → `data-catalog-pdf` → `resolveDocumentDownloadHref` with `/api/download/catalog` fallback
+- DOM: delayed baseline counts; failure 404/503/network/invalid; success media/PDF; FE-05 top/left/width parity (section height stable)
+- Evidence: hydrate unit + DOM + isolation + typecheck PASS; no hotels/dealers/contacts/documents wiring; no seed/push
 
 ### Verify
 
 | Command | Expected |
 |---------|----------|
-| `check:pages-cms-hydrate` | PASS |
+| `check:pages-cms-hydrate` | PASS (incl. defaultsParity + catalogPdf) |
 | `check:pages-cms-hydrate-dom` (index + download-catalog) | PASS |
 | Isolation + typecheck | PASS |
 

@@ -176,7 +176,7 @@ export function DownloadCatalogPage() {
       </a>
 
       <div className="catalogue-new-shared-product-shell">
-        <div className={styles.media}>
+        <div className={styles.media} data-download-media="">
           <DownloadCatalogSlider />
         </div>
 

@@ -29,6 +29,38 @@ export type IndexCollectionCard = {
 /** Code-owned: keep these collection cards visually hidden (legacy carousel). */
 export const INDEX_HIDDEN_COLLECTION_NAMES = new Set(['Viva Natura'])
 
+/**
+ * Code-owned first-paint certification marketing cards (not CMS `docs`).
+ * CMS `docs` remain behavior-bound document hooks rendered separately.
+ */
+export type IndexCertificationCard = {
+  title: string
+  text: string
+  image: string
+  image_alt: string
+}
+
+export const INDEX_CERTIFICATION_CARDS: readonly IndexCertificationCard[] = [
+  {
+    title: 'Производство',
+    text: 'Проверенная временем система распределенного производства полного цикла с контролем качества на каждом этапе. Сертифицированные материалы от европейских поставщиков.',
+    image: '/production.svg',
+    image_alt: 'Производство',
+  },
+  {
+    title: 'Особенности сотрудничества',
+    text: 'Гарантированные сроки поставки 7-14 дней. Логистика по всей России. Расширенная гарантия на пружинные блоки до 5 лет. Техническая поддержка для B2B клиентов.',
+    image: '/cooperation.svg',
+    image_alt: 'Особенности сотрудничества',
+  },
+  {
+    title: 'Сертификация',
+    text: 'Мы предоставляем полный пакет документов и сертификатов соответствия на всю продукцию.\n\nПрозрачность требований, подтверждённые характеристики и единые стандарты качества для уверенной работы.',
+    image: '/certification.svg',
+    image_alt: 'Сертификация',
+  },
+]
+
 export type IndexDocumentCard = {
   document_key: string
   title: string

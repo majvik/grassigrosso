@@ -148,10 +148,19 @@ function attachBlurValidation(form) {
   })
 }
 
-function triggerDocumentDownload(docId) {
-  if (!docId) return
+import { resolveDocumentDownloadHref } from './document-download.mjs'
+
+/**
+ * Prefer hydrated CMS PDF on download-catalog forms; else code-owned /api/download/:id.
+ * Implementation lives in document-download.mjs.
+ */
+export { isSafePublicDownloadUrl, resolveDocumentDownloadHref } from './document-download.mjs'
+
+function triggerDocumentDownload(docId, form) {
+  const href = resolveDocumentDownloadHref(docId, form)
+  if (!href) return
   const link = document.createElement('a')
-  link.href = `/api/download/${encodeURIComponent(docId)}`
+  link.href = href
   link.rel = 'noopener'
   document.body.appendChild(link)
   link.click()
@@ -226,7 +235,7 @@ export function initContactForms() {
             ? 'Заявка отправлена! Начинается загрузка каталога.'
             : 'Заявка отправлена! Мы свяжемся с вами в ближайшее время.'
           showNotification(successMessage, 'success', submitBtn)
-          if (downloadDoc) triggerDocumentDownload(downloadDoc)
+          if (downloadDoc) triggerDocumentDownload(downloadDoc, form)
           form.reset()
           clearErrors(form)
         } else {

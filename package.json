@@ -25,6 +25,7 @@
     "check:pages-cms-isolation": "node scripts/check-pages-cms-isolation.mjs",
     "check:pages-cms-hydrate": "node scripts/check-pages-cms-hydrate.mjs",
     "check:pages-cms-hydrate-dom": "node scripts/check-pages-cms-hydrate-dom.mjs",
+    "pages:sync-defaults-fixtures": "node scripts/sync-pages-defaults-to-fixtures.mjs",
     "check:pages-cms": "node scripts/check-pages-cms.mjs",
     "check:pages-cms-phase-e": "PAGES_CMS_PHASE_E_FULL=1 node scripts/check-pages-cms.mjs",
     "check:pages-cms-phase-a": "node scripts/check-pages-cms-phase-a.mjs",

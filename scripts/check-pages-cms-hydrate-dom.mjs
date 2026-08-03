@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 /**
- * Phase 4B DOM hydrate gate — index + download-catalog only.
+ * Phase 4B DOM hydrate gate — index + download-catalog.
  *
- * Requires local Vite. Stubs window.fetch for /api/pages/:slug so Node/Strapi
- * need not serve page payloads during the gate.
+ * Requires local Vite. Stubs window.fetch for /api/pages/:slug.
  *
  * Env:
  *   CATALOG_UI_BASE_URL / PAGES_CMS_UI_BASE_URL — default http://127.0.0.1:5174
@@ -24,8 +23,14 @@ const baseUrl = String(
   process.env.PAGES_CMS_UI_BASE_URL || process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5174',
 ).replace(/\/+$/, '')
 const runBrowser = shouldRunBrowserSmoke(baseUrl)
-const OVERALL_TIMEOUT_MS = Number(process.env.PAGES_CMS_HYDRATE_DOM_TIMEOUT_MS || 120000)
+const OVERALL_TIMEOUT_MS = Number(process.env.PAGES_CMS_HYDRATE_DOM_TIMEOUT_MS || 180000)
 const PHASE_PAGES = ['index', 'download-catalog']
+const FAILURE_MODES = [
+  { id: '404', mock: { mode: 'fail', status: 404 } },
+  { id: '503', mock: { mode: 'fail', status: 503 } },
+  { id: 'network', mock: { mode: 'network' } },
+  { id: 'invalid', mock: { mode: 'invalid-json' } },
+]
 
 const failures = []
 let session = null
@@ -76,7 +81,7 @@ function pagePath(slug) {
   return slug === 'index' ? '/' : `/${slug}`
 }
 
-function loadDefaultsPayload(slug) {
+function loadParityPayload(slug) {
   if (slug === 'index') {
     return JSON.parse(fs.readFileSync(path.join(ROOT, 'public/pages-index.snapshot.json'), 'utf8'))
   }
@@ -112,6 +117,13 @@ const FETCH_STUB_SOURCE = `(() => {
           headers: { 'Content-Type': 'application/json' },
         })
       }
+      if (next.mode === 'invalid-json') {
+        return new Response('{not-json', {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+      if (next.mode === 'network') throw new TypeError('Failed to fetch')
       return new Response(JSON.stringify({ error: 'held-timeout' }), {
         status: next.status || 503,
         headers: { 'Content-Type': 'application/json' },
@@ -129,6 +141,7 @@ const FETCH_STUB_SOURCE = `(() => {
         headers: { 'Content-Type': 'application/json' },
       })
     }
+    if (mock.mode === 'network') throw new TypeError('Failed to fetch')
     return new Response(JSON.stringify({ error: 'mocked-failure' }), {
       status: mock.status || 503,
       headers: { 'Content-Type': 'application/json' },
@@ -141,11 +154,13 @@ async function installFetchStub(cdp) {
 }
 
 async function setMock(evaluate, mock) {
-  const serialized = JSON.stringify(mock)
-  await evaluate(`window.__pagesCmsMock = ${serialized}`)
+  await evaluate(`window.__pagesCmsMock = ${JSON.stringify(mock)}`)
 }
 
-async function navigate(cdp, slug) {
+async function navigateWithMock(cdp, slug, mock) {
+  await cdp.send('Page.addScriptToEvaluateOnNewDocument', {
+    source: `${FETCH_STUB_SOURCE}; window.__pagesCmsMock = ${JSON.stringify(mock)};`,
+  })
   const url = `${baseUrl}${pagePath(slug)}`
   await cdp.send('Page.navigate', { url })
   await waitFor(
@@ -160,34 +175,7 @@ async function navigate(cdp, slug) {
     `!!document.querySelector('[data-react-root][data-react-page="${slug === 'index' ? 'index' : 'download-catalog'}"]')`,
     20000,
   )
-  // Ensure stub present even if addScript raced (SPA soft nav unlikely; belt-and-suspenders).
   await cdp.evaluate(FETCH_STUB_SOURCE)
-}
-
-function criticalHooksExpr(slug) {
-  if (slug === 'index') {
-    return `(() => ({
-      commercial: !!document.querySelector('#heroCommercialOfferLink'),
-      play: !!document.querySelector('.hero-play-btn'),
-      presentation: !!document.querySelector('[data-document="presentation"]'),
-      heroTitle: (document.querySelector('.hero-title')?.textContent || '').replace(/\\s+/g, ' ').trim(),
-      mainText: (document.querySelector('main')?.innerText || '').trim().length,
-      rawHtml: document.documentElement.innerHTML.includes('map_iframe_html'),
-    }))()`
-  }
-  return `(() => ({
-    downloadDoc: !!document.querySelector('[data-download-doc="catalog"]'),
-    form: !!document.querySelector('[data-contact-form]'),
-    name: !!document.querySelector('#name'),
-    phone: !!document.querySelector('#phone'),
-    email: !!document.querySelector('#email'),
-    privacy: !!document.querySelector('#privacy'),
-    honeypot: !!document.querySelector('#website'),
-    title: (document.querySelector('#download-catalog-title')?.textContent || '').trim(),
-    mainText: (document.querySelector('main')?.innerText || '').trim().length,
-    rawHtml: document.documentElement.innerHTML.includes('map_iframe_html'),
-    slide0: !!document.querySelector('#catalog-hero-slide-0'),
-  }))()`
 }
 
 function hooksReadyExpr(slug) {
@@ -196,8 +184,9 @@ function hooksReadyExpr(slug) {
       const commercial = !!document.querySelector('#heroCommercialOfferLink')
       const play = !!document.querySelector('.hero-play-btn')
       const presentation = !!document.querySelector('[data-document="presentation"]')
+      const baseline = document.querySelectorAll('[data-certification-baseline-card]').length
       const mainText = (document.querySelector('main')?.innerText || '').trim().length
-      return commercial && play && presentation && mainText > 20
+      return commercial && play && presentation && baseline === 3 && mainText > 20
     })()`
   }
   return `(() => {
@@ -208,6 +197,47 @@ function hooksReadyExpr(slug) {
     const mainText = (document.querySelector('main')?.innerText || '').trim().length
     return downloadDoc && form && honeypot && title.length > 0 && mainText > 20
   })()`
+}
+
+function criticalHooksExpr(slug) {
+  if (slug === 'index') {
+    return `(() => {
+      const baselineTitles = [...document.querySelectorAll('[data-certification-baseline-card] .certification-title')]
+        .map((el) => (el.textContent || '').trim())
+      return {
+        commercial: !!document.querySelector('#heroCommercialOfferLink'),
+        play: !!document.querySelector('.hero-play-btn'),
+        presentation: !!document.querySelector('[data-document="presentation"]'),
+        baselineCount: document.querySelectorAll('[data-certification-baseline-card]').length,
+        baselineTitles,
+        solutions: document.querySelectorAll('.solution-card').length,
+        collections: document.querySelectorAll('.collection-card').length,
+        testimonials: new Set(
+          [...document.querySelectorAll('.testimonial-card[data-testimonial-index]')].map((el) =>
+            el.getAttribute('data-testimonial-index'),
+          ),
+        ).size,
+        heroTitle: (document.querySelector('.hero-title')?.textContent || '').replace(/\\s+/g, ' ').trim(),
+        poster: document.querySelector('.hero-poster img')?.getAttribute('src') || '',
+        partners: document.querySelector('.partners-img-normal')?.getAttribute('src') || '',
+        mainText: (document.querySelector('main')?.innerText || '').trim().length,
+        rawHtml: document.documentElement.innerHTML.includes('map_iframe_html'),
+      }
+    })()`
+  }
+  return `(() => ({
+    downloadDoc: !!document.querySelector('[data-download-doc="catalog"]'),
+    form: !!document.querySelector('[data-contact-form]'),
+    honeypot: !!document.querySelector('#website'),
+    privacy: !!document.querySelector('#privacy'),
+    title: (document.querySelector('#download-catalog-title')?.textContent || '').trim(),
+    lead: (document.querySelector('[data-download-lead]')?.textContent || '').trim(),
+    submit: (document.querySelector('[data-contact-form] button[type="submit"]')?.textContent || '').trim(),
+    catalogPdf: document.querySelector('[data-contact-form]')?.getAttribute('data-catalog-pdf') || '',
+    slide0: !!document.querySelector('#catalog-hero-slide-0'),
+    mainText: (document.querySelector('main')?.innerText || '').trim().length,
+    rawHtml: document.documentElement.innerHTML.includes('map_iframe_html'),
+  }))()`
 }
 
 function geometryExpr(slug) {
@@ -234,104 +264,121 @@ function geometryExpr(slug) {
     return {
       title: box(document.querySelector('#download-catalog-title')),
       form: box(document.querySelector('[data-contact-form]')),
-      media: box(document.querySelector('.catalogue-new-shared-product-shell')),
+      media: box(document.querySelector('[data-download-media]')),
+      shell: box(document.querySelector('.catalogue-new-shared-product-shell')),
     }
   })()`
 }
 
-function within1px(a, b, keys = ['left', 'width']) {
+function withinPx(a, b, keys, tol = 1) {
   if (!a || !b) return false
-  return keys.every((k) => Math.abs((a[k] || 0) - (b[k] || 0)) <= 1)
+  return keys.every((k) => Math.abs((a[k] || 0) - (b[k] || 0)) <= tol)
+}
+
+function assertGeometryKeys(label, before, after, map) {
+  for (const [name, keys] of Object.entries(map)) {
+    assert(
+      withinPx(before?.[name], after?.[name], keys),
+      `${label}: ${name} drift ${JSON.stringify({ before: before?.[name], after: after?.[name], keys })}`,
+    )
+  }
+}
+
+function assertFirstPaintBaseline(slug, snap) {
+  if (slug === 'index') {
+    assert(snap?.baselineCount === 3, `${slug} baseline: expected 3 certification cards, got ${snap?.baselineCount}`)
+    assert(
+      snap?.baselineTitles?.includes('Производство') &&
+        snap?.baselineTitles?.includes('Особенности сотрудничества') &&
+        snap?.baselineTitles?.includes('Сертификация'),
+      `${slug} baseline: missing certification titles (${JSON.stringify(snap?.baselineTitles)})`,
+    )
+    assert(snap?.solutions === 3, `${slug} baseline: expected 3 solutions, got ${snap?.solutions}`)
+    assert(snap?.collections === 5, `${slug} baseline: expected 5 collections, got ${snap?.collections}`)
+    assert(snap?.testimonials === 14, `${slug} baseline: expected 14 testimonials, got ${snap?.testimonials}`)
+    assert(String(snap?.heroTitle || '').includes('Любовь с первого утра'), `${slug} baseline: hero title`)
+  } else {
+    assert(snap?.title === 'Скачать каталог', `${slug} baseline: title`)
+    assert(snap?.downloadDoc && snap?.honeypot && snap?.slide0, `${slug} baseline: hooks/slides`)
+    assert(!!snap?.catalogPdf, `${slug} baseline: data-catalog-pdf present`)
+  }
+  assert(!snap?.rawHtml, `${slug} baseline: map_iframe_html leaked`)
+  assert(snap?.mainText > 20, `${slug} baseline: empty main`)
 }
 
 async function runPageScenarios(slug) {
   const { cdp } = session
   const evaluate = (expression, timeoutMs) => cdp.evaluate(expression, timeoutMs)
-  const fallbackPayload = loadDefaultsPayload(slug)
+  const parityPayload = loadParityPayload(slug)
   const fallbackTitle =
-    slug === 'index' ? 'Любовь с первого утра' : fallbackPayload.title || 'Скачать каталог'
+    slug === 'index' ? 'Любовь с первого утра' : parityPayload.title || 'Скачать каталог'
 
-  // --- Delayed API ---
+  // --- Delayed API + first-paint baseline ---
   {
-    await setMock(evaluate, { mode: 'hold' })
-    // setMock before navigate won't stick across navigation — use addScript + set after load start.
-    // Re-install hold via evaluateOnNewDocument pattern: navigate with hold baked into stub default for this scenario.
-    await cdp.send('Page.addScriptToEvaluateOnNewDocument', {
-      source: `${FETCH_STUB_SOURCE}; window.__pagesCmsMock = { mode: 'hold' };`,
-    })
-    await navigate(cdp, slug)
+    await navigateWithMock(cdp, slug, { mode: 'hold' })
     await waitFor(evaluate, `${slug} delayed paint`, hooksReadyExpr(slug), 15000)
-
     const delayed = await evaluate(criticalHooksExpr(slug))
-    assert(delayed?.mainText > 20, `${slug} delayed: empty main`)
-    assert(!delayed?.rawHtml, `${slug} delayed: map_iframe_html leaked`)
-    if (slug === 'index') {
-      assert(delayed?.commercial && delayed?.play && delayed?.presentation, `${slug} delayed: missing critical hooks`)
-      assert(String(delayed?.heroTitle || '').includes(fallbackTitle), `${slug} delayed: hero title missing`)
-    } else {
-      assert(delayed?.downloadDoc && delayed?.form && delayed?.honeypot, `${slug} delayed: missing form hooks`)
-      assert(delayed?.title === fallbackTitle, `${slug} delayed: title mismatch (${delayed?.title})`)
-      assert(delayed?.slide0, `${slug} delayed: slide0 missing`)
-    }
-
+    assertFirstPaintBaseline(slug, delayed)
     const geoBefore = await evaluate(geometryExpr(slug))
-    await setMock(evaluate, { mode: 'json', status: 200, body: envelope(fallbackPayload) })
-    await delay(900)
+    await setMock(evaluate, { mode: 'json', status: 200, body: envelope(parityPayload) })
+    await delay(1000)
     const geoAfter = await evaluate(geometryExpr(slug))
     if (slug === 'index') {
-      assert(within1px(geoBefore?.cta, geoAfter?.cta), `${slug} delayed FE-05: CTA left/width drift`)
-      assert(within1px(geoBefore?.hero, geoAfter?.hero), `${slug} delayed FE-05: hero left/width drift`)
+      assertGeometryKeys(`${slug} delayed FE-05`, geoBefore, geoAfter, {
+        hero: ['top', 'left', 'width'],
+        cta: ['top', 'left', 'width'],
+        section: ['top', 'left', 'width'],
+      })
     } else {
-      assert(within1px(geoBefore?.form, geoAfter?.form), `${slug} delayed FE-05: form left/width drift`)
-      assert(within1px(geoBefore?.title, geoAfter?.title), `${slug} delayed FE-05: title left/width drift`)
+      assertGeometryKeys(`${slug} delayed FE-05`, geoBefore, geoAfter, {
+        title: ['top', 'left', 'width'],
+        form: ['top', 'left', 'width'],
+        media: ['top', 'left', 'width'],
+        shell: ['top', 'left', 'width'],
+      })
     }
-    console.log(`  ${slug} delayed: PASS`, JSON.stringify({ geoBefore, geoAfter }))
+    console.log(`  ${slug} delayed+baseline: PASS`, JSON.stringify({ geoBefore, geoAfter }))
   }
 
-  // --- Failure 503 ---
-  {
-    await cdp.send('Page.addScriptToEvaluateOnNewDocument', {
-      source: `${FETCH_STUB_SOURCE}; window.__pagesCmsMock = { mode: 'fail', status: 503 };`,
-    })
-    await navigate(cdp, slug)
-    await waitFor(evaluate, `${slug} failure paint`, hooksReadyExpr(slug), 15000)
-    await delay(500)
+  // --- Failure modes: 404 / 503 / network / invalid ---
+  for (const mode of FAILURE_MODES) {
+    await navigateWithMock(cdp, slug, mode.mock)
+    await waitFor(evaluate, `${slug} ${mode.id} paint`, hooksReadyExpr(slug), 15000)
+    await delay(400)
     const failed = await evaluate(criticalHooksExpr(slug))
-    assert(failed?.mainText > 20, `${slug} failure: blank main`)
+    assertFirstPaintBaseline(slug, failed)
     if (slug === 'index') {
-      assert(String(failed?.heroTitle || '').includes(fallbackTitle), `${slug} failure: lost fallback title`)
-      assert(failed?.commercial && failed?.presentation, `${slug} failure: lost hooks`)
+      assert(String(failed?.heroTitle || '').includes(fallbackTitle), `${slug} ${mode.id}: lost fallback title`)
     } else {
-      assert(failed?.title === fallbackTitle, `${slug} failure: lost fallback title`)
-      assert(failed?.downloadDoc && failed?.honeypot, `${slug} failure: lost hooks`)
+      assert(failed?.title === fallbackTitle, `${slug} ${mode.id}: lost fallback title`)
     }
-    assert(!failed?.rawHtml, `${slug} failure: map_iframe_html leaked`)
-    console.log(`  ${slug} failure: PASS`)
+    console.log(`  ${slug} failure:${mode.id}: PASS`)
   }
 
-  // --- Success divergent ---
+  // --- Success divergent (texts + media/PDF) ---
   {
-    const divergent = structuredClone(fallbackPayload)
+    const divergent = structuredClone(parityPayload)
+    let geoBaseline
+    await navigateWithMock(cdp, slug, { mode: 'hold' })
+    await waitFor(evaluate, `${slug} success baseline paint`, hooksReadyExpr(slug), 15000)
+    geoBaseline = await evaluate(geometryExpr(slug))
+
     if (slug === 'index') {
       divergent.hero = {
         ...divergent.hero,
         title: 'CMS Index Title Marker',
-        cta_label: divergent.hero?.cta_label || 'CTA',
+        poster: { url: '/uploads/cms-index-poster-marker.avif' },
+        poster_alt: divergent.hero?.poster_alt || 'Grassigrosso',
       }
+      divergent.partners_image_desktop = { url: '/uploads/cms-partners-marker.png' }
     } else {
       divergent.title = 'CMS Download Title Marker'
       divergent.submit_label = 'CMS Submit Marker'
       divergent.lead = 'CMS Lead Marker'
+      divergent.catalog_pdf = { url: '/uploads/cms-catalog-marker.pdf' }
     }
 
-    await cdp.send('Page.addScriptToEvaluateOnNewDocument', {
-      source: `${FETCH_STUB_SOURCE}; window.__pagesCmsMock = ${JSON.stringify({
-        mode: 'json',
-        status: 200,
-        body: envelope(divergent, 'strapi'),
-      })};`,
-    })
-    await navigate(cdp, slug)
+    await setMock(evaluate, { mode: 'json', status: 200, body: envelope(divergent, 'strapi') })
     if (slug === 'index') {
       await waitFor(
         evaluate,
@@ -348,50 +395,73 @@ async function runPageScenarios(slug) {
       )
     }
     const ok = await evaluate(criticalHooksExpr(slug))
+    const geoAfter = await evaluate(geometryExpr(slug))
     assert(!ok?.rawHtml, `${slug} success: map_iframe_html leaked`)
     if (slug === 'index') {
-      assert(ok?.commercial && ok?.play && ok?.presentation, `${slug} success: hooks changed/missing`)
-      const formGeo = await evaluate(geometryExpr(slug))
-      assert(formGeo?.cta && formGeo.cta.width > 0, `${slug} success: CTA geometry missing`)
-      console.log(`  ${slug} success geometry:`, JSON.stringify(formGeo))
+      assert(ok?.commercial && ok?.play && ok?.presentation, `${slug} success: hooks missing`)
+      assert(ok?.baselineCount === 3, `${slug} success: baseline cards must stay`)
+      assert(ok?.poster === '/uploads/cms-index-poster-marker.avif', `${slug} success: poster media not hydrated (${ok?.poster})`)
+      assert(
+        ok?.partners === '/uploads/cms-partners-marker.png',
+        `${slug} success: partners media not hydrated (${ok?.partners})`,
+      )
+      assertGeometryKeys(`${slug} success FE-05`, geoBaseline, geoAfter, {
+        cta: ['left', 'width'],
+        hero: ['left', 'width'],
+      })
     } else {
       assert(ok?.downloadDoc && ok?.form && ok?.honeypot && ok?.slide0, `${slug} success: hooks/slides missing`)
-      const lead = await evaluate(`document.querySelector('[data-download-lead]')?.textContent?.trim()`)
-      assert(lead === 'CMS Lead Marker', `${slug} success: lead not hydrated (${lead})`)
-      const submit = await evaluate(
-        `document.querySelector('[data-contact-form] button[type="submit"]')?.textContent?.trim()`,
+      assert(ok?.lead === 'CMS Lead Marker', `${slug} success: lead`)
+      assert(ok?.submit === 'CMS Submit Marker', `${slug} success: submit`)
+      assert(
+        ok?.catalogPdf === '/uploads/cms-catalog-marker.pdf',
+        `${slug} success: catalog_pdf attr (${ok?.catalogPdf})`,
       )
-      assert(submit === 'CMS Submit Marker', `${slug} success: submit not hydrated (${submit})`)
-      const formGeo = await evaluate(geometryExpr(slug))
-      assert(formGeo?.form && formGeo.form.width > 0, `${slug} success: form geometry missing`)
-      // Divergent copy: left/width of form chrome must hold vs delayed/failure geometry class
-      console.log(`  ${slug} success geometry:`, JSON.stringify(formGeo))
+      assertGeometryKeys(`${slug} success FE-05`, geoBaseline, geoAfter, {
+        form: ['left', 'width'],
+        media: ['left', 'width'],
+        shell: ['left', 'width'],
+      })
     }
-    console.log(`  ${slug} success: PASS`)
+    console.log(`  ${slug} success: PASS`, JSON.stringify({ geoBaseline, geoAfter }))
   }
 
-  // --- FE-05 parity (snapshot payload) ---
+  // --- FE-05 content-equal parity hydrate ---
   {
-    await cdp.send('Page.addScriptToEvaluateOnNewDocument', {
-      source: `${FETCH_STUB_SOURCE}; window.__pagesCmsMock = { mode: 'hold' };`,
-    })
-    await navigate(cdp, slug)
+    await navigateWithMock(cdp, slug, { mode: 'hold' })
     await waitFor(evaluate, `${slug} parity paint`, hooksReadyExpr(slug), 15000)
     const before = await evaluate(geometryExpr(slug))
-    await setMock(evaluate, { mode: 'json', status: 200, body: envelope(fallbackPayload) })
+    const beforeHooks = await evaluate(criticalHooksExpr(slug))
+    await setMock(evaluate, { mode: 'json', status: 200, body: envelope(parityPayload) })
     await delay(1000)
     const after = await evaluate(geometryExpr(slug))
+    const afterHooks = await evaluate(criticalHooksExpr(slug))
     if (slug === 'index') {
+      assertGeometryKeys(`${slug} FE-05 parity`, before, after, {
+        hero: ['top', 'left', 'width'],
+        cta: ['top', 'left', 'width'],
+        section: ['top', 'left', 'width'],
+      })
+      assert(beforeHooks?.solutions === afterHooks?.solutions, `${slug} parity: solutions count changed`)
       assert(
-        within1px(before?.cta, after?.cta),
-        `${slug} FE-05 parity: CTA left/width drift ${JSON.stringify({ before: before?.cta, after: after?.cta })}`,
+        beforeHooks?.testimonials === afterHooks?.testimonials,
+        `${slug} parity: testimonials count changed`,
+      )
+      assert(
+        Math.abs((before?.section?.height || 0) - (after?.section?.height || 0)) <= 1,
+        `${slug} parity: section height changed (not content-equal?) ${JSON.stringify({
+          before: before?.section,
+          after: after?.section,
+        })}`,
       )
     } else {
-      assert(within1px(before?.form, after?.form), `${slug} FE-05 parity: form left/width drift`)
-      assert(
-        within1px(before?.title, after?.title, ['left', 'width', 'top']),
-        `${slug} FE-05 parity: title drift`,
-      )
+      assertGeometryKeys(`${slug} FE-05 parity`, before, after, {
+        title: ['top', 'left', 'width'],
+        form: ['top', 'left', 'width'],
+        media: ['top', 'left', 'width'],
+        shell: ['top', 'left', 'width'],
+      })
+      assert(beforeHooks?.catalogPdf === afterHooks?.catalogPdf, `${slug} parity: catalog_pdf changed`)
     }
     console.log(`  ${slug} FE-05 parity: PASS`, JSON.stringify({ before, after }))
   }
@@ -436,7 +506,7 @@ try {
     process.exit(1)
   }
 
-  console.log('\npages-cms hydrate-dom PASS (index + download-catalog)')
+  console.log('\npages-cms hydrate-dom PASS (index + download-catalog harden)')
   cleanup()
   process.exit(0)
 } catch (err) {
