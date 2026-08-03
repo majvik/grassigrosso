@@ -8,11 +8,13 @@
   "attributes": {
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Название"
     },
     "href": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Ссылка"
     },
     "image": {
       "type": "media",
@@ -20,17 +22,20 @@
       "multiple": false,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "displayName": "Изображение"
     },
     "image_alt": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Alt изображения"
     },
     "features": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.list-item"
+      "component": "page.list-item",
+      "displayName": "Особенности"
     }
   }
 }

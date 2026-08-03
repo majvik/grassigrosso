@@ -8,19 +8,23 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок"
     },
     "title_tm": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Товарный знак в заголовке"
     },
     "description": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Описание"
     },
     "cta_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Текст кнопки"
     },
     "poster": {
       "type": "media",
@@ -28,11 +32,13 @@
       "multiple": false,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "displayName": "Постер"
     },
     "poster_alt": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Alt постера"
     },
     "video_desktop": {
       "type": "media",
@@ -40,7 +46,8 @@
       "multiple": false,
       "allowedTypes": [
         "videos"
-      ]
+      ],
+      "displayName": "Видео (десктоп)"
     },
     "video_mobile": {
       "type": "media",
@@ -48,7 +55,8 @@
       "multiple": false,
       "allowedTypes": [
         "videos"
-      ]
+      ],
+      "displayName": "Видео (мобильное)"
     }
   }
 }

@@ -8,47 +8,58 @@
   "attributes": {
     "slug": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Идентификатор"
     },
     "tab_label": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Подпись вкладки"
     },
     "badge": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Бейдж"
     },
     "city": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Город"
     },
     "region": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Регион"
     },
     "address": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Адрес"
     },
     "phone": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Телефон"
     },
     "phone_href": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Ссылка телефона"
     },
     "email": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Эл. почта"
     },
     "schedule": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Расписание"
     },
     "map_iframe_html": {
       "type": "text",
-      "required": true
+      "required": true,
+      "displayName": "HTML iframe карты"
     }
   }
 }

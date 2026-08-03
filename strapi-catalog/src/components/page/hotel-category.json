@@ -8,16 +8,19 @@
   "attributes": {
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Название"
     },
     "text": {
       "type": "text",
-      "required": true
+      "required": true,
+      "displayName": "Текст"
     },
     "active": {
       "type": "boolean",
       "required": false,
-      "default": false
+      "default": false,
+      "displayName": "Активна"
     }
   }
 }

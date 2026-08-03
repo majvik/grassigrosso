@@ -14,59 +14,71 @@
       "type": "component",
       "required": true,
       "repeatable": false,
-      "component": "page.hero-media"
+      "component": "page.hero-media",
+      "displayName": "Hero-блок"
     },
     "solutions_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок блока решений"
     },
     "solutions": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.solution-card"
+      "component": "page.solution-card",
+      "displayName": "Решения"
     },
     "philosophy_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок философии"
     },
     "philosophy_cards": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.solution-card"
+      "component": "page.solution-card",
+      "displayName": "Карточки философии"
     },
     "philosophy_presentation": {
       "type": "component",
       "required": false,
       "repeatable": false,
-      "component": "page.document-card"
+      "component": "page.document-card",
+      "displayName": "Презентация"
     },
     "collections_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок коллекций"
     },
     "collections_subtitle": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Подзаголовок коллекций"
     },
     "collections_link_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Текст ссылки коллекций"
     },
     "collections_link_href": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Ссылка коллекций"
     },
     "collections": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.collection-card"
+      "component": "page.collection-card",
+      "displayName": "Коллекции"
     },
     "partners_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок партнёров"
     },
     "partners_image_desktop": {
       "type": "media",
@@ -74,7 +86,8 @@
       "multiple": false,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "displayName": "Изображение партнёров (десктоп)"
     },
     "partners_image_mobile": {
       "type": "media",
@@ -82,27 +95,32 @@
       "multiple": false,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "displayName": "Изображение партнёров (мобильное)"
     },
     "testimonials_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок отзывов"
     },
     "testimonials": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.testimonial"
+      "component": "page.testimonial",
+      "displayName": "Отзывы"
     },
     "docs_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок документов"
     },
     "docs": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.document-card"
+      "component": "page.document-card",
+      "displayName": "Документы"
     }
   }
 }

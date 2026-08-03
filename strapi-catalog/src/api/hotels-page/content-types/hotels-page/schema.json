@@ -14,113 +14,137 @@
       "type": "component",
       "required": true,
       "repeatable": false,
-      "component": "page.hero"
+      "component": "page.hero",
+      "displayName": "Hero-блок"
     },
     "stats": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.stat"
+      "component": "page.stat",
+      "displayName": "Показатели"
     },
     "stats_note": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Примечание к показателям"
     },
     "categories_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок категорий"
     },
     "categories": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.hotel-category"
+      "component": "page.hotel-category",
+      "displayName": "Категории"
     },
     "products": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.hotel-product"
+      "component": "page.hotel-product",
+      "displayName": "Продукты"
     },
     "discount_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок скидок"
     },
     "discount_subtitle": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Подзаголовок скидок"
     },
     "discount_col_amount": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Колонка «Сумма»"
     },
     "discount_col_discount": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Колонка «Скидка»"
     },
     "discount_col_terms": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Колонка «Условия»"
     },
     "discount_rows": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.discount-row"
+      "component": "page.discount-row",
+      "displayName": "Строки скидок"
     },
     "discount_note": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Примечание к скидкам"
     },
     "contact_section_title": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Заголовок секции контактов"
     },
     "contact_form_title": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Заголовок формы"
     },
     "contact_submit_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Текст кнопки отправки"
     },
     "contact_info": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.contact-info"
+      "component": "page.contact-info",
+      "displayName": "Контактная информация"
     },
     "refresh_badge": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Бейдж Refresh"
     },
     "refresh_title": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Заголовок Refresh"
     },
     "refresh_description": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Описание Refresh"
     },
     "refresh_features": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.refresh-feature"
+      "component": "page.refresh-feature",
+      "displayName": "Пункты Refresh"
     },
     "refresh_cta_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Кнопка Refresh"
     },
     "faq_title": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Заголовок FAQ"
     },
     "faq_items": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.faq-item"
+      "component": "page.faq-item",
+      "displayName": "Вопросы FAQ"
     }
   }
 }

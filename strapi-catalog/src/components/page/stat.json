@@ -8,11 +8,13 @@
   "attributes": {
     "label": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Подпись"
     },
     "value": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Значение"
     }
   }
 }

@@ -8,19 +8,23 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок"
     },
     "value": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Значение"
     },
     "note": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Примечание"
     },
     "href": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Ссылка"
     },
     "icon_key": {
       "type": "enumeration",
@@ -29,7 +33,8 @@
         "phone",
         "email",
         "location"
-      ]
+      ],
+      "displayName": "Иконка"
     }
   }
 }

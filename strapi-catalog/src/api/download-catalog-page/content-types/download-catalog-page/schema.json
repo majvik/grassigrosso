@@ -12,47 +12,61 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок"
     },
     "lead": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Лид"
     },
     "submit_label": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Текст кнопки отправки"
     },
     "catalog_pdf": {
       "type": "media",
       "required": false,
-      "allowedTypes": ["files"],
-      "multiple": false
+      "allowedTypes": [
+        "files"
+      ],
+      "multiple": false,
+      "displayName": "PDF каталога"
     },
     "back_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Текст ссылки «Назад»"
     },
     "back_href": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Ссылка «Назад»"
     },
     "media_display_mode": {
       "type": "enumeration",
-      "enum": ["slider", "image_only"],
+      "enum": [
+        "slider",
+        "image_only"
+      ],
       "default": "slider",
-      "required": true
+      "required": true,
+      "displayName": "Отображение"
     },
     "slider_autoplay_ms": {
       "type": "integer",
       "required": false,
       "default": 6500,
-      "min": 2500
+      "min": 2500,
+      "displayName": "Автопрокрутка слайдера (мс)"
     },
     "slides": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "catalog.hero-slide"
+      "component": "catalog.hero-slide",
+      "displayName": "Слайды"
     }
   }
 }

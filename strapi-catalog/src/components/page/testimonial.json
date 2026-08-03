@@ -8,28 +8,34 @@
   "attributes": {
     "tag": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Тег"
     },
     "company": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Компания"
     },
     "author_name": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Имя автора"
     },
     "author_role": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Должность автора"
     },
     "rating": {
       "type": "integer",
       "required": false,
-      "default": 5
+      "default": 5,
+      "displayName": "Оценка"
     },
     "text": {
       "type": "text",
-      "required": true
+      "required": true,
+      "displayName": "Текст"
     }
   }
 }

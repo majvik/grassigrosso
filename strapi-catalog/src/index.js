@@ -21,6 +21,7 @@ const { cleanupOrphanGalleryComponents } = require('./api/catalog/utils/cleanup-
 const { seedDownloadCatalogPage } = require('./api/catalog/utils/seed-download-catalog');
 const { seedCatalogFilterHelpContent } = require('./api/catalog/utils/seed-catalog-filter-help-content');
 const { seedCatalogShareHelpContent } = require('./api/catalog/utils/seed-catalog-share-help-content');
+const { syncPagesCmsAdminLabels } = require('./api/catalog/utils/sync-pages-cms-admin-labels');
 
 module.exports = {
   register({ strapi }) {
@@ -460,6 +461,12 @@ module.exports = {
       await seedCatalogShareHelpContent(strapi);
     } catch (e) {
       strapi.log.warn(`Catalog bootstrap: share-help content seed skipped: ${e.message}`);
+    }
+
+    try {
+      await syncPagesCmsAdminLabels(strapi);
+    } catch (e) {
+      strapi.log.warn(`Catalog bootstrap: pages CMS admin label sync skipped: ${e.message}`);
     }
 
     strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products (${dualFirmnessFeatureLinked} dual-firmness feature links, ${fillingOptionsLinked} filling links from layers)`);

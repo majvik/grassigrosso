@@ -8,15 +8,18 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок"
     },
     "text": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Текст"
     },
     "href": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Ссылка"
     },
     "icon": {
       "type": "media",
@@ -24,7 +27,8 @@
       "multiple": false,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "displayName": "Иконка"
     }
   }
 }

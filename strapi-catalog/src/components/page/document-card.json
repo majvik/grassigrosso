@@ -8,27 +8,33 @@
   "attributes": {
     "document_key": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Ключ документа"
     },
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок"
     },
     "type_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Подпись типа"
     },
     "size_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Подпись размера"
     },
     "request_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Текст кнопки запроса"
     },
     "request_aria_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Подпись для скринридера"
     },
     "kind": {
       "type": "enumeration",
@@ -36,7 +42,8 @@
       "enum": [
         "certificate",
         "company"
-      ]
+      ],
+      "displayName": "Тип карточки"
     },
     "file": {
       "type": "media",
@@ -44,7 +51,8 @@
       "multiple": false,
       "allowedTypes": [
         "files"
-      ]
+      ],
+      "displayName": "Файл"
     }
   }
 }

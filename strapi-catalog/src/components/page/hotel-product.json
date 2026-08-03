@@ -8,15 +8,18 @@
   "attributes": {
     "catalog_key": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Ключ каталога"
     },
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок"
     },
     "description": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Описание"
     },
     "image": {
       "type": "media",
@@ -24,15 +27,18 @@
       "multiple": false,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "displayName": "Изображение"
     },
     "image_alt": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Alt изображения"
     },
     "cta_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Текст кнопки"
     }
   }
 }

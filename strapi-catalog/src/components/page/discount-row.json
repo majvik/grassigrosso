@@ -8,20 +8,24 @@
   "attributes": {
     "amount_label": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Сумма"
     },
     "discount_label": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Скидка"
     },
     "terms_label": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Условия"
     },
     "highlight": {
       "type": "boolean",
       "required": false,
-      "default": false
+      "default": false,
+      "displayName": "Выделить"
     }
   }
 }

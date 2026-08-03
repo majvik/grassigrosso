@@ -14,39 +14,47 @@
       "type": "component",
       "required": true,
       "repeatable": false,
-      "component": "page.hero"
+      "component": "page.hero",
+      "displayName": "Hero-блок"
     },
     "offices_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок офисов"
     },
     "offices": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.office"
+      "component": "page.office",
+      "displayName": "Офисы"
     },
     "map_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок карты"
     },
     "contact_section_title": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Заголовок секции контактов"
     },
     "contact_form_title": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Заголовок формы"
     },
     "contact_submit_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Текст кнопки отправки"
     },
     "contact_info": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.contact-info"
+      "component": "page.contact-info",
+      "displayName": "Контактная информация"
     }
   }
 }

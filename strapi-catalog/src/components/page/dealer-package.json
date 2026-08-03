@@ -13,34 +13,41 @@
         "standard",
         "individual",
         "exclusive"
-      ]
+      ],
+      "displayName": "Значение"
     },
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок"
     },
     "price": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Цена"
     },
     "form_option_label": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Подпись в форме"
     },
     "cta_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Текст кнопки"
     },
     "featured": {
       "type": "boolean",
       "required": false,
-      "default": false
+      "default": false,
+      "displayName": "Избранный"
     },
     "features": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.list-item"
+      "component": "page.list-item",
+      "displayName": "Особенности"
     }
   }
 }

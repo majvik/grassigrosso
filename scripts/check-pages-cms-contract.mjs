@@ -95,6 +95,53 @@ function expectedRuKeysForComponent(uid, attributes) {
   return keys
 }
 
+function expectedRuKeysForSingleType(uid, attributes) {
+  const api = `api::${uid}.${uid}`
+  const keys = []
+  for (const attrName of Object.keys(attributes)) {
+    keys.push(`content-manager.content-types.${api}.${attrName}`)
+    keys.push(`content-type-builder.content-types.${api}.attributes.${attrName}`)
+  }
+  return keys
+}
+
+function expectedEnumRuKeys(uid, attributes, { isComponent }) {
+  const keys = []
+  for (const [attrName, attr] of Object.entries(attributes || {})) {
+    if (attr.type !== 'enumeration' || !Array.isArray(attr.enum)) continue
+    for (const value of attr.enum) {
+      keys.push(
+        isComponent
+          ? `${uid}.${attrName}.${value}`
+          : `api::${uid}.${uid}.${attrName}.${value}`,
+      )
+    }
+  }
+  return keys
+}
+
+/** Full Wave 1 RU key list (components + single types + enums + displayNames). */
+function collectWave1RuKeys(c) {
+  const keys = new Set(['page'])
+  for (const uid of [...c.phase1Components, ...c.phase2Components]) {
+    const def = c.definitions.components[uid]
+    if (!def) continue
+    keys.add(def.displayName)
+    for (const key of expectedRuKeysForComponent(uid, def.attributes)) keys.add(key)
+    for (const key of expectedEnumRuKeys(uid, def.attributes, { isComponent: true })) keys.add(key)
+  }
+  for (const uid of c.phase2SingleTypes) {
+    const def = c.definitions.singleTypes[uid]
+    if (!def) continue
+    keys.add(def.displayName)
+    for (const key of expectedRuKeysForSingleType(uid, def.attributes)) keys.add(key)
+    for (const key of expectedEnumRuKeys(uid, def.attributes, { isComponent: false })) keys.add(key)
+  }
+  // Legacy English displayName for download-catalog still referenced historically
+  keys.add('Download catalog page')
+  return [...keys]
+}
+
 function validateAttrDef(prefix, def) {
   if (!def || typeof def !== 'object') {
     fail(`${prefix}: attribute definition missing`)
@@ -358,7 +405,7 @@ if (contract) {
 }
 
 assertPhase1Schemas()
-assertPhase1FullRu()
+assertWave1FullRu()
 assertDownloadPreserve(contract)
 
 function assertBasics(c) {
@@ -675,14 +722,29 @@ function assertPhase1Schemas() {
   }
 }
 
-function assertPhase1FullRu() {
+function assertWave1FullRu() {
   const ru = readJson('strapi-catalog/src/admin/translations/ru.json')
   if (!ru || !contract) return
-  for (const uid of contract.phase1Components) {
-    const def = contract.definitions.components[uid]
-    if (!def) continue
-    for (const key of expectedRuKeysForComponent(uid, def.attributes)) {
-      if (typeof ru[key] !== 'string' || !ru[key].trim()) fail(`ru.json missing Phase 1 key: ${key}`)
+  const required = collectWave1RuKeys(contract)
+  if (required.length < 100) {
+    fail(`Wave 1 RU key set unexpectedly small: ${required.length}`)
+  }
+  for (const key of required) {
+    if (typeof ru[key] !== 'string' || !ru[key].trim()) {
+      fail(`ru.json missing Wave 1 key: ${key}`)
+    }
+  }
+
+  // Negative regression: deleting one required key must be detected
+  const probeKey = 'content-manager.components.page.office.map_iframe_html'
+  if (!required.includes(probeKey)) {
+    fail('negative-check failed: RU probe key not in required Wave 1 set')
+  } else {
+    const probeRu = { ...ru }
+    delete probeRu[probeKey]
+    const misses = required.filter((k) => typeof probeRu[k] !== 'string' || !probeRu[k].trim())
+    if (!misses.includes(probeKey)) {
+      fail('negative-check failed: Wave 1 RU coverage did not detect removed key')
     }
   }
 }

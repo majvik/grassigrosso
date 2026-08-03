@@ -14,27 +14,32 @@
       "type": "component",
       "required": true,
       "repeatable": false,
-      "component": "page.hero"
+      "component": "page.hero",
+      "displayName": "Hero-блок"
     },
     "stats": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.stat"
+      "component": "page.stat",
+      "displayName": "Показатели"
     },
     "conditions_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок условий"
     },
     "conditions_subtitle": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Подзаголовок условий"
     },
     "conditions": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.list-item"
+      "component": "page.list-item",
+      "displayName": "Условия"
     },
     "conditions_icon": {
       "type": "media",
@@ -42,29 +47,35 @@
       "multiple": false,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "displayName": "Иконка условий"
     },
     "offers_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок предложений"
     },
     "offers_subtitle": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Подзаголовок предложений"
     },
     "offers": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.offer-card"
+      "component": "page.offer-card",
+      "displayName": "Предложения"
     },
     "geography_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок географии"
     },
     "geography_subtitle": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Подзаголовок географии"
     },
     "geography_map_image": {
       "type": "media",
@@ -72,21 +83,25 @@
       "multiple": false,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "displayName": "Карта географии"
     },
     "geography_cities": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.geo-city"
+      "component": "page.geo-city",
+      "displayName": "Города"
     },
     "quality_title": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Заголовок качества"
     },
     "quality_body": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Текст качества"
     },
     "quality_image": {
       "type": "media",
@@ -94,71 +109,86 @@
       "multiple": false,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "displayName": "Изображение качества"
     },
     "requirements_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок требований"
     },
     "requirements_subtitle": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Подзаголовок требований"
     },
     "requirements": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.requirement-card"
+      "component": "page.requirement-card",
+      "displayName": "Требования"
     },
     "packages_title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок пакетов"
     },
     "packages_subtitle": {
       "type": "text",
-      "required": false
+      "required": false,
+      "displayName": "Подзаголовок пакетов"
     },
     "packages": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.dealer-package"
+      "component": "page.dealer-package",
+      "displayName": "Пакеты"
     },
     "contact_section_title": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Заголовок секции контактов"
     },
     "contact_form_title": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Заголовок формы"
     },
     "contact_submit_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Текст кнопки отправки"
     },
     "contact_package_field_label": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Подпись поля пакета"
     },
     "contact_package_placeholder": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Плейсхолдер пакета"
     },
     "contact_info": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.contact-info"
+      "component": "page.contact-info",
+      "displayName": "Контактная информация"
     },
     "faq_title": {
       "type": "string",
-      "required": false
+      "required": false,
+      "displayName": "Заголовок FAQ"
     },
     "faq_items": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.faq-item"
+      "component": "page.faq-item",
+      "displayName": "Вопросы FAQ"
     }
   }
 }

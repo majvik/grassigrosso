@@ -8,7 +8,8 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "displayName": "Заголовок"
     },
     "icon": {
       "type": "media",
@@ -16,13 +17,15 @@
       "multiple": false,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "displayName": "Иконка"
     },
     "bullets": {
       "type": "component",
       "required": false,
       "repeatable": true,
-      "component": "page.list-item"
+      "component": "page.list-item",
+      "displayName": "Пункты"
     }
   }
 }
