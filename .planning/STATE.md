@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 2 Task 1 done — content contract + `check:pages-cms-contract`; schemas not started
+**Current focus:** Phase 2 Task 1 hard gate reworked — contract v2 + fixtures + strict harness; Task 2 schemas still blocked until acceptance
 
 ## Current Position
 
 Phase: 2 of 6 (Wave 1 Single Types)
-Plan: 02-01 in progress (Task 1 complete)
-Status: Content contract frozen; persistent harness green; ready for Task 2 schemas when continuing
-Last activity: 2026-08-03 — Wrote `02-CONTENT-CONTRACT.md` / JSON; added `npm run check:pages-cms-contract` (PASS, 121 rows)
+Plan: 02-01 in progress (Task 1 rework PASS; Task 2 not started)
+Status: Content contract v2 frozen; `check:pages-cms-contract` PASS (contract); typecheck PASS; ready for Task 2 only after user accepts hard gate
+Last activity: 2026-08-03 — Task 1 harness harden: recursive CMS paths, unknown fixture keys forbidden, strict full attr compare, negative checks, whitespace fix
 
 Progress: [██░░░░░░░░] 20%
 

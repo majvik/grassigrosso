@@ -1,0 +1,20 @@
+{
+  "title": "Скачать каталог",
+  "lead": "Оставьте контакты — пришлём PDF каталога.",
+  "submit_label": "Скачать каталог",
+  "catalog_pdf": {
+    "url": "/documents/Catalog_v1.2.pdf"
+  },
+  "back_label": "Назад в каталог",
+  "back_href": "/catalog",
+  "media_display_mode": "image_only",
+  "slider_autoplay_ms": 6500,
+  "slides": [
+    {
+      "slide_image": {
+        "url": "/uploads/download_catalog_cover_4eb40d86f8.avif"
+      },
+      "alt_text": "Каталог продукции Grassigrosso"
+    }
+  ]
+}

@@ -1,18 +1,26 @@
 #!/usr/bin/env node
 /**
- * Persistent Pages CMS contract + schema harness (Phase 2 gate).
+ * Pages CMS contract harness (Phase 2 Task 1 gate + optional strict schema mode).
  *
- * Always validates:
- * - content-contract JSON completeness (ADM-05)
- * - Phase 1 page.* component schemas still present
- * - RU keys for Phase 1 components
- * - download-catalog-page preserves required attributes
+ * Default mode (Task 1):
+ * - Validate content-contract.json structure, definitions, rows
+ * - Resolve CMS paths recursively through component definitions
+ * - Forbid TBD / OR / wildcard / compound pseudo-paths
+ * - Require fixtures for all 6 pages; reject unknown keys; validate against definitions
+ * - Validate Phase 1 component schemas + full Phase 1 RU CM+CTB keys
+ * - Preserve download-catalog attributes
+ * - Built-in negative checks (bad nested path, extra fixture key, schema type mismatch)
+ * - Do NOT treat Phase 1 / existing download-catalog as Phase 2 progress
  *
- * When Phase 2 schemas exist, additionally validates:
- * - required components / single types from contract
- * - representative fixtures under scripts/fixtures/pages-cms/ (if present)
+ * Strict schema mode (Task 2+):
+ * - Enabled when PAGES_CMS_SCHEMA_MODE=strict OR any phase2-only schema file exists
+ * - Requires EVERY phase2Components + phase2SingleTypes schema file
+ * - Compares full normalized attribute contract (type/required/repeatable/component/allowedTypes/enum/default)
+ * - Missing any required Phase 2 schema → FAIL
  *
- * Usage: npm run check:pages-cms-contract
+ * Usage:
+ *   npm run check:pages-cms-contract
+ *   PAGES_CMS_SCHEMA_MODE=strict npm run check:pages-cms-contract
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -26,156 +34,532 @@ function abs(...parts) {
   return path.join(root, ...parts)
 }
 
+function fail(message) {
+  failures.push(message)
+}
+
 function readJson(rel) {
   const file = abs(rel)
   if (!fs.existsSync(file)) {
-    failures.push(`Missing JSON: ${rel}`)
+    fail(`Missing JSON: ${rel}`)
     return null
   }
   try {
     return JSON.parse(fs.readFileSync(file, 'utf8'))
   } catch (error) {
-    failures.push(`Invalid JSON ${rel}: ${error.message}`)
+    fail(`Invalid JSON ${rel}: ${error.message}`)
     return null
   }
 }
 
-function assert(cond, message) {
-  if (!cond) failures.push(message)
+function componentRel(uid) {
+  const [ns, ...rest] = uid.split('.')
+  const name = rest.join('.')
+  return `strapi-catalog/src/components/${ns}/${name}.json`
+}
+
+function singleTypeRel(uid) {
+  return `strapi-catalog/src/api/${uid}/content-types/${uid}/schema.json`
+}
+
+function isForbiddenCmsPath(cms) {
+  if (typeof cms !== 'string' || !cms.trim()) return 'empty'
+  if (/\bTBD\b/i.test(cms)) return 'contains TBD'
+  if (cms.includes('|')) return 'contains OR (|)'
+  if (cms.includes('*')) return 'contains wildcard (*)'
+  if (/\s/.test(cms)) return 'contains whitespace / pseudo phrase'
+  if (!/^[a-z0-9-]+(?:\.[a-z0-9_]+)+$/i.test(cms)) return 'not dotted path root.attr...'
+  return null
+}
+
+function expectedRuKeysForComponent(uid, attributes) {
+  const keys = []
+  for (const attrName of Object.keys(attributes)) {
+    keys.push(`content-manager.components.${uid}.${attrName}`)
+    keys.push(`content-type-builder.components.${uid}.attributes.${attrName}`)
+  }
+  return keys
+}
+
+function validateAttrDef(prefix, def) {
+  if (!def || typeof def !== 'object') {
+    fail(`${prefix}: attribute definition missing`)
+    return
+  }
+  if (!def.type) fail(`${prefix}: type required`)
+  if (typeof def.required !== 'boolean') fail(`${prefix}: required boolean required`)
+  if (def.type === 'media') {
+    if (!Array.isArray(def.allowedTypes) || def.allowedTypes.length === 0) {
+      fail(`${prefix}: media.allowedTypes required`)
+    }
+  }
+  if (def.type === 'component') {
+    if (!def.component) fail(`${prefix}: component uid required`)
+    if (def.repeatable != null && typeof def.repeatable !== 'boolean') {
+      fail(`${prefix}: repeatable must be boolean when set`)
+    }
+  }
+  if (def.type === 'enumeration') {
+    if (!Array.isArray(def.enum) || def.enum.length === 0) fail(`${prefix}: enum required`)
+  }
+}
+
+/**
+ * Resolve dotted CMS path through single-type → nested component attributes.
+ * @returns {{ ok: true, attr: object, leafPath: string } | { ok: false, error: string }}
+ */
+function resolveCmsPath(contract, cmsPath) {
+  const parts = cmsPath.split('.')
+  if (parts.length < 2) {
+    return { ok: false, error: `path too short: ${cmsPath}` }
+  }
+  const rootName = parts[0]
+  const typeDef = contract.definitions.singleTypes[rootName]
+  if (!typeDef) {
+    return { ok: false, error: `cms root not in definitions.singleTypes: ${cmsPath}` }
+  }
+
+  let attributes = typeDef.attributes || {}
+  let attr = null
+  let leafPath = rootName
+
+  for (let i = 1; i < parts.length; i += 1) {
+    const name = parts[i]
+    leafPath = `${leafPath}.${name}`
+    attr = attributes[name]
+    if (!attr) {
+      return {
+        ok: false,
+        error: `cms path does not resolve (missing "${name}" under ${parts.slice(0, i).join('.')}): ${cmsPath}`,
+      }
+    }
+    if (i === parts.length - 1) {
+      return { ok: true, attr, leafPath }
+    }
+    if (attr.type !== 'component') {
+      return {
+        ok: false,
+        error: `cannot descend into non-component "${name}" (${attr.type}): ${cmsPath}`,
+      }
+    }
+    const child = contract.definitions.components[attr.component]
+    if (!child?.attributes) {
+      return {
+        ok: false,
+        error: `unknown component ref ${attr.component} at ${leafPath}: ${cmsPath}`,
+      }
+    }
+    attributes = child.attributes
+  }
+
+  return { ok: false, error: `unresolved path: ${cmsPath}` }
+}
+
+/** Normalize contract or Strapi schema attribute for strict structural compare. */
+function normalizeAttrContract(attr) {
+  if (!attr || typeof attr !== 'object') return null
+  const out = {
+    type: attr.type,
+    required: attr.required === true,
+  }
+  if (attr.type === 'component') {
+    out.component = attr.component
+    out.repeatable = attr.repeatable === true
+  }
+  if (attr.type === 'media') {
+    out.allowedTypes = [...(attr.allowedTypes || [])].map(String).sort()
+    out.multiple = attr.multiple === true
+  }
+  if (attr.type === 'enumeration') {
+    out.enum = [...(attr.enum || [])].map(String)
+  }
+  if (Object.prototype.hasOwnProperty.call(attr, 'default')) {
+    out.default = attr.default
+  }
+  return out
+}
+
+/**
+ * @returns {string|null} error message when mismatch
+ */
+function compareNormalizedAttrs(defAttr, schemaAttr, label) {
+  const expected = normalizeAttrContract(defAttr)
+  const actual = normalizeAttrContract(schemaAttr)
+  if (!expected) return `${label}: definition attr missing`
+  if (!actual) return `${label}: schema attr missing`
+  const expectedJson = JSON.stringify(expected)
+  const actualJson = JSON.stringify(actual)
+  if (expectedJson !== actualJson) {
+    return `${label}: attribute contract mismatch expected=${expectedJson} actual=${actualJson}`
+  }
+  return null
+}
+
+function collectFixtureObjectErrors(prefix, obj, attributes, components, errors) {
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+    errors.push(`${prefix}: expected object`)
+    return
+  }
+  for (const key of Object.keys(obj)) {
+    if (!Object.prototype.hasOwnProperty.call(attributes, key)) {
+      errors.push(`${prefix}: unknown fixture key "${key}"`)
+    }
+  }
+  for (const [name, def] of Object.entries(attributes)) {
+    collectFixtureValueErrors(`${prefix}.${name}`, obj[name], def, components, errors)
+  }
+}
+
+function collectFixtureValueErrors(prefix, value, attrDef, components, errors) {
+  if (!attrDef) {
+    errors.push(`${prefix}: no attribute definition`)
+    return
+  }
+  if (value === undefined) {
+    if (attrDef.required) errors.push(`${prefix}: required value missing in fixture`)
+    return
+  }
+  if (attrDef.type === 'component') {
+    const childUid = attrDef.component
+    const childDef = components[childUid]
+    if (!childDef) {
+      errors.push(`${prefix}: unknown component ${childUid}`)
+      return
+    }
+    if (attrDef.repeatable) {
+      if (!Array.isArray(value)) {
+        errors.push(`${prefix}: expected array of ${childUid}`)
+        return
+      }
+      value.forEach((item, i) => {
+        collectFixtureObjectErrors(`${prefix}[${i}]`, item, childDef.attributes, components, errors)
+      })
+    } else {
+      collectFixtureObjectErrors(prefix, value, childDef.attributes, components, errors)
+    }
+    return
+  }
+  if (attrDef.type === 'media') {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      errors.push(`${prefix}: media fixture must be { url: string }`)
+      return
+    }
+    for (const key of Object.keys(value)) {
+      if (key !== 'url') errors.push(`${prefix}: unknown media fixture key "${key}"`)
+    }
+    if (typeof value.url !== 'string') errors.push(`${prefix}: media.url must be string`)
+    return
+  }
+  if (attrDef.type === 'boolean' && typeof value !== 'boolean') errors.push(`${prefix}: expected boolean`)
+  if (attrDef.type === 'integer' && typeof value !== 'number') errors.push(`${prefix}: expected number`)
+  if (
+    (attrDef.type === 'string' || attrDef.type === 'text' || attrDef.type === 'enumeration') &&
+    typeof value !== 'string'
+  ) {
+    errors.push(`${prefix}: expected string`)
+  }
+  if (attrDef.type === 'enumeration' && Array.isArray(attrDef.enum) && !attrDef.enum.includes(value)) {
+    errors.push(`${prefix}: value not in enum ${attrDef.enum.join('|')}`)
+  }
 }
 
 const contractRel = '.planning/phases/02-wave-1-single-types/02-content-contract.json'
 const contractMdRel = '.planning/phases/02-wave-1-single-types/02-CONTENT-CONTRACT.md'
 const contract = readJson(contractRel)
+if (!fs.existsSync(abs(contractMdRel))) fail(`Missing ${contractMdRel}`)
 
-assert(fs.existsSync(abs(contractMdRel)), `Missing ${contractMdRel}`)
+let mode = 'contract'
+let phase2OnlyPresent = 0
 
 if (contract) {
-  assert(Array.isArray(contract.pages) && contract.pages.length === 6, 'contract.pages must list 6 pages')
-  assert(Array.isArray(contract.rows) && contract.rows.length > 0, 'contract.rows must be non-empty')
-  assert(Array.isArray(contract.requiredComponents), 'contract.requiredComponents required')
-  assert(Array.isArray(contract.requiredSingleTypes), 'contract.requiredSingleTypes required')
+  assertBasics(contract)
+  assertDefinitions(contract)
+  assertRows(contract)
+  assertFixtures(contract)
+  assertNegativeChecks(contract)
+  phase2OnlyPresent = countExistingPhase2Schemas(contract)
+  if (process.env.PAGES_CMS_SCHEMA_MODE === 'strict' || phase2OnlyPresent > 0) {
+    mode = 'strict-schemas'
+    assertAllPhase2Schemas(contract)
+  }
+}
 
+assertPhase1Schemas()
+assertPhase1FullRu()
+assertDownloadPreserve(contract)
+
+function assertBasics(c) {
+  if (c.version < 2) fail('contract.version must be >= 2')
+  if (!Array.isArray(c.pages) || c.pages.length !== 6) fail('contract.pages must list exactly 6 pages')
+  if (!Array.isArray(c.phase1Components) || c.phase1Components.length !== 4) {
+    fail('phase1Components must list 4 Phase 1 UIDs')
+  }
+  if (!Array.isArray(c.phase2Components) || c.phase2Components.length === 0) fail('phase2Components required')
+  if (!Array.isArray(c.phase2SingleTypes) || c.phase2SingleTypes.length === 0) fail('phase2SingleTypes required')
+  if (!c.definitions?.components || !c.definitions?.singleTypes) fail('definitions.components/singleTypes required')
+  if (!Array.isArray(c.rows) || c.rows.length === 0) fail('rows required')
+  if (!c.fixtures || typeof c.fixtures !== 'object') fail('fixtures map required')
+  const office = c.definitions.components['page.office']
+  if (!office?.attributes?.map_iframe_html || office.attributes.map_iframe_html.required !== true) {
+    fail('page.office.map_iframe_html must be required text (CMS map source of truth)')
+  }
+  for (const forbidden of ['lat', 'lng', 'latitude', 'longitude', 'zoom', 'balloon']) {
+    if (office?.attributes?.[forbidden]) {
+      fail(`page.office must not expose ${forbidden} as CMS attribute`)
+    }
+  }
+  if (c.definitions.singleTypes['contacts-page']?.attributes?.mapSeed) {
+    fail('contacts-page.mapSeed must not be a CMS single-type attribute')
+  }
+}
+
+function assertDefinitions(c) {
+  for (const uid of [...c.phase1Components, ...c.phase2Components]) {
+    if (!c.definitions.components[uid]) fail(`definitions.components missing ${uid}`)
+  }
+  for (const [uid, def] of Object.entries(c.definitions.components)) {
+    if (!def.displayName) fail(`${uid}: displayName required`)
+    if (!def.attributes || !Object.keys(def.attributes).length) fail(`${uid}: attributes required`)
+    for (const [name, attr] of Object.entries(def.attributes)) {
+      validateAttrDef(`definitions.components.${uid}.${name}`, attr)
+    }
+  }
+  for (const uid of c.phase2SingleTypes) {
+    const def = c.definitions.singleTypes[uid]
+    if (!def) {
+      fail(`definitions.singleTypes missing ${uid}`)
+      continue
+    }
+    if (!def.displayName) fail(`${uid}: displayName required`)
+    for (const [name, attr] of Object.entries(def.attributes || {})) {
+      validateAttrDef(`definitions.singleTypes.${uid}.${name}`, attr)
+    }
+  }
+  for (const [uid, def] of Object.entries(c.definitions.components)) {
+    for (const [name, attr] of Object.entries(def.attributes || {})) {
+      if (attr.type === 'component' && !c.definitions.components[attr.component]) {
+        fail(`${uid}.${name}: unknown component ref ${attr.component}`)
+      }
+    }
+  }
+  for (const [uid, def] of Object.entries(c.definitions.singleTypes)) {
+    for (const [name, attr] of Object.entries(def.attributes || {})) {
+      if (attr.type === 'component' && !c.definitions.components[attr.component]) {
+        fail(`${uid}.${name}: unknown component ref ${attr.component}`)
+      }
+    }
+  }
+  if (!c.definitions.components['catalog.hero-slide']) {
+    fail('definitions.components must include existing catalog.hero-slide for download-catalog slides')
+  }
+}
+
+function assertRows(c) {
   const pagesSeen = new Set()
-  for (const [index, row] of contract.rows.entries()) {
-    const prefix = `rows[${index}]`
-    assert(row && typeof row === 'object', `${prefix}: must be object`)
-    if (!row) continue
-    assert(typeof row.page === 'string' && row.page, `${prefix}: page required`)
-    assert(typeof row.section === 'string' && row.section, `${prefix}: section required`)
-    assert(typeof row.source === 'string' && row.source, `${prefix}: source required`)
-    assert(row.ownership === 'cms' || row.ownership === 'code', `${prefix}: ownership must be cms|code`)
+  for (const [index, row] of c.rows.entries()) {
+    const p = `rows[${index}]`
+    if (!row || typeof row !== 'object') {
+      fail(`${p}: must be object`)
+      continue
+    }
+    if (!c.pages.includes(row.page)) fail(`${p}: unknown page ${row.page}`)
     pagesSeen.add(row.page)
-
+    if (!row.section || !row.source) fail(`${p}: section/source required`)
+    if (/\bTBD\b/i.test(JSON.stringify(row))) fail(`${p}: contains TBD`)
     if (row.ownership === 'cms') {
-      assert(typeof row.cms === 'string' && row.cms.trim(), `${prefix}: cms field required for cms ownership`)
-      assert(!row.reason, `${prefix}: code reason must be empty for cms ownership`)
+      const bad = isForbiddenCmsPath(row.cms)
+      if (bad) {
+        fail(`${p}: invalid cms path (${bad}): ${row.cms}`)
+      } else {
+        const resolved = resolveCmsPath(c, row.cms)
+        if (!resolved.ok) fail(`${p}: ${resolved.error}`)
+        if (/(^|\.)(lat|lng|latitude|longitude|zoom|balloon)(\.|$)/i.test(row.cms)) {
+          fail(`${p}: lat/lng/zoom/balloon cannot be CMS-owned: ${row.cms}`)
+        }
+      }
+      if (row.reason) fail(`${p}: cms row must not have reason`)
+    } else if (row.ownership === 'code') {
+      if (row.cms != null) fail(`${p}: code row cms must be null`)
+      if (!row.reason || !String(row.reason).trim()) fail(`${p}: code reason required`)
     } else {
-      assert(row.cms === null || row.cms === undefined || row.cms === '', `${prefix}: cms must be null for code ownership`)
-      assert(typeof row.reason === 'string' && row.reason.trim(), `${prefix}: reason required for code ownership`)
+      fail(`${p}: ownership must be cms|code`)
+    }
+  }
+  for (const page of c.pages) {
+    if (!pagesSeen.has(page)) fail(`no rows for page ${page}`)
+  }
+}
+
+function assertFixtures(c) {
+  const components = c.definitions.components
+  for (const page of c.pages) {
+    const rel = c.fixtures?.[page]
+    if (!rel) {
+      fail(`fixtures.${page} path missing in contract`)
+      continue
+    }
+    const data = readJson(rel)
+    if (!data) continue
+    const typeUid = page === 'download-catalog' ? 'download-catalog-page' : `${page}-page`
+    const typeDef = c.definitions.singleTypes[typeUid]
+    if (!typeDef) {
+      fail(`no single type definition for fixture page ${page}`)
+      continue
+    }
+    const errors = []
+    collectFixtureObjectErrors(rel, data, typeDef.attributes, components, errors)
+    for (const error of errors) fail(error)
+  }
+}
+
+function assertNegativeChecks(c) {
+  const badNested = resolveCmsPath(c, 'index-page.hero.not_a_real_field')
+  if (badNested.ok) {
+    fail('negative-check failed: invalid nested CMS path unexpectedly resolved')
+  }
+
+  const heroDef = c.definitions.components['page.hero-media']
+  if (!heroDef) {
+    fail('negative-check failed: page.hero-media definition missing')
+  } else {
+    const extraErrors = []
+    collectFixtureObjectErrors(
+      'negative-fixture',
+      { title: 'x', bogus_extra_field: true },
+      heroDef.attributes,
+      c.definitions.components,
+      extraErrors,
+    )
+    if (!extraErrors.some((e) => /unknown fixture key "bogus_extra_field"/.test(e))) {
+      fail('negative-check failed: extra fixture key did not produce FAIL')
     }
   }
 
-  for (const page of contract.pages) {
-    assert(pagesSeen.has(page), `contract missing rows for page: ${page}`)
+  const typeMismatch = compareNormalizedAttrs(
+    { type: 'string', required: true },
+    { type: 'text', required: true },
+    'negative-schema',
+  )
+  if (!typeMismatch) {
+    fail('negative-check failed: schema type mismatch did not produce FAIL')
+  }
+
+  const requiredMismatch = compareNormalizedAttrs(
+    { type: 'string', required: true },
+    { type: 'string', required: false },
+    'negative-required',
+  )
+  if (!requiredMismatch) {
+    fail('negative-check failed: required mismatch did not produce FAIL')
   }
 }
 
-const phase1Components = {
-  'page.hero': 'strapi-catalog/src/components/page/hero.json',
-  'page.section': 'strapi-catalog/src/components/page/section.json',
-  'page.faq-item': 'strapi-catalog/src/components/page/faq-item.json',
-  'page.list-item': 'strapi-catalog/src/components/page/list-item.json',
+function countExistingPhase2Schemas(c) {
+  let n = 0
+  for (const uid of c.phase2Components) {
+    if (fs.existsSync(abs(componentRel(uid)))) n += 1
+  }
+  for (const uid of c.phase2SingleTypes) {
+    if (uid === 'download-catalog-page') continue
+    if (fs.existsSync(abs(singleTypeRel(uid)))) n += 1
+  }
+  return n
 }
 
-for (const [uid, rel] of Object.entries(phase1Components)) {
+function assertAllPhase2Schemas(c) {
+  for (const uid of c.phase2Components) {
+    const rel = componentRel(uid)
+    if (!fs.existsSync(abs(rel))) fail(`strict-schemas: missing component schema ${rel}`)
+    else assertSchemaMatchesDefinition(rel, c.definitions.components[uid], 'component')
+  }
+  for (const uid of c.phase2SingleTypes) {
+    const rel = singleTypeRel(uid)
+    if (!fs.existsSync(abs(rel))) fail(`strict-schemas: missing single type schema ${rel}`)
+    else assertSchemaMatchesDefinition(rel, c.definitions.singleTypes[uid], 'singleType')
+  }
+}
+
+function assertSchemaMatchesDefinition(rel, def, kind) {
   const schema = readJson(rel)
-  if (!schema) continue
-  assert(schema.collectionName, `${rel}: collectionName required`)
-  assert(schema.info?.displayName, `${rel}: info.displayName required`)
-  assert(schema.attributes && Object.keys(schema.attributes).length > 0, `${rel}: attributes required`)
-  if (uid === 'page.section') {
-    const items = schema.attributes.items
-    assert(items?.component === 'page.list-item', `${rel}: items must nest page.list-item`)
-    assert(items?.repeatable === true, `${rel}: items must be repeatable`)
+  if (!schema || !def) return
+  if (kind === 'singleType' && schema.kind !== 'singleType') fail(`${rel}: kind must be singleType`)
+  const defAttrs = def.attributes || {}
+  const schemaAttrs = schema.attributes || {}
+  for (const name of Object.keys(defAttrs)) {
+    if (!schemaAttrs[name]) {
+      fail(`${rel}: missing attribute ${name} from contract definition`)
+      continue
+    }
+    const mismatch = compareNormalizedAttrs(defAttrs[name], schemaAttrs[name], `${rel}.attributes.${name}`)
+    if (mismatch) fail(`strict-schemas: ${mismatch}`)
   }
-  if (uid === 'page.hero') {
-    assert(schema.attributes.image?.allowedTypes?.includes('images'), `${rel}: image must allow images`)
-  }
-}
-
-const ru = readJson('strapi-catalog/src/admin/translations/ru.json')
-if (ru) {
-  const phase1RuNeedles = [
-    'content-manager.components.page.hero.title',
-    'content-manager.components.page.section.title',
-    'content-manager.components.page.faq-item.question',
-    'content-manager.components.page.list-item.title',
-    'content-type-builder.components.page.hero.attributes.title',
-    'content-type-builder.components.page.section.attributes.title',
-    'content-type-builder.components.page.faq-item.attributes.question',
-    'content-type-builder.components.page.list-item.attributes.title',
-  ]
-  for (const key of phase1RuNeedles) {
-    assert(typeof ru[key] === 'string' && ru[key].trim(), `ru.json missing Phase 1 key: ${key}`)
+  for (const name of Object.keys(schemaAttrs)) {
+    if (!defAttrs[name]) {
+      fail(`${rel}: schema has attribute "${name}" not present in contract definition`)
+    }
   }
 }
 
-const downloadSchema = readJson(
-  'strapi-catalog/src/api/download-catalog-page/content-types/download-catalog-page/schema.json',
-)
-if (downloadSchema && contract) {
-  for (const attr of contract.downloadCatalogPreserveAttrs || []) {
-    assert(downloadSchema.attributes?.[attr], `download-catalog-page missing preserved attr: ${attr}`)
-  }
-}
-
-/** Optional Phase 2 schema assertions — only when files exist. */
-function componentPathFromUid(uid) {
-  const name = uid.replace(/^page\./, '')
-  return `strapi-catalog/src/components/page/${name}.json`
-}
-
-function singleTypePath(uid) {
-  return `strapi-catalog/src/api/${uid}/content-types/${uid}/schema.json`
-}
-
-let phase2SchemasPresent = 0
-if (contract) {
-  for (const uid of contract.requiredComponents) {
-    const rel = componentPathFromUid(uid)
-    if (!fs.existsSync(abs(rel))) continue
-    phase2SchemasPresent += 1
+function assertPhase1Schemas() {
+  if (!contract) return
+  for (const uid of contract.phase1Components) {
+    const rel = componentRel(uid)
     const schema = readJson(rel)
-    if (!schema) continue
-    assert(schema.info?.displayName, `${rel}: displayName required`)
-    assert(schema.attributes, `${rel}: attributes required`)
-  }
-  for (const uid of contract.requiredSingleTypes) {
-    const rel = singleTypePath(uid)
-    if (!fs.existsSync(abs(rel))) continue
-    phase2SchemasPresent += 1
-    const schema = readJson(rel)
-    if (!schema) continue
-    assert(schema.kind === 'singleType', `${rel}: kind must be singleType`)
-    assert(schema.info?.displayName, `${rel}: displayName required`)
-  }
-}
-
-const fixturesDir = abs('scripts/fixtures/pages-cms')
-if (fs.existsSync(fixturesDir)) {
-  const files = fs.readdirSync(fixturesDir).filter((name) => name.endsWith('.json'))
-  for (const name of files) {
-    readJson(path.join('scripts/fixtures/pages-cms', name))
+    const def = contract.definitions.components[uid]
+    if (!schema || !def) continue
+    if (!schema.info?.displayName) fail(`${rel}: displayName required`)
+    if (uid === 'page.section' && schema.attributes?.items?.component !== 'page.list-item') {
+      fail(`${rel}: items must nest page.list-item`)
+    }
+    for (const name of Object.keys(def.attributes || {})) {
+      if (!schema.attributes?.[name]) {
+        fail(`${rel}: missing Phase 1 attribute ${name}`)
+        continue
+      }
+      const mismatch = compareNormalizedAttrs(
+        def.attributes[name],
+        schema.attributes[name],
+        `${rel}.attributes.${name}`,
+      )
+      if (mismatch) fail(mismatch)
+    }
   }
 }
 
-const mode = phase2SchemasPresent > 0 ? 'contract+partial-schemas' : 'contract-only'
+function assertPhase1FullRu() {
+  const ru = readJson('strapi-catalog/src/admin/translations/ru.json')
+  if (!ru || !contract) return
+  for (const uid of contract.phase1Components) {
+    const def = contract.definitions.components[uid]
+    if (!def) continue
+    for (const key of expectedRuKeysForComponent(uid, def.attributes)) {
+      if (typeof ru[key] !== 'string' || !ru[key].trim()) fail(`ru.json missing Phase 1 key: ${key}`)
+    }
+  }
+}
+
+function assertDownloadPreserve(c) {
+  const schema = readJson(
+    'strapi-catalog/src/api/download-catalog-page/content-types/download-catalog-page/schema.json',
+  )
+  if (!schema || !c) return
+  for (const attr of c.downloadCatalogPreserveAttrs || []) {
+    if (!schema.attributes?.[attr]) fail(`download-catalog-page missing preserved attr: ${attr}`)
+  }
+}
+
 if (failures.length) {
   console.error(`check:pages-cms-contract FAILED (${mode})`)
-  for (const failure of failures) console.error(` - ${failure}`)
+  for (const f of failures) console.error(` - ${f}`)
   process.exit(1)
 }
 
 console.log(`check:pages-cms-contract PASS (${mode})`)
-console.log(` rows=${contract?.rows?.length ?? 0} phase1Components=4 phase2SchemaFilesTouched=${phase2SchemasPresent}`)
+console.log(
+  ` rows=${contract?.rows?.length ?? 0}` +
+    ` phase1Components=${contract?.phase1Components?.length ?? 0}` +
+    ` phase2Components=${contract?.phase2Components?.length ?? 0}` +
+    ` phase2OnlySchemaFiles=${phase2OnlyPresent}` +
+    ` fixtures=${Object.keys(contract?.fixtures || {}).length}` +
+    ` negativeChecks=ok`,
+)

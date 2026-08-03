@@ -1,0 +1,114 @@
+{
+  "hero": {
+    "title": "Любовь с первого утра",
+    "title_tm": "Ⓒ",
+    "description": "Мы создаем продуманные системы для сна и естественного восстановления, чтобы каждое утро начиналось легко и спокойно.",
+    "cta_label": "Получить подробную информацию",
+    "poster": {
+      "url": "/grassigrosso-poster.avif"
+    },
+    "poster_alt": "Grassigrosso",
+    "video_desktop": {
+      "url": "/grassigrosso-silent.mp4"
+    },
+    "video_mobile": {
+      "url": "/grassigrosso-silent-mobile.mp4"
+    }
+  },
+  "solutions_title": "Решения для бизнеса",
+  "solutions": [
+    {
+      "title": "Отелям",
+      "text": "Комплексные решения для гостиничного бизнеса",
+      "href": "/hotels",
+      "icon": {
+        "url": "/icon-hotels.svg"
+      }
+    },
+    {
+      "title": "Дилерам",
+      "text": "Партнёрская программа",
+      "href": "/dealers",
+      "icon": {
+        "url": "/icon-dealers.svg"
+      }
+    }
+  ],
+  "philosophy_title": "Наша философия",
+  "philosophy_cards": [
+    {
+      "title": "Качество",
+      "text": "Контроль на каждом этапе",
+      "href": "",
+      "icon": {
+        "url": "/icon-quality.svg"
+      }
+    }
+  ],
+  "philosophy_presentation": {
+    "document_id": "presentation",
+    "title": "Презентация компании",
+    "type_label": "PDF документ",
+    "size_label": "",
+    "request_label": "Запросить",
+    "request_aria_label": "Запросить презентацию компании",
+    "kind": "company",
+    "file": {
+      "url": "/documents/presentation.pdf"
+    }
+  },
+  "collections_title": "Коллекции",
+  "collections_subtitle": "Линейки матрасов Grassigrosso",
+  "collections_link_label": "В каталог",
+  "collections_link_href": "/catalog",
+  "collections": [
+    {
+      "name": "Classic",
+      "href": "/catalog",
+      "image": {
+        "url": "/collection-classic.png"
+      },
+      "image_alt": "Classic",
+      "features": [
+        {
+          "title": "Независимый блок",
+          "text": "",
+          "href": ""
+        }
+      ]
+    }
+  ],
+  "partners_title": "Партнеры и технологии",
+  "partners_image_desktop": {
+    "url": "/partners-desktop.png"
+  },
+  "partners_image_mobile": {
+    "url": "/partners-mobile.png"
+  },
+  "testimonials_title": "Нам доверяют",
+  "testimonials": [
+    {
+      "tag": "Дилер",
+      "company": "Кубань Матрас",
+      "author_name": "Иван",
+      "author_role": "Директор",
+      "rating": 5,
+      "text": "Надёжный партнёр."
+    }
+  ],
+  "docs_title": "Сертификация и документация",
+  "docs": [
+    {
+      "document_id": "declaration",
+      "title": "Декларация о соответствии",
+      "type_label": "Декларация",
+      "size_label": "2.5 MB",
+      "request_label": "ЗАПРОСИТЬ",
+      "request_aria_label": "Запросить декларацию",
+      "kind": "certificate",
+      "file": {
+        "url": "/documents/Deklaraciya.pdf"
+      }
+    }
+  ]
+}

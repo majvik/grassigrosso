@@ -1,47 +1,48 @@
-# Phase 2 Content Contract
+# Content contract — Phase 2 Wave 1 (machine-readable)
 
-**Status:** FROZEN for schema design (ADM-05)  
-**Updated:** 2026-08-03  
-**Machine source of truth:** [`02-content-contract.json`](./02-content-contract.json)  
-**Gate:** `npm run check:pages-cms-contract`
+**Status:** Task 1 rework — hard gate for Task 2
+**Source of truth:** [`02-content-contract.json`](./02-content-contract.json)
+**Fixtures:** [`scripts/fixtures/pages-cms/`](../../../scripts/fixtures/pages-cms/)
+**Harness:** `npm run check:pages-cms-contract`
 
-## Purpose
+## Locked decisions
 
-Доказать lossless parity: каждое editor-facing значение текущих React-страниц волны 1 либо имеет CMS-поле, либо явно **CODE-OWNED** с причиной. Без unresolved rows схемы Phase 2 писать нельзя.
+- Ownership: `cms` | `code` only
+- CMS paths: exact dotted paths only (`root.attr…`); harness resolves recursively through component definitions
+- Forbidden: `TBD`, `|`, `*`, whitespace/pseudo phrases, compound aggregations
+- Map: **CMS = `page.office.map_iframe_html` via `contacts-page.offices[]` only**; Yandex lat/lng/zoom = temporary **code-owned** seed (`contacts-maps.js`), never a CMS attribute
+- Download Catalog: existing attrs preserved (`media_display_mode`, `slider_autoplay_ms`, `slides` → `catalog.hero-slide`); Wave 1 adds `title` / `lead` (text) / `submit_label` / `catalog_pdf`; no TBD render slots
+- Definitions: every Phase 1/2 component, existing `catalog.hero-slide`, and Wave 1 single types have attributes with `type` / `required` / `repeatable` / `allowedTypes` / `enum` / `default` as applicable
+- Fixtures: real JSON for six pages under `scripts/fixtures/pages-cms/`; unknown keys FAIL
 
-## Coverage
+## Harness modes
 
-| Page | CMS-owned groups | Code-owned (examples) |
-|------|------------------|------------------------|
-| Index | hero-media (video/poster/CTA), solutions, philosophy, collections cards, partners images, testimonials, docs cards | play button, collections nav, commercial-offer modal hook |
-| Hotels | hero, stats, categories, products+media, discount table, refresh program, FAQ, contact chrome | form field ids, email routing, commercial-offer / catalog modals |
-| Dealers | hero, stats, conditions, offers, geography cities (`page.geo-city[]`), quality, requirements, packages (`value` stable), FAQ, contact | package preset allowlist, form ids, email routing, map animation |
-| Contacts | hero, offices, map title, **per-office map embed**, contact chrome | map tab mechanics; Yandex loader until iframe migration; Phase 3 URL normalize (API-06) |
-| Documents | hero, certificate/company cards with **stable ids**, help, FAQ | `/api/download/:docId` filename map, help modal page label |
-| Download catalog | title, lead, submit_label, catalog_pdf, existing slides/mode/autoplay | slider chrome, form fields, `data-download-doc=catalog`, email routing |
+| Mode | When | Schema expectation |
+|------|------|--------------------|
+| `contract` | Task 1 (default) | Phase 1 schemas + RU full coverage + fixtures; Phase 2 schemas **not** required |
+| `strict-schemas` | `PAGES_CMS_SCHEMA_MODE=strict` **or** any Phase-2-only schema file appears | **All** `phase2Components` + `phase2SingleTypes` must exist; each attribute compared to contract (`type`/`required`/`repeatable`/`component`/`allowedTypes`/`enum`/`default`); missing any → FAIL |
 
-## Required structured components (beyond Phase 1)
+Phase 1 components and the pre-existing `download-catalog-page` are **never** counted as Phase 2 Task 2 progress.
 
-Phase 1 `page.section` / `page.list-item` **недостаточны**. Contract требует дополнительно:
+Built-in negative checks (must themselves FAIL correctly): bad nested CMS path, extra fixture key, schema type/required mismatch.
 
-`page.hero-media`, `page.stat`, `page.geo-city`, `page.office`, `page.document-card`, `page.contact-info`, `page.solution-card`, `page.collection-card`, `page.testimonial`, `page.hotel-category`, `page.hotel-product`, `page.discount-row`, `page.refresh-feature`, `page.offer-card`, `page.requirement-card`, `page.dealer-package`, `page.media-srcset`
+## Pages (6)
 
-## Contacts map decision
+`index` · `hotels` · `dealers` · `contacts` · `documents` · `download-catalog`
 
-**Current runtime:** `src/contacts-maps.js` mounts Yandex Maps JS with `center/zoom/title/address` per office.  
-**User decision:** iframe HTML задаётся в админке.  
-**Contract:** CMS field `page.office.map_iframe_html`; keep lat/lng fields as seed/migration aids until Phase 4 switches UI to allowlisted embed URL from feed (API-06 — no raw HTML to React).
+## Components
 
-## Download catalog PDF
+- **Phase 1:** `page.hero`, `page.section`, `page.faq-item`, `page.list-item`
+- **Phase 2:** see `phase2Components` in JSON (solution-card, document-card, office, …)
 
-`catalog_pdf` media on `download-catalog-page`. Runtime hook stays `data-download-doc="catalog"`. Wiring PDF URL into `/api/download/catalog` is Phase 3/4 — contract only freezes ownership.
+## Acceptance for Task 1 close
 
-## Unresolved rows
+1. `npm run check:pages-cms-contract` → `PASS (contract)`
+2. No forbidden path tokens in any `cms` row; nested paths fully resolve
+3. Six fixtures validate with no unknown keys
+4. Full Phase 1 RU CM+CTB keys present
+5. `npm run typecheck` green
+6. No Phase 2 schema files yet (or strict mode would require the full set)
+7. `git diff --check` clean for contract docs
 
-**None** in `02-content-contract.json` (`ownership` is always `cms` or `code`; every `cms` row has `cms` field path; every `code` row has `reason`).
-
-## Next (not this artifact)
-
-1. Implement schemas from this contract (Task 2–4 of `02-01-PLAN.md`).  
-2. Extend harness to assert schemas/fixtures once files exist.  
-3. No feeds/frontend in Phase 2.
+Task 2 must not start until this document and harness PASS without soft-skips.

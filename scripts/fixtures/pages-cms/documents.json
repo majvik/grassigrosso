@@ -1,0 +1,92 @@
+{
+  "hero": {
+    "title": "Документы и сертификаты",
+    "description": "Полная прозрачность и соответствие стандартам.",
+    "image": {
+      "url": "/docs-hero.png"
+    },
+    "image_alt": "Интерьер спальни",
+    "cta_label": "",
+    "cta_url": ""
+  },
+  "certificates_title": "Официальная сертификация",
+  "certificates": [
+    {
+      "document_id": "declaration",
+      "title": "Евразийский Экономический Союз. Декларация о соответствии",
+      "type_label": "Декларация",
+      "size_label": "2.5 MB",
+      "request_label": "ЗАПРОСИТЬ",
+      "request_aria_label": "Запросить декларацию",
+      "kind": "certificate",
+      "file": {
+        "url": "/documents/Deklaraciya.pdf"
+      }
+    },
+    {
+      "document_id": "certificate",
+      "title": "Результаты лабораторных испытаний «ПромМаш Тест»",
+      "type_label": "Сертификат",
+      "size_label": "1.8 MB",
+      "request_label": "ЗАПРОСИТЬ",
+      "request_aria_label": "Запросить сертификат",
+      "kind": "certificate",
+      "file": {
+        "url": "/documents/Sertifikat.pdf"
+      }
+    },
+    {
+      "document_id": "trademark",
+      "title": "Свидетельство на товарный знак GrassiGrosso",
+      "type_label": "Товарный знак",
+      "size_label": "1.2 MB",
+      "request_label": "ЗАПРОСИТЬ",
+      "request_aria_label": "Запросить свидетельство",
+      "kind": "certificate",
+      "file": {
+        "url": "/documents/Trademark.pdf"
+      }
+    }
+  ],
+  "company_title": "О компании Grassigrosso",
+  "company_illustration": {
+    "url": "/catalog-illustration.svg"
+  },
+  "company_documents": [
+    {
+      "document_id": "catalog",
+      "title": "Каталог продукции",
+      "type_label": "PDF документ",
+      "size_label": "",
+      "request_label": "Запросить",
+      "request_aria_label": "Запросить каталог продукции",
+      "kind": "company",
+      "file": {
+        "url": "/documents/Catalog_v1.2.pdf"
+      }
+    },
+    {
+      "document_id": "presentation",
+      "title": "Презентация компании",
+      "type_label": "PDF документ",
+      "size_label": "",
+      "request_label": "Запросить",
+      "request_aria_label": "Запросить презентацию компании",
+      "kind": "company",
+      "file": {
+        "url": "/documents/presentation.pdf"
+      }
+    }
+  ],
+  "help_title": "Нужна помощь с документами?",
+  "help_body": "Наши менеджеры готовы предоставить любые необходимые документы по запросу",
+  "help_cta_label": "Связаться с менеджером",
+  "faq_title": "Часто задаваемые вопросы",
+  "faq_items": [
+    {
+      "question": "Как быстро производите?",
+      "answer": "Стандартные сроки производства составляют 3 рабочих дня.",
+      "open_by_default": true
+    }
+  ]
+}

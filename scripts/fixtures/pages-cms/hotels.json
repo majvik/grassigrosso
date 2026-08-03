@@ -1,0 +1,109 @@
+{
+  "hero": {
+    "title": "Сон, о котором хочется написать в отзыве",
+    "description": "Решения для отелей",
+    "image": {
+      "url": "/hotels-hero.png"
+    },
+    "image_alt": "Интерьер спальни",
+    "cta_label": "Скачать каталог",
+    "cta_url": "#"
+  },
+  "stats": [
+    {
+      "label": "Отелей",
+      "value": "120+"
+    },
+    {
+      "label": "Номеров",
+      "value": "15 000+"
+    }
+  ],
+  "stats_note": "* При заключении договора на плановую замену матрасов",
+  "categories_title": "Решения по категории отеля",
+  "categories": [
+    {
+      "name": "Люкс",
+      "text": "Бескомпромиссный комфорт",
+      "active": false
+    },
+    {
+      "name": "Стандарт",
+      "text": "Оптимальные модели",
+      "active": true
+    }
+  ],
+  "products": [
+    {
+      "catalog_key": "boxspring",
+      "title": "BoxSpring",
+      "description": "Основания для кроватей",
+      "image": {
+        "url": "/boxspring.jpg"
+      },
+      "image_alt": "BoxSpring",
+      "cta_label": "Запросить каталог"
+    }
+  ],
+  "discount_title": "Система скидок от объема",
+  "discount_subtitle": "Гибкое партнёрство",
+  "discount_col_amount": "Сумма заказа",
+  "discount_col_discount": "Скидка",
+  "discount_col_terms": "Условия",
+  "discount_rows": [
+    {
+      "amount_label": "от 250 000 ₽",
+      "discount_label": "7%",
+      "terms_label": "Базовые условия",
+      "highlight": true
+    }
+  ],
+  "discount_note": "* Точную стоимость рассчитает менеджер",
+  "contact_section_title": "Доброе утро!",
+  "contact_form_title": "Форма обратной связи",
+  "contact_submit_label": "Отправить",
+  "contact_info": [
+    {
+      "title": "Телефон",
+      "value": "+ 7 (978) 248-43-80",
+      "note": "Пн-Пт: 9:00 - 18:00 МСК",
+      "href": "tel:+79782484380",
+      "icon_key": "phone"
+    },
+    {
+      "title": "Email",
+      "value": "hotels@grassigrosso.com",
+      "note": "Ответим в течение 24 часов",
+      "href": "mailto:hotels@grassigrosso.com",
+      "icon_key": "email"
+    },
+    {
+      "title": "Адрес",
+      "value": "Симферополь, ул. Кубанская д. 25",
+      "note": "Главный офис",
+      "href": "",
+      "icon_key": "location"
+    }
+  ],
+  "refresh_badge": "Refresh-программа",
+  "refresh_title": "Плановая замена матрасов",
+  "refresh_description": "Программа регулярного обновления матрасного фонда отеля.",
+  "refresh_features": [
+    {
+      "title": "Плановая замена",
+      "text": "График замены согласно регламенту",
+      "icon": {
+        "url": "/icon-calendar.svg"
+      }
+    }
+  ],
+  "refresh_cta_label": "Подключить Refresh-программу",
+  "faq_title": "Часто задаваемые вопросы",
+  "faq_items": [
+    {
+      "question": "Как быстро производите?",
+      "answer": "От 3 дней.",
+      "open_by_default": true
+    }
+  ]
+}
