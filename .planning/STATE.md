@@ -11,8 +11,8 @@ See: .planning/PROJECT.md (updated 2026-08-03)
 
 Phase: 3 of 6 (Feeds, Proxy & Seed) — IN PROGRESS
 Plan: 03-01 Phase A–C accepted; Phase D harness green
-Status: `check:pages-api` PASS (N1–N5 + strapi/memory-cache/disk-snapshot)
-Last activity: 2026-08-03 — Phase D Node `/api/pages/:slug` + snapshots + narrowed catalog-scope
+Status: `check:pages-api` PASS (N1–N5 + atomic export + catalog-api + clean public/)
+Last activity: 2026-08-03 — Phase D harden (`ead6d4d`): shared verifier, atomic export, no dirty public/
 
 Progress: [█████████░] 95%
 
