@@ -555,7 +555,7 @@ function isDownloadCatalogExtended(c) {
   } catch {
     return false
   }
-  const task4Fields = ['title', 'lead', 'submit_label', 'catalog_pdf']
+  const task4Fields = ['title', 'lead', 'submit_label', 'catalog_pdf', 'back_label', 'back_href']
   return task4Fields.every((name) => schema.attributes?.[name])
 }
 
@@ -687,13 +687,43 @@ function assertPhase1FullRu() {
   }
 }
 
-function assertDownloadPreserve(c) {
-  const schema = readJson(
-    'strapi-catalog/src/api/download-catalog-page/content-types/download-catalog-page/schema.json',
-  )
-  if (!schema || !c) return
+function collectDownloadPreserveMisses(schema, c) {
+  const misses = []
+  const def = c.definitions.singleTypes['download-catalog-page']
   for (const attr of c.downloadCatalogPreserveAttrs || []) {
-    if (!schema.attributes?.[attr]) fail(`download-catalog-page missing preserved attr: ${attr}`)
+    if (!schema?.attributes?.[attr]) {
+      misses.push(`missing preserved attr: ${attr}`)
+      continue
+    }
+    const expected = def?.attributes?.[attr]
+    if (!expected) {
+      misses.push(`contract missing preserve definition: ${attr}`)
+      continue
+    }
+    const mismatch = compareNormalizedAttrs(
+      expected,
+      schema.attributes[attr],
+      `download-catalog-page.attributes.${attr}`,
+    )
+    if (mismatch) misses.push(mismatch)
+  }
+  return misses
+}
+
+function assertDownloadPreserve(c) {
+  const rel = 'strapi-catalog/src/api/download-catalog-page/content-types/download-catalog-page/schema.json'
+  const schema = readJson(rel)
+  if (!schema || !c) return
+  for (const miss of collectDownloadPreserveMisses(schema, c)) {
+    fail(`download-catalog preserve: ${miss}`)
+  }
+
+  // Regression: removing a preserved attr must be detected
+  const probe = JSON.parse(JSON.stringify(schema))
+  delete probe.attributes.media_display_mode
+  const probeMisses = collectDownloadPreserveMisses(probe, c)
+  if (!probeMisses.some((m) => /media_display_mode/.test(m))) {
+    fail('negative-check failed: download-catalog preserve regression did not detect removed media_display_mode')
   }
 }
 

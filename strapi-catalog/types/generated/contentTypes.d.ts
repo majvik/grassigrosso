@@ -730,7 +730,7 @@ export interface ApiDownloadCatalogPageDownloadCatalogPage
   extends Struct.SingleTypeSchema {
   collectionName: 'download_catalog_pages';
   info: {
-    displayName: 'Download catalog page';
+    displayName: '\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u00AB\u0421\u043A\u0430\u0447\u0430\u0442\u044C \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u00BB';
     pluralName: 'download-catalog-pages';
     singularName: 'download-catalog-page';
   };
@@ -738,9 +738,13 @@ export interface ApiDownloadCatalogPageDownloadCatalogPage
     draftAndPublish: false;
   };
   attributes: {
+    back_href: Schema.Attribute.String;
+    back_label: Schema.Attribute.String;
+    catalog_pdf: Schema.Attribute.Media<'files'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    lead: Schema.Attribute.Text;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -760,6 +764,8 @@ export interface ApiDownloadCatalogPageDownloadCatalogPage
       > &
       Schema.Attribute.DefaultTo<6500>;
     slides: Schema.Attribute.Component<'catalog.hero-slide', true>;
+    submit_label: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

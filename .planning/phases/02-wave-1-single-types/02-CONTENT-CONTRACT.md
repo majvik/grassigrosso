@@ -22,7 +22,7 @@
 | `contract` | Task 1 (default, no Phase 2 schema files) | Phase 1 schemas + RU full coverage + fixtures; Phase 2 schemas **not** required |
 | `components` | `PAGES_CMS_SCHEMA_MODE=components` **or** any `phase2Components` file exists (and no new Wave 1 single types yet) | **All 16** `phase2Components` must exist and match contract attrs; missing single types still OK |
 | `single-types` | `PAGES_CMS_SCHEMA_MODE=single-types` **or** any of the five new Wave 1 single types exists (and download-catalog not yet extended) | All 16 components + **five** page single types; download-catalog full contract match **not** required yet |
-| `strict-schemas` | `PAGES_CMS_SCHEMA_MODE=strict` **or** download-catalog gains Task 4 fields (`title`/`lead`/`submit_label`/`catalog_pdf`) | **All** `phase2Components` + `phase2SingleTypes` (incl. extended download-catalog); full attribute contract compare; missing any → FAIL |
+| `strict-schemas` | `PAGES_CMS_SCHEMA_MODE=strict` **or** download-catalog gains Task 4 fields (`title`/`lead`/`submit_label`/`catalog_pdf`/`back_label`/`back_href`) | **All** `phase2Components` + `phase2SingleTypes` (incl. extended download-catalog); full attribute contract compare; missing any → FAIL |
 
 Phase 1 components and the pre-Task-4 `download-catalog-page` shape are handled explicitly: preserve-attrs always; full download-catalog contract only in strict (Task 4+).
 

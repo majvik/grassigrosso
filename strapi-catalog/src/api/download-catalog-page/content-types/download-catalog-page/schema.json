@@ -4,12 +4,38 @@
   "info": {
     "singularName": "download-catalog-page",
     "pluralName": "download-catalog-pages",
-    "displayName": "Download catalog page"
+    "displayName": "Страница «Скачать каталог»"
   },
   "options": {
     "draftAndPublish": false
   },
   "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "lead": {
+      "type": "text",
+      "required": false
+    },
+    "submit_label": {
+      "type": "string",
+      "required": true
+    },
+    "catalog_pdf": {
+      "type": "media",
+      "required": false,
+      "allowedTypes": ["files"],
+      "multiple": false
+    },
+    "back_label": {
+      "type": "string",
+      "required": false
+    },
+    "back_href": {
+      "type": "string",
+      "required": false
+    },
     "media_display_mode": {
       "type": "enumeration",
       "enum": ["slider", "image_only"],
@@ -18,11 +44,13 @@
     },
     "slider_autoplay_ms": {
       "type": "integer",
+      "required": false,
       "default": 6500,
       "min": 2500
     },
     "slides": {
       "type": "component",
+      "required": false,
       "repeatable": true,
       "component": "catalog.hero-slide"
     }
