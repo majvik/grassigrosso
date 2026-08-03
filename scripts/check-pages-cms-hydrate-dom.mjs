@@ -552,6 +552,102 @@ function assertCurrentSrcIncludes(label, product, needle) {
   )
 }
 
+const MAP_VISIBILITY_EXPR = `(() => {
+  const container = document.querySelector('.contacts-map-container')
+  if (!container) return null
+  const cRect = container.getBoundingClientRect()
+  const frames = [...document.querySelectorAll('[data-map-frame]')].map((el) => {
+    const style = window.getComputedStyle(el)
+    const r = el.getBoundingClientRect()
+    const displayNone = style.display === 'none' || style.visibility === 'hidden'
+    const hiddenAttr = el.hasAttribute('hidden')
+    const intersectsContainer =
+      r.width > 1 &&
+      r.height > 1 &&
+      r.right > cRect.left + 1 &&
+      r.left < cRect.right - 1 &&
+      r.bottom > cRect.top + 1 &&
+      r.top < cRect.bottom - 1
+    const inViewport =
+      r.width > 1 &&
+      r.height > 1 &&
+      r.bottom > 0 &&
+      r.top < window.innerHeight &&
+      r.right > 0 &&
+      r.left < window.innerWidth
+    const isVisible = !displayNone && !hiddenAttr && intersectsContainer
+    return {
+      slug: el.getAttribute('data-office'),
+      tag: el.tagName,
+      hiddenAttr,
+      display: style.display,
+      left: r.left,
+      width: r.width,
+      height: r.height,
+      intersectsContainer,
+      inViewport,
+      isVisible,
+    }
+  })
+  return {
+    containerLeft: cRect.left,
+    containerWidth: cRect.width,
+    frames,
+    visibleSlugs: frames.filter((f) => f.isVisible).map((f) => f.slug),
+  }
+})()`
+
+async function prepareContactsMapView(evaluate) {
+  await evaluate(`document.querySelector('.contacts-map-container')?.scrollIntoView({ block: 'center', inline: 'nearest' })`)
+  await delay(150)
+}
+
+function assertExactlyOneVisibleMap(label, snap, expectedSlug) {
+  assert(!!snap, `${label}: map visibility snapshot missing`)
+  assert(
+    Array.isArray(snap.visibleSlugs) && snap.visibleSlugs.length === 1,
+    `${label}: expected exactly one visible map, got ${JSON.stringify(snap.visibleSlugs)} (${JSON.stringify(snap.frames)})`,
+  )
+  assert(
+    snap.visibleSlugs[0] === expectedSlug,
+    `${label}: expected visible ${expectedSlug}, got ${JSON.stringify(snap.visibleSlugs)}`,
+  )
+  const visible = (snap.frames || []).find((f) => f.slug === expectedSlug)
+  assert(visible?.intersectsContainer, `${label}: visible map not inside container (${JSON.stringify(visible)})`)
+  assert(visible?.inViewport, `${label}: visible map not in viewport (${JSON.stringify(visible)})`)
+  assert(
+    visible?.left >= (snap.containerLeft || 0) - 1,
+    `${label}: visible map left off-container (${JSON.stringify({ visible, containerLeft: snap.containerLeft })})`,
+  )
+  for (const frame of snap.frames || []) {
+    if (frame.slug === expectedSlug) continue
+    assert(
+      frame.hiddenAttr === true || frame.display === 'none' || !frame.isVisible,
+      `${label}: map ${frame.slug} should be hidden (${JSON.stringify(frame)})`,
+    )
+  }
+}
+
+async function assertContactsMapTabSwitching(evaluate, label) {
+  await prepareContactsMapView(evaluate)
+  let snap = await evaluate(MAP_VISIBILITY_EXPR)
+  assertExactlyOneVisibleMap(`${label} initial`, snap, 'main')
+
+  for (const officeSlug of CONTACTS_OFFICE_SLUGS) {
+    await evaluate(
+      `document.querySelector('[data-map-tab][data-office="${officeSlug}"]')?.click()`,
+    )
+    await delay(120)
+    await prepareContactsMapView(evaluate)
+    snap = await evaluate(MAP_VISIBILITY_EXPR)
+    assertExactlyOneVisibleMap(`${label} tab:${officeSlug}`, snap, officeSlug)
+  }
+
+  // Return to main for subsequent scenarios.
+  await evaluate(`document.querySelector('[data-map-tab][data-office="main"]')?.click()`)
+  await delay(80)
+}
+
 function assertFirstPaintBaseline(slug, snap) {
   if (slug === 'index') {
     assert(snap?.baselineCount === 3, `${slug} baseline: expected 3 certification cards, got ${snap?.baselineCount}`)
@@ -741,6 +837,10 @@ async function runPageScenarios(slug) {
     await waitFor(evaluate, `${slug} delayed paint`, hooksReadyExpr(slug), 15000)
     const delayed = await evaluate(criticalHooksExpr(slug))
     assertFirstPaintBaseline(slug, delayed)
+    if (slug === 'contacts') {
+      await assertContactsMapTabSwitching(evaluate, `${slug} first-paint embed`)
+      console.log(`  ${slug} first-paint map tabs: PASS`)
+    }
     const geoBefore = await evaluate(geometryExpr(slug))
     await setMock(evaluate, { mode: 'json', status: 200, body: envelope(parityPayload) })
     await delay(1000)
@@ -1034,6 +1134,8 @@ async function runPageScenarios(slug) {
         tabs: ['left', 'width'],
         form: ['left', 'width'],
       })
+      await assertContactsMapTabSwitching(evaluate, `${slug} success embed`)
+      console.log(`  ${slug} success map tabs: PASS`)
     } else {
       assert(
         JSON.stringify(ok?.topLevelSections) === JSON.stringify(DOCUMENTS_SECTIONS),
@@ -1134,6 +1236,7 @@ async function runPageScenarios(slug) {
       `${slug} null-map: expected placeholder divs (${JSON.stringify(nullSnap?.frames)})`,
     )
     assert(!nullSnap?.rawHtml && !nullSnap?.hasDangerousMapHtml, `${slug} null-map: HTML leak`)
+    await assertContactsMapTabSwitching(evaluate, `${slug} null-map placeholder`)
     console.log(`  ${slug} null-map fallback: PASS`, JSON.stringify({ frames: nullSnap?.frames }))
   }
 

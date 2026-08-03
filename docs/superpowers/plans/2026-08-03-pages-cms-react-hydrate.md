@@ -37,7 +37,7 @@ Wave-1 React pages (`index`, `hotels`, `dealers`, `contacts`, `documents`, downl
 | Phase A | client + merge + unit harness | DONE — accepted |
 | Phase B | index + download-catalog texts + DOM slice | DONE — accepted (`a537e6f` + `825deb0`) |
 | Phase C | hotels + dealers + DOM slice | DONE — accepted (`97ab57e` + `02d254b`) |
-| Phase D | contacts + documents + map + DOM slice | DONE — awaiting accept |
+| Phase D | contacts + documents + map + DOM slice | DONE — harden (map hidden/tabs) awaiting accept |
 | Phase E | full unit + DOM (all 6) + FE-* docs | not started |
 
 ---

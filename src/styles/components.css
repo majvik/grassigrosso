@@ -7394,6 +7394,11 @@ iframe.contacts-map-frame[data-map-embed] {
   background-color: var(--color-partner-cell);
 }
 
+/* Author display:block must not defeat the HTML hidden attribute. */
+iframe.contacts-map-frame[data-map-embed][hidden] {
+  display: none;
+}
+
 /* Карта Яндекса: растягиваем на весь блок с сохранением пропорций (обесцвечивание слоя карты задаётся в main.js через API) */
 .contacts-map-placeholder > div,
 .contacts-map-placeholder iframe {
