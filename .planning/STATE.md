@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 4 — React hydrate from `GET /api/pages/:slug` (spec/plan first; no code until plan affirmed). No `strapi:sync-seed` / no push unless asked.
+**Current focus:** Phase 4 — React hydrate. Spec/plan drafted; **no hydrate code until user affirms**. No `strapi:sync-seed` / no push unless asked.
 
 ## Current Position
 
-Phase: 4 of 6 (React Hydrate) — NEXT
-Plan: 03-01 COMPLETE; 04-01 spec/plan awaiting affirm
-Status: Phase 3 A–E accepted (`ad0d279` isolation harden); preparing Phase 4 design
-Last activity: 2026-08-03 — Phase E accepted; Phase 3 marked Complete locally
+Phase: 4 of 6 (React Hydrate) — awaiting plan affirm
+Plan: 04-01 DRAFT
+Status: Phase 3 Complete; Phase 4 design + execution plan ready for review
+Last activity: 2026-08-03 — Phase 3 closed; Phase 4 spec/plan committed (docs only)
 
 Progress: [██████████] Phase 3 done; Phase 4 planning
 
@@ -35,21 +35,21 @@ Progress: [██████████] Phase 3 done; Phase 4 planning
 ### Decisions
 
 - Page content only via Node `GET /api/pages/:slug` (`strapi|memory-cache|disk-snapshot`)
-- Frontend `src/` must not call Strapi page feeds / `:1337` (`check:pages-cms-isolation`, fs walk + negatives)
+- Frontend `src/` must not call Strapi page feeds / `:1337` (`check:pages-cms-isolation`)
 - Seed writes `.tmp` only; snapshots in `public/pages-*.snapshot.json`
 - Local-only: no push/PR/deploy; no sync-seed unless asked
-- Phase 4: hardcoded TSX = first paint; hydrate merges Node `data`; email/`data-*`/keys code-owned
+- Phase 4 proposed: Option B — shared pages-api + hardcoded-first merge; map URL-only; texts≠slides
 
 ### Pending Todos
 
-- Affirm Phase 4 design + execution plan, then implement hydrate (no code before affirm)
+- User affirms Phase 4 design + plan → start Phase A (client/merge/harness only)
 
 ### Blockers/Concerns
 
-None.
+None — blocked only on affirm before code.
 
 ## Session Continuity
 
 Last session: 2026-08-03
-Stopped at: Phase 3 COMPLETE; Phase 4 spec/plan prepared for affirm
-Next: User affirms Phase 4 plan → execute hydrate phases
+Stopped at: Phase 4 spec/plan drafted; awaiting affirm
+Next: Affirm → Phase A shared client (no page wiring until B)
