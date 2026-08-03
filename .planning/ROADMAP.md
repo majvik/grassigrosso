@@ -80,7 +80,7 @@ Plans:
 **Plans**: 1 plan (draft — awaiting affirm)
 
 Plans:
-- [ ] 04-01-PLAN.md — React hydrate wave 1 ([design](../docs/superpowers/specs/2026-08-03-pages-cms-react-hydrate-design.md), [execution](../docs/superpowers/plans/2026-08-03-pages-cms-react-hydrate.md)) — no hydrate code until affirmed
+- [ ] 04-01-PLAN.md — React hydrate wave 1 ([design v2](../docs/superpowers/specs/2026-08-03-pages-cms-react-hydrate-design.md), [execution v2](../docs/superpowers/plans/2026-08-03-pages-cms-react-hydrate.md)) — merge/lifecycle/DOM locked; no hydrate code until affirmed
 
 ### Phase 5: Local Acceptance Gate
 **Goal**: Доказать локально автоматическими тестами, что весь milestone работает и не регрессирует; не отправлять изменения во внешние системы.
@@ -123,7 +123,7 @@ Plans:
 | 1. Shared Page Components | 1/1 | Complete | 2026-08-03 |
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) | 2026-08-03 |
 | 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) | 2026-08-03 |
-| 4. React Hydrate | 0/1 | Spec/plan draft — awaiting affirm | - |
+| 4. React Hydrate | 0/1 | Spec/plan draft v2 — awaiting affirm | - |
 | 5. Local Acceptance Gate | 0/TBD | Not started | - |
 | 6. Legal Pages | 0/TBD | Not started | - |
 
