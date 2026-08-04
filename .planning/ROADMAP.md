@@ -95,10 +95,10 @@ Plans:
   6. Ручной browser smoke выполнен только как дополнительная проверка и не является единственным доказательством
   7. Не выполнялись `git push`, PR, remote deploy, remote smoke с mutation или изменения Timeweb/dev/prod
   8. Degraded-mode gate не убивает чужие процессы и восстанавливает исходное состояние слушателей
-**Plans**: 1 plan (Phase A–C DONE locally 2026-08-04; no push / no sync-seed)
+**Plans**: 1 plan — **Accepted** locally 2026-08-04 at `7d26bcb` (QA-01…03; no push / no sync-seed)
 
 Plans:
-- [x] 05-01-PLAN.md — Local acceptance gate ([design](../docs/superpowers/specs/2026-08-04-pages-cms-local-acceptance-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-local-acceptance.md), [coverage](phases/05-local-acceptance/05-COVERAGE.md), [suite](phases/05-local-acceptance/05-SUITE-RESULTS.md)) — Complete local; aggregator PASS
+- [x] 05-01-PLAN.md — Local acceptance gate ([design](../docs/superpowers/specs/2026-08-04-pages-cms-local-acceptance-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-local-acceptance.md), [coverage](phases/05-local-acceptance/05-COVERAGE.md), [suite](phases/05-local-acceptance/05-SUITE-RESULTS.md)) — **Accepted** `7d26bcb`
 
 ### Phase 6: Legal Pages
 **Goal**: Юрист/редактор обновляет privacy, terms и cookies в админке; сайт гидрирует `legal-content` без отдельного CMS-бандла.
@@ -109,10 +109,10 @@ Plans:
   2. Контент поддерживает rich text / блочную структуру, достаточную для текущих legal-страниц
   3. `/privacy`, `/terms`, `/cookies` гидрируют из Node API + snapshot fallback через тот же proxy-паттерн
   4. Визуал legal-страниц остаётся читаемым; нет прямого доступа фронта к Strapi
-**Plans**: TBD
+**Plans**: Phase A Accepted; Phase B Done locally; Phase C next
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md — Legal pages ([design](../docs/superpowers/specs/2026-08-04-pages-cms-legal-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-legal.md), [contract](phases/06-legal-pages/06-CONTENT-CONTRACT.md)) — A Accepted; B Done (`check:pages-cms-phase-6b`); C next
 
 ## Progress
 
@@ -125,8 +125,8 @@ Plans:
 | 2. Wave 1 Single Types | 1/1 | Complete (accepted) | 2026-08-03 |
 | 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) | 2026-08-03 |
 | 4. React Hydrate | 1/1 | Complete (local; FE-01…05; `2d7ca10`; no push) | 2026-08-04 |
-| 5. Local Acceptance Gate | 1/1 | Complete (local; `check:pages-cms-phase-5` PASS) | 2026-08-04 |
-| 6. Legal Pages | 0/TBD | Not started | - |
+| 5. Local Acceptance Gate | 1/1 | **Accepted** (local; `7d26bcb`; no push) | 2026-08-04 |
+| 6. Legal Pages | 0/1 | A Accepted; B Done locally; C next | - |
 
 ---
 *Roadmap created: 2026-08-03*

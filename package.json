@@ -37,6 +37,8 @@
     "check:pages-cms-phase-a": "node scripts/check-pages-cms-phase-a.mjs",
     "check:pages-cms-phase-b": "node scripts/check-pages-cms-phase-b.mjs",
     "check:pages-cms-phase-c": "node scripts/check-pages-cms-phase-c.mjs",
+    "check:pages-cms-phase-6b": "node scripts/check-pages-cms-phase-6b.mjs",
+    "check:pages-cms-phase-6": "node scripts/check-pages-cms-phase-6b.mjs",
     "check:pages-api": "node scripts/check-pages-api.mjs",
     "pages:export-snapshot": "node scripts/export-pages-snapshot.mjs",
     "pages-cms:seed": "node scripts/seed-pages-cms-from-fixtures.mjs",

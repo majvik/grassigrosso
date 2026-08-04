@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 5 Complete locally (A–C). Phase 6 not started. No push / no `strapi:sync-seed`.
+**Current focus:** Phase 6 Legal — **Phase A Accepted; Phase B Done locally; Phase C next**. No push / no `strapi:sync-seed`. Phase 5 accepted at `7d26bcb`.
 
 ## Current Position
 
-Phase: 5 of 6 (Local Acceptance Gate) — **Complete (local)**
-Plan: 05-01
-Status: Aggregator `check:pages-cms-phase-5` PASS; QA-01…03 covered; suite recorded in `05-SUITE-RESULTS.md`
-Last activity: 2026-08-04 — Phase C closeout
+Phase: 6 of 6 (Legal Pages) — Phase B complete locally
+Plan: 06-01
+Status: Schemas + RU + feeds + `check:pages-cms-phase-6b` PASS
+Last activity: 2026-08-04 — Phase 6B done locally
 
-Progress: [██████████] Phases 1–5 complete (local); Phase 6 not started
+Progress: [██████████] Phases 1–5 accepted; Phase 6A+B local
 
 ## Performance Metrics
 
@@ -22,27 +22,29 @@ Progress: [██████████] Phases 1–5 complete (local); Phase 
 
 | Phase | Plans | Status |
 |-------|-------|--------|
-| 1–4 | … | Complete (local) |
-| 5. Local Acceptance Gate | 1/1 | Complete (local; no push) |
-| 6. Legal Pages | 0/TBD | Not started |
+| 1–4 | … | Complete (accepted, local) |
+| 5. Local Acceptance Gate | 1/1 | **Accepted** (`7d26bcb`; no push) |
+| 6. Legal Pages | 0/1 | A Accepted; B Done locally; C next |
 
 ## Accumulated Context
 
-### Decisions
+### Decisions (Phase 5 locked)
 
-- D1 disk-first `/uploads` (`lib/uploads-disk-first.cjs` + `server.cjs`)
-- D2 isolated stack + SIGINT/SIGTERM observe-only gate
-- D3 live-edit IPC + verified restore; D4 degraded media+CDP
-- Phase C aggregator composes suite; pages-api uses isolated ports/DB when `:1337` busy
+- D1–D4 + Phase C aggregator (record/normal, owned catalog, pages_cms leftover audit)
+
+### Phase 6 locked (A+B)
+
+- Ordered structured blocks; three single types; operator block; `effective_date`; no thin shell; exact href allowlist; discriminator `link_label` → public `children`; mandatory SSR+parity (Phase D); `check:pages-cms-phase-6b`; Node 9-slug allowlist deferred to Phase C
 
 ### Pending Todos
 
-- User affirm Phase 5 closeout (optional)
-- Phase 6 legal — not started
-- No push / sync-seed unless asked
+- Phase C — Node proxy ×9, seed `.tmp`, fixtures, snapshots
+- No push / sync-seed / deploy until asked
 
 ## Session Continuity
 
-- Aggregator: `npm run check:pages-cms-phase-5`
-- Results: `.planning/phases/05-local-acceptance/05-SUITE-RESULTS.md`
-- Coverage: `.planning/phases/05-local-acceptance/05-COVERAGE.md`
+- Contract: `.planning/phases/06-legal-pages/06-CONTENT-CONTRACT.md`
+- Schema JSON: `.planning/phases/06-legal-pages/06-content-contract.json`
+- Design: `docs/superpowers/specs/2026-08-04-pages-cms-legal-design.md`
+- Plan: `docs/superpowers/plans/2026-08-04-pages-cms-legal.md`
+- Gate: `npm run check:pages-cms-phase-6b`

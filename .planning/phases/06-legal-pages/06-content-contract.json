@@ -1,0 +1,165 @@
+{
+  "version": "6b-1",
+  "updated": "2026-08-04",
+  "phase": "6B",
+  "mechanicalBodyLength": {
+    "privacy": 55,
+    "terms": 37,
+    "cookies": 17
+  },
+  "unowned": 0,
+  "hrefAllowlist": [
+    "https://grassigrosso.com",
+    "mailto:office@grassigrosso.com",
+    "/privacy"
+  ],
+  "blockTypes": ["paragraph", "list", "table", "operator"],
+  "runTypes": ["text", "link"],
+  "legalComponents": [
+    "legal.inline-run",
+    "legal.list-item",
+    "legal.table-header",
+    "legal.table-cell",
+    "legal.table-row",
+    "legal.paragraph-block",
+    "legal.list-block",
+    "legal.table-block",
+    "legal.operator-block"
+  ],
+  "legalSingleTypes": [
+    "privacy-page",
+    "terms-page",
+    "cookies-page"
+  ],
+  "feedPaths": {
+    "privacy": "/api/privacy-page-feed",
+    "terms": "/api/terms-page-feed",
+    "cookies": "/api/cookies-page-feed"
+  },
+  "wave1SlugCount": 6,
+  "definitions": {
+    "components": {
+      "legal.inline-run": {
+        "displayName": "Инлайн-фрагмент",
+        "attributes": {
+          "type": { "type": "enumeration", "required": true, "enum": ["text", "link"] },
+          "value": { "type": "text", "required": false },
+          "strong": { "type": "boolean", "required": true },
+          "href": { "type": "string", "required": false },
+          "link_label": { "type": "string", "required": false }
+        }
+      },
+      "legal.list-item": {
+        "displayName": "Пункт списка",
+        "attributes": {
+          "runs": { "type": "component", "required": true, "repeatable": true, "component": "legal.inline-run" }
+        }
+      },
+      "legal.table-header": {
+        "displayName": "Заголовок колонки",
+        "attributes": {
+          "value": { "type": "string", "required": true }
+        }
+      },
+      "legal.table-cell": {
+        "displayName": "Ячейка таблицы",
+        "attributes": {
+          "runs": { "type": "component", "required": true, "repeatable": true, "component": "legal.inline-run" }
+        }
+      },
+      "legal.table-row": {
+        "displayName": "Строка таблицы",
+        "attributes": {
+          "cells": { "type": "component", "required": true, "repeatable": true, "component": "legal.table-cell" }
+        }
+      },
+      "legal.paragraph-block": {
+        "displayName": "Абзац",
+        "attributes": {
+          "heading": { "type": "string", "required": false },
+          "runs": { "type": "component", "required": true, "repeatable": true, "component": "legal.inline-run" }
+        }
+      },
+      "legal.list-block": {
+        "displayName": "Список",
+        "attributes": {
+          "heading": { "type": "string", "required": false },
+          "items": { "type": "component", "required": true, "repeatable": true, "component": "legal.list-item" }
+        }
+      },
+      "legal.table-block": {
+        "displayName": "Таблица",
+        "attributes": {
+          "heading": { "type": "string", "required": false },
+          "headers": { "type": "component", "required": true, "repeatable": true, "component": "legal.table-header" },
+          "rows": { "type": "component", "required": true, "repeatable": true, "component": "legal.table-row" }
+        }
+      },
+      "legal.operator-block": {
+        "displayName": "Оператор",
+        "attributes": {
+          "heading": { "type": "string", "required": false },
+          "role_label": { "type": "string", "required": true },
+          "legal_name": { "type": "string", "required": true },
+          "ogrn": { "type": "string", "required": true },
+          "inn": { "type": "string", "required": true },
+          "address": { "type": "text", "required": true },
+          "email": { "type": "email", "required": true }
+        }
+      }
+    },
+    "singleTypes": {
+      "privacy-page": {
+        "displayName": "Политика конфиденциальности",
+        "attributes": {
+          "title": { "type": "string", "required": true },
+          "effective_date": { "type": "date", "required": true },
+          "body": {
+            "type": "dynamiczone",
+            "required": true,
+            "components": [
+              "legal.paragraph-block",
+              "legal.list-block",
+              "legal.table-block",
+              "legal.operator-block"
+            ]
+          }
+        }
+      },
+      "terms-page": {
+        "displayName": "Пользовательское соглашение",
+        "attributes": {
+          "title": { "type": "string", "required": true },
+          "effective_date": { "type": "date", "required": true },
+          "body": {
+            "type": "dynamiczone",
+            "required": true,
+            "components": [
+              "legal.paragraph-block",
+              "legal.list-block",
+              "legal.table-block",
+              "legal.operator-block"
+            ]
+          }
+        }
+      },
+      "cookies-page": {
+        "displayName": "Политика cookie",
+        "attributes": {
+          "title": { "type": "string", "required": true },
+          "effective_date": { "type": "date", "required": true },
+          "body": {
+            "type": "dynamiczone",
+            "required": true,
+            "components": [
+              "legal.paragraph-block",
+              "legal.list-block",
+              "legal.table-block",
+              "legal.operator-block"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
