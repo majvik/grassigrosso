@@ -14,6 +14,8 @@
     "build:web": "vite build",
     "build:strapi": "npm run build --prefix strapi-catalog",
     "build": "npm run build:web && npm run build:strapi",
+    "browser:smoke": "agent-browser --help",
+    "check:submit-queue-fast": "node scripts/check-submit-queue-fast.mjs",
     "check:docker-runtime-contract": "node scripts/check-docker-runtime-contract.mjs",
     "repair:pages-cms-upload-records": "node scripts/repair-pages-cms-upload-records.mjs",
     "typecheck": "tsc --noEmit",
@@ -87,6 +89,7 @@
     "react-dom": "^19.2.5"
   },
   "devDependencies": {
+    "agent-browser": "0.33.2",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
