@@ -217,6 +217,14 @@ const FETCH_STUB_SOURCE = `(() => {
   const orig = window.fetch.bind(window)
   window.fetch = async (input, init) => {
     const url = String(typeof input === 'string' ? input : (input && input.url) || '')
+    // Phase 6 page hydrate scenarios must not race the independent Phase 7
+    // chrome request. A controlled failure preserves the complete HTML fallback.
+    if (url.includes('/api/site-chrome')) {
+      return new Response(JSON.stringify({ error: 'phase6 chrome isolated' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
     if (!url.includes('/api/pages/')) return orig(input, init)
     const mock = window.__pagesCmsMock || { mode: 'pass' }
     if (mock.mode === 'pass') return orig(input, init)
@@ -502,7 +510,7 @@ function criticalHooksExpr(slug) {
   if (slug === 'dealers') {
     return `(() => ({
       map: !!document.querySelector('#geographyMapContainer'),
-      mapImg: document.querySelector('#geographyMapImg')?.getAttribute('src') || '',
+      mapImg: document.querySelector('#geographyMapContainer')?.getAttribute('data-geography-map-source') || document.querySelector('#geographyMapImg')?.getAttribute('src') || '',
       packages: [...document.querySelectorAll('[data-package]')].map((el) => el.getAttribute('data-package')),
       packageSelect: !!document.querySelector('select[name="package"]'),
       packageOptions: [...document.querySelectorAll('select[name="package"] option')]
@@ -1095,6 +1103,12 @@ async function runPageScenarios(slug) {
   if (LEGAL_PAGE_SET.has(slug)) {
     await navigateWithMock(cdp, slug, { mode: 'hold' })
     await waitFor(evaluate, `${slug} timeout hold paint`, hooksReadyExpr(slug), 15000)
+    await waitFor(
+      evaluate,
+      `${slug} timeout fallback title`,
+      `document.querySelector('.legal-page-title')?.textContent?.trim() === ${JSON.stringify(fallbackTitle)}`,
+      15000,
+    )
     const held = await evaluate(criticalHooksExpr(slug))
     assertFirstPaintBaseline(slug, held)
     assert(String(held?.title || '') === fallbackTitle, `${slug} timeout: SSR/fallback title missing`)

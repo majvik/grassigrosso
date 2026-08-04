@@ -1,6 +1,6 @@
 # Pages CMS Phase 7 — Global Site Chrome execution plan
 
-**Status:** Phases A–D complete locally; Phase E next
+**Status:** Complete locally; release actions pending separate approval
 **Design:** `docs/superpowers/specs/2026-08-04-pages-cms-global-chrome-design.md`
 
 ## Phase A — Contract and coverage freeze — complete
@@ -61,3 +61,5 @@
 5. Only after review: local commit; then separately approve `strapi:sync-seed`, snapshot publication and branch push.
 
 **Stop condition:** Phase 7 is incomplete until all automated tests pass. No push/deploy merely because implementation appears visually correct.
+
+**Phase E result:** `check:pages-cms-phase-7:record` PASS (8 steps; full Phase 6 regression, routes, typecheck, web + Strapi builds), porcelain unchanged. Browser flake root causes were hardened: Phase 6 isolates the independent chrome request, geography overlay retains a stable source contract, and legal timeout waits for the SSR title. No push, deploy or `strapi:sync-seed`.

@@ -155,7 +155,7 @@ export function DealersPage() {
             <p className="geography-subtitle">{data.geography_subtitle}</p>
           ) : null}
         </div>
-        <div className="geography-map" id="geographyMapContainer">
+        <div className="geography-map" id="geographyMapContainer" data-geography-map-source={mapImage}>
           <img src={mapImage} alt="География дилеров" id="geographyMapImg" />
         </div>
         <div className="geography-cities-wrapper">

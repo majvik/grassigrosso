@@ -51,6 +51,8 @@
     "check:pages-cms-phase-7b": "node scripts/check-pages-cms-phase-7b.mjs",
     "check:pages-cms-phase-7c": "node scripts/check-pages-cms-phase-7c.mjs",
     "check:pages-cms-phase-7d": "node scripts/check-pages-cms-phase-7d.mjs",
+    "check:pages-cms-phase-7": "node scripts/check-pages-cms-phase-7.mjs",
+    "check:pages-cms-phase-7:record": "node scripts/check-pages-cms-phase-7.mjs --record",
     "check:pages-cms-media-integrity": "node scripts/check-pages-cms-media-integrity.mjs",
     "pages-cms:extract-legal-fixtures": "node scripts/pages-cms/extract-legal-fixtures.mjs",
     "pages-cms:check-legal-fixtures": "node scripts/pages-cms/extract-legal-fixtures.mjs --check",

@@ -16,7 +16,7 @@ Milestone **v1.1** делает маркетинговые тексты волн
 - [x] **Phase 4: React Hydrate** - Волны 1 страницы берут контент из Node API без поломки layout и email-routing
 - [x] **Phase 5: Local Acceptance Gate** - Полное автотестовое покрытие и локальный green verify; без push/deploy
 - [x] **Phase 6: Legal Pages** - Privacy / terms / cookies в CMS + hydrate `legal-content.tsx` (Complete locally, pending review)
-- [ ] **Phase 7: Global Site Chrome** - Header, mobile menu и footer в одном строгом CMS-контракте
+- [x] **Phase 7: Global Site Chrome** - Header, mobile menu и footer в одном строгом CMS-контракте (Complete locally)
 
 ## Phase Details
 
@@ -125,10 +125,10 @@ Plans:
   3. Node cache/snapshot и полный HTML fallback работают без Strapi
   4. Все contracted HTML pages проходят strict parity и DOM regression
   5. Email routing, analytics, SEO/security и catalog/legal behavior не меняются
-**Plans**: Phase A complete locally; Phase B next
+**Plans**: Complete locally; release actions require separate approval
 
 Plans:
-- [ ] 07-01-PLAN.md — Global Site Chrome ([design](../docs/superpowers/specs/2026-08-04-pages-cms-global-chrome-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-global-chrome.md))
+- [x] 07-01-PLAN.md — Global Site Chrome ([design](../docs/superpowers/specs/2026-08-04-pages-cms-global-chrome-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-global-chrome.md), [suite](phases/07-global-site-chrome/07-SUITE-RESULTS.md))
 
 ## Progress
 
