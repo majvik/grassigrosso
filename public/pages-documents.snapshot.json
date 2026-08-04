@@ -6,7 +6,7 @@
   "help_cta_label": "Связаться с менеджером",
   "faq_title": "Часто задаваемые вопросы",
   "company_illustration": {
-    "url": "/uploads/pages_cms_9712b36309a10ac1_catalog_illustration_cb082f2077.svg"
+    "url": "/uploads/pages_cms_9712b36309a10ac1_catalog-illustration.svg"
   },
   "faq_items": [
     {
@@ -32,7 +32,7 @@
     "cta_label": "",
     "cta_url": "",
     "image": {
-      "url": "/uploads/pages_cms_ffddab079003200c_docs_hero_0a81c97360.png"
+      "url": "/uploads/pages_cms_ffddab079003200c_docs-hero.png"
     }
   },
   "certificates": [
@@ -45,7 +45,7 @@
       "request_aria_label": "Запросить декларацию",
       "kind": "certificate",
       "file": {
-        "url": "/uploads/pages_cms_322d850417ca10dc_1feec7d562.pdf"
+        "url": "/uploads/pages_cms_322d850417ca10dc__.pdf"
       }
     },
     {
@@ -57,7 +57,7 @@
       "request_aria_label": "Запросить сертификат",
       "kind": "certificate",
       "file": {
-        "url": "/uploads/pages_cms_40b0de100852348b_3ec9de213a.pdf"
+        "url": "/uploads/pages_cms_40b0de100852348b__.pdf"
       }
     },
     {
@@ -69,7 +69,7 @@
       "request_aria_label": "Запросить свидетельство",
       "kind": "certificate",
       "file": {
-        "url": "/uploads/pages_cms_7dc3d1fde4f03025_37cb799512.pdf"
+        "url": "/uploads/pages_cms_7dc3d1fde4f03025__.pdf"
       }
     }
   ],
@@ -83,7 +83,7 @@
       "request_aria_label": "Запросить каталог продукции",
       "kind": "company",
       "file": {
-        "url": "/uploads/pages_cms_c3fa0e1e51352ae7_Catalog_v1_2_a555d9a36c.pdf"
+        "url": "/uploads/pages_cms_c3fa0e1e51352ae7_Catalog_v1.2.pdf"
       }
     },
     {
@@ -95,7 +95,7 @@
       "request_aria_label": "Запросить презентацию компании",
       "kind": "company",
       "file": {
-        "url": "/uploads/pages_cms_c28902ee89483dfc_Grassigrosso_company_a5d71a7745.pdf"
+        "url": "/uploads/pages_cms_c28902ee89483dfc_Grassigrosso-company.pdf"
       }
     }
   ]

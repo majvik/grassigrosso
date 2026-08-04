@@ -122,7 +122,7 @@
     "cta_label": "Рассчитать КП",
     "cta_url": "#",
     "image": {
-      "url": "/uploads/pages_cms_19d95ed17c5c4bc2_hotels_hero_4e9428b022.png"
+      "url": "/uploads/pages_cms_19d95ed17c5c4bc2_hotels-hero.png"
     }
   },
   "products": [
@@ -133,7 +133,7 @@
       "image_alt": "BoxSpring",
       "cta_label": "Подробнее",
       "image": {
-        "url": "/uploads/pages_cms_f9987868b4449bfc_boxspring_702572c06b.jpg"
+        "url": "/uploads/pages_cms_f9987868b4449bfc_boxspring.jpg"
       }
     },
     {
@@ -143,7 +143,7 @@
       "image_alt": "Аксессуары",
       "cta_label": "Подробнее",
       "image": {
-        "url": "/uploads/pages_cms_7b4579f95438a09c_accessories_5fe2760ad9.png"
+        "url": "/uploads/pages_cms_7b4579f95438a09c_accessories.png"
       }
     }
   ],
@@ -152,14 +152,14 @@
       "title": "Плановая замена",
       "text": "График замены матрасов согласно регламенту отеля",
       "icon": {
-        "url": "/uploads/pages_cms_5bac95b1a9b76313_icon_calendar_c451cb9b7b.svg"
+        "url": "/uploads/pages_cms_5bac95b1a9b76313_icon-calendar.svg"
       }
     },
     {
       "title": "Специальные условия",
       "text": "Фиксированные условия сотрудничества и приоритетное производство для участников программы",
       "icon": {
-        "url": "/uploads/pages_cms_8ca1e26b80c0336d_icon_hand_gesture_96a0397166.svg"
+        "url": "/uploads/pages_cms_8ca1e26b80c0336d_icon-hand-gesture.svg"
       }
     }
   ]

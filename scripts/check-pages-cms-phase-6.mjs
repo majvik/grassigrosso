@@ -60,6 +60,7 @@ const STEPS = Object.freeze([
   { label: 'Phase 6B schemas/feeds', script: 'check:pages-cms-phase-6b' },
   { label: 'Phase 6C seed/API/snapshots', script: 'check:pages-cms-phase-6c' },
   { label: 'Phase 6D hydrate/SSR parity', script: 'check:pages-cms-phase-6d' },
+  { label: 'snapshot media integrity', script: 'check:pages-cms-media-integrity' },
   { label: 'phase-a map/envelope', script: 'check:pages-cms-phase-a' },
   { label: 'strict contract', script: 'check:pages-cms-strict' },
   { label: 'catalog-scope', script: 'check:pages-cms-catalog-scope' },

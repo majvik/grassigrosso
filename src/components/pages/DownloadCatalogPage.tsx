@@ -21,7 +21,7 @@ export const DOWNLOAD_CATALOG_TEXT_DEFAULTS: DownloadCatalogTextContent = {
   submit_label: 'Скачать каталог',
   back_label: 'Назад в каталог',
   back_href: '/catalog',
-  catalog_pdf: { url: '/uploads/pages_cms_c3fa0e1e51352ae7_Catalog_v1_2_5b54dc882c.pdf' },
+  catalog_pdf: { url: '/documents/Catalog_v1.2.pdf' },
 }
 
 function DownloadCatalogSlideZeroFallback() {

@@ -4,6 +4,7 @@ const { preferAvifVariant } = require('../../catalog/utils/prefer-avif');
 const { getDeepPopulateForSlug, DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS } = require('./deep-populate');
 const { LEGAL_PAGES_CMS_SLUGS, COMPONENT_TO_BLOCK_TYPE } = require('./legal-allowlist');
 const { canonicalizeLegalPageData, LegalContractError } = require('./legal-page-contract');
+const { canonicalPagesCmsPublicUrl } = require('./canonical-media-url');
 const { normalizeMapIframeHtml } = require('./normalize-map-iframe');
 
 const STRAPI_META_KEYS = new Set([
@@ -39,7 +40,7 @@ function isMediaObject(node) {
 
 function serializeMedia(media) {
   return {
-    url: preferAvifVariant(media.url || ''),
+    url: canonicalPagesCmsPublicUrl(media) || preferAvifVariant(media.url || ''),
   };
 }
 

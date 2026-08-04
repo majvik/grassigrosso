@@ -18,6 +18,9 @@ const {
   LEGAL_PAGES_CMS_SLUGS,
   fixtureToStrapiLegalData,
 } = require('../../strapi-catalog/src/api/pages-cms/utils/legal-allowlist');
+const {
+  canonicalPagesCmsFilename,
+} = require('../../strapi-catalog/src/api/pages-cms/utils/canonical-media-url');
 
 const MIME_BY_EXT = {
   '.png': 'image/png',
@@ -49,6 +52,35 @@ function stableUploadName(contentHash, filepath) {
 }
 
 /**
+ * Upload rows may outlive their local files (for example after an over-eager
+ * cleanup). An idempotent seed must repair that state instead of treating the
+ * DB row as proof that the media is usable.
+ */
+function ensureExistingUploadFile(strapi, existing, sourcePath) {
+  const publicRoot = path.join(strapi.dirs.app.root, 'public');
+  const filename = canonicalPagesCmsFilename(existing?.name);
+  if (!filename) throw new Error(`Existing pages CMS upload has invalid name: ${existing?.name}`);
+  const destination = path.resolve(publicRoot, 'uploads', filename);
+  const uploadsRoot = path.resolve(publicRoot, 'uploads');
+  if (path.dirname(destination) !== uploadsRoot) {
+    throw new Error(`Existing pages CMS upload escapes uploads root: ${filename}`);
+  }
+
+  // Strapi may optimize/transform uploaded images, so an existing on-disk
+  // original is not required to be byte-identical to the source fixture.
+  // Repair only the broken-row case: DB metadata exists but the file is gone.
+  const needsRepair = !fs.existsSync(destination);
+  if (needsRepair) {
+    fs.mkdirSync(uploadsRoot, { recursive: true });
+    fs.copyFileSync(sourcePath, destination);
+  }
+  if (!fs.existsSync(destination) || fs.statSync(destination).size === 0) {
+    throw new Error(`Failed to materialize existing pages CMS upload: ${filename}`);
+  }
+  return { destination, repaired: needsRepair };
+}
+
+/**
  * Idempotent upload: lookup by deterministic name (hash + basename).
  * @returns {Promise<number>} numeric upload id
  */
@@ -56,7 +88,10 @@ async function findOrUploadByHash(strapi, filepath, fixtureUrl) {
   const contentHash = sha256File(filepath);
   const name = stableUploadName(contentHash, filepath);
   const existing = await strapi.db.query('plugin::upload.file').findOne({ where: { name } });
-  if (existing?.id != null) return existing.id;
+  if (existing?.id != null) {
+    ensureExistingUploadFile(strapi, existing, filepath);
+    return existing.id;
+  }
 
   const stats = fs.statSync(filepath);
   const uploadService = strapi.plugin('upload').service('upload');
@@ -77,6 +112,7 @@ async function findOrUploadByHash(strapi, filepath, fixtureUrl) {
   });
   const file = Array.isArray(uploaded) ? uploaded[0] : uploaded;
   if (file?.id == null) throw new Error(`Upload failed for ${fixtureUrl} (${filepath})`);
+  ensureExistingUploadFile(strapi, file, filepath);
   return file.id;
 }
 
@@ -273,4 +309,5 @@ module.exports = {
   textsOnlyDownloadCatalog,
   stableUploadName,
   sha256File,
+  ensureExistingUploadFile,
 };

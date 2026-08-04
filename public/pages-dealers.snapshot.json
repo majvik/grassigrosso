@@ -57,10 +57,10 @@
     }
   ],
   "conditions_icon": {
-    "url": "/uploads/pages_cms_c4bdf5e32807349b_icon_hand_pointer_0715919007.svg"
+    "url": "/uploads/pages_cms_c4bdf5e32807349b_icon-hand-pointer.svg"
   },
   "geography_map_image": {
-    "url": "/uploads/pages_cms_ccbd9e7173f1a8c1_Map_f4305c5264.svg"
+    "url": "/uploads/pages_cms_ccbd9e7173f1a8c1_Map.svg"
   },
   "geography_cities": [
     {
@@ -280,7 +280,7 @@
     }
   ],
   "quality_image": {
-    "url": "/uploads/pages_cms_5374d5e9e76226ad_quality_video_poster_192e53eafe.avif"
+    "url": "/uploads/pages_cms_5374d5e9e76226ad_quality-video-poster.avif"
   },
   "contact_info": [
     {
@@ -329,14 +329,14 @@
     "cta_label": "Стать дилером",
     "cta_url": "#contact-form",
     "image": {
-      "url": "/uploads/pages_cms_0a86c190d016408b_dealers_hero_86e9558939.png"
+      "url": "/uploads/pages_cms_0a86c190d016408b_dealers-hero.png"
     }
   },
   "offers": [
     {
       "title": "Маркетинговая поддержка",
       "icon": {
-        "url": "/uploads/pages_cms_dfdfc84e58627071_icon_megaphone_e3cc311286.svg"
+        "url": "/uploads/pages_cms_dfdfc84e58627071_icon-megaphone.svg"
       },
       "bullets": [
         {
@@ -364,7 +364,7 @@
     {
       "title": "Логистика и сервис",
       "icon": {
-        "url": "/uploads/pages_cms_a28556fec4b17d9e_icon_truck_394d7a2d1a.svg"
+        "url": "/uploads/pages_cms_a28556fec4b17d9e_icon-truck.svg"
       },
       "bullets": [
         {
@@ -394,7 +394,7 @@
     {
       "title": "Обязательные требования",
       "icon": {
-        "url": "/uploads/pages_cms_5c1c791d3d7856a1_icon_badge_535ca16e01.svg"
+        "url": "/uploads/pages_cms_5c1c791d3d7856a1_icon-badge.svg"
       },
       "bullets": [
         {
@@ -422,7 +422,7 @@
     {
       "title": "Желательные требования",
       "icon": {
-        "url": "/uploads/pages_cms_61a61be27fd3bdd1_icon_thumbs_up_dba06c1370.svg"
+        "url": "/uploads/pages_cms_61a61be27fd3bdd1_icon-thumbs-up.svg"
       },
       "bullets": [
         {

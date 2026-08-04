@@ -9,10 +9,10 @@
   "testimonials_title": "Нам доверяют",
   "docs_title": "Сертификация и документация",
   "partners_image_desktop": {
-    "url": "/uploads/pages_cms_4614c23d40cda5aa_logos_2x_normal_f26ab6e54b.png"
+    "url": "/uploads/pages_cms_4614c23d40cda5aa_logos_2x-normal.png"
   },
   "partners_image_mobile": {
-    "url": "/uploads/pages_cms_1313f75b45d13179_logos_2x_mobile_1d58ee19a1.png"
+    "url": "/uploads/pages_cms_1313f75b45d13179_logos_2x-mobile.png"
   },
   "testimonials": [
     {
@@ -135,13 +135,13 @@
     "cta_label": "Получить подробную информацию",
     "poster_alt": "Grassigrosso",
     "poster": {
-      "url": "/uploads/pages_cms_6cdbda8ba9489589_grassigrosso_poster_b6b58ed850.avif"
+      "url": "/uploads/pages_cms_6cdbda8ba9489589_grassigrosso-poster.avif"
     },
     "video_desktop": {
-      "url": "/uploads/pages_cms_32d9ae79c3454976_grassigrosso_silent_5f4c07a408.mp4"
+      "url": "/uploads/pages_cms_32d9ae79c3454976_grassigrosso-silent.mp4"
     },
     "video_mobile": {
-      "url": "/uploads/pages_cms_9f9025bde9b98fe1_grassigrosso_silent_mobile_b42e89ded8.mp4"
+      "url": "/uploads/pages_cms_9f9025bde9b98fe1_grassigrosso-silent-mobile.mp4"
     }
   },
   "solutions": [
@@ -150,7 +150,7 @@
       "text": "Сон, о котором хочется написать в отзыве.\nМатрасы, которые создают впечатление и повышают лояльность гостей.",
       "href": "/hotels",
       "icon": {
-        "url": "/uploads/pages_cms_f3986c8c00532e0d_icon_hotels_c2ea638a84.svg"
+        "url": "/uploads/pages_cms_f3986c8c00532e0d_icon-hotels.svg"
       }
     },
     {
@@ -158,7 +158,7 @@
       "text": "Продуманные решения для ваших клиентов. Инвестиция в восстановление каждого утра ближайших 10 лет.",
       "href": "/dealers",
       "icon": {
-        "url": "/uploads/pages_cms_b913d99571c4410d_icon_dealers_bd20631c9b.svg"
+        "url": "/uploads/pages_cms_b913d99571c4410d_icon-dealers.svg"
       }
     },
     {
@@ -166,7 +166,7 @@
       "text": "Инженерная точность сна в каждой модели.\nМатрасы, в которых все на своем месте − и вы тоже.",
       "href": "/catalog",
       "icon": {
-        "url": "/uploads/pages_cms_fed5cd7f6503d8f6_icon_catalog_c855bb7dc7.svg"
+        "url": "/uploads/pages_cms_fed5cd7f6503d8f6_icon-catalog.svg"
       }
     }
   ],
@@ -176,7 +176,7 @@
       "text": "Мы собираем современные технологии и лучшие инженерные решения в продуманные продукты для сна.",
       "href": "",
       "icon": {
-        "url": "/uploads/pages_cms_52d20eec87022ba4_icon_engineering_1ce2dfc7a6.svg"
+        "url": "/uploads/pages_cms_52d20eec87022ba4_icon-engineering.svg"
       }
     },
     {
@@ -184,7 +184,7 @@
       "text": "Оставлено только то, что действительно работает.\nЧистые формы снаружи и внутри.",
       "href": "",
       "icon": {
-        "url": "/uploads/pages_cms_378534195db73756_icon_nature_158a693dab.svg"
+        "url": "/uploads/pages_cms_378534195db73756_icon-nature.svg"
       }
     }
   ],
@@ -197,7 +197,7 @@
     "request_aria_label": "Запросить презентацию компании",
     "kind": "company",
     "file": {
-      "url": "/uploads/pages_cms_c28902ee89483dfc_Grassigrosso_company_a5d71a7745.pdf"
+      "url": "/uploads/pages_cms_c28902ee89483dfc_Grassigrosso-company.pdf"
     }
   },
   "collections": [
@@ -206,7 +206,7 @@
       "href": "/catalog",
       "image_alt": "Classic",
       "image": {
-        "url": "/uploads/pages_cms_d8d182e87077b9ec_collection_Classic_4be6c678df.png"
+        "url": "/uploads/pages_cms_d8d182e87077b9ec_collection-Classic.png"
       },
       "features": [
         {
@@ -231,7 +231,7 @@
       "href": "/catalog",
       "image_alt": "Flexi",
       "image": {
-        "url": "/uploads/pages_cms_20c53e296602cea3_collection_Flexi_34e6cbfff3.png"
+        "url": "/uploads/pages_cms_20c53e296602cea3_collection-Flexi.png"
       },
       "features": [
         {
@@ -256,7 +256,7 @@
       "href": "/catalog",
       "image_alt": "Relax",
       "image": {
-        "url": "/uploads/pages_cms_e467710529f97162_collection_Relax_b3aee630da.png"
+        "url": "/uploads/pages_cms_e467710529f97162_collection-Relax.png"
       },
       "features": [
         {
@@ -281,7 +281,7 @@
       "href": "/catalog",
       "image_alt": "Trend",
       "image": {
-        "url": "/uploads/pages_cms_f231f0adacb0c8b8_collection_Trend_22f435755f.png"
+        "url": "/uploads/pages_cms_f231f0adacb0c8b8_collection-Trend.png"
       },
       "features": [
         {
@@ -306,7 +306,7 @@
       "href": "/catalog",
       "image_alt": "Viva Natura",
       "image": {
-        "url": "/uploads/pages_cms_c6a60aa10e3ea975_collection_Viva_Natura_0_5x_c548533dc1.png"
+        "url": "/uploads/pages_cms_c6a60aa10e3ea975_collection-Viva-Natura_0.5x.png"
       },
       "features": [
         {
@@ -337,7 +337,7 @@
       "request_aria_label": "Запросить декларацию",
       "kind": "certificate",
       "file": {
-        "url": "/uploads/pages_cms_322d850417ca10dc_1feec7d562.pdf"
+        "url": "/uploads/pages_cms_322d850417ca10dc__.pdf"
       }
     }
   ]
