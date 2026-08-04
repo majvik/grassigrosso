@@ -112,16 +112,21 @@
     </div>
 
     <main>
-      <section class="download-catalog-page" aria-labelledby="download-catalog-title">
-        <a href="/catalog" class="download-catalog-back">Назад в каталог</a>
-        <div class="download-catalog-shell">
-          <div class="download-catalog-media">
-            <img class="download-catalog-cover" src="/download-catalog/slide-01.avif" alt="Каталог продукции Grassigrosso" width="880" height="880" fetchpriority="high" />
+      <section class="catalogue-new-shared-product download-catalog-page" aria-labelledby="download-catalog-title">
+        <a href="/catalog" class="catalogue-new-shared-back download-catalog-back">Назад в каталог</a>
+        <div class="catalogue-new-shared-product-shell download-catalog-shell">
+          <div class="download-catalog-media" data-download-media>
+            <img class="download-catalog-cover" src="/download-catalog/slide-01.avif" alt="Каталог продукции Grassigrosso" width="880" height="880" loading="eager" fetchpriority="high" decoding="async" />
           </div>
-          <div class="download-catalog-info">
-            <h1 class="download-catalog-title" id="download-catalog-title">Скачать каталог</h1>
-            <p class="download-catalog-lead">Оставьте контакты — пришлём PDF каталога.</p>
-            <form class="contact-form download-catalog-form" data-download-doc="catalog">
+          <div class="catalogue-new-shared-product-info download-catalog-info">
+            <h1 class="catalogue-new-shared-product-title download-catalog-title" id="download-catalog-title">Скачать каталог</h1>
+            <p class="download-catalog-lead" data-download-lead>Оставьте контакты — пришлём PDF каталога.</p>
+            <div class="download-catalog-form-wrap">
+            <form class="contact-form download-catalog-form" data-contact-form data-download-doc="catalog" data-privacy-consent-guard>
+              <div class="download-catalog-honeypot" aria-hidden="true">
+                <label for="website">Website</label>
+                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+              </div>
               <div class="form-group">
                 <label for="name">Имя</label>
                 <input type="text" id="name" placeholder="Иван Иванов" required />
@@ -134,20 +139,23 @@
                 <label for="email">E-mail</label>
                 <input type="email" id="email" placeholder="example@company.com" required />
               </div>
-              <div class="form-checkbox">
-                <input type="checkbox" id="privacy" name="privacy" required />
-                <label for="privacy">
-                  <span class="checkbox-custom">
-                    <svg class="checkbox-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <rect x="0.5" y="0.5" width="23" height="23" rx="3.5" fill="white" stroke="#283E37" stroke-opacity="0.1" />
-                      <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2" />
-                    </svg>
-                  </span>
-                  <span class="checkbox-text">Я согласен на обработку персональных данных в соответствии с <a href="/privacy">Политикой конфиденциальности</a></span>
-                </label>
+              <div class="form-submit-group">
+                <div class="form-checkbox">
+                  <input type="checkbox" id="privacy" name="privacy" required />
+                  <label for="privacy">
+                    <span class="checkbox-custom">
+                      <svg class="checkbox-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <rect x="0.5" y="0.5" width="23" height="23" rx="3.5" fill="white" stroke="#283E37" stroke-opacity="0.1" />
+                        <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2" />
+                      </svg>
+                    </span>
+                    <span class="checkbox-text">Я согласен на обработку персональных данных в соответствии с <a href="/privacy">Политикой конфиденциальности</a></span>
+                  </label>
+                </div>
+                <button type="submit" class="btn-primary is-privacy-disabled" disabled aria-disabled="true">Скачать каталог</button>
               </div>
-              <button type="submit" class="btn-primary">Скачать каталог</button>
             </form>
+            </div>
           </div>
         </div>
       </section>

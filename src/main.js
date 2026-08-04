@@ -33,18 +33,36 @@ function initDownloadCatalogChrome() {
   document.querySelectorAll('.footer-column').forEach((column) => {
     const heading = column.querySelector('.footer-heading')?.textContent.trim()
     const list = column.querySelector('.footer-links')
-    if (heading !== 'Информация' || !list || list.querySelector('[data-download-catalog-link]')) return
+    if (heading !== 'Решения' || !list || list.querySelector('[data-download-catalog-link]')) return
     const item = document.createElement('li')
     const download = document.createElement('a')
     download.href = '/download-catalog'
     download.dataset.downloadCatalogLink = ''
     download.textContent = 'Скачать каталог'
     item.appendChild(download)
-    list.appendChild(item)
+    const catalogLink = list.querySelector('a[href="/catalog"], a[href="catalog.html"]')
+    const catalogItem = catalogLink?.closest('li')
+    if (catalogItem) catalogItem.after(item)
+    else list.appendChild(item)
   })
 }
 
 initDownloadCatalogChrome()
+
+document.querySelectorAll('form[data-privacy-consent-guard]').forEach((form) => {
+  const checkbox = form.querySelector('input[name="privacy"]')
+  const submit = form.querySelector('button[type="submit"]')
+  if (!checkbox || !submit) return
+  const syncPrivacyState = () => {
+    const disabled = !checkbox.checked
+    submit.disabled = disabled
+    submit.classList.toggle('is-privacy-disabled', disabled)
+    submit.setAttribute('aria-disabled', String(disabled))
+  }
+  checkbox.addEventListener('change', syncPrivacyState)
+  form.addEventListener('reset', () => setTimeout(syncPrivacyState, 0))
+  syncPrivacyState()
+})
 
 // Типографика: привязка коротких предлогов/союзов к следующему слову неразрывным пробелом
 ;(function fixWidows() {
