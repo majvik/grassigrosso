@@ -136,10 +136,10 @@ Rejected: proxy-on-error uploads; restart-Strapi-as-fix; foreign process kill.
 | D4 degraded JSON+media+CDP+404 | PASS | PASS |
 | Phase E / embedded suite | PASS + uploads self-clean | PASS (`pages-api` isolated ports when `:1337` busy) |
 | Isolation / routes / typecheck / build | PASS | PASS |
-| Catalog API (+ UI when harness Vite up) | PASS | PASS (`catalog-api` + `catalog-ui`) |
-| Porcelain / default listeners | unchanged | PASS |
+| Catalog API (+ UI + perf on owned stack) | PASS | PASS (`catalog-api`/`ui`/`perf` via owned ports) |
+| Porcelain / default listeners | unchanged | PASS (normal mode; record writes evidence then commit) |
 | Push / `strapi:sync-seed` | **not performed** | **not performed** |
-| Aggregator | PASS | **`npm run check:pages-cms-phase-5` PASS** → `05-SUITE-RESULTS.md` |
+| Aggregator | PASS | **`check:pages-cms-phase-5:record`** then **`check:pages-cms-phase-5`** → `05-SUITE-RESULTS.md` |
 
 ---
 
