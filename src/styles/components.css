@@ -7391,6 +7391,7 @@ iframe.contacts-map-frame[data-map-embed] {
   aspect-ratio: 1280 / 549;
   border: 0;
   border-radius: 24px;
+  filter: grayscale(1);
   background-color: var(--color-partner-cell);
 }
 

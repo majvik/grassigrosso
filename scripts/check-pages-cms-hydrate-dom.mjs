@@ -734,6 +734,8 @@ const MAP_VISIBILITY_EXPR = `(() => {
       tag: el.tagName,
       hiddenAttr,
       display: style.display,
+      filter: style.filter,
+      borderRadius: style.borderRadius,
       left: r.left,
       width: r.width,
       height: r.height,
@@ -772,6 +774,16 @@ function assertExactlyOneVisibleMap(label, snap, expectedSlug) {
     visible?.left >= (snap.containerLeft || 0) - 1,
     `${label}: visible map left off-container (${JSON.stringify({ visible, containerLeft: snap.containerLeft })})`,
   )
+  if (visible?.tag === 'IFRAME') {
+    assert(
+      visible.filter === 'grayscale(1)',
+      `${label}: CMS map iframe lost baseline grayscale (${JSON.stringify(visible)})`,
+    )
+    assert(
+      visible.borderRadius === '24px',
+      `${label}: CMS map iframe lost rounded frame (${JSON.stringify(visible)})`,
+    )
+  }
   for (const frame of snap.frames || []) {
     if (frame.slug === expectedSlug) continue
     assert(
