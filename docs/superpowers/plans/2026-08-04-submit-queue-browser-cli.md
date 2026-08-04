@@ -11,6 +11,7 @@
 - Change `/api/submit` to durable enqueue + immediate `202`.
 - Trigger the existing queue worker without blocking the response.
 - Move confirmation email to the successful worker path.
+- Add bounded Telegram and SMTP timeouts so the worker always reaches retry scheduling.
 - Pin `agent-browser` in dev dependencies and expose `browser:smoke`.
 
 ## Phase C — verify — complete

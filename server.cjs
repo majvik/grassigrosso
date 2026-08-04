@@ -76,6 +76,7 @@ const SMTP_TLS_REJECT_UNAUTHORIZED = (process.env.SMTP_TLS_REJECT_UNAUTHORIZED |
 const QUEUE_RETRY_INTERVAL_MS = Number(process.env.QUEUE_RETRY_INTERVAL_MS || 15000);
 const QUEUE_BASE_RETRY_DELAY_MS = Number(process.env.QUEUE_BASE_RETRY_DELAY_MS || 30000);
 const QUEUE_MAX_RETRY_DELAY_MS = Number(process.env.QUEUE_MAX_RETRY_DELAY_MS || 15 * 60 * 1000);
+const DELIVERY_CHANNEL_TIMEOUT_MS = Number(process.env.DELIVERY_CHANNEL_TIMEOUT_MS || 15000);
 const SPAM_WINDOW_MS = Number(process.env.SPAM_WINDOW_MS || 10 * 60 * 1000);
 /** В dev частые тесты форм иначе ловят 429 на полчаса — в production оставляем строгие значения. */
 const SPAM_MAX_SUBMITS_PER_WINDOW = Number(
@@ -765,6 +766,9 @@ function createMailTransport() {
     host: SMTP_HOST,
     port: SMTP_PORT,
     secure: SMTP_SECURE,
+    connectionTimeout: DELIVERY_CHANNEL_TIMEOUT_MS,
+    greetingTimeout: DELIVERY_CHANNEL_TIMEOUT_MS,
+    socketTimeout: DELIVERY_CHANNEL_TIMEOUT_MS,
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASS,
@@ -873,6 +877,8 @@ async function sendLeadToTelegram(lead) {
         chat_id: id,
         text: message,
         parse_mode: 'HTML'
+      }, {
+        timeout: DELIVERY_CHANNEL_TIMEOUT_MS
       });
     } catch (err) {
       const detail = extractErrorDetails(err);

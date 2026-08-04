@@ -106,6 +106,7 @@ async function main() {
       MAIL_FROM: 'qa@example.test',
       MAIL_TO: 'sales@example.test',
       QUEUE_RETRY_INTERVAL_MS: '60000',
+      DELIVERY_CHANNEL_TIMEOUT_MS: '5000',
     },
   })
 
@@ -147,6 +148,8 @@ async function main() {
   assert.ok(workerStart >= 0 && submitStart > workerStart)
   assert.ok(source.slice(workerStart, submitStart).includes('sendConfirmationToUser(lead)'))
   assert.ok(!source.slice(submitStart).includes('await deliverLeadWithFallback(lead)'))
+  assert.ok(source.includes('timeout: DELIVERY_CHANNEL_TIMEOUT_MS'))
+  assert.ok(source.includes('socketTimeout: DELIVERY_CHANNEL_TIMEOUT_MS'))
 
   console.log(`check:submit-queue-fast PASS (status=202 elapsedMs=${elapsedMs} durablePending=1 smtpMessages=2)`)
 }
