@@ -1308,6 +1308,37 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiSiteChromeSiteChrome extends Struct.SingleTypeSchema {
+  collectionName: 'site_chromes';
+  info: {
+    displayName: '\u0428\u0430\u043F\u043A\u0430 \u0438 \u043F\u043E\u0434\u0432\u0430\u043B \u0441\u0430\u0439\u0442\u0430';
+    pluralName: 'site-chromes';
+    singularName: 'site-chrome';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    footer: Schema.Attribute.Component<'chrome.footer', false> &
+      Schema.Attribute.Required;
+    header: Schema.Attribute.Component<'chrome.header', false> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::site-chrome.site-chrome'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiTagTag extends Struct.CollectionTypeSchema {
   collectionName: 'tags';
   info: {
@@ -1905,6 +1936,7 @@ declare module '@strapi/strapi' {
       'api::mattress-type-option.mattress-type-option': ApiMattressTypeOptionMattressTypeOption;
       'api::privacy-page.privacy-page': ApiPrivacyPagePrivacyPage;
       'api::product.product': ApiProductProduct;
+      'api::site-chrome.site-chrome': ApiSiteChromeSiteChrome;
       'api::tag.tag': ApiTagTag;
       'api::terms-page.terms-page': ApiTermsPageTermsPage;
       'plugin::content-releases.release': PluginContentReleasesRelease;

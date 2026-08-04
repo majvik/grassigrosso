@@ -64,6 +64,89 @@ export interface CatalogProductGalleryItem extends Struct.ComponentSchema {
   };
 }
 
+export interface ChromeFooter extends Struct.ComponentSchema {
+  collectionName: 'components_chrome_footers';
+  info: {
+    displayName: '\u041F\u043E\u0434\u0432\u0430\u043B \u0441\u0430\u0439\u0442\u0430';
+    icon: 'layout';
+  };
+  attributes: {
+    contacts_title: Schema.Attribute.String & Schema.Attribute.Required;
+    copyright_brand: Schema.Attribute.String & Schema.Attribute.Required;
+    copyright_legal_text: Schema.Attribute.Text & Schema.Attribute.Required;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    email_href: Schema.Attribute.String & Schema.Attribute.Required;
+    email_label: Schema.Attribute.String & Schema.Attribute.Required;
+    email_value: Schema.Attribute.String & Schema.Attribute.Required;
+    inn: Schema.Attribute.String & Schema.Attribute.Required;
+    inn_label: Schema.Attribute.String & Schema.Attribute.Required;
+    logo: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    logo_alt: Schema.Attribute.String & Schema.Attribute.Required;
+    navigation_groups: Schema.Attribute.Component<
+      'chrome.navigation-group',
+      true
+    > &
+      Schema.Attribute.Required;
+    ogrn: Schema.Attribute.String & Schema.Attribute.Required;
+    ogrn_label: Schema.Attribute.String & Schema.Attribute.Required;
+    phone_href: Schema.Attribute.String & Schema.Attribute.Required;
+    phone_label: Schema.Attribute.String & Schema.Attribute.Required;
+    phone_value: Schema.Attribute.String & Schema.Attribute.Required;
+    policy_links: Schema.Attribute.Component<'chrome.link', true> &
+      Schema.Attribute.Required;
+    schedule: Schema.Attribute.String & Schema.Attribute.Required;
+    schedule_label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ChromeHeader extends Struct.ComponentSchema {
+  collectionName: 'components_chrome_headers';
+  info: {
+    displayName: '\u0428\u0430\u043F\u043A\u0430 \u0441\u0430\u0439\u0442\u0430';
+    icon: 'layout';
+  };
+  attributes: {
+    contact_cta_href: Schema.Attribute.String & Schema.Attribute.Required;
+    contact_cta_label: Schema.Attribute.String & Schema.Attribute.Required;
+    greeting: Schema.Attribute.String & Schema.Attribute.Required;
+    logo: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    logo_alt: Schema.Attribute.String & Schema.Attribute.Required;
+    logo_home_href: Schema.Attribute.String & Schema.Attribute.Required;
+    phone_href: Schema.Attribute.String & Schema.Attribute.Required;
+    phone_label: Schema.Attribute.String & Schema.Attribute.Required;
+    primary_navigation: Schema.Attribute.Component<'chrome.link', true> &
+      Schema.Attribute.Required;
+    schedule: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ChromeLink extends Struct.ComponentSchema {
+  collectionName: 'components_chrome_links';
+  info: {
+    displayName: '\u0421\u0441\u044B\u043B\u043A\u0430 \u0441\u0430\u0439\u0442\u0430';
+    icon: 'link';
+  };
+  attributes: {
+    href: Schema.Attribute.String & Schema.Attribute.Required;
+    key: Schema.Attribute.String & Schema.Attribute.Required;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ChromeNavigationGroup extends Struct.ComponentSchema {
+  collectionName: 'components_chrome_navigation_groups';
+  info: {
+    displayName: '\u0413\u0440\u0443\u043F\u043F\u0430 \u0441\u0441\u044B\u043B\u043E\u043A';
+    icon: 'bulletList';
+  };
+  attributes: {
+    key: Schema.Attribute.String & Schema.Attribute.Required;
+    links: Schema.Attribute.Component<'chrome.link', true> &
+      Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface LegalInlineRun extends Struct.ComponentSchema {
   collectionName: 'components_legal_inline_runs';
   info: {
@@ -498,6 +581,10 @@ declare module '@strapi/strapi' {
       'catalog.filter-help-summary-item': CatalogFilterHelpSummaryItem;
       'catalog.hero-slide': CatalogHeroSlide;
       'catalog.product-gallery-item': CatalogProductGalleryItem;
+      'chrome.footer': ChromeFooter;
+      'chrome.header': ChromeHeader;
+      'chrome.link': ChromeLink;
+      'chrome.navigation-group': ChromeNavigationGroup;
       'legal.inline-run': LegalInlineRun;
       'legal.list-block': LegalListBlock;
       'legal.list-item': LegalListItem;

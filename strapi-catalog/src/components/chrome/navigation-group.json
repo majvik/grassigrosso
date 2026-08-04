@@ -1,0 +1,10 @@
+{
+  "collectionName": "components_chrome_navigation_groups",
+  "info": { "displayName": "Группа ссылок", "icon": "bulletList" },
+  "options": {},
+  "attributes": {
+    "key": { "type": "string", "required": true, "displayName": "Системный ключ" },
+    "title": { "type": "string", "required": true, "displayName": "Заголовок" },
+    "links": { "type": "component", "repeatable": true, "required": true, "component": "chrome.link", "displayName": "Ссылки" }
+  }
+}

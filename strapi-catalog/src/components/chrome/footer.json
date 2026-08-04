@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_chrome_footers",
+  "info": { "displayName": "Подвал сайта", "icon": "layout" },
+  "options": {},
+  "attributes": {
+    "logo": { "type": "media", "multiple": false, "required": true, "allowedTypes": ["images"], "displayName": "Логотип" },
+    "logo_alt": { "type": "string", "required": true, "displayName": "Описание логотипа" },
+    "description": { "type": "text", "required": true, "displayName": "Описание" },
+    "inn_label": { "type": "string", "required": true, "displayName": "ИНН — подпись" },
+    "inn": { "type": "string", "required": true, "displayName": "ИНН" },
+    "ogrn_label": { "type": "string", "required": true, "displayName": "ОГРН — подпись" },
+    "ogrn": { "type": "string", "required": true, "displayName": "ОГРН" },
+    "navigation_groups": { "type": "component", "repeatable": true, "required": true, "component": "chrome.navigation-group", "displayName": "Группы навигации" },
+    "contacts_title": { "type": "string", "required": true, "displayName": "Заголовок контактов" },
+    "phone_label": { "type": "string", "required": true, "displayName": "Телефон — подпись" },
+    "phone_value": { "type": "string", "required": true, "displayName": "Телефон — текст" },
+    "phone_href": { "type": "string", "required": true, "displayName": "Телефон — ссылка" },
+    "email_label": { "type": "string", "required": true, "displayName": "Электронная почта — подпись" },
+    "email_value": { "type": "string", "required": true, "displayName": "Электронная почта — текст" },
+    "email_href": { "type": "string", "required": true, "displayName": "Электронная почта — ссылка" },
+    "schedule_label": { "type": "string", "required": true, "displayName": "Режим работы — подпись" },
+    "schedule": { "type": "string", "required": true, "displayName": "Режим работы" },
+    "policy_links": { "type": "component", "repeatable": true, "required": true, "component": "chrome.link", "displayName": "Юридические ссылки" },
+    "copyright_brand": { "type": "string", "required": true, "displayName": "Копирайт бренда" },
+    "copyright_legal_text": { "type": "text", "required": true, "displayName": "Юридический текст" }
+  }
+}

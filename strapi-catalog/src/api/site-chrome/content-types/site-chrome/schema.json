@@ -1,0 +1,10 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_chromes",
+  "info": { "singularName": "site-chrome", "pluralName": "site-chromes", "displayName": "Шапка и подвал сайта" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "header": { "type": "component", "repeatable": false, "required": true, "component": "chrome.header", "displayName": "Шапка сайта" },
+    "footer": { "type": "component", "repeatable": false, "required": true, "component": "chrome.footer", "displayName": "Подвал сайта" }
+  }
+}

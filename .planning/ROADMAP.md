@@ -7,7 +7,7 @@ Milestone **v1.1** делает маркетинговые тексты волн
 ## Phases
 
 **Phase Numbering:**
-- Integer phases (1–6): Planned milestone work
+- Integer phases (1–7): Planned milestone work
 - Decimal phases (e.g. 2.1): Urgent insertions via `/gsd-insert-phase`
 
 - [x] **Phase 1: Shared Page Components** - Переиспользуемые `page.*` блоки с русскими лейблами
@@ -16,6 +16,7 @@ Milestone **v1.1** делает маркетинговые тексты волн
 - [x] **Phase 4: React Hydrate** - Волны 1 страницы берут контент из Node API без поломки layout и email-routing
 - [x] **Phase 5: Local Acceptance Gate** - Полное автотестовое покрытие и локальный green verify; без push/deploy
 - [x] **Phase 6: Legal Pages** - Privacy / terms / cookies в CMS + hydrate `legal-content.tsx` (Complete locally, pending review)
+- [ ] **Phase 7: Global Site Chrome** - Header, mobile menu и footer в одном строгом CMS-контракте
 
 ## Phase Details
 
@@ -114,6 +115,21 @@ Plans:
 Plans:
 - [x] 06-01-PLAN.md — Legal pages ([design](../docs/superpowers/specs/2026-08-04-pages-cms-legal-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-legal.md), [contract](phases/06-legal-pages/06-CONTENT-CONTRACT.md), [suite](phases/06-legal-pages/06-SUITE-RESULTS.md)) — Complete locally (`check:pages-cms-phase-6`)
 
+### Phase 7: Global Site Chrome
+**Goal**: Редактор меняет общий header, mobile menu и footer в одном RU single type без рассинхронизации страниц и без потери полного first paint.
+**Depends on**: Phase 6
+**Requirements**: CHR-01…CHR-06
+**Success Criteria**:
+  1. Один `site-chrome` управляет всеми разрешёнными текстами, ссылками и медиа существующих chrome-слотов
+  2. Desktop/mobile navigation имеют один ordered source и сохраняют code-owned behavior hooks
+  3. Node cache/snapshot и полный HTML fallback работают без Strapi
+  4. Все contracted HTML pages проходят strict parity и DOM regression
+  5. Email routing, analytics, SEO/security и catalog/legal behavior не меняются
+**Plans**: Phase A complete locally; Phase B next
+
+Plans:
+- [ ] 07-01-PLAN.md — Global Site Chrome ([design](../docs/superpowers/specs/2026-08-04-pages-cms-global-chrome-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-global-chrome.md))
+
 ## Progress
 
 **Execution Order:**
@@ -127,6 +143,7 @@ Plans:
 | 4. React Hydrate | 1/1 | Complete (local; FE-01…05; `2d7ca10`; no push) | 2026-08-04 |
 | 5. Local Acceptance Gate | 1/1 | **Accepted** (local; `7d26bcb`; no push) | 2026-08-04 |
 | 6. Legal Pages | 1/1 | **Complete locally, pending review** | 2026-08-04 |
+| 7. Global Site Chrome | 0/1 | **Planning draft; not started** | — |
 
 ---
 *Roadmap created: 2026-08-03*

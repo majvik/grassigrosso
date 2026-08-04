@@ -44,6 +44,15 @@
 - **LEG-01**: Single types или эквивалент для privacy / terms / cookies
 - **LEG-02**: Rich text / блоковая структура + hydrate `legal-content.tsx`
 
+## v3 Requirements — Global Site Chrome (planned)
+
+- [ ] **CHR-01**: Один RU single type управляет header и footer через структурированные компоненты
+- [ ] **CHR-02**: Desktop header и mobile menu используют один ordered navigation contract
+- [ ] **CHR-03**: Node API + cache/stale/disk snapshot обслуживают chrome без frontend→Strapi
+- [ ] **CHR-04**: Полный header/mobile/footer присутствует в первом HTML-кадре всех contracted страниц
+- [ ] **CHR-05**: Atomic hydrate сохраняет layout, hooks, security, email-routing и fallback
+- [ ] **CHR-06**: Phase 7 gate покрывает Admin save/reload, degraded mode и все page consumers
+
 ## Out of Scope
 
 | Feature | Reason |
@@ -80,6 +89,12 @@
 | QA-03 | Every phase + Phase 5 gate | Complete — attested no push / no sync-seed; listeners unchanged |
 | LEG-01 | Phase 6 | Complete |
 | LEG-02 | Phase 6 | Complete |
+| CHR-01 | Phase 7 | Planned |
+| CHR-02 | Phase 7 | Planned |
+| CHR-03 | Phase 7 | Planned |
+| CHR-04 | Phase 7 | Planned |
+| CHR-05 | Phase 7 | Planned |
+| CHR-06 | Phase 7 | Planned |
 
 **Coverage:**
 - v1 requirements: 20 total
@@ -89,4 +104,4 @@
 
 ---
 *Requirements defined: 2026-08-03*
-*Last updated: 2026-08-04 — Phase 6 Complete locally, pending review; LEG-01/02 closed (`check:pages-cms-phase-6` PASS)*
+*Last updated: 2026-08-04 — Phase 7A contract complete locally; Phase B next*

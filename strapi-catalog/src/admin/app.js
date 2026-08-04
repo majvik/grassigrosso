@@ -14,13 +14,14 @@
  * техническими (image_only, certificate, …).
  */
 import ru from './translations/ru.json';
+import chromeRu from './translations/chrome-ru.mjs';
 import EnumerationInput from './extensions/EnumerationInput';
 
 export default {
   config: {
     locales: ['ru', 'en'],
     translations: {
-      ru,
+      ru: { ...ru, ...chromeRu },
     },
   },
   bootstrap(app) {

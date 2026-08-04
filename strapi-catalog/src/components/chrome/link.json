@@ -1,0 +1,10 @@
+{
+  "collectionName": "components_chrome_links",
+  "info": { "displayName": "Ссылка сайта", "icon": "link" },
+  "options": {},
+  "attributes": {
+    "key": { "type": "string", "required": true, "displayName": "Системный ключ" },
+    "label": { "type": "string", "required": true, "displayName": "Текст" },
+    "href": { "type": "string", "required": true, "displayName": "Ссылка" }
+  }
+}

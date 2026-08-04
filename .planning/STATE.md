@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-08-03)
 
 **Core value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта и без прямого доступа сайта к Strapi.
-**Current focus:** Phase 6 Legal — **Complete locally, pending review**. No push / no `strapi:sync-seed`. Phase 5 accepted at `7d26bcb`.
+**Current focus:** Phase 7 Global Site Chrome — Phases A–B complete; Phase C seed/API/snapshot next.
 
 ## Current Position
 
-Phase: 6 of 6 (Legal Pages) — Complete locally
-Plan: 06-01
-Status: LEG-01/LEG-02 Complete; `check:pages-cms-phase-6` PASS
-Last activity: 2026-08-04 — Phase 6D+E closeout
+Phase: 7 (Global Site Chrome) — planning
+Plan: 07-01
+Status: Phases A–B complete locally; Phase C not started
+Last activity: 2026-08-04 — Phase 7B schemas/RU/feed gate and dual boot passed
 
-Progress: [██████████] Phases 1–6 complete locally
+Progress: [██████████] Phases 1–6 complete; Phase 7A complete
 
 ## Performance Metrics
 
@@ -36,7 +36,8 @@ Progress: [██████████] Phases 1–6 complete locally
 
 ### Pending Todos
 
-- Review / push / sync-seed / deploy only when asked
+- Build Phase 7C fixture, local `.tmp` seed, Node API and atomic snapshot
+- Do not run `strapi:sync-seed`
 
 ## Session Continuity
 
@@ -44,3 +45,4 @@ Progress: [██████████] Phases 1–6 complete locally
 - Design/plan: `docs/superpowers/{specs,plans}/2026-08-04-pages-cms-legal*`
 - Suite: `.planning/phases/06-legal-pages/06-SUITE-RESULTS.md`
 - Gate: `npm run check:pages-cms-phase-6`
+- Phase 7 design/plan: `docs/superpowers/{specs,plans}/2026-08-04-pages-cms-global-chrome*`

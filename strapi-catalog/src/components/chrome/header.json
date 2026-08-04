@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_chrome_headers",
+  "info": { "displayName": "Шапка сайта", "icon": "layout" },
+  "options": {},
+  "attributes": {
+    "greeting": { "type": "string", "required": true, "displayName": "Приветствие" },
+    "phone_label": { "type": "string", "required": true, "displayName": "Телефон — текст" },
+    "phone_href": { "type": "string", "required": true, "displayName": "Телефон — ссылка" },
+    "schedule": { "type": "string", "required": true, "displayName": "Режим работы" },
+    "logo": { "type": "media", "multiple": false, "required": true, "allowedTypes": ["images"], "displayName": "Логотип" },
+    "logo_alt": { "type": "string", "required": true, "displayName": "Описание логотипа" },
+    "logo_home_href": { "type": "string", "required": true, "displayName": "Ссылка логотипа" },
+    "primary_navigation": { "type": "component", "repeatable": true, "required": true, "component": "chrome.link", "displayName": "Основная навигация" },
+    "contact_cta_label": { "type": "string", "required": true, "displayName": "Кнопка связи — текст" },
+    "contact_cta_href": { "type": "string", "required": true, "displayName": "Кнопка связи — ссылка" }
+  }
+}
