@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_legal_list_items",
+  "info": {
+    "displayName": "Пункт списка",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "runs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "legal.inline-run",
+      "required": true,
+      "displayName": "Фрагменты"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "kind": "singleType",
+  "collectionName": "cookies_pages",
+  "info": {
+    "singularName": "cookies-page",
+    "pluralName": "cookies-pages",
+    "displayName": "Политика cookie"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "displayName": "Заголовок"
+    },
+    "effective_date": {
+      "type": "date",
+      "required": true,
+      "displayName": "Дата обновления"
+    },
+    "body": {
+      "type": "dynamiczone",
+      "components": [
+        "legal.paragraph-block",
+        "legal.list-block",
+        "legal.table-block",
+        "legal.operator-block"
+      ],
+      "required": true,
+      "displayName": "Содержание"
+    }
+  }
+}

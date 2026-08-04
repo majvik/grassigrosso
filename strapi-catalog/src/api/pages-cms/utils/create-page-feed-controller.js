@@ -1,6 +1,6 @@
 'use strict';
 
-const { loadCanonicalPageData } = require('./serialize-page-feed');
+const { loadCanonicalPageData, LegalContractError } = require('./serialize-page-feed');
 
 /**
  * Factory for public read-only page feed controllers (`auth: false` routes).
@@ -9,14 +9,24 @@ const { loadCanonicalPageData } = require('./serialize-page-feed');
 function createPageFeedController(slug) {
   return {
     async index(ctx) {
-      const data = await loadCanonicalPageData(strapi, slug);
-      if (!data) {
-        ctx.status = 404;
-        ctx.body = { data: null };
-        return;
+      try {
+        const data = await loadCanonicalPageData(strapi, slug);
+        if (!data) {
+          ctx.status = 404;
+          ctx.body = { data: null };
+          return;
+        }
+        // Feed envelope: { data } only — no source (Node adds source in Phase D / C).
+        ctx.body = { data };
+      } catch (err) {
+        if (err instanceof LegalContractError || err?.name === 'LegalContractError') {
+          // Atomic reject: do not emit invalid legal payload.
+          ctx.status = 422;
+          ctx.body = { data: null };
+          return;
+        }
+        throw err;
       }
-      // Feed envelope: { data } only — no source (Node adds source in Phase D).
-      ctx.body = { data };
     },
   };
 }

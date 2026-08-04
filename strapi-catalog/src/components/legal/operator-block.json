@@ -1,0 +1,45 @@
+{
+  "collectionName": "components_legal_operator_blocks",
+  "info": {
+    "displayName": "Оператор",
+    "icon": "user"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "required": false,
+      "displayName": "Заголовок секции"
+    },
+    "role_label": {
+      "type": "string",
+      "required": true,
+      "displayName": "Роль оператора"
+    },
+    "legal_name": {
+      "type": "string",
+      "required": true,
+      "displayName": "Юридическое имя"
+    },
+    "ogrn": {
+      "type": "string",
+      "required": true,
+      "displayName": "ОГРН"
+    },
+    "inn": {
+      "type": "string",
+      "required": true,
+      "displayName": "ИНН"
+    },
+    "address": {
+      "type": "text",
+      "required": true,
+      "displayName": "Адрес"
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "displayName": "Email"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_legal_list_blocks",
+  "info": {
+    "displayName": "Список",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "required": false,
+      "displayName": "Заголовок секции"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "legal.list-item",
+      "required": true,
+      "displayName": "Пункты"
+    }
+  }
+}

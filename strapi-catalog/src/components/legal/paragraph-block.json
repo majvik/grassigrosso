@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_legal_paragraph_blocks",
+  "info": {
+    "displayName": "Абзац",
+    "icon": "write"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "required": false,
+      "displayName": "Заголовок секции"
+    },
+    "runs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "legal.inline-run",
+      "required": true,
+      "displayName": "Фрагменты"
+    }
+  }
+}

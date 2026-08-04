@@ -1,0 +1,38 @@
+{
+  "collectionName": "components_legal_inline_runs",
+  "info": {
+    "displayName": "Инлайн-фрагмент",
+    "icon": "quote",
+    "description": "Дискриминатор text|link; публичный feed приводит link_label → children[]"
+  },
+  "options": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": ["text", "link"],
+      "required": true,
+      "displayName": "Тип фрагмента"
+    },
+    "value": {
+      "type": "text",
+      "required": false,
+      "displayName": "Текст"
+    },
+    "strong": {
+      "type": "boolean",
+      "required": true,
+      "default": false,
+      "displayName": "Жирный"
+    },
+    "href": {
+      "type": "string",
+      "required": false,
+      "displayName": "Ссылка"
+    },
+    "link_label": {
+      "type": "string",
+      "required": false,
+      "displayName": "Подпись ссылки"
+    }
+  }
+}

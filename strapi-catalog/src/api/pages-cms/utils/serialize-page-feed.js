@@ -2,6 +2,8 @@
 
 const { preferAvifVariant } = require('../../catalog/utils/prefer-avif');
 const { getDeepPopulateForSlug, DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS } = require('./deep-populate');
+const { LEGAL_PAGES_CMS_SLUGS, COMPONENT_TO_BLOCK_TYPE } = require('./legal-allowlist');
+const { canonicalizeLegalPageData, LegalContractError } = require('./legal-page-contract');
 const { normalizeMapIframeHtml } = require('./normalize-map-iframe');
 
 const STRAPI_META_KEYS = new Set([
@@ -71,7 +73,7 @@ function stripDownloadCatalogTextsForbidden(data) {
 }
 
 /**
- * Load one Wave 1 page via explicit deep-populate and return canonical public `data`.
+ * Load one Wave 1 / legal page via explicit deep-populate and return canonical public `data`.
  * @param {import('@strapi/types').Core.Strapi} strapi
  * @param {string} slug
  * @returns {Promise<object | null>}
@@ -86,6 +88,12 @@ async function loadCanonicalPageData(strapi, slug) {
 
   if (!entry) return null;
 
+  if (LEGAL_PAGES_CMS_SLUGS.includes(slug)) {
+    const withTypes = mapLegalDynamicZoneTypes(entry);
+    const stripped = serializeNode(withTypes);
+    return canonicalizeLegalPageData(stripped);
+  }
+
   let data = serializeNode(entry);
   if (slug === 'download-catalog') {
     data = stripDownloadCatalogTextsForbidden(data);
@@ -93,9 +101,30 @@ async function loadCanonicalPageData(strapi, slug) {
   return data;
 }
 
+/**
+ * Preserve block type before serializeNode strips `__component`.
+ */
+function mapLegalDynamicZoneTypes(entry) {
+  if (!entry || typeof entry !== 'object') return entry;
+  const body = Array.isArray(entry.body)
+    ? entry.body.map((block) => {
+        if (!block || typeof block !== 'object') return block;
+        const mappedType =
+          block.type ||
+          (typeof block.__component === 'string'
+            ? COMPONENT_TO_BLOCK_TYPE[block.__component]
+            : undefined);
+        return mappedType ? { ...block, type: mappedType } : block;
+      })
+    : entry.body;
+  return { ...entry, body };
+}
+
 module.exports = {
   loadCanonicalPageData,
   serializeNode,
   stripDownloadCatalogTextsForbidden,
   isMediaObject,
+  LegalContractError,
+  mapLegalDynamicZoneTypes,
 };

@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_legal_table_headers",
+  "info": {
+    "displayName": "Заголовок колонки",
+    "icon": "layer"
+  },
+  "options": {},
+  "attributes": {
+    "value": {
+      "type": "string",
+      "required": true,
+      "displayName": "Текст заголовка"
+    }
+  }
+}

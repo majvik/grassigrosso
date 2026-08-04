@@ -1,0 +1,35 @@
+{
+  "kind": "singleType",
+  "collectionName": "terms_pages",
+  "info": {
+    "singularName": "terms-page",
+    "pluralName": "terms-pages",
+    "displayName": "Пользовательское соглашение"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "displayName": "Заголовок"
+    },
+    "effective_date": {
+      "type": "date",
+      "required": true,
+      "displayName": "Дата обновления"
+    },
+    "body": {
+      "type": "dynamiczone",
+      "components": [
+        "legal.paragraph-block",
+        "legal.list-block",
+        "legal.table-block",
+        "legal.operator-block"
+      ],
+      "required": true,
+      "displayName": "Содержание"
+    }
+  }
+}

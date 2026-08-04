@@ -1,6 +1,42 @@
 'use strict';
 
 const { SLUG_TO_UID, PAGES_CMS_SLUGS } = require('./map-allowlist');
+const { LEGAL_SLUG_TO_UID, LEGAL_PAGES_CMS_SLUGS } = require('./legal-allowlist');
+
+/** Explicit nested populate for legal dynamic-zone body (no populate=*). */
+const LEGAL_BODY_POPULATE = Object.freeze({
+  on: {
+    'legal.paragraph-block': {
+      populate: {
+        runs: true,
+      },
+    },
+    'legal.list-block': {
+      populate: {
+        items: {
+          populate: {
+            runs: true,
+          },
+        },
+      },
+    },
+    'legal.table-block': {
+      populate: {
+        headers: true,
+        rows: {
+          populate: {
+            cells: {
+              populate: {
+                runs: true,
+              },
+            },
+          },
+        },
+      },
+    },
+    'legal.operator-block': true,
+  },
+});
 
 /**
  * Explicit deep-populate for Wave 1 page feeds.
@@ -78,6 +114,15 @@ const DEEP_POPULATE_BY_SLUG = Object.freeze({
   'download-catalog': {
     catalog_pdf: true,
   },
+  privacy: {
+    body: LEGAL_BODY_POPULATE,
+  },
+  terms: {
+    body: LEGAL_BODY_POPULATE,
+  },
+  cookies: {
+    body: LEGAL_BODY_POPULATE,
+  },
 });
 
 /** Paths integration harness asserts after populate (texts feed — no slides). */
@@ -154,6 +199,9 @@ const POPULATE_ASSERT_PATHS_BY_SLUG = Object.freeze({
     'back_label',
     'back_href',
   ],
+  privacy: ['title', 'effective_date', 'body'],
+  terms: ['title', 'effective_date', 'body'],
+  cookies: ['title', 'effective_date', 'body'],
 });
 
 /** Keys forbidden on download-catalog texts/canonical payloads (slides feed owns these). */
@@ -166,8 +214,10 @@ const DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS = Object.freeze([
 function getDeepPopulateForSlug(slug) {
   const populate = DEEP_POPULATE_BY_SLUG[slug];
   if (!populate) throw new Error(`No deep populate descriptor for slug: ${slug}`);
+  const uid = SLUG_TO_UID[slug] || LEGAL_SLUG_TO_UID[slug];
+  if (!uid) throw new Error(`No UID for slug: ${slug}`);
   return {
-    uid: SLUG_TO_UID[slug],
+    uid,
     populate,
     assertPaths: POPULATE_ASSERT_PATHS_BY_SLUG[slug],
   };
@@ -197,6 +247,9 @@ module.exports = {
   DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS,
   PAGES_CMS_SLUGS,
   SLUG_TO_UID,
+  LEGAL_PAGES_CMS_SLUGS,
+  LEGAL_SLUG_TO_UID,
+  LEGAL_BODY_POPULATE,
   getDeepPopulateForSlug,
   assertNoStarPopulate,
 };

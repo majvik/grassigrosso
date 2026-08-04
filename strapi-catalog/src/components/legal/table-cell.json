@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_legal_table_cells",
+  "info": {
+    "displayName": "Ячейка таблицы",
+    "icon": "grid"
+  },
+  "options": {},
+  "attributes": {
+    "runs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "legal.inline-run",
+      "required": true,
+      "displayName": "Фрагменты"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_legal_table_rows",
+  "info": {
+    "displayName": "Строка таблицы",
+    "icon": "dashboard"
+  },
+  "options": {},
+  "attributes": {
+    "cells": {
+      "type": "component",
+      "repeatable": true,
+      "component": "legal.table-cell",
+      "required": true,
+      "displayName": "Ячейки"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_legal_table_blocks",
+  "info": {
+    "displayName": "Таблица",
+    "icon": "grid"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "required": false,
+      "displayName": "Заголовок секции"
+    },
+    "headers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "legal.table-header",
+      "required": true,
+      "displayName": "Заголовки колонок"
+    },
+    "rows": {
+      "type": "component",
+      "repeatable": true,
+      "component": "legal.table-row",
+      "required": true,
+      "displayName": "Строки"
+    }
+  }
+}
