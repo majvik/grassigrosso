@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Export six pages CMS disk snapshots from Node GET /api/pages/:slug.
+ * Export pages CMS disk snapshots from Node GET /api/pages/:slug (all allowlisted slugs).
  * Accepts only source=strapi (N3).
  * Atomic publish: validate all responses → stage → verify (N5) → swap with rollback.
  *

@@ -16,6 +16,9 @@ const PAGE_ENTITY_TABLES = Object.freeze([
   'contacts_pages',
   'documents_pages',
   'download_catalog_pages',
+  'privacy_pages',
+  'terms_pages',
+  'cookies_pages',
 ]);
 
 const PAGE_CMPS_TABLES = Object.freeze([
@@ -25,6 +28,9 @@ const PAGE_CMPS_TABLES = Object.freeze([
   'contacts_pages_cmps',
   'documents_pages_cmps',
   'download_catalog_pages_cmps',
+  'privacy_pages_cmps',
+  'terms_pages_cmps',
+  'cookies_pages_cmps',
 ]);
 
 /** component_type → sqlite table */
@@ -49,6 +55,15 @@ const COMPONENT_TYPE_TO_TABLE = Object.freeze({
   'page.dealer-package': 'components_page_dealer_packages',
   'page.office': 'components_page_offices',
   'catalog.hero-slide': 'components_catalog_hero_slides',
+  'legal.inline-run': 'components_legal_inline_runs',
+  'legal.list-item': 'components_legal_list_items',
+  'legal.table-header': 'components_legal_table_headers',
+  'legal.table-cell': 'components_legal_table_cells',
+  'legal.table-row': 'components_legal_table_rows',
+  'legal.paragraph-block': 'components_legal_paragraph_blocks',
+  'legal.list-block': 'components_legal_list_blocks',
+  'legal.table-block': 'components_legal_table_blocks',
+  'legal.operator-block': 'components_legal_operator_blocks',
 });
 
 function openDb(dbPath) {
@@ -58,7 +73,7 @@ function openDb(dbPath) {
 function listPageComponentTables(db) {
   return db
     .prepare(
-      "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'components_page_%' ORDER BY name",
+      "SELECT name FROM sqlite_master WHERE type='table' AND (name LIKE 'components_page_%' OR name LIKE 'components_legal_%') ORDER BY name",
     )
     .all()
     .map((r) => r.name);
@@ -92,7 +107,7 @@ function findOrphanPageComponents(dbPath) {
 
     const linkTables = db
       .prepare(
-        "SELECT name FROM sqlite_master WHERE type='table' AND (name LIKE '%_pages_cmps' OR name LIKE 'components_page_%_cmps') ORDER BY name",
+        "SELECT name FROM sqlite_master WHERE type='table' AND (name LIKE '%_pages_cmps' OR name LIKE 'components_page_%_cmps' OR name LIKE 'components_legal_%_cmps') ORDER BY name",
       )
       .all()
       .map((r) => r.name);
@@ -108,8 +123,8 @@ function findOrphanPageComponents(dbPath) {
     /** @type {Array<{ table: string, id: number, componentType: string }>} */
     const orphans = [];
     for (const [componentType, table] of Object.entries(COMPONENT_TYPE_TO_TABLE)) {
-      // Phase B N6 scopes orphans to page.* components (not catalog slides owned by slides feed).
-      if (!componentType.startsWith('page.')) continue;
+      // Scope orphans to page.* and legal.* (not catalog slides owned by slides feed).
+      if (!componentType.startsWith('page.') && !componentType.startsWith('legal.')) continue;
       if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?").get(table)) continue;
       const ids = db.prepare(`SELECT id FROM "${table}"`).all().map((r) => r.id);
       for (const id of ids) {
@@ -211,6 +226,21 @@ const PAGE_TABLE_META = Object.freeze([
     cmps: 'download_catalog_pages_cmps',
     relatedType: 'api::download-catalog-page.download-catalog-page',
   },
+  {
+    table: 'privacy_pages',
+    cmps: 'privacy_pages_cmps',
+    relatedType: 'api::privacy-page.privacy-page',
+  },
+  {
+    table: 'terms_pages',
+    cmps: 'terms_pages_cmps',
+    relatedType: 'api::terms-page.terms-page',
+  },
+  {
+    table: 'cookies_pages',
+    cmps: 'cookies_pages_cmps',
+    relatedType: 'api::cookies-page.cookies-page',
+  },
 ]);
 
 function tableExists(db, table) {
@@ -240,6 +270,37 @@ function fileIdentity(db, fileId) {
   return { name: row.name, hash: row.hash, url: row.url };
 }
 
+/**
+ * Strapi may renumber `order` on update (1,2 → 1,3). Content-addressed digests use
+ * relative position per field after stable sort — not absolute surrogate ordinals.
+ */
+function withRelativeOrders(entries) {
+  /** @type {Map<string, Array<object>>} */
+  const byField = new Map();
+  for (const entry of entries) {
+    const field = entry.field || '';
+    if (!byField.has(field)) byField.set(field, []);
+    byField.get(field).push(entry);
+  }
+  /** @type {Array<object>} */
+  const out = [];
+  for (const field of [...byField.keys()].sort()) {
+    const group = byField
+      .get(field)
+      .slice()
+      .sort((a, b) => {
+        const ao = a.order ?? 0;
+        const bo = b.order ?? 0;
+        if (ao !== bo) return ao - bo;
+        return String(a.componentType || '').localeCompare(String(b.componentType || ''));
+      });
+    group.forEach((item, i) => {
+      out.push({ ...item, order: i });
+    });
+  }
+  return out;
+}
+
 function mediaBindings(db, relatedType, relatedId) {
   if (!tableExists(db, 'files_related_mph')) return [];
   return db
@@ -263,6 +324,12 @@ function componentScalars(db, componentType, cmpId) {
     return { __missing: true, componentType, cmpId };
   }
   const cols = stableColumnNames(db, table); // strips id
+  if (cols.length === 0) {
+    // Nested-only components (e.g. legal.list-item / table-row / table-cell) have no scalars.
+    const exists = db.prepare(`SELECT 1 AS ok FROM "${table}" WHERE id = ?`).get(cmpId);
+    if (!exists) return { __missing: true, componentType, cmpId };
+    return {};
+  }
   const row = db
     .prepare(`SELECT ${cols.map((c) => `"${c}"`).join(', ')} FROM "${table}" WHERE id = ?`)
     .get(cmpId);
@@ -308,7 +375,12 @@ function logicalComponentNode(db, componentType, cmpId, seen = new Set()) {
     }
   }
 
-  return { componentType, scalars, media, children };
+  return {
+    componentType,
+    scalars,
+    media: withRelativeOrders(media),
+    children: withRelativeOrders(children),
+  };
 }
 
 function rootScalars(db, table) {
@@ -360,7 +432,11 @@ function pageLogicalSnapshot(dbPath) {
       }
 
       const rootMedia = rootId != null ? mediaBindings(db, meta.relatedType, rootId) : [];
-      pages[meta.table] = { root, rootMedia, components };
+      pages[meta.table] = {
+        root,
+        rootMedia: withRelativeOrders(rootMedia),
+        components: withRelativeOrders(components),
+      };
     }
 
     /**

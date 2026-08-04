@@ -39,7 +39,7 @@ export const BEHAVIOR_ARRAY_ITEMS: Readonly<
 
 export const BEHAVIOR_BOUND_ARRAYS = BEHAVIOR_ARRAY_KEYS
 
-const SLUG_TO_UID: Record<PagesCmsSlug, string> = {
+const SLUG_TO_UID: Partial<Record<PagesCmsSlug, string>> = {
   index: 'index-page',
   hotels: 'hotels-page',
   dealers: 'dealers-page',
@@ -134,8 +134,19 @@ export function resolveComponentSchema(uid: string): FieldDesc {
 }
 
 function buildPageRootSchema(slug: PagesCmsSlug): FieldDesc {
+  if (slug === 'privacy' || slug === 'terms' || slug === 'cookies') {
+    return {
+      kind: 'object',
+      component: `${slug}-page`,
+      fields: {
+        title: { kind: 'string' },
+        effective_date: { kind: 'string' },
+        body: { kind: 'object', fields: {} },
+      },
+    }
+  }
   const uid = SLUG_TO_UID[slug]
-  const def = singleTypes[uid]
+  const def = uid ? singleTypes[uid] : undefined
   if (!def) throw new Error(`Unknown single type for slug ${slug}`)
   const fields: Record<string, FieldDesc> = {}
   for (const [name, attr] of Object.entries(def.attributes)) {

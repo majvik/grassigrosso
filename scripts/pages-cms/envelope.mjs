@@ -16,6 +16,10 @@ const { PAGES_CMS_SLUGS } = require(path.join(strapiPagesCmsUtils, 'map-allowlis
 const { DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS } = require(
   path.join(strapiPagesCmsUtils, 'deep-populate.js'),
 )
+const { LEGAL_PAGES_CMS_SLUGS } = require(path.join(strapiPagesCmsUtils, 'legal-allowlist.js'))
+const { canonicalizeLegalPageData } = require(
+  path.join(strapiPagesCmsUtils, 'legal-page-contract.js'),
+)
 
 /** Node response source vocabulary (API-05). */
 export const PAGES_CMS_SOURCES = Object.freeze(['strapi', 'memory-cache', 'disk-snapshot'])
@@ -30,6 +34,9 @@ export const CANONICAL_REQUIRED_KEYS = Object.freeze({
   contacts: ['hero', 'offices', 'contact_info'],
   documents: ['hero', 'certificates', 'company_documents', 'faq_items'],
   'download-catalog': ['title', 'lead', 'submit_label', 'catalog_pdf', 'back_label', 'back_href'],
+  privacy: ['title', 'effective_date', 'body'],
+  terms: ['title', 'effective_date', 'body'],
+  cookies: ['title', 'effective_date', 'body'],
 })
 
 /**
@@ -86,6 +93,14 @@ export function validateCanonicalPageContent(data, slug) {
           `${slug}: texts canonical must not include "${key}" (slides feed owns slider fields)`,
         )
       }
+    }
+  }
+
+  if (LEGAL_PAGES_CMS_SLUGS.includes(slug)) {
+    try {
+      canonicalizeLegalPageData(data)
+    } catch (err) {
+      failures.push(`${slug}: legal contract: ${err.message}`)
     }
   }
 

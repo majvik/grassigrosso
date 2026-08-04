@@ -10,9 +10,14 @@ const path = require('path');
 const crypto = require('crypto');
 
 const { PAGES_CMS_SLUGS, SLUG_TO_UID } = require('../../strapi-catalog/src/api/pages-cms/utils/map-allowlist');
-const { DEEP_POPULATE_BY_SLUG, DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS } = require(
-  '../../strapi-catalog/src/api/pages-cms/utils/deep-populate',
-);
+const {
+  DEEP_POPULATE_BY_SLUG,
+  DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS,
+} = require('../../strapi-catalog/src/api/pages-cms/utils/deep-populate');
+const {
+  LEGAL_PAGES_CMS_SLUGS,
+  fixtureToStrapiLegalData,
+} = require('../../strapi-catalog/src/api/pages-cms/utils/legal-allowlist');
 
 const MIME_BY_EXT = {
   '.png': 'image/png',
@@ -184,7 +189,12 @@ async function countPagesCmsUploads(strapi) {
  * }} opts
  */
 async function seedPagesCmsFromFixtures(strapi, opts) {
-  const { fixturesBySlug, resolveMedia, injectFailureAfterMutation = false } = opts;
+  const {
+    fixturesBySlug,
+    resolveMedia,
+    injectFailureAfterMutation = false,
+    injectFailureAfterLegalMutation = false,
+  } = opts;
   const catalogBefore = await captureCatalogGuard(strapi);
   const uploadsBefore = await countPagesCmsUploads(strapi);
 
@@ -216,17 +226,27 @@ async function seedPagesCmsFromFixtures(strapi, opts) {
     mediaIdsByUrl[url] = await findOrUploadByHash(strapi, absolutePath, url);
   }
 
-  let mutationStarted = false;
+  let mutationStarted = false
+  let legalMutationStarted = false
   for (const slug of PAGES_CMS_SLUGS) {
     const raw =
       slug === 'download-catalog'
         ? textsOnlyDownloadCatalog(fixturesBySlug[slug])
         : fixturesBySlug[slug];
-    const data = materialize(raw, mediaIdsByUrl);
+    const prepared = LEGAL_PAGES_CMS_SLUGS.includes(slug)
+      ? fixtureToStrapiLegalData(raw)
+      : raw;
+    const data = materialize(prepared, mediaIdsByUrl);
     await upsertPage(strapi, slug, data);
     mutationStarted = true;
+    if (LEGAL_PAGES_CMS_SLUGS.includes(slug)) legalMutationStarted = true;
     if (injectFailureAfterMutation) {
       const err = new Error('injected failure after mutation');
+      err.code = 'PAGES_CMS_INJECTED_FAILURE';
+      throw err;
+    }
+    if (injectFailureAfterLegalMutation && legalMutationStarted) {
+      const err = new Error('injected failure after legal mutation');
       err.code = 'PAGES_CMS_INJECTED_FAILURE';
       throw err;
     }

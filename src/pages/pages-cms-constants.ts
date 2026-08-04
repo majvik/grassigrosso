@@ -1,6 +1,7 @@
 /**
- * Pages CMS hydrate — shared constants (Phase 4A).
+ * Pages CMS hydrate — shared constants (Phase 4A + Phase 6C nine slugs).
  * Browser talks only to Node GET /api/pages/:slug.
+ * Legal hydrate UI is Phase D — constants/allowlist expand here for API parity.
  */
 
 export const PAGES_CMS_SLUGS = [
@@ -10,6 +11,9 @@ export const PAGES_CMS_SLUGS = [
   'contacts',
   'documents',
   'download-catalog',
+  'privacy',
+  'terms',
+  'cookies',
 ] as const
 
 export type PagesCmsSlug = (typeof PAGES_CMS_SLUGS)[number]
@@ -25,6 +29,9 @@ export const CANONICAL_REQUIRED_KEYS: Readonly<Record<PagesCmsSlug, readonly str
   contacts: ['hero', 'offices', 'contact_info'],
   documents: ['hero', 'certificates', 'company_documents', 'faq_items'],
   'download-catalog': ['title', 'lead', 'submit_label', 'catalog_pdf', 'back_label', 'back_href'],
+  privacy: ['title', 'effective_date', 'body'],
+  terms: ['title', 'effective_date', 'body'],
+  cookies: ['title', 'effective_date', 'body'],
 }
 
 export const DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS = [
@@ -32,6 +39,10 @@ export const DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS = [
   'media_display_mode',
   'slider_autoplay_ms',
 ] as const
+
+export const LEGAL_PAGES_CMS_SLUGS = ['privacy', 'terms', 'cookies'] as const
+
+export type LegalPagesCmsSlug = (typeof LEGAL_PAGES_CMS_SLUGS)[number]
 
 export const PAGES_API_TIMEOUT_MS_DEFAULT = 10_000
 export let PAGES_API_TIMEOUT_MS = PAGES_API_TIMEOUT_MS_DEFAULT
@@ -42,6 +53,10 @@ export function setPagesApiTimeoutMsForTests(ms: number | null): void {
 
 export function isPagesCmsSlug(value: string): value is PagesCmsSlug {
   return (PAGES_CMS_SLUGS as readonly string[]).includes(value)
+}
+
+export function isLegalPagesCmsSlug(value: string): value is LegalPagesCmsSlug {
+  return (LEGAL_PAGES_CMS_SLUGS as readonly string[]).includes(value)
 }
 
 export function isPagesCmsSource(value: unknown): value is PagesCmsSource {

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seed six Wave 1 page single types from fixtures into local Strapi .tmp/data.db.
+ * Seed nine page single types (Wave 1 + legal) from fixtures into local Strapi .tmp/data.db.
  *
  * - SQLite-safe backup (better-sqlite3 backup + WAL/SHM clear on restore)
  * - Preflights all media (FAIL before DB writes if missing)
@@ -39,6 +39,13 @@ const fixturesDir = path.join(root, 'scripts/fixtures/pages-cms')
 const { PAGES_CMS_SLUGS } = require(path.join(
   strapiRoot,
   'src/api/pages-cms/utils/map-allowlist.js',
+))
+const {
+  LEGAL_PAGES_CMS_SLUGS,
+} = require(path.join(strapiRoot, 'src/api/pages-cms/utils/legal-allowlist.js'))
+const { canonicalizeLegalPageData } = require(path.join(
+  strapiRoot,
+  'src/api/pages-cms/utils/legal-page-contract.js',
 ))
 const { seedPagesCmsFromFixtures } = require('./pages-cms/seed-core.cjs')
 const { createSqliteBackup, restoreSqliteBackup } = require('./pages-cms/sqlite-backup.cjs')
@@ -151,8 +158,11 @@ async function main() {
   let preflight
   try {
     preflight = preflightMedia(fixturesBySlug)
+    for (const slug of LEGAL_PAGES_CMS_SLUGS) {
+      canonicalizeLegalPageData(fixturesBySlug[slug])
+    }
   } catch (error) {
-    console.error(`Preflight media FAILED (no DB mutation): ${error.message}`)
+    console.error(`Preflight FAILED (no DB mutation): ${error.message}`)
     process.exit(1)
   }
 
@@ -162,6 +172,7 @@ async function main() {
         {
           ok: true,
           mediaCount: preflight.unique.length,
+          legalSlugs: [...LEGAL_PAGES_CMS_SLUGS],
           resolved: preflight.resolved.map((r) => ({ url: r.url, via: r.via })),
         },
         null,
@@ -179,6 +190,9 @@ async function main() {
 
   const injectFailureAfterMutation =
     process.env.PAGES_CMS_SEED_INJECT_FAILURE === '1' || args.includes('--inject-failure')
+  const injectFailureAfterLegalMutation =
+    process.env.PAGES_CMS_SEED_INJECT_LEGAL_FAILURE === '1' ||
+    args.includes('--inject-legal-failure')
 
   try {
     const result = await withStrapi(async (strapi) =>
@@ -186,6 +200,7 @@ async function main() {
         fixturesBySlug,
         resolveMedia: (url) => resolveFixtureMediaUrl(url, { repoRoot: root }),
         injectFailureAfterMutation,
+        injectFailureAfterLegalMutation,
       }),
     )
     console.log(JSON.stringify({ ok: true, backup: backup.backupPath, ...result }, null, 2))

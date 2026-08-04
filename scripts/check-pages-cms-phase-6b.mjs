@@ -215,9 +215,14 @@ for (const slug of LEGAL_PAGES_CMS_SLUGS) {
 
 assert(LEGAL_PAGES_CMS_SLUGS.length === 3, 'exactly 3 legal slugs')
 assert(contract.legalSingleTypes.length === 3, 'exactly 3 legal single types')
-assert(PAGES_CMS_SLUGS.length === contract.wave1SlugCount, 'Wave 1 slug count must stay 6')
-assert(!PAGES_CMS_SLUGS.includes('privacy'), 'Node Wave-1 allowlist must not include privacy yet (Phase C)')
-assert(!( 'privacy' in SLUG_TO_UID), 'SLUG_TO_UID Wave-1 map must not include privacy')
+assert(PAGES_CMS_SLUGS.length === 9, 'public Pages CMS allowlist is nine slugs')
+assert(
+  PAGES_CMS_SLUGS.filter((s) => !LEGAL_PAGES_CMS_SLUGS.includes(s)).length ===
+    contract.wave1SlugCount,
+  'Wave 1 slug count must stay 6',
+)
+assert(PAGES_CMS_SLUGS.includes('privacy'), 'Node Wave-1+legal allowlist includes privacy')
+assert('privacy' in SLUG_TO_UID, 'SLUG_TO_UID includes privacy')
 assert(LEGAL_SLUG_TO_UID.privacy === 'api::privacy-page.privacy-page', 'privacy uid')
 
 assert(
@@ -610,8 +615,9 @@ assert(permutedOut.body.map((b) => b.type).join(',') === 'table,paragraph,operat
 
 // Node proxy still Wave-1 only
 const apiSrc = fs.readFileSync(path.join(root, 'lib/pages-cms-api.cjs'), 'utf8')
-assert(!apiSrc.includes("privacy: '/api/privacy-page-feed'"), 'Phase C not started: Node FEED_PATH privacy')
+assert(apiSrc.includes("privacy: '/api/privacy-page-feed'") || apiSrc.includes('LEGAL_FEED_PATH_BY_SLUG'), 'Phase C: Node FEED_PATH must include privacy')
 assert(Object.keys(WAVE1_FEED_PATHS).length === 6, 'wave1 feeds 6')
+assert(PAGES_CMS_SLUGS.length === 9, 'Phase C: nine public slugs')
 
 // ========== Strapi boot + feed smoke (owned dynamic port) ==========
 const SAMPLE_PRIVACY_BODY = [
@@ -779,7 +785,7 @@ async function runStrapiSmokeForEnv(nodeEnv) {
       )
     }
 
-    for (const slug of PAGES_CMS_SLUGS) {
+    for (const slug of Object.keys(WAVE1_FEED_PATHS)) {
       const r = await fetchJson(WAVE1_FEED_PATHS[slug])
       assert(
         (r.status === 200 || r.status === 404) &&

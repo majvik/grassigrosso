@@ -309,6 +309,21 @@ const trackedBefore = fingerprintPagesSnapshotDir(publicDir)
         back_label: 'b',
         back_href: '/catalog',
       },
+      privacy: {
+        title: 'Privacy',
+        effective_date: '2026-03-01',
+        body: [{ type: 'paragraph', runs: [{ type: 'text', value: 'p', strong: false }] }],
+      },
+      terms: {
+        title: 'Terms',
+        effective_date: '2026-03-01',
+        body: [{ type: 'paragraph', runs: [{ type: 'text', value: 't', strong: false }] }],
+      },
+      cookies: {
+        title: 'Cookies',
+        effective_date: '2026-03-01',
+        body: [{ type: 'paragraph', runs: [{ type: 'text', value: 'c', strong: false }] }],
+      },
     })
   }
   const beforeLate = fingerprintPagesSnapshotDir(victimDir)
@@ -370,6 +385,30 @@ const trackedBefore = fingerprintPagesSnapshotDir(publicDir)
         catalog_pdf: { url: '/x.pdf' },
         back_label: 'b',
         back_href: '/catalog',
+      },
+      source: 'strapi',
+    },
+    privacy: {
+      data: {
+        title: 'Privacy',
+        effective_date: '2026-03-01',
+        body: [{ type: 'paragraph', runs: [{ type: 'text', value: 'p', strong: false }] }],
+      },
+      source: 'strapi',
+    },
+    terms: {
+      data: {
+        title: 'Terms',
+        effective_date: '2026-03-01',
+        body: [{ type: 'paragraph', runs: [{ type: 'text', value: 't', strong: false }] }],
+      },
+      source: 'strapi',
+    },
+    cookies: {
+      data: {
+        title: 'Cookies',
+        effective_date: '2026-03-01',
+        body: [{ type: 'paragraph', runs: [{ type: 'text', value: 'c', strong: false }] }],
       },
       source: 'strapi',
     },

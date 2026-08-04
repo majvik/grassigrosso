@@ -215,7 +215,7 @@ if (firstJson && secondJson) {
   assert(urls.includes('/documents/Catalog_v1.2.pdf'), 'texts media includes catalog_pdf')
 }
 
-assert(PAGES_CMS_SLUGS.length === 6, 'six slugs')
+assert(PAGES_CMS_SLUGS.length === 9, 'nine slugs')
 assert(!process.env.PAGES_CMS_RAN_SYNC_SEED, 'strapi:sync-seed must not run')
 
 // catalog must remain stable vs pre-seed baseline for product identities
