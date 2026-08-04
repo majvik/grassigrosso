@@ -1,217 +1,19 @@
 {
-  "hero": {
-    "title": "Любовь с первого утра",
-    "title_tm": "Ⓒ",
-    "description": "Мы создаем продуманные системы для сна и естественного восстановления, чтобы каждое утро начиналось легко и спокойно.",
-    "cta_label": "Получить подробную информацию",
-    "poster": {
-      "url": "/grassigrosso-poster.avif"
-    },
-    "poster_alt": "Grassigrosso",
-    "video_desktop": {
-      "url": "/grassigrosso-silent.mp4"
-    },
-    "video_mobile": {
-      "url": "/grassigrosso-silent-mobile.mp4"
-    }
-  },
   "solutions_title": "Решения для бизнеса",
-  "solutions": [
-    {
-      "title": "Отелям",
-      "text": "Сон, о котором хочется написать в отзыве.\nМатрасы, которые создают впечатление и повышают лояльность гостей.",
-      "href": "/hotels",
-      "icon": {
-        "url": "/icon-hotels.svg"
-      }
-    },
-    {
-      "title": "Дилерам",
-      "text": "Продуманные решения для ваших клиентов. Инвестиция в восстановление каждого утра ближайших 10 лет.",
-      "href": "/dealers",
-      "icon": {
-        "url": "/icon-dealers.svg"
-      }
-    },
-    {
-      "title": "Каталог",
-      "text": "Инженерная точность сна в каждой модели.\nМатрасы, в которых все на своем месте − и вы тоже.",
-      "href": "/catalog",
-      "icon": {
-        "url": "/icon-catalog.svg"
-      }
-    }
-  ],
   "philosophy_title": "Наша философия",
-  "philosophy_cards": [
-    {
-      "title": "Инженерная точность сна",
-      "text": "Мы собираем современные технологии и лучшие инженерные решения в продуманные продукты для сна.",
-      "href": "",
-      "icon": {
-        "url": "/icon-engineering.svg"
-      }
-    },
-    {
-      "title": "Естественное восстановление",
-      "text": "Оставлено только то, что действительно работает.\nЧистые формы снаружи и внутри.",
-      "href": "",
-      "icon": {
-        "url": "/icon-nature.svg"
-      }
-    }
-  ],
-  "philosophy_presentation": {
-    "document_key": "presentation",
-    "title": "Презентация компании",
-    "type_label": "PDF документ",
-    "size_label": "",
-    "request_label": "Запросить",
-    "request_aria_label": "Запросить презентацию компании",
-    "kind": "company",
-    "file": {
-      "url": "/documents/presentation.pdf"
-    }
-  },
   "collections_title": "Коллекции",
   "collections_subtitle": "Каждая коллекция вдохновлена своей историей и проблемой, которую мы хотим решить. Но все они объединены общими принципами инженерной осознанности.",
   "collections_link_label": "смотреть Все коллекции",
   "collections_link_href": "/catalog",
-  "collections": [
-    {
-      "name": "Classic",
-      "href": "/catalog",
-      "image": {
-        "url": "/collection-Classic.png"
-      },
-      "image_alt": "Classic",
-      "features": [
-        {
-          "title": "Доступные модели",
-          "text": "",
-          "href": ""
-        },
-        {
-          "title": "Классические технологии",
-          "text": "",
-          "href": ""
-        },
-        {
-          "title": "Базовый, понятный комфорт",
-          "text": "",
-          "href": ""
-        }
-      ]
-    },
-    {
-      "name": "Flexi",
-      "href": "/catalog",
-      "image": {
-        "url": "/collection-Flexi.png"
-      },
-      "image_alt": "Flexi",
-      "features": [
-        {
-          "title": "Современные пены",
-          "text": "",
-          "href": ""
-        },
-        {
-          "title": "Упругая адаптивная поддержка",
-          "text": "",
-          "href": ""
-        },
-        {
-          "title": "Минималистичный дизайн",
-          "text": "",
-          "href": ""
-        }
-      ]
-    },
-    {
-      "name": "Relax",
-      "href": "/catalog",
-      "image": {
-        "url": "/collection-Relax.png"
-      },
-      "image_alt": "Relax",
-      "features": [
-        {
-          "title": "Пружины малого диаметра",
-          "text": "",
-          "href": ""
-        },
-        {
-          "title": "Высокая адаптивность поддержки",
-          "text": "",
-          "href": ""
-        },
-        {
-          "title": "Высокая несущая способность",
-          "text": "",
-          "href": ""
-        }
-      ]
-    },
-    {
-      "name": "Trend",
-      "href": "/catalog",
-      "image": {
-        "url": "/collection-Trend.png"
-      },
-      "image_alt": "Trend",
-      "features": [
-        {
-          "title": "Проверенные решения",
-          "text": "",
-          "href": ""
-        },
-        {
-          "title": "Популярный дизайн",
-          "text": "",
-          "href": ""
-        },
-        {
-          "title": "Для современных интерьеров",
-          "text": "",
-          "href": ""
-        }
-      ]
-    },
-    {
-      "name": "Viva Natura",
-      "href": "/catalog",
-      "image": {
-        "url": "/collection-Viva-Natura@0.5x.png"
-      },
-      "image_alt": "Viva Natura",
-      "features": [
-        {
-          "title": "Натуральные компоненты",
-          "text": "",
-          "href": ""
-        },
-        {
-          "title": "Экологичность",
-          "text": "",
-          "href": ""
-        },
-        {
-          "title": "Премиальный комфорт",
-          "text": "",
-          "href": ""
-        }
-      ]
-    }
-  ],
   "partners_title": "Партнеры и технологии",
+  "testimonials_title": "Нам доверяют",
+  "docs_title": "Сертификация и документация",
   "partners_image_desktop": {
-    "url": "/logos@2x-normal.png"
+    "url": "/uploads/pages_cms_4614c23d40cda5aa_logos_2x_normal_f26ab6e54b.png"
   },
   "partners_image_mobile": {
-    "url": "/logos@2x-mobile.png"
+    "url": "/uploads/pages_cms_1313f75b45d13179_logos_2x_mobile_1d58ee19a1.png"
   },
-  "testimonials_title": "Нам доверяют",
   "testimonials": [
     {
       "tag": "Партнёр",
@@ -326,7 +128,205 @@
       "text": "Цена, сроки, качество, логистика – всё на высоте. Ни одной рекламации не было за всё время работы. Молодцы, так держать!"
     }
   ],
-  "docs_title": "Сертификация и документация",
+  "hero": {
+    "title": "Любовь с первого утра",
+    "title_tm": "Ⓒ",
+    "description": "Мы создаем продуманные системы для сна и естественного восстановления, чтобы каждое утро начиналось легко и спокойно.",
+    "cta_label": "Получить подробную информацию",
+    "poster_alt": "Grassigrosso",
+    "poster": {
+      "url": "/uploads/pages_cms_6cdbda8ba9489589_grassigrosso_poster_b6b58ed850.avif"
+    },
+    "video_desktop": {
+      "url": "/uploads/pages_cms_32d9ae79c3454976_grassigrosso_silent_5f4c07a408.mp4"
+    },
+    "video_mobile": {
+      "url": "/uploads/pages_cms_9f9025bde9b98fe1_grassigrosso_silent_mobile_b42e89ded8.mp4"
+    }
+  },
+  "solutions": [
+    {
+      "title": "Отелям",
+      "text": "Сон, о котором хочется написать в отзыве.\nМатрасы, которые создают впечатление и повышают лояльность гостей.",
+      "href": "/hotels",
+      "icon": {
+        "url": "/uploads/pages_cms_f3986c8c00532e0d_icon_hotels_c2ea638a84.svg"
+      }
+    },
+    {
+      "title": "Дилерам",
+      "text": "Продуманные решения для ваших клиентов. Инвестиция в восстановление каждого утра ближайших 10 лет.",
+      "href": "/dealers",
+      "icon": {
+        "url": "/uploads/pages_cms_b913d99571c4410d_icon_dealers_bd20631c9b.svg"
+      }
+    },
+    {
+      "title": "Каталог",
+      "text": "Инженерная точность сна в каждой модели.\nМатрасы, в которых все на своем месте − и вы тоже.",
+      "href": "/catalog",
+      "icon": {
+        "url": "/uploads/pages_cms_fed5cd7f6503d8f6_icon_catalog_c855bb7dc7.svg"
+      }
+    }
+  ],
+  "philosophy_cards": [
+    {
+      "title": "Инженерная точность сна",
+      "text": "Мы собираем современные технологии и лучшие инженерные решения в продуманные продукты для сна.",
+      "href": "",
+      "icon": {
+        "url": "/uploads/pages_cms_52d20eec87022ba4_icon_engineering_1ce2dfc7a6.svg"
+      }
+    },
+    {
+      "title": "Естественное восстановление",
+      "text": "Оставлено только то, что действительно работает.\nЧистые формы снаружи и внутри.",
+      "href": "",
+      "icon": {
+        "url": "/uploads/pages_cms_378534195db73756_icon_nature_158a693dab.svg"
+      }
+    }
+  ],
+  "philosophy_presentation": {
+    "document_key": "presentation",
+    "title": "Презентация компании",
+    "type_label": "PDF документ",
+    "size_label": "",
+    "request_label": "Запросить",
+    "request_aria_label": "Запросить презентацию компании",
+    "kind": "company",
+    "file": {
+      "url": "/uploads/pages_cms_c28902ee89483dfc_Grassigrosso_company_a5d71a7745.pdf"
+    }
+  },
+  "collections": [
+    {
+      "name": "Classic",
+      "href": "/catalog",
+      "image_alt": "Classic",
+      "image": {
+        "url": "/uploads/pages_cms_d8d182e87077b9ec_collection_Classic_4be6c678df.png"
+      },
+      "features": [
+        {
+          "title": "Доступные модели",
+          "text": "",
+          "href": ""
+        },
+        {
+          "title": "Классические технологии",
+          "text": "",
+          "href": ""
+        },
+        {
+          "title": "Базовый, понятный комфорт",
+          "text": "",
+          "href": ""
+        }
+      ]
+    },
+    {
+      "name": "Flexi",
+      "href": "/catalog",
+      "image_alt": "Flexi",
+      "image": {
+        "url": "/uploads/pages_cms_20c53e296602cea3_collection_Flexi_34e6cbfff3.png"
+      },
+      "features": [
+        {
+          "title": "Современные пены",
+          "text": "",
+          "href": ""
+        },
+        {
+          "title": "Упругая адаптивная поддержка",
+          "text": "",
+          "href": ""
+        },
+        {
+          "title": "Минималистичный дизайн",
+          "text": "",
+          "href": ""
+        }
+      ]
+    },
+    {
+      "name": "Relax",
+      "href": "/catalog",
+      "image_alt": "Relax",
+      "image": {
+        "url": "/uploads/pages_cms_e467710529f97162_collection_Relax_b3aee630da.png"
+      },
+      "features": [
+        {
+          "title": "Пружины малого диаметра",
+          "text": "",
+          "href": ""
+        },
+        {
+          "title": "Высокая адаптивность поддержки",
+          "text": "",
+          "href": ""
+        },
+        {
+          "title": "Высокая несущая способность",
+          "text": "",
+          "href": ""
+        }
+      ]
+    },
+    {
+      "name": "Trend",
+      "href": "/catalog",
+      "image_alt": "Trend",
+      "image": {
+        "url": "/uploads/pages_cms_f231f0adacb0c8b8_collection_Trend_22f435755f.png"
+      },
+      "features": [
+        {
+          "title": "Проверенные решения",
+          "text": "",
+          "href": ""
+        },
+        {
+          "title": "Популярный дизайн",
+          "text": "",
+          "href": ""
+        },
+        {
+          "title": "Для современных интерьеров",
+          "text": "",
+          "href": ""
+        }
+      ]
+    },
+    {
+      "name": "Viva Natura",
+      "href": "/catalog",
+      "image_alt": "Viva Natura",
+      "image": {
+        "url": "/uploads/pages_cms_c6a60aa10e3ea975_collection_Viva_Natura_0_5x_c548533dc1.png"
+      },
+      "features": [
+        {
+          "title": "Натуральные компоненты",
+          "text": "",
+          "href": ""
+        },
+        {
+          "title": "Экологичность",
+          "text": "",
+          "href": ""
+        },
+        {
+          "title": "Премиальный комфорт",
+          "text": "",
+          "href": ""
+        }
+      ]
+    }
+  ],
   "docs": [
     {
       "document_key": "declaration",
@@ -337,7 +337,7 @@
       "request_aria_label": "Запросить декларацию",
       "kind": "certificate",
       "file": {
-        "url": "/documents/Deklaraciya.pdf"
+        "url": "/uploads/pages_cms_322d850417ca10dc_1feec7d562.pdf"
       }
     }
   ]

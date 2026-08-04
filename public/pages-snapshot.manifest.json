@@ -1,19 +1,25 @@
 {
-  "syncedAt": "2026-08-03T21:38:06.499Z",
+  "syncedAt": "2026-08-04T08:16:30.200Z",
   "slugs": [
     "index",
     "hotels",
     "dealers",
     "contacts",
     "documents",
-    "download-catalog"
+    "download-catalog",
+    "privacy",
+    "terms",
+    "cookies"
   ],
   "sha256BySlug": {
-    "index": "0820704d1ec6607698415b531c3d71b86f120d5999fafe41d4f071e729664e0f",
-    "hotels": "2367654d957629c6372ccb761530766b3f1c6d9c67e426a1e54070db7100f7ba",
-    "dealers": "66aae86cd06e179af76344178b2ee46f70a841f042e6ff28f2a78e5ba6840d65",
-    "contacts": "b6e10c791bdf1ea75706372aa5cd629a98a085cfd265e8ebdd81ee513db25189",
-    "documents": "f48de928dd0d2cd34c39c00fa039cf01ff1671df56eeed041a446ee89acc96ea",
-    "download-catalog": "076b49a23f1b2af991d9773c72a7a64e3b8d7a5d7fcba728f84a12e232eeeb53"
+    "index": "98ccbf03146c4e27cd5c4f16e242fae794e763c52e82338e7838175e68dd2336",
+    "hotels": "f4aad4f236cb8976b358f80358ba988dc5dd6fe832f1e786fe7994251be67a7e",
+    "dealers": "1a7197ec8a746f9e82b8754d974fde1cb6e412dbdad4825c24f7175d8dc2fe55",
+    "contacts": "7e14bc04bdbcaeb926b336095c76b90251ec706259034e200f3887f2807dab1c",
+    "documents": "09e39ce0f779567303b1e5e4bbb21f5f51517878666419c46a22727774927f8d",
+    "download-catalog": "eb97123ee54cc595c5faf79c920bec32a1dd7eceb2992e405e0c831c6590bd41",
+    "privacy": "e8286cd4ce101228ad83671425feb6aee391b825bafbce3af21ddbbba4d127eb",
+    "terms": "ba692251c1e44c6c65b2f64a5c7e561f6cbc3e37eaadd66375b05f57bb9fd175",
+    "cookies": "99cd99c1c6cc0829df715b87bcff4e19c79a41e89926ebe9a7af5183985ab80a"
   }
 }

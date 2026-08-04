@@ -1,15 +1,9 @@
 {
-  "hero": {
-    "title": "Контакты",
-    "description": "Свяжитесь с нами удобным способом. Мы всегда готовы ответить на ваши вопросы.",
-    "image": {
-      "url": "/contacts-hero.png"
-    },
-    "image_alt": "Интерьер спальни",
-    "cta_label": "",
-    "cta_url": ""
-  },
   "offices_title": "Наши офисы",
+  "map_title": "Как нас найти",
+  "contact_section_title": "Доброе утро!",
+  "contact_form_title": "Форма обратной связи",
+  "contact_submit_label": "Отправить",
   "offices": [
     {
       "slug": "main",
@@ -64,10 +58,6 @@
       "map_embed_url": "https://yandex.ru/map-widget/v1/?ll=38.147954%2C48.035223&z=16"
     }
   ],
-  "map_title": "Как нас найти",
-  "contact_section_title": "Доброе утро!",
-  "contact_form_title": "Форма обратной связи",
-  "contact_submit_label": "Отправить",
   "contact_info": [
     {
       "title": "Телефон",
@@ -90,5 +80,15 @@
       "href": "",
       "icon_key": "location"
     }
-  ]
+  ],
+  "hero": {
+    "title": "Контакты",
+    "description": "Свяжитесь с нами удобным способом. Мы всегда готовы ответить на ваши вопросы.",
+    "image_alt": "Интерьер спальни",
+    "cta_label": "",
+    "cta_url": "",
+    "image": {
+      "url": "/uploads/pages_cms_394469949e94cc67_contacts_hero_8a33b6af74.png"
+    }
+  }
 }
