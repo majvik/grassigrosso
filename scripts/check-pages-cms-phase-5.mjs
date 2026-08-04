@@ -27,10 +27,12 @@ import {
   startIsolatedPagesCmsStack,
 } from './lib/pages-cms-isolated-stack.mjs'
 import {
+  assertNoUntrackedPagesCmsUploads,
   cleanupAndAssertUploadsRestored,
   formatUploadsDiff,
   gitPorcelain,
   restoreUploadsFingerprint,
+  runUntrackedPagesCmsProbe,
   runUploadsCleanupProbe,
   uploadsDirForRoot,
   uploadsFingerprint,
@@ -80,8 +82,9 @@ let catalogStack = null
 let cleaned = false
 
 const porcelainBefore = gitPorcelain(root)
-const uploadsBefore = uploadsFingerprint(uploadsDir)
 const listenersBefore = listListeners([...FORBIDDEN_PORTS])
+/** @type {import('./lib/pages-cms-uploads-guard.mjs').UploadsFingerprint | null} */
+let uploadsBefore = null
 
 function registerTempDir(dir) {
   if (dir) tempDirs.add(dir)
@@ -154,6 +157,7 @@ function assertPorcelain(label) {
 }
 
 function restoreUploads(label) {
+  if (!uploadsBefore) return true
   const result = cleanupAndAssertUploadsRestored(uploadsDir, uploadsBefore)
   if (!result.ok) {
     failures.push(`${label}: uploads not restored (${formatUploadsDiff(result.diff)})`)
@@ -167,6 +171,19 @@ function restoreUploads(label) {
           : ''),
     )
   }
+  return true
+}
+
+function assertPagesCmsUploadsTrackedOnly(label) {
+  const audit = assertNoUntrackedPagesCmsUploads(uploadsDir, root)
+  if (!audit.ok) {
+    failures.push(
+      `${label}: untracked/ignored pages_cms uploads must be 0, found ${audit.leftovers.length}: ${JSON.stringify(audit.leftovers)}`,
+    )
+    record(label, 'FAIL', `leftovers=${audit.leftovers.length}`)
+    return false
+  }
+  record(label, 'PASS', 'untracked/ignored pages_cms uploads = 0')
   return true
 }
 
@@ -212,6 +229,7 @@ function writeResultsFile(overall) {
     '- [x] No PR / remote deploy / remote mutation',
     '- [x] Default listeners `:1337`/`:3000`/`:5174` not killed (owned catalog stack on dynamic ports)',
     '- [x] Catalog API/UI/perf ran against owned Strapi+Node+Vite',
+    '- [x] untracked/ignored pages_cms uploads = 0 (pre + post; includes gitignored `*.mp4`)',
     '',
     '## Steps',
     '',
@@ -229,6 +247,7 @@ function writeResultsFile(overall) {
   lines.push('## Locality post-conditions')
   lines.push('')
   lines.push('- Uploads fingerprint restored (additions cleaned; missing/changed → FAIL)')
+  lines.push('- untracked/ignored `*pages_cms_*` uploads = 0 (vs `git ls-files`, including ignored)')
   lines.push('- Git porcelain matches pre-gate working tree (**normal** mode only; record mode writes this file)')
   lines.push('- Forbidden-port listeners match pre-gate snapshot')
   lines.push('')
@@ -252,19 +271,23 @@ function finalizeLocality(reason) {
       failures.push(`${reason}: ${msg}`)
       record('default listeners unchanged', 'FAIL', msg)
     }
-    const uploadsAfter = uploadsFingerprint(uploadsDir)
-    let same = uploadsAfter.size === uploadsBefore.size
-    if (same) {
-      for (const [name, meta] of uploadsBefore) {
-        const next = uploadsAfter.get(name)
-        if (!next || next.size !== meta.size || next.sha256 !== meta.sha256) {
-          same = false
-          break
+    if (uploadsBefore) {
+      const uploadsAfter = uploadsFingerprint(uploadsDir)
+      let same = uploadsAfter.size === uploadsBefore.size
+      if (same) {
+        for (const [name, meta] of uploadsBefore) {
+          const next = uploadsAfter.get(name)
+          if (!next || next.size !== meta.size || next.sha256 !== meta.sha256) {
+            same = false
+            break
+          }
         }
       }
+      record('uploads fingerprint restored', same ? 'PASS' : 'FAIL')
+      if (!same) failures.push(`${reason}: uploads fingerprint mismatch after cleanup`)
     }
-    record('uploads fingerprint restored', same ? 'PASS' : 'FAIL')
-    if (!same) failures.push(`${reason}: uploads fingerprint mismatch after cleanup`)
+
+    assertPagesCmsUploadsTrackedOnly('post: pages_cms uploads tracked-only')
 
     // Porcelain: normal mode must match pre-gate. Record mode writes evidence after this —
     // so we only assert porcelain in normal mode (before any tracked write).
@@ -372,7 +395,7 @@ function onSignal(signal) {
 process.on('SIGINT', () => onSignal('SIGINT'))
 process.on('SIGTERM', () => onSignal('SIGTERM'))
 process.on('exit', () => {
-  if (!cleaned) {
+  if (!cleaned && uploadsBefore) {
     try {
       restoreUploadsFingerprint(uploadsDir, uploadsBefore)
     } catch {
@@ -396,6 +419,11 @@ console.log(
 )
 
 try {
+  console.log('\n── pre: pages_cms uploads tracked-only ──')
+  if (!assertPagesCmsUploadsTrackedOnly('pre: pages_cms uploads tracked-only')) {
+    throw new Error('precondition failed: untracked/ignored pages_cms uploads present')
+  }
+
   console.log('\n── uploads cleanup probe ──')
   const probe = runUploadsCleanupProbe(uploadsDir)
   if (!probe.ok) {
@@ -404,6 +432,23 @@ try {
   } else {
     console.log('uploads cleanup probe PASS')
     record('uploads cleanup probe', 'PASS')
+  }
+
+  if (failures.length === 0) {
+    console.log('\n── ignored pages_cms mp4 probe ──')
+    const ignoredProbe = runUntrackedPagesCmsProbe(uploadsDir, root)
+    if (!ignoredProbe.ok) {
+      for (const f of ignoredProbe.failures) failures.push(f)
+      record('ignored pages_cms mp4 probe', 'FAIL', ignoredProbe.failures.join('; '))
+    } else {
+      console.log('ignored pages_cms mp4 probe PASS')
+      record('ignored pages_cms mp4 probe', 'PASS')
+    }
+  }
+
+  // Fingerprint only after a clean tracked-only baseline (never accept ignored seed junk).
+  if (failures.length === 0) {
+    uploadsBefore = uploadsFingerprint(uploadsDir)
   }
 
   if (failures.length === 0) {

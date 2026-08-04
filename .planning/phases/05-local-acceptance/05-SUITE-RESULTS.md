@@ -1,7 +1,7 @@
 # Phase 5 — Recorded local suite (QA-02)
 
-**Started:** 2026-08-04T06:18:36.285Z
-**Finished:** 2026-08-04T06:23:02.499Z
+**Started:** 2026-08-04T06:37:44.965Z
+**Finished:** 2026-08-04T06:41:51.599Z
 **Overall:** PASS
 **Aggregator:** `npm run check:pages-cms-phase-5:record` → commit → `npm run check:pages-cms-phase-5`
 **Phase B commits:** `dd0825e` + harden `8beedda` + `26b15d4`
@@ -13,36 +13,41 @@
 - [x] No PR / remote deploy / remote mutation
 - [x] Default listeners `:1337`/`:3000`/`:5174` not killed (owned catalog stack on dynamic ports)
 - [x] Catalog API/UI/perf ran against owned Strapi+Node+Vite
+- [x] untracked/ignored pages_cms uploads = 0 (pre + post; includes gitignored `*.mp4`)
 
 ## Steps
 
 | Step | Result | Detail |
 |------|--------|--------|
+| pre: pages_cms uploads tracked-only | **PASS** | untracked/ignored pages_cms uploads = 0 |
 | uploads cleanup probe | **PASS** |  |
-| D1 uploads-disk-first | **PASS** | 1680ms |
-| D2 stack-signal | **PASS** | 13140ms |
-| D3 live-edit | **PASS** | 44656ms |
-| D4 degraded-media | **PASS** | 46697ms |
-| isolation | **PASS** | 381ms |
-| hydrate | **PASS** | 340ms |
-| phase-a map/envelope | **PASS** | 206ms |
-| strict contract | **PASS** | 153ms |
-| catalog-scope | **PASS** | 1249ms |
-| routes | **PASS** | 257ms |
-| typecheck | **PASS** | 3073ms |
-| pages-api (Phase E N1–N5) | **PASS** | 7741ms |
-| hydrate-dom | **PASS** | 50965ms ui:http://127.0.0.1:60032 api:http://127.0.0.1:60031 |
-| catalog-api | **PASS** | 1193ms ui:http://127.0.0.1:60032 api:http://127.0.0.1:60031 |
-| catalog-ui | **PASS** | 21390ms ui:http://127.0.0.1:60032 api:http://127.0.0.1:60031 |
-| catalog-perf | **PASS** | 20288ms ui:http://127.0.0.1:60032 api:http://127.0.0.1:60031 |
-| build | **PASS** | 35011ms |
+| ignored pages_cms mp4 probe | **PASS** |  |
+| D1 uploads-disk-first | **PASS** | 1091ms |
+| D2 stack-signal | **PASS** | 11702ms |
+| D3 live-edit | **PASS** | 37717ms |
+| D4 degraded-media | **PASS** | 42075ms |
+| isolation | **PASS** | 358ms |
+| hydrate | **PASS** | 335ms |
+| phase-a map/envelope | **PASS** | 179ms |
+| strict contract | **PASS** | 211ms |
+| catalog-scope | **PASS** | 1282ms |
+| routes | **PASS** | 211ms |
+| typecheck | **PASS** | 2706ms |
+| pages-api (Phase E N1–N5) | **PASS** | 9259ms |
+| hydrate-dom | **PASS** | 49790ms ui:http://127.0.0.1:63151 api:http://127.0.0.1:63150 |
+| catalog-api | **PASS** | 488ms ui:http://127.0.0.1:63151 api:http://127.0.0.1:63150 |
+| catalog-ui | **PASS** | 19177ms ui:http://127.0.0.1:63151 api:http://127.0.0.1:63150 |
+| catalog-perf | **PASS** | 18571ms ui:http://127.0.0.1:63151 api:http://127.0.0.1:63150 |
+| build | **PASS** | 36767ms |
 | default listeners unchanged | **PASS** |  |
 | uploads fingerprint restored | **PASS** |  |
+| post: pages_cms uploads tracked-only | **PASS** | untracked/ignored pages_cms uploads = 0 |
 | porcelain unchanged | **SKIP** | record mode writes 05-SUITE-RESULTS.md; commit then re-run normal mode |
 
 ## Locality post-conditions
 
 - Uploads fingerprint restored (additions cleaned; missing/changed → FAIL)
+- untracked/ignored `*pages_cms_*` uploads = 0 (vs `git ls-files`, including ignored)
 - Git porcelain matches pre-gate working tree (**normal** mode only; record mode writes this file)
 - Forbidden-port listeners match pre-gate snapshot
 

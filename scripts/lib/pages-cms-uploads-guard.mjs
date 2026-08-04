@@ -105,6 +105,116 @@ export function formatUploadsDiff(diff) {
   )
 }
 
+/** True if basename looks like a pages-cms seed/upload artifact (incl. derivatives). */
+export function isPagesCmsUploadName(name) {
+  return String(name).includes('pages_cms_')
+}
+
+/**
+ * Basenames under uploads/ that are tracked by git (`git ls-files`).
+ * Includes files that would be ignored if untracked — only what is already in the index/tree.
+ */
+export function listGitTrackedUploadBasenames(uploadsDir, repoRoot) {
+  const relUploads = path.relative(repoRoot, uploadsDir).split(path.sep).join('/')
+  const r = spawnSync('git', ['ls-files', '-z', '--', relUploads], {
+    cwd: repoRoot,
+    encoding: 'buffer',
+  })
+  if (r.status !== 0) {
+    throw new Error(`git ls-files failed for ${relUploads}: ${String(r.stderr || '')}`)
+  }
+  const out = new Set()
+  const buf = r.stdout || Buffer.alloc(0)
+  if (buf.length === 0) return out
+  for (const entry of buf.toString('utf8').split('\0')) {
+    if (!entry) continue
+    out.add(path.basename(entry))
+  }
+  return out
+}
+
+/**
+ * On-disk `*pages_cms_*` files that are NOT in `git ls-files` (untracked and/or gitignored).
+ * Milestone closeout requires this list to be empty.
+ */
+export function listUntrackedPagesCmsUploads(uploadsDir, repoRoot) {
+  const tracked = listGitTrackedUploadBasenames(uploadsDir, repoRoot)
+  const leftovers = []
+  for (const name of listUploadsRelPaths(uploadsDir)) {
+    if (!isPagesCmsUploadName(name)) continue
+    if (!tracked.has(name)) leftovers.push(name)
+  }
+  leftovers.sort()
+  return leftovers
+}
+
+/**
+ * @returns {{ ok: true, leftovers: [] } | { ok: false, leftovers: string[] }}
+ */
+export function assertNoUntrackedPagesCmsUploads(uploadsDir, repoRoot) {
+  const leftovers = listUntrackedPagesCmsUploads(uploadsDir, repoRoot)
+  return leftovers.length === 0
+    ? { ok: true, leftovers: [] }
+    : { ok: false, leftovers }
+}
+
+/**
+ * Negative probe: an ignored `pages_cms_*.mp4` must be detected as untracked leftover
+ * and must make assertNoUntrackedPagesCmsUploads FAIL until removed.
+ * Leaves uploads identical to entry (no new leftovers).
+ */
+export function runUntrackedPagesCmsProbe(uploadsDir, repoRoot) {
+  const failures = []
+  const token = `gate_ignored_${process.pid}_${Date.now()}`
+  const name = `pages_cms_${token}_silent_probe.mp4`
+  const abs = path.join(uploadsDir, name)
+
+  const before = listUntrackedPagesCmsUploads(uploadsDir, repoRoot)
+  if (before.length) {
+    failures.push(
+      `ignored-pages-cms-probe: baseline already has untracked pages_cms leftovers: ${JSON.stringify(before)}`,
+    )
+    return { ok: false, failures }
+  }
+
+  try {
+    fs.mkdirSync(uploadsDir, { recursive: true })
+    fs.writeFileSync(abs, Buffer.from(`fake-mp4-probe:${token}`))
+
+    const ignored = spawnSync('git', ['check-ignore', '-q', '--', abs], {
+      cwd: repoRoot,
+    })
+    // *.mp4 is gitignored in this repo — probe should be ignored (status 0).
+    if (ignored.status !== 0) {
+      failures.push(
+        `ignored-pages-cms-probe: expected git check-ignore for ${name} (status=${ignored.status})`,
+      )
+    }
+
+    const mid = assertNoUntrackedPagesCmsUploads(uploadsDir, repoRoot)
+    if (mid.ok || !mid.leftovers.includes(name)) {
+      failures.push(
+        `ignored-pages-cms-probe: expected FAIL detecting ${name}, got ok=${mid.ok} leftovers=${JSON.stringify(mid.leftovers)}`,
+      )
+    }
+  } finally {
+    try {
+      if (fs.existsSync(abs)) fs.unlinkSync(abs)
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const after = assertNoUntrackedPagesCmsUploads(uploadsDir, repoRoot)
+  if (!after.ok) {
+    failures.push(
+      `ignored-pages-cms-probe: leftovers remain after cleanup: ${JSON.stringify(after.leftovers)}`,
+    )
+  }
+
+  return { ok: failures.length === 0, failures }
+}
+
 /** Paths present in `after` but not in `before` (names only). */
 export function uploadsAdded(before, after) {
   return compareUploadsFingerprints(before, after).additions
