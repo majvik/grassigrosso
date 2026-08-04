@@ -95,6 +95,21 @@ function assertNonEmptyString(value, path) {
   if (typeof value !== 'string' || value.trim() === '') {
     fail(path, 'non-empty string required');
   }
+  assertNoHtmlLike(value, path);
+}
+
+/**
+ * Reject HTML / markup-like strings in CMS text (atomic reject).
+ * Matches open/close tags such as <b>, </div>, <script ...>.
+ */
+function assertNoHtmlLike(value, path) {
+  if (typeof value !== 'string') return;
+  if (/<\/?[a-zA-Z][^>]*>/.test(value)) {
+    fail(path, 'HTML-like value forbidden');
+  }
+  if (/&lt;\/?[a-zA-Z]/.test(value)) {
+    fail(path, 'HTML-like value forbidden');
+  }
 }
 
 function normalizeHref(href) {
@@ -357,5 +372,6 @@ module.exports = {
   canonicalizeLegalPageData,
   canonicalizeBlock,
   canonicalizeRun,
+  assertNoHtmlLike,
   LEGAL_HREF_ALLOWLIST,
 };

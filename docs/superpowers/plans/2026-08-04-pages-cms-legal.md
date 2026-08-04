@@ -1,10 +1,10 @@
 # Pages CMS Phase 6 — Legal pages (execution plan) v2.1
 
-**Date:** 2026-08-04  
-**Status:** Phase A **Accepted**; Phase B **Done locally**; Phase C next  
-**Design:** [2026-08-04-pages-cms-legal-design.md](../specs/2026-08-04-pages-cms-legal-design.md)  
-**Contract:** [.planning/phases/06-legal-pages/06-CONTENT-CONTRACT.md](../../.planning/phases/06-legal-pages/06-CONTENT-CONTRACT.md)  
-**Depends on:** Phase 5 accepted (`7d26bcb`)  
+**Date:** 2026-08-04
+**Status:** Phase A **Accepted**; Phase B **Done locally**; Phase C next
+**Design:** [2026-08-04-pages-cms-legal-design.md](../specs/2026-08-04-pages-cms-legal-design.md)
+**Contract:** [.planning/phases/06-legal-pages/06-CONTENT-CONTRACT.md](../../.planning/phases/06-legal-pages/06-CONTENT-CONTRACT.md)
+**Depends on:** Phase 5 accepted (`7d26bcb`)
 
 ## Progress
 
@@ -24,9 +24,9 @@
 
 ## Later phases
 
-- **C:** extend Node allowlist to 9; fixtures; seed `.tmp` only; snapshots; pages-api non-regression.  
-- **D:** defaults from `LEGAL_PAGES`; hydrate; **mandatory** parity gate; optional HTML generator.  
-- **E:** phase-6 closeout (not Phase 5 aggregator).  
+- **C:** extend Node allowlist to 9; fixtures; seed `.tmp` only; snapshots; pages-api non-regression.
+- **D:** defaults from `LEGAL_PAGES`; hydrate; **mandatory** parity gate; optional HTML generator.
+- **E:** phase-6 closeout (not Phase 5 aggregator).
 
 ## Non-goals
 

@@ -1,10 +1,10 @@
 # Pages CMS Phase 6 — Legal pages (design) v2
 
-**Date:** 2026-08-04  
-**Status:** Phase A content contract **Accepted** (v2.1); Phase B **Done locally**; Phase C next  
-**Requirements:** LEG-01, LEG-02  
-**Depends on:** Phase 5 accepted (`7d26bcb`)  
-**Locality:** no push / no `strapi:sync-seed` / no deploy unless separately asked  
+**Date:** 2026-08-04
+**Status:** Phase A content contract **Accepted** (v2.1); Phase B **Done locally**; Phase C next
+**Requirements:** LEG-01, LEG-02
+**Depends on:** Phase 5 accepted (`7d26bcb`)
+**Locality:** no push / no `strapi:sync-seed` / no deploy unless separately asked
 
 ## Problem
 
@@ -12,9 +12,9 @@ Privacy / terms / cookies live as hardcoded JSX in `legal-content.tsx` with **du
 
 ## Goals
 
-1. **LEG-01** — Three Strapi single types (`privacy-page`, `terms-page`, `cookies-page`) with RU admin labels.  
-2. **LEG-02** — Ordered structured block body sufficient for current legal pages + hydrate via Node `/api/pages/:slug` + disk snapshot; **first paint remains full SSR / hardcoded fallback**.  
-3. Same `.legal-*` visual slots only — CMS cannot invent UI.  
+1. **LEG-01** — Three Strapi single types (`privacy-page`, `terms-page`, `cookies-page`) with RU admin labels.
+2. **LEG-02** — Ordered structured block body sufficient for current legal pages + hydrate via Node `/api/pages/:slug` + disk snapshot; **first paint remains full SSR / hardcoded fallback**.
+3. Same `.legal-*` visual slots only — CMS cannot invent UI.
 4. No frontend→Strapi; no email-routing CMS; no CMS field named `updatedAt`.
 
 ## Locked decisions (v2 — from user corrections 1–8)
@@ -96,20 +96,20 @@ No open class of “any root-relative / any mailto / any grassigrosso.com URL”
 
 ## Out of scope
 
-- Thin-shell HTML that empties SSR legal body  
-- Raw HTML / richtext HTML from CMS  
-- CMS field `updatedAt`  
-- Embedding Phase 6 into Phase 5 aggregator (for now)  
-- Push / deploy / `strapi:sync-seed` without separate ask  
-- Email routing CMS  
+- Thin-shell HTML that empties SSR legal body
+- Raw HTML / richtext HTML from CMS
+- CMS field `updatedAt`
+- Embedding Phase 6 into Phase 5 aggregator (for now)
+- Push / deploy / `strapi:sync-seed` without separate ask
+- Email routing CMS
 
 ## Success criteria (Phase 6 close)
 
-1. Contract: every legal slot owned; block/run order contracted; atomic reject rules enforced.  
-2. Admin edits three legal pages in RU (local Strapi).  
-3. Node serves nine slugs; wave-1 six unchanged in behavior.  
-4. Hydrate + full first-paint fallback; DOM gate L18 green.  
-5. Strict parity gate always green (generator optional; parity non-waivable).  
+1. Contract: every legal slot owned; block/run order contracted; atomic reject rules enforced.
+2. Admin edits three legal pages in RU (local Strapi).
+3. Node serves nine slugs; wave-1 six unchanged in behavior.
+4. Hydrate + full first-paint fallback; DOM gate L18 green.
+5. Strict parity gate always green (generator optional; parity non-waivable).
 6. Attestation: no push / sync-seed / deploy unless asked.
 
 ---

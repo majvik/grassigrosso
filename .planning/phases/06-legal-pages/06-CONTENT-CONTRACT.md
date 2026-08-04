@@ -1,9 +1,9 @@
 # Phase 6 — Legal content contract (QA / LEG)
 
 **Date:** 2026-08-04
-**Status:** Phase A **Accepted** (v2.1); Phase B Done locally — see plan  
-**Source of truth for matrix:** `src/components/pages/legal-content.tsx` → `LEGAL_PAGES` (mechanical parse 2026-08-04)  
-**SSR mirrors (parity subjects):** `privacy.html` / `terms.html` / `cookies.html`  
+**Status:** Phase A **Accepted** (v2.1); Phase B Done locally — see plan
+**Source of truth for matrix:** `src/components/pages/legal-content.tsx` → `LEGAL_PAGES` (mechanical parse 2026-08-04)
+**SSR mirrors (parity subjects):** `privacy.html` / `terms.html` / `cookies.html`
 **Code / Phase B:** Done locally (`check:pages-cms-phase-6b`). Phase C / push / sync-seed **not** started.
 
 ## Ownership legend
@@ -18,8 +18,8 @@
 
 1. **Ordered body:** `body[]` is an ordered array of blocks `paragraph | list | table | operator`. Order is contractual.
 2. **Ordered runs:** every text-bearing cell uses ordered `text | link` runs. Order is contractual.
-3. **Atomic reject:** unknown block/run/field, inconsistent table shape, unsafe link, empty required operator field, or non-unique table headers → reject **entire** CMS payload; keep fallback.
-4. **No raw HTML** in CMS payload or hydrated DOM from CMS.
+3. **Atomic reject:** unknown block/run/field, inconsistent table shape, unsafe link, empty required operator field, non-unique table headers, or **HTML-like string values** in any text field/run → reject **entire** CMS payload; keep fallback.
+4. **No raw HTML** in CMS payload or hydrated DOM from CMS — including HTML-like markup inside `text.value`, headings, titles, labels, table headers, and operator strings.
 5. **No CMS `updatedAt`.** Use `effective_date` (`date`). Prefix `Дата последнего обновления:` is **code**.
 6. **No new UI:** only existing slots (`.legal-page`, `.legal-page-title`, `.legal-page-date`, `.legal-page-content`, `.legal-table-wrap`, `.legal-table`, `h1`/`h2`/`p`/`ul`/`li`/`a`/`strong`/`table`).
 7. **`data-label`:** built by **code** renderer from `table.headers[i]` — not authored in CMS.

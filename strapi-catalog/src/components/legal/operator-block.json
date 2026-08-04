@@ -39,7 +39,7 @@
     "email": {
       "type": "email",
       "required": true,
-      "displayName": "Email"
+      "displayName": "Электронная почта"
     }
   }
 }

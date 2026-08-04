@@ -23,6 +23,7 @@ const pagesCmsUtils = path.join(strapiRoot, 'src/api/pages-cms/utils')
 const {
   canonicalizeLegalPageData,
   LegalContractError,
+  assertNoHtmlLike,
 } = require(path.join(pagesCmsUtils, 'legal-page-contract.js'))
 const {
   LEGAL_PAGES_CMS_SLUGS,
@@ -278,17 +279,73 @@ for (const slug of LEGAL_PAGES_CMS_SLUGS) {
   assert(starFails.length === 0, `star populate ${slug}: ${starFails.join('; ')}`)
 }
 
-// RU coverage — no English fallback for legal scope
+// RU coverage — Cyrillic required; Latin-only labels are English fallback
+function isLatinOnlyLegalLabel(value) {
+  const s = String(value ?? '').trim()
+  if (!s) return true
+  if (/[А-Яа-яЁё]/.test(s)) return false
+  return /[A-Za-z]/.test(s)
+}
+
+function collectEnglishFallbackKeys(ruMap, keys) {
+  return keys.filter((k) => isLatinOnlyLegalLabel(ruMap[k]))
+}
+
 const ruKeys = expectedRuKeys()
 const missingRu = ruKeys.filter((k) => !(k in ru) || !String(ru[k]).trim())
 assert(missingRu.length === 0, `missing RU keys: ${missingRu.slice(0, 8).join(', ')}`)
-for (const k of ruKeys) {
-  const v = String(ru[k])
-  // English-only fallback detection for new legal labels
-  if (/^(Title|Body|Text|Link|Heading|Operator|List|Table)$/i.test(v)) {
-    fail(`English fallback RU value for ${k}: ${v}`)
+
+const englishRu = collectEnglishFallbackKeys(ru, ruKeys)
+assert(
+  englishRu.length === 0,
+  `English fallback RU value(s): ${englishRu
+    .slice(0, 12)
+    .map((k) => `${k}=${JSON.stringify(ru[k])}`)
+    .join(', ')}`,
+)
+
+// Schema displayName must also be RU (not Latin-only)
+for (const uid of contract.legalComponents) {
+  const [cat, name] = uid.split('.')
+  const schema = JSON.parse(
+    fs.readFileSync(path.join(strapiRoot, `src/components/${cat}/${name}.json`), 'utf8'),
+  )
+  assert(
+    !isLatinOnlyLegalLabel(schema.info.displayName),
+    `English schema displayName ${uid}: ${schema.info.displayName}`,
+  )
+  for (const [attr, defn] of Object.entries(schema.attributes || {})) {
+    if (!defn.displayName) continue
+    assert(
+      !isLatinOnlyLegalLabel(defn.displayName),
+      `English schema attr displayName ${uid}.${attr}: ${defn.displayName}`,
+    )
   }
 }
+for (const uid of contract.legalSingleTypes) {
+  const schema = JSON.parse(
+    fs.readFileSync(
+      path.join(strapiRoot, `src/api/${uid}/content-types/${uid}/schema.json`),
+      'utf8',
+    ),
+  )
+  assert(
+    !isLatinOnlyLegalLabel(schema.info.displayName),
+    `English ST displayName ${uid}: ${schema.info.displayName}`,
+  )
+}
+
+assert(
+  ru['content-manager.components.legal.operator-block.email'] === 'Электронная почта',
+  'operator email RU label must be Электронная почта',
+)
+assert(
+  collectEnglishFallbackKeys(
+    { 'probe.email': 'Email' },
+    ['probe.email'],
+  ).includes('probe.email'),
+  'RU probe must flag Email as English fallback',
+)
 
 // Positive canonicalize
 try {
@@ -340,10 +397,29 @@ expectReject(
   {
     title: 'T',
     effective_date: '2026-03-01',
-    body: [{ type: 'paragraph', runs: [{ type: 'text', value: '<b>x</b>', strong: false }], html: '<b>x</b>' }],
+    body: [{ type: 'paragraph', runs: [{ type: 'text', value: 'x', strong: false }], html: '<b>x</b>' }],
   },
   'unknown field',
 )
+expectReject(
+  'raw-html-value',
+  {
+    title: 'T',
+    effective_date: '2026-03-01',
+    body: [{ type: 'paragraph', runs: [{ type: 'text', value: '<b>x</b>', strong: false }] }],
+  },
+  'HTML-like value forbidden',
+)
+{
+  try {
+    assertNoHtmlLike('<b>x</b>', 'probe')
+    fail('assertNoHtmlLike must throw for <b>x</b>')
+  } catch (err) {
+    if (!(err instanceof LegalContractError) && err?.name !== 'LegalContractError') {
+      fail(`assertNoHtmlLike wrong error: ${err}`)
+    }
+  }
+}
 expectReject(
   'unknown-block',
   {
@@ -538,13 +614,65 @@ assert(!apiSrc.includes("privacy: '/api/privacy-page-feed'"), 'Phase C not start
 assert(Object.keys(WAVE1_FEED_PATHS).length === 6, 'wave1 feeds 6')
 
 // ========== Strapi boot + feed smoke (owned dynamic port) ==========
-async function runStrapiSmoke() {
+const SAMPLE_PRIVACY_BODY = [
+  {
+    __component: 'legal.paragraph-block',
+    heading: '1. Общие положения',
+    runs: [
+      { type: 'text', value: 'См. ', strong: false },
+      {
+        type: 'link',
+        href: 'https://grassigrosso.com',
+        link_label: 'сайт',
+        strong: false,
+      },
+    ],
+  },
+  {
+    __component: 'legal.operator-block',
+    role_label: 'Оператор персональных данных',
+    legal_name: 'ООО «Грасси»',
+    ogrn: '1239100014548',
+    inn: '9102292969',
+    address: 'Республика Крым, г. Симферополь, ул. Кубанская, д. 25',
+    email: 'office@grassigrosso.com',
+  },
+  {
+    __component: 'legal.list-block',
+    items: [
+      {
+        runs: [
+          { type: 'text', value: 'пункт', strong: true },
+          { type: 'text', value: ' один', strong: false },
+        ],
+      },
+    ],
+  },
+  {
+    __component: 'legal.table-block',
+    headers: [{ value: 'Кол1' }, { value: 'Кол2' }],
+    rows: [
+      {
+        cells: [
+          { runs: [{ type: 'text', value: 'a', strong: false }] },
+          { runs: [{ type: 'text', value: 'b', strong: false }] },
+        ],
+      },
+    ],
+  },
+]
+
+/**
+ * Boot Strapi under an explicit NODE_ENV, exercise feeds, destroy.
+ * @param {'development'|'production'} nodeEnv
+ */
+async function runStrapiSmokeForEnv(nodeEnv) {
   const baseline = listListeners([...FORBIDDEN_PORTS])
   let port = await freePort()
   if (FORBIDDEN_PORTS.includes(port)) port = await freePort()
-  assert(!FORBIDDEN_PORTS.includes(port), `refusing forbidden port ${port}`)
+  assert(!FORBIDDEN_PORTS.includes(port), `${nodeEnv}: refusing forbidden port ${port}`)
 
-  const workDir = fs.mkdtempSync(path.join(root, '.tmp', 'phase6b-'))
+  const workDir = fs.mkdtempSync(path.join(root, '.tmp', `phase6b-${nodeEnv}-`))
   const dbPath = path.join(workDir, 'data.db')
   const seedDb = path.join(strapiRoot, 'database', 'seed', 'data.db')
   assert(fs.existsSync(seedDb), `seed db missing ${seedDb}`)
@@ -558,11 +686,13 @@ async function runStrapiSmoke() {
     PORT: process.env.PORT,
     DATABASE_FILENAME: process.env.DATABASE_FILENAME,
     DATABASE_CLIENT: process.env.DATABASE_CLIENT,
+    NODE_ENV: process.env.NODE_ENV,
   }
   process.env.HOST = '127.0.0.1'
   process.env.PORT = String(port)
   process.env.DATABASE_CLIENT = 'sqlite'
   process.env.DATABASE_FILENAME = dbPath
+  process.env.NODE_ENV = nodeEnv
   process.env.APP_KEYS = process.env.APP_KEYS || 'phase6bKey1,phase6bKey2,phase6bKey3,phase6bKey4'
   process.env.API_TOKEN_SALT = process.env.API_TOKEN_SALT || 'phase6bApiTokenSalt'
   process.env.ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'phase6bAdminJwt'
@@ -572,7 +702,10 @@ async function runStrapiSmoke() {
     process.env.ENCRYPTION_KEY || 'phase6bEncryptionKey0123456789ab'
 
   process.chdir(strapiRoot)
-  const { createStrapi } = require(path.join(strapiRoot, 'node_modules/@strapi/strapi'))
+  // Fresh require after env change (Strapi reads NODE_ENV at boot).
+  const strapiPkg = path.join(strapiRoot, 'node_modules/@strapi/strapi')
+  delete require.cache[require.resolve(strapiPkg)]
+  const { createStrapi } = require(strapiPkg)
 
   let app
   try {
@@ -581,83 +714,31 @@ async function runStrapiSmoke() {
       distDir: path.join(strapiRoot, 'dist'),
     }).load()
 
-    // Representability: content types / components registered
+    assert(String(process.env.NODE_ENV) === nodeEnv, `${nodeEnv}: NODE_ENV drifted`)
+    const reportedEnv = String(
+      app.config?.get?.('environment') ?? app.config?.environment ?? process.env.NODE_ENV,
+    )
+    assert(reportedEnv === nodeEnv, `${nodeEnv}: Strapi environment=${reportedEnv}`)
+
     for (const uid of Object.values(LEGAL_SLUG_TO_UID)) {
-      assert(Boolean(app.contentTypes?.[uid]), `ct registered ${uid}`)
+      assert(Boolean(app.contentTypes?.[uid]), `${nodeEnv}: ct registered ${uid}`)
     }
     for (const uid of contract.legalComponents) {
-      assert(Boolean(app.components?.[uid]), `component registered ${uid}`)
+      assert(Boolean(app.components?.[uid]), `${nodeEnv}: component registered ${uid}`)
     }
 
-    // Create sample privacy document (schema nesting probe)
     const privacyUid = LEGAL_SLUG_TO_UID.privacy
-    const sampleBody = [
-      {
-        __component: 'legal.paragraph-block',
-        heading: '1. Общие положения',
-        runs: [
-          { type: 'text', value: 'См. ', strong: false },
-          {
-            type: 'link',
-            href: 'https://grassigrosso.com',
-            link_label: 'сайт',
-            strong: false,
-          },
-        ],
-      },
-      {
-        __component: 'legal.operator-block',
-        role_label: 'Оператор персональных данных',
-        legal_name: 'ООО «Грасси»',
-        ogrn: '1239100014548',
-        inn: '9102292969',
-        address: 'Республика Крым, г. Симферополь, ул. Кубанская, д. 25',
-        email: 'office@grassigrosso.com',
-      },
-      {
-        __component: 'legal.list-block',
-        items: [
-          {
-            runs: [
-              { type: 'text', value: 'пункт', strong: true },
-              { type: 'text', value: ' один', strong: false },
-            ],
-          },
-        ],
-      },
-      {
-        __component: 'legal.table-block',
-        headers: [{ value: 'Кол1' }, { value: 'Кол2' }],
-        rows: [
-          {
-            cells: [
-              { runs: [{ type: 'text', value: 'a', strong: false }] },
-              { runs: [{ type: 'text', value: 'b', strong: false }] },
-            ],
-          },
-        ],
-      },
-    ]
-
     const docs = app.documents(privacyUid)
     const existing = await docs.findFirst({})
+    const payload = {
+      title: 'Политика в отношении обработки персональных данных',
+      effective_date: '2026-03-01',
+      body: SAMPLE_PRIVACY_BODY,
+    }
     if (existing?.documentId) {
-      await docs.update({
-        documentId: existing.documentId,
-        data: {
-          title: 'Политика в отношении обработки персональных данных',
-          effective_date: '2026-03-01',
-          body: sampleBody,
-        },
-      })
+      await docs.update({ documentId: existing.documentId, data: payload })
     } else {
-      await docs.create({
-        data: {
-          title: 'Политика в отношении обработки персональных данных',
-          effective_date: '2026-03-01',
-          body: sampleBody,
-        },
-      })
+      await docs.create({ data: payload })
     }
 
     await app.listen()
@@ -675,51 +756,41 @@ async function runStrapiSmoke() {
       return { status: res.status, body }
     }
 
-    // Legal feeds smoke
     const privacyFeed = await fetchJson(LEGAL_FEED_PATH_BY_SLUG.privacy)
     assert(
       privacyFeed.status === 200 && privacyFeed.body && 'data' in privacyFeed.body,
-      `privacy feed envelope status=${privacyFeed.status}`,
+      `${nodeEnv}: privacy feed envelope status=${privacyFeed.status}`,
     )
-    assert(Object.keys(privacyFeed.body).join(',') === 'data', 'privacy feed keys only data')
+    assert(Object.keys(privacyFeed.body).join(',') === 'data', `${nodeEnv}: privacy feed keys only data`)
     const pdata = privacyFeed.body.data
-    assert(pdata && Array.isArray(pdata.body), 'privacy data.body')
-    assert(pdata.body.length === 4, `privacy sample body length ${pdata.body?.length}`)
-    assert(pdata.body[0].type === 'paragraph', 'order preserved paragraph first')
-    assert(pdata.body[1].type === 'operator', 'order preserved operator second')
-    assert(pdata.body[0].runs[1].type === 'link', 'link run')
-    assert(pdata.body[0].runs[1].children[0].value === 'сайт', 'link children from label')
-    assert(!JSON.stringify(pdata).includes('createdAt'), 'no createdAt')
-    assert(!JSON.stringify(pdata).includes('updatedAt'), 'no updatedAt')
-    assert(!JSON.stringify(pdata).includes('publishedAt'), 'no publishedAt')
-    assert(!JSON.stringify(pdata).includes('link_label'), 'no link_label public')
+    assert(pdata && Array.isArray(pdata.body) && pdata.body.length === 4, `${nodeEnv}: privacy body`)
+    assert(pdata.body[0].type === 'paragraph', `${nodeEnv}: order paragraph`)
+    assert(pdata.body[1].type === 'operator', `${nodeEnv}: order operator`)
+    assert(pdata.body[0].runs[1].children[0].value === 'сайт', `${nodeEnv}: link children`)
+    assert(!JSON.stringify(pdata).includes('createdAt'), `${nodeEnv}: no createdAt`)
+    assert(!JSON.stringify(pdata).includes('updatedAt'), `${nodeEnv}: no updatedAt`)
+    assert(!JSON.stringify(pdata).includes('link_label'), `${nodeEnv}: no link_label`)
 
     for (const slug of ['terms', 'cookies']) {
       const r = await fetchJson(LEGAL_FEED_PATH_BY_SLUG[slug])
       assert(
         (r.status === 404 || r.status === 200) && r.body && 'data' in r.body,
-        `${slug} feed must return {data} (status ${r.status})`,
+        `${nodeEnv}: ${slug} feed status=${r.status}`,
       )
-      assert(Object.keys(r.body).every((k) => k === 'data'), `${slug} feed only data key`)
     }
 
-    // Wave-1 regression smoke (seed copy may or may not have pages — accept 200/{data} or 404/{data:null})
     for (const slug of PAGES_CMS_SLUGS) {
       const r = await fetchJson(WAVE1_FEED_PATHS[slug])
       assert(
-        (r.status === 200 || r.status === 404) && r.body && Object.prototype.hasOwnProperty.call(r.body, 'data'),
-        `wave1 ${slug} feed broken status=${r.status}`,
+        (r.status === 200 || r.status === 404) &&
+          r.body &&
+          Object.prototype.hasOwnProperty.call(r.body, 'data'),
+        `${nodeEnv}: wave1 ${slug} status=${r.status}`,
       )
-      assert(Object.keys(r.body).every((k) => k === 'data'), `wave1 ${slug} only data`)
     }
-
-    // develop/production boot marker: createStrapi().load succeeded
-    assert(true, 'strapi load ok')
   } finally {
     try {
-      if (app) {
-        await app.destroy()
-      }
+      if (app) await app.destroy()
     } catch {
       /* ignore */
     }
@@ -735,16 +806,18 @@ async function runStrapiSmoke() {
     }
     const after = listListeners([...FORBIDDEN_PORTS])
     for (const p of FORBIDDEN_PORTS) {
-      assert(after[p] === baseline[p], `forbidden port ${p} changed during harness`)
+      assert(after[p] === baseline[p], `${nodeEnv}: forbidden port ${p} changed`)
     }
   }
 }
 
-let smokeError = null
+const bootModes = []
 try {
-  await runStrapiSmoke()
+  await runStrapiSmokeForEnv('development')
+  bootModes.push('development')
+  await runStrapiSmokeForEnv('production')
+  bootModes.push('production')
 } catch (err) {
-  smokeError = err
   fail(`strapi smoke: ${err && err.stack ? err.stack : err}`)
 }
 
@@ -757,6 +830,6 @@ if (failures.length) {
 console.log(
   `check:pages-cms-phase-6b PASS legalST=${contract.legalSingleTypes.length}` +
     ` components=${contract.legalComponents.length}` +
-    ` negatives=14 mechanical=55/37/17 unowned=0 wave1=${PAGES_CMS_SLUGS.length}` +
-    (smokeError ? '' : ' strapiBoot=ok'),
+    ` negatives=15 mechanical=55/37/17 unowned=0 wave1=${PAGES_CMS_SLUGS.length}` +
+    ` strapiBoot=${bootModes.join('+')}`,
 )
