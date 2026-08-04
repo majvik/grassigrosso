@@ -262,6 +262,7 @@ const PAGE_EMAIL_ROUTING = {
   'Страница "Отелям"':  ['hotels@grassigrosso.com'],
   'Отелям (каталог)':   ['hotels@grassigrosso.com'],
   'Страница "Дилерам"': ['b2b@grassigrosso.com'],
+  'Скачать каталог':      ['sales@grassigrosso.com'],
   'Документы':          ['sales@grassigrosso.com'],
   'Документы (помощь)': ['sales@grassigrosso.com'],
   'Страница "Контакты"':['sales@grassigrosso.com'],

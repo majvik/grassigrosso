@@ -2,6 +2,50 @@ import './style.css'
 import { gsap } from 'gsap'
 import Lenis from 'lenis'
 
+function initDownloadCatalogChrome() {
+  document.querySelectorAll('.header-nav-wrapper').forEach((wrapper) => {
+    if (wrapper.querySelector('[data-download-catalog-link]')) return
+    const contact = wrapper.querySelector('.btn-contact')
+    if (!contact) return
+    const actions = document.createElement('div')
+    actions.className = 'header-actions'
+    const download = document.createElement('a')
+    download.href = '/download-catalog'
+    download.className = 'btn-download-catalog'
+    download.dataset.downloadCatalogLink = ''
+    download.textContent = 'Скачать каталог'
+    contact.before(actions)
+    actions.append(download, contact)
+  })
+
+  document.querySelectorAll('.mobile-menu').forEach((menu) => {
+    if (menu.querySelector('[data-download-catalog-link]')) return
+    const contact = menu.querySelector('.mobile-menu-cta')
+    if (!contact) return
+    const download = document.createElement('a')
+    download.href = '/download-catalog'
+    download.className = 'mobile-menu-download'
+    download.dataset.downloadCatalogLink = ''
+    download.textContent = 'Скачать каталог'
+    contact.before(download)
+  })
+
+  document.querySelectorAll('.footer-column').forEach((column) => {
+    const heading = column.querySelector('.footer-heading')?.textContent.trim()
+    const list = column.querySelector('.footer-links')
+    if (heading !== 'Информация' || !list || list.querySelector('[data-download-catalog-link]')) return
+    const item = document.createElement('li')
+    const download = document.createElement('a')
+    download.href = '/download-catalog'
+    download.dataset.downloadCatalogLink = ''
+    download.textContent = 'Скачать каталог'
+    item.appendChild(download)
+    list.appendChild(item)
+  })
+}
+
+initDownloadCatalogChrome()
+
 // Типографика: привязка коротких предлогов/союзов к следующему слову неразрывным пробелом
 ;(function fixWidows() {
   const WORDS = [
@@ -1577,7 +1621,8 @@ if (contactForms.length > 0) {
       'index': 'Главная страница',
       'hotels': 'Страница "Отелям"',
       'dealers': 'Страница "Дилерам"',
-      'contacts': 'Страница "Контакты"'
+      'contacts': 'Страница "Контакты"',
+      'download-catalog': 'Скачать каталог'
     }
 
     return pageNames[slug] || slug
@@ -1797,7 +1842,20 @@ if (contactForms.length > 0) {
         console.log('Данные ответа:', data)
         
         if (response.ok) {
-          showNotification('Заявка отправлена! Мы свяжемся с вами в ближайшее время.', 'success', submitBtn)
+          const downloadDoc = form.dataset.downloadDoc
+          showNotification(
+            downloadDoc ? 'Заявка отправлена! Начинается загрузка каталога.' : 'Заявка отправлена! Мы свяжемся с вами в ближайшее время.',
+            'success',
+            submitBtn
+          )
+          if (downloadDoc) {
+            const link = document.createElement('a')
+            link.href = `/api/download/${encodeURIComponent(downloadDoc)}`
+            link.rel = 'noopener'
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+          }
           form.reset()
           clearErrors(form)
         } else {

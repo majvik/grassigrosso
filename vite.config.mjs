@@ -53,6 +53,7 @@ export default defineConfig(({ mode }) => {
           cookies: './cookies.html',
           '404': './404.html',
           unsubscribe: './unsubscribe.html',
+          'download-catalog': './download-catalog.html',
         }
       }
     },

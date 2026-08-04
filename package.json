@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "check:download-catalog-sales": "node scripts/check-download-catalog-sales.mjs",
     "preview": "vite preview",
     "new-page": "node scripts/new-page.mjs",
     "start": "node server.cjs"
