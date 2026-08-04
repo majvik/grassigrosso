@@ -435,6 +435,10 @@ async function processQueue() {
       if (result.ok) {
         db.markDelivered(row.id, result.channel);
         console.log(`✅ Заявка #${row.id} доставлена через ${result.channel}`);
+        // Подтверждение пользователю отправляется только после фактической
+        // доставки заявки менеджерам. Ошибка подтверждения не возвращает
+        // уже доставленную заявку обратно в очередь.
+        sendConfirmationToUser(lead);
         continue;
       }
 
@@ -718,41 +722,20 @@ app.post('/api/submit', async (req, res) => {
     return res.status(500).json({ error: 'Ошибка обработки заявки' });
   }
 
-  try {
-    const deliveryResult = await deliverLeadWithFallback(lead);
-
-    // Подтверждение пользователю отправляется ПОСЛЕ доставки заявки,
-    // чтобы не конкурировать за SMTP-соединение
-    sendConfirmationToUser(lead);
-
-    if (deliveryResult.ok) {
-      db.markDelivered(leadId, deliveryResult.channel);
-      return res.status(200).json({
-        success: true,
-        delivery: deliveryResult.channel,
-        queued: false
-      });
-    }
-
-    const errorText = JSON.stringify(deliveryResult.errors);
-    const delayMs = calculateRetryDelayMs(1);
-    db.updateRetrySchedule(leadId, 1, Date.now() + delayMs, errorText);
-    console.error(`⚠️ Заявка #${leadId} добавлена в очередь ретраев`);
-
-    return res.status(202).json({
-      success: true,
-      delivery: 'queued_retry',
-      queued: true,
-      leadId
+  // SQLite — граница надёжного приёма. Не держим HTTP-запрос открытым, пока
+  // Telegram/SMTP отвечают: это вызывало ложный client timeout и дубли заявок.
+  setImmediate(() => {
+    processQueue().catch((error) => {
+      console.error('❌ Immediate queue processing error:', extractErrorDetails(error));
     });
-  } catch (error) {
-    console.error('❌ Ошибка при обработке формы:', extractErrorDetails(error));
-    sendConfirmationToUser(lead);
-    return res.status(500).json({
-      error: 'Ошибка обработки заявки',
-      details: extractErrorDetails(error)
-    });
-  }
+  });
+
+  return res.status(202).json({
+    success: true,
+    delivery: 'queued',
+    queued: true,
+    leadId
+  });
 });
 
 const isDev = !isProd;

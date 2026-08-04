@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "browser:smoke": "agent-browser --help",
     "check:download-catalog-sales": "node scripts/check-download-catalog-sales.mjs",
+    "check:submit-queue-fast": "node scripts/check-submit-queue-fast.mjs",
     "preview": "vite preview",
     "new-page": "node scripts/new-page.mjs",
     "start": "node server.cjs"
@@ -23,6 +25,7 @@
     "nodemailer": "^8.0.1"
   },
   "devDependencies": {
+    "agent-browser": "0.33.2",
     "vite": "^7.2.4"
   }
 }
