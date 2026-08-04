@@ -212,10 +212,18 @@ try {
     }
 
     let result
-    if (step.kind === 'node') {
-      result = runNode(step.args, env)
-    } else {
-      result = runNpm(step.script, env)
+    const maxAttempts = step.kind === 'owned-ui' ? 2 : 1
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      if (step.kind === 'node') {
+        result = runNode(step.args, env)
+      } else {
+        result = runNpm(step.script, env)
+      }
+      if (result.status === 0) break
+      if (attempt < maxAttempts) {
+        console.log(`  retry ${step.label} after exit ${result.status} (chrome flake)`)
+        await new Promise((r) => setTimeout(r, 2000))
+      }
     }
     const ms = Date.now() - started
     if (result.status !== 0) {
