@@ -71,8 +71,6 @@ const downloadCatalogRuntimePromise = isDownloadCatalogPage
 
 applyWidowFix()
 
-initGeographyEffects()
-
 const lenisInstance = createLenisInstance(Lenis)
 
 const preloader = document.getElementById('preloader')
@@ -88,6 +86,7 @@ function initApp(catalogRuntime) {
   catalogRuntime?.catalogPage.initCataloguePage({ lockScroll, unlockScroll })
   initCollectionsSlider()
   initTestimonialsSlider()
+  initGeographyEffects()
   initPageLayout()
   initContactsMaps()
   initPrivacyConsentGuards()

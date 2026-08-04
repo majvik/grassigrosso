@@ -15,6 +15,7 @@
     "build:strapi": "npm run build --prefix strapi-catalog",
     "build": "npm run build:web && npm run build:strapi",
     "check:docker-runtime-contract": "node scripts/check-docker-runtime-contract.mjs",
+    "repair:pages-cms-upload-records": "node scripts/repair-pages-cms-upload-records.mjs",
     "typecheck": "tsc --noEmit",
     "check": "npm run check:routes && npm run check:pages-cms-contract && npm run check:pages-cms-isolation && npm run check:catalog-api && npm run typecheck",
     "check:routes": "node scripts/check-routing-contracts.mjs",

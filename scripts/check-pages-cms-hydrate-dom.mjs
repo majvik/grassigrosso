@@ -1026,6 +1026,16 @@ async function stabilizeViewport(evaluate) {
   await delay(120)
 }
 
+async function assertDealersMarqueeMoves(evaluate, label) {
+  await evaluate(`document.querySelector('.geography-section')?.scrollIntoView({ block: 'center' })`)
+  await delay(350)
+  const before = await evaluate(`document.querySelector('.geography-cities')?.style.transform || ''`)
+  await delay(500)
+  const after = await evaluate(`document.querySelector('.geography-cities')?.style.transform || ''`)
+  assert(before && after && before !== after, `${label}: marquee did not move (${before} → ${after})`)
+  await stabilizeViewport(evaluate)
+}
+
 async function runPageScenarios(slug) {
   const { cdp } = session
   const evaluate = (expression, timeoutMs) => cdp.evaluate(expression, timeoutMs)
@@ -1039,6 +1049,10 @@ async function runPageScenarios(slug) {
     await stabilizeViewport(evaluate)
     const delayed = await evaluate(criticalHooksExpr(slug))
     assertFirstPaintBaseline(slug, delayed)
+    if (slug === 'dealers') {
+      await assertDealersMarqueeMoves(evaluate, `${slug} hydrated lifecycle`)
+      console.log(`  ${slug} marquee movement: PASS`)
+    }
     if (slug === 'contacts') {
       await assertContactsMapTabSwitching(evaluate, `${slug} first-paint embed`)
       console.log(`  ${slug} first-paint map tabs: PASS`)

@@ -6,6 +6,7 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 
 const require = createRequire(import.meta.url)
+const Database = require('better-sqlite3')
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const publicDir = path.join(root, 'public')
 const uploadsDir = path.join(root, 'strapi-catalog/public/uploads')
@@ -27,6 +28,23 @@ function walk(value) {
 
 for (const name of fs.readdirSync(publicDir).filter((item) => /^pages-.*\.snapshot\.json$/.test(item))) {
   walk(JSON.parse(fs.readFileSync(path.join(publicDir, name), 'utf8')))
+}
+
+const seedDbPath = path.join(root, 'strapi-catalog/database/seed/data.db')
+const seedDb = new Database(seedDbPath, { readonly: true })
+try {
+  const rows = seedDb.prepare("select id, name, url, formats from files where name like 'pages-cms__%'").all()
+  for (const row of rows) {
+    const expected = `/uploads/${canonicalPagesCmsFilename(row.name)}`
+    if (row.url !== expected) failures.push(`seed upload row ${row.id} URL mismatch: ${row.url} != ${expected}`)
+    if (row.formats !== null) failures.push(`seed upload row ${row.id} has unavailable derivative formats`)
+    const filepath = path.join(uploadsDir, path.basename(expected))
+    if (!fs.existsSync(filepath) || !fs.statSync(filepath).isFile() || fs.statSync(filepath).size === 0) {
+      failures.push(`seed upload row ${row.id} file missing/empty: ${expected}`)
+    }
+  }
+} finally {
+  seedDb.close()
 }
 
 for (const url of [...referenced].sort()) {
