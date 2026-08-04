@@ -109,10 +109,10 @@ Plans:
   2. Контент поддерживает rich text / блочную структуру, достаточную для текущих legal-страниц
   3. `/privacy`, `/terms`, `/cookies` гидрируют из Node API + snapshot fallback через тот же proxy-паттерн
   4. Визуал legal-страниц остаётся читаемым; нет прямого доступа фронта к Strapi
-**Plans**: Phase A Accepted; Phase B Done locally; Phase C next
+**Plans**: Phase A Accepted; Phase B+C Done locally; Phase D next
 
 Plans:
-- [ ] 06-01-PLAN.md — Legal pages ([design](../docs/superpowers/specs/2026-08-04-pages-cms-legal-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-legal.md), [contract](phases/06-legal-pages/06-CONTENT-CONTRACT.md)) — A Accepted; B Done (`check:pages-cms-phase-6b`); C next
+- [ ] 06-01-PLAN.md — Legal pages ([design](../docs/superpowers/specs/2026-08-04-pages-cms-legal-design.md), [execution](../docs/superpowers/plans/2026-08-04-pages-cms-legal.md), [contract](phases/06-legal-pages/06-CONTENT-CONTRACT.md)) — A Accepted; B+C Done (`check:pages-cms-phase-6b` / `6c`); D next
 
 ## Progress
 
@@ -126,7 +126,7 @@ Plans:
 | 3. Feeds, Proxy & Seed | 1/1 | Complete (local; no push) | 2026-08-03 |
 | 4. React Hydrate | 1/1 | Complete (local; FE-01…05; `2d7ca10`; no push) | 2026-08-04 |
 | 5. Local Acceptance Gate | 1/1 | **Accepted** (local; `7d26bcb`; no push) | 2026-08-04 |
-| 6. Legal Pages | 0/1 | A Accepted; B Done locally; C next | - |
+| 6. Legal Pages | 0/1 | A Accepted; B+C Done locally; D next | - |
 
 ---
 *Roadmap created: 2026-08-03*

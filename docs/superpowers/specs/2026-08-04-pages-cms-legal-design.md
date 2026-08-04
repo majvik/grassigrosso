@@ -1,7 +1,7 @@
 # Pages CMS Phase 6 — Legal pages (design) v2
 
 **Date:** 2026-08-04
-**Status:** Phase A content contract **Accepted** (v2.1); Phase B **Done locally**; Phase C next
+**Status:** Phase A content contract **Accepted** (v2.1); Phase B+C **Done locally**; Phase D next
 **Requirements:** LEG-01, LEG-02
 **Depends on:** Phase 5 accepted (`7d26bcb`)
 **Locality:** no push / no `strapi:sync-seed` / no deploy unless separately asked

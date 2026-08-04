@@ -4,7 +4,7 @@
 **Status:** Phase A **Accepted** (v2.1); Phase B Done locally — see plan
 **Source of truth for matrix:** `src/components/pages/legal-content.tsx` → `LEGAL_PAGES` (mechanical parse 2026-08-04)
 **SSR mirrors (parity subjects):** `privacy.html` / `terms.html` / `cookies.html`
-**Code / Phase B:** Done locally (`check:pages-cms-phase-6b`). Phase C / push / sync-seed **not** started.
+**Code / Phase B:** Done locally (`check:pages-cms-phase-6b`). **Phase C:** Done locally (`check:pages-cms-phase-6c`; 9-slug Node + snapshots). Phase D / push / sync-seed **not** started.
 
 ## Ownership legend
 
