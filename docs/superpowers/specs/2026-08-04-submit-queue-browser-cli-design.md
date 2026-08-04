@@ -18,12 +18,14 @@ The production `/download-catalog` form can show a client timeout after 25 secon
 3. Trigger the existing queue processor immediately without awaiting it; retain the interval as recovery.
 4. Send the user confirmation only after the queue processor records successful lead delivery.
 5. Add `agent-browser@0.33.2` as a pinned dev dependency and expose a deterministic smoke command. The current Node 22 runtime emits the package's Node 24 engine warning during install, but the CLI entrypoint is verified locally; upgrading the project runtime remains a separate infrastructure task.
+6. Bound Telegram and SMTP connection/greeting/socket waits so one external channel cannot hold the queue worker forever.
 
 ## Success criteria
 
 - Submit response does not wait for SMTP or Telegram.
 - A newly accepted row is pending before delivery and becomes delivered through the worker.
 - Failed delivery remains pending for retry.
+- Every external delivery attempt finishes within the configured channel timeout.
 - User confirmation is attempted only after successful lead delivery.
 - Production form treats `202` as success and starts the PDF download.
 - `npm exec agent-browser -- --help` works locally.
