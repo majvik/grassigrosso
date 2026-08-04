@@ -78,8 +78,8 @@
 | QA-01 | Every phase + Phase 5 gate | Complete — `05-COVERAGE.md` + aggregator 2026-08-04 |
 | QA-02 | Every phase + Phase 5 gate | Complete — `check:pages-cms-phase-5` + `05-SUITE-RESULTS.md` |
 | QA-03 | Every phase + Phase 5 gate | Complete — attested no push / no sync-seed; listeners unchanged |
-| LEG-01 | Phase 6 | Pending |
-| LEG-02 | Phase 6 | Pending |
+| LEG-01 | Phase 6 | Complete |
+| LEG-02 | Phase 6 | Complete |
 
 **Coverage:**
 - v1 requirements: 20 total
@@ -89,4 +89,4 @@
 
 ---
 *Requirements defined: 2026-08-03*
-*Last updated: 2026-08-04 — Phase 5 Complete locally; QA-01…03 closed (`check:pages-cms-phase-5` PASS)*
+*Last updated: 2026-08-04 — Phase 6 Complete locally, pending review; LEG-01/02 closed (`check:pages-cms-phase-6` PASS)*
