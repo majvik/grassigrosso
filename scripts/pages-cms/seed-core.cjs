@@ -230,6 +230,8 @@ async function seedPagesCmsFromFixtures(strapi, opts) {
     resolveMedia,
     injectFailureAfterMutation = false,
     injectFailureAfterLegalMutation = false,
+    siteChromeFixture = null,
+    injectFailureAfterSiteChromeMutation = false,
   } = opts;
   const catalogBefore = await captureCatalogGuard(strapi);
   const uploadsBefore = await countPagesCmsUploads(strapi);
@@ -254,6 +256,11 @@ async function seedPagesCmsFromFixtures(strapi, opts) {
       const resolved = resolveMedia(url);
       pathByUrl.set(url, resolved.absolutePath);
     }
+  }
+  if (siteChromeFixture) {
+    const urls = [];
+    ;(function walk(node) { if (Array.isArray(node)) return node.forEach(walk); if (!node || typeof node !== 'object') return; if (isMediaStub(node)) urls.push(node.url); Object.values(node).forEach(walk); })(siteChromeFixture);
+    for (const url of urls) if (!pathByUrl.has(url)) pathByUrl.set(url, resolveMedia(url).absolutePath);
   }
 
   /** @type {Record<string, number>} */
@@ -287,6 +294,19 @@ async function seedPagesCmsFromFixtures(strapi, opts) {
       throw err;
     }
   }
+  if (siteChromeFixture) {
+    const data = materialize(siteChromeFixture, mediaIdsByUrl);
+    const docs = strapi.documents('api::site-chrome.site-chrome');
+    const existing = await docs.findFirst({ populate: { header: { populate: { logo: true, primary_navigation: true } }, footer: { populate: { logo: true, navigation_groups: { populate: { links: true } }, policy_links: true } } } });
+    if (existing?.documentId) await docs.update({ documentId: existing.documentId, data });
+    else await docs.create({ data });
+    mutationStarted = true;
+    if (injectFailureAfterSiteChromeMutation) {
+      const err = new Error('injected failure after site chrome mutation');
+      err.code = 'PAGES_CMS_INJECTED_FAILURE';
+      throw err;
+    }
+  }
 
   const catalogAfter = await assertCatalogGuard(strapi, catalogBefore);
   const uploadsAfter = await countPagesCmsUploads(strapi);
@@ -298,6 +318,7 @@ async function seedPagesCmsFromFixtures(strapi, opts) {
     uploadsAfter,
     catalog: catalogAfter,
     mutationStarted,
+    siteChrome: Boolean(siteChromeFixture),
   };
 }
 

@@ -11,6 +11,7 @@ const { normalizeOriginList, buildCorsOptions } = require('./lib/cors-config.cjs
 const db = require('./lib/db.cjs');
 const { buildConfirmationEmail } = require('./lib/confirmation-email.cjs');
 const { createPagesCmsApi } = require('./lib/pages-cms-api.cjs');
+const { createSiteChromeApi } = require('./lib/site-chrome-api.cjs');
 require('dotenv').config();
 
 const app = express();
@@ -120,6 +121,7 @@ const pagesCmsApi = createPagesCmsApi({
   strapiUrl: STRAPI_URL,
   rootDir: __dirname,
 });
+const siteChromeApi = createSiteChromeApi({ isProd, strapiUrl: STRAPI_URL, rootDir: __dirname });
 const PAGES_STRAPI_CACHE_TTL_MS = pagesCmsApi.ttlMs;
 const PAGES_STRAPI_CACHE_STALE_MS = pagesCmsApi.staleMs;
 
@@ -1337,6 +1339,16 @@ app.get('/api/pages/:slug', async (req, res) => {
       slug,
       details: String(error && error.message ? error.message : error),
     });
+  }
+});
+
+app.get('/api/site-chrome', async (_req, res) => {
+  try {
+    const result = await siteChromeApi.resolve();
+    for (const [key, value] of Object.entries(result.headers || {})) res.set(key, value);
+    return res.status(result.status).json(result.body);
+  } catch (error) {
+    return res.status(503).json({ error: 'Site chrome unavailable', details: String(error?.message || error) });
   }
 });
 

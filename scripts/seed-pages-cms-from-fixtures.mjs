@@ -35,6 +35,7 @@ const dbPath = process.env.DATABASE_FILENAME
 const backupDir = path.join(strapiRoot, '.tmp/pages-cms-seed-backups')
 const uploadsDir = path.join(strapiRoot, 'public/uploads')
 const fixturesDir = path.join(root, 'scripts/fixtures/pages-cms')
+const siteChromeFixturePath = path.join(fixturesDir, 'site-chrome.json')
 
 const { PAGES_CMS_SLUGS } = require(path.join(
   strapiRoot,
@@ -154,10 +155,17 @@ async function main() {
 
   assertDbExists()
   const fixturesBySlug = readFixtures()
+  const siteChromeFixture = JSON.parse(fs.readFileSync(siteChromeFixturePath, 'utf8'))
 
   let preflight
   try {
     preflight = preflightMedia(fixturesBySlug)
+    for (const url of collectMediaUrls(siteChromeFixture)) {
+      if (!preflight.unique.includes(url)) {
+        preflight.unique.push(url)
+        preflight.resolved.push({ url, ...resolveFixtureMediaUrl(url, { repoRoot: root }) })
+      }
+    }
     for (const slug of LEGAL_PAGES_CMS_SLUGS) {
       canonicalizeLegalPageData(fixturesBySlug[slug])
     }
@@ -198,9 +206,13 @@ async function main() {
     const result = await withStrapi(async (strapi) =>
       seedPagesCmsFromFixtures(strapi, {
         fixturesBySlug,
+        siteChromeFixture,
         resolveMedia: (url) => resolveFixtureMediaUrl(url, { repoRoot: root }),
         injectFailureAfterMutation,
         injectFailureAfterLegalMutation,
+        injectFailureAfterSiteChromeMutation:
+          process.env.PAGES_CMS_SEED_INJECT_SITE_CHROME_FAILURE === '1' ||
+          args.includes('--inject-site-chrome-failure'),
       }),
     )
     console.log(JSON.stringify({ ok: true, backup: backup.backupPath, ...result }, null, 2))

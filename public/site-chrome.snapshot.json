@@ -1,0 +1,120 @@
+{
+  "header": {
+    "greeting": "Доброе утро!",
+    "phone_label": "+ 7 (978) 248-43-80",
+    "phone_href": "tel:+79782484380",
+    "schedule": "Пн-Пт: 9:00 - 18:00",
+    "logo_alt": "Grassigrosso",
+    "logo_home_href": "/",
+    "contact_cta_label": "Связаться",
+    "contact_cta_href": "/contacts#contact-form",
+    "logo": {
+      "url": "/uploads/pages_cms_dc4fffa72815b573_header-logo.svg"
+    },
+    "primary_navigation": [
+      {
+        "key": "hotels",
+        "label": "Отелям",
+        "href": "/hotels"
+      },
+      {
+        "key": "dealers",
+        "label": "Дилерам",
+        "href": "/dealers"
+      },
+      {
+        "key": "catalog",
+        "label": "Каталог",
+        "href": "/catalog"
+      },
+      {
+        "key": "documents",
+        "label": "Документы",
+        "href": "/documents"
+      },
+      {
+        "key": "contacts",
+        "label": "Контакты",
+        "href": "/contacts"
+      }
+    ]
+  },
+  "footer": {
+    "logo_alt": "Grassigrosso",
+    "description": "Продуманные решения для естественного восстановления. Каждое утро – как лучшее.",
+    "inn_label": "ИНН:",
+    "inn": "9102292969",
+    "ogrn_label": "ОГРН:",
+    "ogrn": "1239100014548",
+    "contacts_title": "Связь",
+    "phone_label": "Телефон:",
+    "phone_value": "+ 7 (978) 248-43-80",
+    "phone_href": "tel:+79782484380",
+    "email_label": "Email:",
+    "email_value": "sales@grassigrosso.com",
+    "email_href": "mailto:sales@grassigrosso.com",
+    "schedule_label": "Режим работы:",
+    "schedule": "Пн-Пт: 9:00 - 18:00 МСК",
+    "copyright_brand": "© Grassigrosso, 2026.",
+    "copyright_legal_text": "Все материалы, размещённые на сайте grassigrosso.com, включая текстовые, графические, фото- и видеоматериалы, элементы дизайна и оформления, структуру страниц, товарные знаки, фирменное наименование и доменное имя, являются объектами авторского права и иных прав на интеллектуальную собственность. Указанные материалы охраняются законодательством Российской Федерации и международными нормами в сфере защиты авторских и смежных прав. Любое использование материалов сайта, включая воспроизведение, копирование, переработку, распространение или размещение на других ресурсах, допускается только с предварительного письменного согласия правообладателя. Запрещаются действия, способные ввести пользователей в заблуждение относительно принадлежности размещённых материалов и их связи с доменом grassigrosso.com",
+    "logo": {
+      "url": "/uploads/pages_cms_d52a90c82bd909c1_footer-logo.svg"
+    },
+    "policy_links": [
+      {
+        "key": "privacy",
+        "label": "Политика конфиденциальности",
+        "href": "/privacy"
+      },
+      {
+        "key": "terms",
+        "label": "Пользовательское соглашение",
+        "href": "/terms"
+      },
+      {
+        "key": "cookies",
+        "label": "Политика использования cookie",
+        "href": "/cookies"
+      }
+    ],
+    "navigation_groups": [
+      {
+        "key": "solutions",
+        "title": "Решения",
+        "links": [
+          {
+            "key": "hotels",
+            "label": "Отелям",
+            "href": "/hotels"
+          },
+          {
+            "key": "dealers",
+            "label": "Дилерам",
+            "href": "/dealers"
+          },
+          {
+            "key": "catalog",
+            "label": "Каталог матрасов",
+            "href": "/catalog"
+          }
+        ]
+      },
+      {
+        "key": "information",
+        "title": "Информация",
+        "links": [
+          {
+            "key": "documents",
+            "label": "Документы",
+            "href": "/documents"
+          },
+          {
+            "key": "contacts",
+            "label": "Контакты",
+            "href": "/contacts"
+          }
+        ]
+      }
+    ]
+  }
+}

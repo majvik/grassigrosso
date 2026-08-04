@@ -26,6 +26,7 @@ import { initPageInteractions } from './page-interactions'
 import { initPageLayout } from './page-layout'
 import { initResourceModals } from './resource-modals'
 import { initTestimonialsSlider } from './testimonials-slider'
+import { hydrateSiteChrome } from './site-chrome'
 
 const isCatalogPage = document.body.dataset.page === 'catalog'
 const isDownloadCatalogPage = document.body.dataset.page === 'download-catalog'
@@ -70,6 +71,7 @@ const downloadCatalogRuntimePromise = isDownloadCatalogPage
   : Promise.resolve(null)
 
 applyWidowFix()
+void hydrateSiteChrome()
 
 const lenisInstance = createLenisInstance(Lenis)
 

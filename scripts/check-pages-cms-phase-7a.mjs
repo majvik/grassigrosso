@@ -61,15 +61,13 @@ for (const file of contract.files) {
   assert.deepEqual(desktop.map(([href, label]) => [href, label]), expectedNav, `${file}: desktop nav drift`)
   assert.deepEqual(mobile.map(([href, label]) => [href, label]), expectedNav, `${file}: mobile nav drift`)
   const footer = anchors(region(source, '<footer class="footer">', '</footer>')).map(([href]) => href)
-  const allowedFooter = [...expectedFooter]
-  if (file === 'hotels.html' || file === 'dealers.html') allowedFooter[2] = '#'
-  assert.deepEqual(footer, allowedFooter, `${file}: footer link drift`)
+  assert.deepEqual(footer, expectedFooter, `${file}: footer link drift`)
   assert.ok(source.includes('aria-label="Открыть меню"') && source.includes('src="/menu.svg"'), `${file}: open control drift`)
   assert.ok(source.includes('aria-label="Закрыть меню"') && source.includes('src="/menu-close.svg"'), `${file}: close control drift`)
   assert.ok(source.includes('src="/header-logo.svg"') && source.includes('src="/footer-logo.svg"'), `${file}: logo drift`)
   const ctaHrefs = [...source.matchAll(/class="(?:btn-contact|mobile-menu-cta)"[^>]*href="([^"]+)"|href="([^"]+)"[^>]*class="(?:btn-contact|mobile-menu-cta)"/g)]
     .map((match) => match[1] || match[2])
-  const allowedCta = file === 'contacts.html' ? ['#contact-form', '#contact-form'] : ['/contacts#contact-form', '/contacts#contact-form']
+  const allowedCta = ['/contacts#contact-form', '/contacts#contact-form']
   assert.deepEqual(ctaHrefs.sort(), allowedCta.sort(), `${file}: CTA drift`)
 }
 

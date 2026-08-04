@@ -1,6 +1,6 @@
 # Pages CMS Phase 7 — Global Site Chrome execution plan
 
-**Status:** Phase A complete locally; Phase B next
+**Status:** Phases A–D complete locally; Phase E next
 **Design:** `docs/superpowers/specs/2026-08-04-pages-cms-global-chrome-design.md`
 
 ## Phase A — Contract and coverage freeze — complete
@@ -38,6 +38,8 @@
 
 **Verify:** seed×2 logical digest, injected rollback, snapshot corruption/missing media negatives, unknown API route 404, catalog remains 43 products.
 
+**Result:** canonical fixture, local `.tmp` seed×2, injected post-chrome rollback, catalog guard (43 products), dedicated Node endpoint with `strapi | memory-cache | disk-snapshot`, atomic snapshot + sha256 manifest and tracked logo uploads. `check:pages-cms-phase-7c` PASS. No `strapi:sync-seed` and no push.
+
 ## Phase D — Full first paint and atomic hydrate
 
 1. Introduce typed defaults/validator/client for site chrome.
@@ -47,6 +49,8 @@
 5. Ensure desktop and mobile navigation always derive from the same validated array.
 
 **Verify:** delayed, success, 404/422/503/network/timeout/invalid JSON/invalid payload on every page; desktop/mobile geometry parity; one menu source; no raw HTML; all links and hooks exact.
+
+**Result:** strict typed runtime validator and one in-flight `/api/site-chrome` client hydrate only existing slots. Desktop/mobile share one validated navigation array; no `innerHTML`; baseline drifts fixed in Contacts and Hotels/Dealers. Contracted 13-consumer slot gate, typecheck, routes, build and browser desktop/mobile smoke PASS.
 
 ## Phase E — Acceptance and release preparation
 
