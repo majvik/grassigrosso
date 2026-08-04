@@ -64,6 +64,130 @@ export interface CatalogProductGalleryItem extends Struct.ComponentSchema {
   };
 }
 
+export interface LegalInlineRun extends Struct.ComponentSchema {
+  collectionName: 'components_legal_inline_runs';
+  info: {
+    description: '\u0414\u0438\u0441\u043A\u0440\u0438\u043C\u0438\u043D\u0430\u0442\u043E\u0440 text|link; \u043F\u0443\u0431\u043B\u0438\u0447\u043D\u044B\u0439 feed \u043F\u0440\u0438\u0432\u043E\u0434\u0438\u0442 link_label \u2192 children[]';
+    displayName: '\u0418\u043D\u043B\u0430\u0439\u043D-\u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442';
+    icon: 'quote';
+  };
+  attributes: {
+    href: Schema.Attribute.String;
+    link_label: Schema.Attribute.String;
+    strong: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    type: Schema.Attribute.Enumeration<['text', 'link']> &
+      Schema.Attribute.Required;
+    value: Schema.Attribute.Text;
+  };
+}
+
+export interface LegalListBlock extends Struct.ComponentSchema {
+  collectionName: 'components_legal_list_blocks';
+  info: {
+    displayName: '\u0421\u043F\u0438\u0441\u043E\u043A';
+    icon: 'bulletList';
+  };
+  attributes: {
+    heading: Schema.Attribute.String;
+    items: Schema.Attribute.Component<'legal.list-item', true> &
+      Schema.Attribute.Required;
+  };
+}
+
+export interface LegalListItem extends Struct.ComponentSchema {
+  collectionName: 'components_legal_list_items';
+  info: {
+    displayName: '\u041F\u0443\u043D\u043A\u0442 \u0441\u043F\u0438\u0441\u043A\u0430';
+    icon: 'bulletList';
+  };
+  attributes: {
+    runs: Schema.Attribute.Component<'legal.inline-run', true> &
+      Schema.Attribute.Required;
+  };
+}
+
+export interface LegalOperatorBlock extends Struct.ComponentSchema {
+  collectionName: 'components_legal_operator_blocks';
+  info: {
+    displayName: '\u041E\u043F\u0435\u0440\u0430\u0442\u043E\u0440';
+    icon: 'user';
+  };
+  attributes: {
+    address: Schema.Attribute.Text & Schema.Attribute.Required;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    heading: Schema.Attribute.String;
+    inn: Schema.Attribute.String & Schema.Attribute.Required;
+    legal_name: Schema.Attribute.String & Schema.Attribute.Required;
+    ogrn: Schema.Attribute.String & Schema.Attribute.Required;
+    role_label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface LegalParagraphBlock extends Struct.ComponentSchema {
+  collectionName: 'components_legal_paragraph_blocks';
+  info: {
+    displayName: '\u0410\u0431\u0437\u0430\u0446';
+    icon: 'write';
+  };
+  attributes: {
+    heading: Schema.Attribute.String;
+    runs: Schema.Attribute.Component<'legal.inline-run', true> &
+      Schema.Attribute.Required;
+  };
+}
+
+export interface LegalTableBlock extends Struct.ComponentSchema {
+  collectionName: 'components_legal_table_blocks';
+  info: {
+    displayName: '\u0422\u0430\u0431\u043B\u0438\u0446\u0430';
+    icon: 'grid';
+  };
+  attributes: {
+    headers: Schema.Attribute.Component<'legal.table-header', true> &
+      Schema.Attribute.Required;
+    heading: Schema.Attribute.String;
+    rows: Schema.Attribute.Component<'legal.table-row', true> &
+      Schema.Attribute.Required;
+  };
+}
+
+export interface LegalTableCell extends Struct.ComponentSchema {
+  collectionName: 'components_legal_table_cells';
+  info: {
+    displayName: '\u042F\u0447\u0435\u0439\u043A\u0430 \u0442\u0430\u0431\u043B\u0438\u0446\u044B';
+    icon: 'grid';
+  };
+  attributes: {
+    runs: Schema.Attribute.Component<'legal.inline-run', true> &
+      Schema.Attribute.Required;
+  };
+}
+
+export interface LegalTableHeader extends Struct.ComponentSchema {
+  collectionName: 'components_legal_table_headers';
+  info: {
+    displayName: '\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u043A\u043E\u043B\u043E\u043D\u043A\u0438';
+    icon: 'layer';
+  };
+  attributes: {
+    value: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface LegalTableRow extends Struct.ComponentSchema {
+  collectionName: 'components_legal_table_rows';
+  info: {
+    displayName: '\u0421\u0442\u0440\u043E\u043A\u0430 \u0442\u0430\u0431\u043B\u0438\u0446\u044B';
+    icon: 'dashboard';
+  };
+  attributes: {
+    cells: Schema.Attribute.Component<'legal.table-cell', true> &
+      Schema.Attribute.Required;
+  };
+}
+
 export interface PageCollectionCard extends Struct.ComponentSchema {
   collectionName: 'components_page_collection_cards';
   info: {
@@ -374,6 +498,15 @@ declare module '@strapi/strapi' {
       'catalog.filter-help-summary-item': CatalogFilterHelpSummaryItem;
       'catalog.hero-slide': CatalogHeroSlide;
       'catalog.product-gallery-item': CatalogProductGalleryItem;
+      'legal.inline-run': LegalInlineRun;
+      'legal.list-block': LegalListBlock;
+      'legal.list-item': LegalListItem;
+      'legal.operator-block': LegalOperatorBlock;
+      'legal.paragraph-block': LegalParagraphBlock;
+      'legal.table-block': LegalTableBlock;
+      'legal.table-cell': LegalTableCell;
+      'legal.table-header': LegalTableHeader;
+      'legal.table-row': LegalTableRow;
       'page.collection-card': PageCollectionCard;
       'page.contact-info': PageContactInfo;
       'page.dealer-package': PageDealerPackage;

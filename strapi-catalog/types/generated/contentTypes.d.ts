@@ -629,6 +629,44 @@ export interface ApiContactsPageContactsPage extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiCookiesPageCookiesPage extends Struct.SingleTypeSchema {
+  collectionName: 'cookies_pages';
+  info: {
+    displayName: '\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 cookie';
+    pluralName: 'cookies-pages';
+    singularName: 'cookies-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    body: Schema.Attribute.DynamicZone<
+      [
+        'legal.paragraph-block',
+        'legal.list-block',
+        'legal.table-block',
+        'legal.operator-block',
+      ]
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    effective_date: Schema.Attribute.Date & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::cookies-page.cookies-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiDealersPageDealersPage extends Struct.SingleTypeSchema {
   collectionName: 'dealers_pages';
   info: {
@@ -1112,6 +1150,44 @@ export interface ApiMattressTypeOptionMattressTypeOption
   };
 }
 
+export interface ApiPrivacyPagePrivacyPage extends Struct.SingleTypeSchema {
+  collectionName: 'privacy_pages';
+  info: {
+    displayName: '\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438';
+    pluralName: 'privacy-pages';
+    singularName: 'privacy-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    body: Schema.Attribute.DynamicZone<
+      [
+        'legal.paragraph-block',
+        'legal.list-block',
+        'legal.table-block',
+        'legal.operator-block',
+      ]
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    effective_date: Schema.Attribute.Date & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::privacy-page.privacy-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
@@ -1254,6 +1330,44 @@ export interface ApiTagTag extends Struct.CollectionTypeSchema {
     slug: Schema.Attribute.UID<'name'> &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTermsPageTermsPage extends Struct.SingleTypeSchema {
+  collectionName: 'terms_pages';
+  info: {
+    displayName: '\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u043E\u0435 \u0441\u043E\u0433\u043B\u0430\u0448\u0435\u043D\u0438\u0435';
+    pluralName: 'terms-pages';
+    singularName: 'terms-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    body: Schema.Attribute.DynamicZone<
+      [
+        'legal.paragraph-block',
+        'legal.list-block',
+        'legal.table-block',
+        'legal.operator-block',
+      ]
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    effective_date: Schema.Attribute.Date & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::terms-page.terms-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1776,6 +1890,7 @@ declare module '@strapi/strapi' {
       'api::catalog-share-help.catalog-share-help': ApiCatalogShareHelpCatalogShareHelp;
       'api::collection.collection': ApiCollectionCollection;
       'api::contacts-page.contacts-page': ApiContactsPageContactsPage;
+      'api::cookies-page.cookies-page': ApiCookiesPageCookiesPage;
       'api::dealers-page.dealers-page': ApiDealersPageDealersPage;
       'api::documents-page.documents-page': ApiDocumentsPageDocumentsPage;
       'api::download-catalog-page.download-catalog-page': ApiDownloadCatalogPageDownloadCatalogPage;
@@ -1788,8 +1903,10 @@ declare module '@strapi/strapi' {
       'api::load-range-option.load-range-option': ApiLoadRangeOptionLoadRangeOption;
       'api::mattress-size.mattress-size': ApiMattressSizeMattressSize;
       'api::mattress-type-option.mattress-type-option': ApiMattressTypeOptionMattressTypeOption;
+      'api::privacy-page.privacy-page': ApiPrivacyPagePrivacyPage;
       'api::product.product': ApiProductProduct;
       'api::tag.tag': ApiTagTag;
+      'api::terms-page.terms-page': ApiTermsPageTermsPage;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
