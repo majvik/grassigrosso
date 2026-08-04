@@ -4,6 +4,7 @@
  * See design §1–§2.
  */
 import type { PagesCmsSlug } from './pages-cms-constants'
+import { isLegalPagesCmsSlug } from './pages-cms-constants'
 import {
   getPageRootSchema,
   resolveComponentSchema,
@@ -11,6 +12,7 @@ import {
   type FieldDesc,
 } from './pages-cms-schema'
 import { isPlainObject } from './pages-cms-validate'
+import { canonicalizeLegalPageData, LegalContractError } from './legal-page-contract'
 
 export type MergeSuccess<T> = { ok: true; value: T }
 export type MergeFailure = { ok: false; reason: string }
@@ -310,6 +312,7 @@ function mergeObjectWithSchema(
 
 /**
  * Atomic merge. On any violation returns ok:false and does not partially apply.
+ * Legal pages: full-document replace after contract canonicalize (no partial body merge).
  */
 export function mergePageContent<T extends Record<string, unknown>>(
   slug: PagesCmsSlug,
@@ -320,6 +323,23 @@ export function mergePageContent<T extends Record<string, unknown>>(
     if (!isPlainObject(data)) {
       return { ok: false, reason: 'cms data must be a plain object' }
     }
+
+    if (isLegalPagesCmsSlug(slug)) {
+      void fallback
+      try {
+        const canonical = canonicalizeLegalPageData(data)
+        if (!Array.isArray(canonical.body) || canonical.body.length === 0) {
+          return { ok: false, reason: 'legal body must be non-empty' }
+        }
+        return { ok: true, value: cloneUnknown(canonical) as unknown as T }
+      } catch (err) {
+        if (err instanceof LegalContractError) {
+          return { ok: false, reason: err.message }
+        }
+        return { ok: false, reason: err instanceof Error ? err.message : 'legal merge failed' }
+      }
+    }
+
     const root = getPageRootSchema(slug)
     if (root.kind !== 'object') {
       return { ok: false, reason: 'page root schema must be object' }

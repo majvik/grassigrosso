@@ -10,7 +10,12 @@ export {
   pagesApiPath,
 } from '../../src/pages/pages-api.ts'
 export { createMountGuard } from '../../src/pages/pages-cms-mount-guard.ts'
-export { setPagesApiTimeoutMsForTests, PAGES_CMS_SLUGS } from '../../src/pages/pages-cms-constants.ts'
+export {
+  setPagesApiTimeoutMsForTests,
+  PAGES_CMS_SLUGS,
+  LEGAL_PAGES_CMS_SLUGS,
+  isLegalPagesCmsSlug,
+} from '../../src/pages/pages-cms-constants.ts'
 export {
   BEHAVIOR_BOUND_ARRAYS,
   BEHAVIOR_ARRAY_ITEMS,

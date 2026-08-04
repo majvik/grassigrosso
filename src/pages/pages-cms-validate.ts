@@ -5,11 +5,13 @@
 import {
   CANONICAL_REQUIRED_KEYS,
   DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS,
+  isLegalPagesCmsSlug,
   isPagesCmsSlug,
   isPagesCmsSource,
   type PagesCmsSlug,
   type PagesCmsSource,
 } from './pages-cms-constants'
+import { canonicalizeLegalPageData, LegalContractError } from './legal-page-contract'
 
 export type PagesCmsEnvelope = {
   data: Record<string, unknown>
@@ -66,6 +68,16 @@ export function validateCanonicalPageContent(data: unknown, slug: string): strin
 
   if ('source' in data) {
     failures.push(`${slug}: canonical data must not include source`)
+  }
+
+  if (isLegalPagesCmsSlug(slug)) {
+    try {
+      canonicalizeLegalPageData(data)
+    } catch (err) {
+      failures.push(
+        `${slug}: legal contract: ${err instanceof LegalContractError || err instanceof Error ? err.message : String(err)}`,
+      )
+    }
   }
 
   return failures

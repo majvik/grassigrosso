@@ -37,7 +37,10 @@ const pagesCmsPrefetchSlug = (() => {
     page === 'hotels' ||
     page === 'dealers' ||
     page === 'contacts' ||
-    page === 'documents'
+    page === 'documents' ||
+    page === 'privacy' ||
+    page === 'terms' ||
+    page === 'cookies'
   ) {
     return page
   }

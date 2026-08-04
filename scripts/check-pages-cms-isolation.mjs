@@ -42,13 +42,13 @@ const FORBIDDEN_PATTERNS = [
   {
     id: 'page-feed-path',
     regex:
-      /\/api\/(index|hotels|dealers|contacts|documents|download-catalog)-page-feed\b/,
+      /\/api\/(index|hotels|dealers|contacts|documents|download-catalog|privacy|terms|cookies)-page-feed\b/,
     message: 'Strapi page-feed path',
   },
   {
     id: 'page-feed-name',
     regex:
-      /\b(index|hotels|dealers|contacts|documents|download-catalog)-page-feed\b/,
+      /\b(index|hotels|dealers|contacts|documents|download-catalog|privacy|terms|cookies)-page-feed\b/,
     message: 'Strapi page-feed identifier',
   },
   {

@@ -10,6 +10,7 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
+import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import {
   cleanupChromeSession,
@@ -18,19 +19,59 @@ import {
 } from './lib/catalog-chrome-session.mjs'
 import { shouldRunBrowserSmoke } from './lib/catalog-smoke-env.mjs'
 
+const require = createRequire(import.meta.url)
+const { normalizeMapIframeHtml } = require(
+  path.join(
+    path.dirname(fileURLToPath(import.meta.url)),
+    '../strapi-catalog/src/api/pages-cms/utils/normalize-map-iframe.js',
+  ),
+)
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const baseUrl = String(
   process.env.PAGES_CMS_UI_BASE_URL || process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5174',
 ).replace(/\/+$/, '')
 const runBrowser = shouldRunBrowserSmoke(baseUrl)
 const OVERALL_TIMEOUT_MS = Number(process.env.PAGES_CMS_HYDRATE_DOM_TIMEOUT_MS || 360000)
-const PHASE_PAGES = ['index', 'download-catalog', 'hotels', 'dealers', 'contacts', 'documents']
+const WAVE1_PAGES = ['index', 'download-catalog', 'hotels', 'dealers', 'contacts', 'documents']
+const LEGAL_PHASE_PAGES = ['privacy', 'terms', 'cookies']
+const PHASE_PAGES = [...WAVE1_PAGES, ...LEGAL_PHASE_PAGES]
+const LEGAL_PAGE_SET = new Set(LEGAL_PHASE_PAGES)
 const FAILURE_MODES = [
   { id: '404', mock: { mode: 'fail', status: 404 } },
   { id: '503', mock: { mode: 'fail', status: 503 } },
   { id: 'network', mock: { mode: 'network' } },
   { id: 'invalid', mock: { mode: 'invalid-json' } },
 ]
+const LEGAL_EXTRA_FAILURE_MODES = [
+  { id: '422', mock: { mode: 'fail', status: 422 } },
+  {
+    id: 'invalid-payload',
+    mock: {
+      mode: 'json',
+      status: 200,
+      body: { data: { title: 'x', effective_date: '2026-03-01' }, source: 'strapi' },
+    },
+  },
+]
+
+const LEGAL_SECTIONS = ['legal-page']
+const LEGAL_CONTENT_TAGS = [
+  'H2',
+  'P',
+  'UL',
+  'LI',
+  'TABLE',
+  'THEAD',
+  'TBODY',
+  'TR',
+  'TH',
+  'TD',
+  'A',
+  'STRONG',
+  'DIV',
+]
+const LEGAL_DATE_LABEL = 'Дата последнего обновления: 01.03.2026'
 
 const HOTELS_SECTIONS = [
   'page-hero',
@@ -123,8 +164,30 @@ function reactPageAttr(slug) {
 }
 
 function loadParityPayload(slug) {
-  const file = `pages-${slug}.snapshot.json`
-  return JSON.parse(fs.readFileSync(path.join(ROOT, 'public', file), 'utf8'))
+  // Legal: defaults/fixtures/snapshots are identical (no media URL drift).
+  if (LEGAL_PAGE_SET.has(slug)) {
+    return JSON.parse(
+      fs.readFileSync(path.join(ROOT, 'public', `pages-${slug}.snapshot.json`), 'utf8'),
+    )
+  }
+  // Wave-1: fixtures match React defaults (public snapshots may use seed-resolved uploads).
+  const raw = JSON.parse(
+    fs.readFileSync(path.join(ROOT, 'scripts/fixtures/pages-cms', `${slug}.json`), 'utf8'),
+  )
+  if (slug === 'download-catalog') {
+    const { slides, media_display_mode, slider_autoplay_ms, ...texts } = raw
+    return texts
+  }
+  if (slug === 'contacts') {
+    return {
+      ...raw,
+      offices: (raw.offices || []).map((office) => {
+        const { map_iframe_html: html, ...rest } = office
+        return { ...rest, map_embed_url: normalizeMapIframeHtml(html) }
+      }),
+    }
+  }
+  return raw
 }
 
 function envelope(data, source = 'disk-snapshot') {
@@ -135,6 +198,22 @@ const FETCH_STUB_SOURCE = `(() => {
   if (window.__pagesCmsFetchStubInstalled) return
   window.__pagesCmsFetchStubInstalled = true
   window.__pagesCmsMock = { mode: 'pass' }
+  window.__pagesCmsConsoleErrors = window.__pagesCmsConsoleErrors || []
+  if (!window.__pagesCmsConsoleHooked) {
+    window.__pagesCmsConsoleHooked = true
+    const pushErr = (msg) => {
+      try { window.__pagesCmsConsoleErrors.push(String(msg)) } catch {}
+    }
+    const origError = console.error.bind(console)
+    console.error = (...args) => {
+      pushErr(args.map((a) => (typeof a === 'string' ? a : (a && a.message) || String(a))).join(' '))
+      origError(...args)
+    }
+    window.addEventListener('error', (e) => pushErr(e?.message || 'window.error'))
+    window.addEventListener('unhandledrejection', (e) =>
+      pushErr(e?.reason?.message || String(e?.reason || 'unhandledrejection')),
+    )
+  }
   const orig = window.fetch.bind(window)
   window.fetch = async (input, init) => {
     const url = String(typeof input === 'string' ? input : (input && input.url) || '')
@@ -196,7 +275,7 @@ async function setMock(evaluate, mock) {
 
 async function navigateWithMock(cdp, slug, mock) {
   await cdp.send('Page.addScriptToEvaluateOnNewDocument', {
-    source: `${FETCH_STUB_SOURCE}; window.__pagesCmsMock = ${JSON.stringify(mock)};`,
+    source: `${FETCH_STUB_SOURCE}; window.__pagesCmsMock = ${JSON.stringify(mock)}; window.__pagesCmsConsoleErrors = [];`,
   })
   const url = `${baseUrl}${pagePath(slug)}`
   await cdp.send('Page.navigate', { url })
@@ -216,6 +295,16 @@ async function navigateWithMock(cdp, slug, mock) {
 }
 
 function hooksReadyExpr(slug) {
+  if (LEGAL_PAGE_SET.has(slug)) {
+    return `(() => {
+      const section = document.querySelector('section.legal-page')
+      const title = (document.querySelector('.legal-page-title')?.textContent || '').trim()
+      const date = (document.querySelector('.legal-page-date')?.textContent || '').trim()
+      const content = document.querySelector('.legal-page-content')
+      const mainText = (document.querySelector('main')?.innerText || '').trim().length
+      return !!(section && title && date && content && mainText > 20)
+    })()`
+  }
   if (slug === 'index') {
     return `(() => {
       const commercial = !!document.querySelector('#heroCommercialOfferLink')
@@ -281,6 +370,55 @@ function hooksReadyExpr(slug) {
 }
 
 function criticalHooksExpr(slug) {
+  if (LEGAL_PAGE_SET.has(slug)) {
+    return `(() => {
+      const content = document.querySelector('.legal-page-content')
+      const allowed = new Set(${JSON.stringify(LEGAL_CONTENT_TAGS)})
+      const badTags = []
+      if (content) {
+        for (const el of content.querySelectorAll('*')) {
+          if (!allowed.has(el.tagName)) badTags.push(el.tagName)
+        }
+      }
+      const tds = content ? [...content.querySelectorAll('td')] : []
+      const dataLabels = tds.map((td) => td.getAttribute('data-label'))
+      const operatorText = content
+        ? [...content.querySelectorAll('p')]
+            .map((p) => (p.textContent || '').trim())
+            .filter((t) => t.includes('ОГРН') && t.includes('ИНН'))
+        : []
+      const topLevelSections = [...document.querySelectorAll('[data-react-root][data-react-page="${slug}"] > section')]
+        .map((el) => el.className)
+      return {
+        section: !!document.querySelector('section.legal-page'),
+        titleEl: !!document.querySelector('.legal-page-title'),
+        dateEl: !!document.querySelector('.legal-page-date'),
+        contentEl: !!content,
+        topLevelSections,
+        title: (document.querySelector('.legal-page-title')?.textContent || '').trim(),
+        date: (document.querySelector('.legal-page-date')?.textContent || '').trim(),
+        h2: content ? content.querySelectorAll('h2').length : 0,
+        paragraphs: content ? content.querySelectorAll(':scope > p, :scope > ul').length : 0,
+        tables: content ? content.querySelectorAll('table').length : 0,
+        tableWraps: content ? content.querySelectorAll('.legal-table-wrap').length : 0,
+        links: content ? content.querySelectorAll('a').length : 0,
+        strongs: content ? content.querySelectorAll('strong').length : 0,
+        operatorCount: operatorText.length,
+        tdCount: tds.length,
+        dataLabelOk: tds.length === 0 || dataLabels.every((l) => typeof l === 'string' && l.length > 0),
+        badTags: [...new Set(badTags)],
+        hasDangerousHtml: content
+          ? content.querySelector('script, iframe, object, embed') != null ||
+            /<script\\b/i.test(content.innerHTML)
+          : true,
+        consoleErrors: Array.isArray(window.__pagesCmsConsoleErrors)
+          ? window.__pagesCmsConsoleErrors.length
+          : -1,
+        mainText: (document.querySelector('main')?.innerText || '').trim().length,
+        rawHtml: document.documentElement.innerHTML.includes('map_iframe_html'),
+      }
+    })()`
+  }
   if (slug === 'index') {
     return `(() => {
       const baselineTitles = [...document.querySelectorAll('[data-certification-baseline-card] .certification-title')]
@@ -438,6 +576,21 @@ function criticalHooksExpr(slug) {
 }
 
 function geometryExpr(slug) {
+  if (LEGAL_PAGE_SET.has(slug)) {
+    return `(() => {
+      const box = (el) => {
+        if (!el) return null
+        const r = el.getBoundingClientRect()
+        return { top: r.top, left: r.left, width: r.width, height: r.height }
+      }
+      return {
+        title: box(document.querySelector('.legal-page-title')),
+        date: box(document.querySelector('.legal-page-date')),
+        content: box(document.querySelector('.legal-page-content')),
+        section: box(document.querySelector('section.legal-page')),
+      }
+    })()`
+  }
   if (slug === 'index') {
     return `(() => {
       const box = (el) => {
@@ -649,7 +802,28 @@ async function assertContactsMapTabSwitching(evaluate, label) {
 }
 
 function assertFirstPaintBaseline(slug, snap) {
-  if (slug === 'index') {
+  if (LEGAL_PAGE_SET.has(slug)) {
+    assert(
+      JSON.stringify(snap?.topLevelSections) === JSON.stringify(LEGAL_SECTIONS),
+      `${slug} baseline: section allowlist (${JSON.stringify(snap?.topLevelSections)})`,
+    )
+    assert(snap?.section && snap?.titleEl && snap?.dateEl && snap?.contentEl, `${slug} baseline: legal slots`)
+    assert(String(snap?.date || '') === LEGAL_DATE_LABEL, `${slug} baseline: date label (${snap?.date})`)
+    assert(String(snap?.title || '').length > 5, `${slug} baseline: title`)
+    assert(snap?.h2 > 0, `${slug} baseline: headings`)
+    assert(Array.isArray(snap?.badTags) && snap.badTags.length === 0, `${slug} baseline: bad tags ${JSON.stringify(snap?.badTags)}`)
+    assert(snap?.dataLabelOk, `${slug} baseline: td data-label`)
+    assert(!snap?.hasDangerousHtml, `${slug} baseline: dangerous HTML`)
+    if (slug === 'privacy' || slug === 'terms') {
+      assert(snap?.operatorCount === 1, `${slug} baseline: operator once (${snap?.operatorCount})`)
+    } else {
+      assert(snap?.operatorCount === 0, `${slug} baseline: cookies has no operator`)
+    }
+    if (slug === 'cookies' || slug === 'privacy') {
+      assert(snap?.tables >= 1 && snap?.tableWraps >= 1, `${slug} baseline: table wrap`)
+    }
+    assert(snap?.consoleErrors === 0, `${slug} baseline: console errors ${snap?.consoleErrors}`)
+  } else if (slug === 'index') {
     assert(snap?.baselineCount === 3, `${slug} baseline: expected 3 certification cards, got ${snap?.baselineCount}`)
     assert(
       snap?.certificationCardCount === 3,
@@ -773,6 +947,7 @@ function assertFirstPaintBaseline(slug, snap) {
 }
 
 function fallbackTitleFor(slug, parityPayload) {
+  if (LEGAL_PAGE_SET.has(slug)) return parityPayload.title || ''
   if (slug === 'index') return 'Любовь с первого утра'
   if (slug === 'download-catalog') return parityPayload.title || 'Скачать каталог'
   if (slug === 'hotels') return parityPayload.hero?.title || 'Сон, о котором хочется написать в отзыве'
@@ -782,6 +957,15 @@ function fallbackTitleFor(slug, parityPayload) {
 }
 
 function fe05DelayedMap(slug) {
+  if (LEGAL_PAGE_SET.has(slug)) {
+    // Legal pages are long; sticky header / scrollY can shift `top` without content change.
+    return {
+      title: ['left', 'width'],
+      date: ['left', 'width'],
+      content: ['left', 'width'],
+      section: ['left', 'width'],
+    }
+  }
   if (slug === 'index') {
     return { hero: ['top', 'left', 'width'], cta: ['top', 'left', 'width'], section: ['top', 'left', 'width'] }
   }
@@ -825,6 +1009,11 @@ function fe05DelayedMap(slug) {
   }
 }
 
+async function stabilizeViewport(evaluate) {
+  await evaluate(`window.scrollTo(0, 0)`)
+  await delay(120)
+}
+
 async function runPageScenarios(slug) {
   const { cdp } = session
   const evaluate = (expression, timeoutMs) => cdp.evaluate(expression, timeoutMs)
@@ -835,28 +1024,38 @@ async function runPageScenarios(slug) {
   {
     await navigateWithMock(cdp, slug, { mode: 'hold' })
     await waitFor(evaluate, `${slug} delayed paint`, hooksReadyExpr(slug), 15000)
+    await stabilizeViewport(evaluate)
     const delayed = await evaluate(criticalHooksExpr(slug))
     assertFirstPaintBaseline(slug, delayed)
     if (slug === 'contacts') {
       await assertContactsMapTabSwitching(evaluate, `${slug} first-paint embed`)
       console.log(`  ${slug} first-paint map tabs: PASS`)
     }
+    await stabilizeViewport(evaluate)
     const geoBefore = await evaluate(geometryExpr(slug))
     await setMock(evaluate, { mode: 'json', status: 200, body: envelope(parityPayload) })
     await delay(1000)
+    await stabilizeViewport(evaluate)
     const geoAfter = await evaluate(geometryExpr(slug))
     assertGeometryKeys(`${slug} delayed FE-05`, geoBefore, geoAfter, fe05DelayedMap(slug))
     console.log(`  ${slug} delayed+baseline: PASS`, JSON.stringify({ geoBefore, geoAfter }))
   }
 
-  // --- Failure modes: 404 / 503 / network / invalid ---
-  for (const mode of FAILURE_MODES) {
+  // --- Failure modes: 404 / 503 / network / invalid (+ legal extras) ---
+  const failureModes = LEGAL_PAGE_SET.has(slug)
+    ? [...FAILURE_MODES, ...LEGAL_EXTRA_FAILURE_MODES]
+    : FAILURE_MODES
+  for (const mode of failureModes) {
     await navigateWithMock(cdp, slug, mode.mock)
     await waitFor(evaluate, `${slug} ${mode.id} paint`, hooksReadyExpr(slug), 15000)
     await delay(400)
     const failed = await evaluate(criticalHooksExpr(slug))
     assertFirstPaintBaseline(slug, failed)
-    if (slug === 'index') {
+    if (LEGAL_PAGE_SET.has(slug)) {
+      assert(String(failed?.title || '') === fallbackTitle, `${slug} ${mode.id}: lost fallback title`)
+      assert(String(failed?.date || '') === LEGAL_DATE_LABEL, `${slug} ${mode.id}: lost fallback date`)
+      assert(failed?.consoleErrors === 0, `${slug} ${mode.id}: console errors`)
+    } else if (slug === 'index') {
       assert(String(failed?.heroTitle || '').includes(fallbackTitle), `${slug} ${mode.id}: lost fallback title`)
     } else if (slug === 'download-catalog') {
       assert(failed?.title === fallbackTitle, `${slug} ${mode.id}: lost fallback title`)
@@ -864,6 +1063,22 @@ async function runPageScenarios(slug) {
       assert(String(failed?.heroTitle || '') === fallbackTitle, `${slug} ${mode.id}: lost fallback title`)
     }
     console.log(`  ${slug} failure:${mode.id}: PASS`)
+  }
+
+  // --- Legal: timeout-like hold → fail keeps SSR/fallback ---
+  if (LEGAL_PAGE_SET.has(slug)) {
+    await navigateWithMock(cdp, slug, { mode: 'hold' })
+    await waitFor(evaluate, `${slug} timeout hold paint`, hooksReadyExpr(slug), 15000)
+    const held = await evaluate(criticalHooksExpr(slug))
+    assertFirstPaintBaseline(slug, held)
+    assert(String(held?.title || '') === fallbackTitle, `${slug} timeout: SSR/fallback title missing`)
+    await setMock(evaluate, { mode: 'network' })
+    await delay(600)
+    const afterTimeout = await evaluate(criticalHooksExpr(slug))
+    assertFirstPaintBaseline(slug, afterTimeout)
+    assert(String(afterTimeout?.title || '') === fallbackTitle, `${slug} timeout: fallback lost after abort-like fail`)
+    assert(afterTimeout?.consoleErrors === 0, `${slug} timeout: console errors`)
+    console.log(`  ${slug} failure:timeout: PASS`)
   }
 
   // --- Success divergent (texts + media) ---
@@ -934,6 +1149,14 @@ async function runPageScenarios(slug) {
             }
           : office,
       )
+    } else if (LEGAL_PAGE_SET.has(slug)) {
+      divergent.title = `CMS ${slug} Title Marker`
+      divergent.effective_date = '2026-04-15'
+      // Mutate first paragraph text so body visibly updates
+      const firstPara = divergent.body.find((b) => b.type === 'paragraph')
+      if (firstPara?.runs?.[0]?.type === 'text') {
+        firstPara.runs[0].value = `CMS ${slug} body marker. ${firstPara.runs[0].value}`
+      }
     } else {
       divergent.hero = {
         ...divergent.hero,
@@ -1007,6 +1230,25 @@ async function runPageScenarios(slug) {
             !document.documentElement.innerHTML.includes('map_iframe_html')
           )
         })()`,
+        15000,
+      )
+    } else if (LEGAL_PAGE_SET.has(slug)) {
+      await waitFor(
+        evaluate,
+        `${slug} success hydrate`,
+        `document.querySelector('.legal-page-title')?.textContent?.trim() === 'CMS ${slug} Title Marker'`,
+        15000,
+      )
+      await waitFor(
+        evaluate,
+        `${slug} success date`,
+        `document.querySelector('.legal-page-date')?.textContent?.trim() === 'Дата последнего обновления: 15.04.2026'`,
+        15000,
+      )
+      await waitFor(
+        evaluate,
+        `${slug} success body`,
+        `(document.querySelector('.legal-page-content')?.innerText || '').includes('CMS ${slug} body marker')`,
         15000,
       )
     } else {
@@ -1136,6 +1378,27 @@ async function runPageScenarios(slug) {
       })
       await assertContactsMapTabSwitching(evaluate, `${slug} success embed`)
       console.log(`  ${slug} success map tabs: PASS`)
+    } else if (LEGAL_PAGE_SET.has(slug)) {
+      assert(
+        JSON.stringify(ok?.topLevelSections) === JSON.stringify(LEGAL_SECTIONS),
+        `${slug} success: section allowlist drifted`,
+      )
+      assert(ok?.title === `CMS ${slug} Title Marker`, `${slug} success: title`)
+      assert(
+        ok?.date === 'Дата последнего обновления: 15.04.2026',
+        `${slug} success: date (${ok?.date})`,
+      )
+      assert(ok?.dataLabelOk, `${slug} success: td data-label`)
+      assert(!ok?.hasDangerousHtml, `${slug} success: dangerous HTML`)
+      assert(ok?.consoleErrors === 0, `${slug} success: console errors`)
+      if (slug === 'privacy' || slug === 'terms') {
+        assert(ok?.operatorCount === 1, `${slug} success: operator once`)
+      }
+      assertGeometryKeys(`${slug} success FE-05`, geoBaseline, geoAfter, {
+        title: ['left', 'width'],
+        content: ['left', 'width'],
+        section: ['left', 'width'],
+      })
     } else {
       assert(
         JSON.stringify(ok?.topLevelSections) === JSON.stringify(DOCUMENTS_SECTIONS),
@@ -1244,10 +1507,12 @@ async function runPageScenarios(slug) {
   {
     await navigateWithMock(cdp, slug, { mode: 'hold' })
     await waitFor(evaluate, `${slug} parity paint`, hooksReadyExpr(slug), 15000)
+    await stabilizeViewport(evaluate)
     const before = await evaluate(geometryExpr(slug))
     const beforeHooks = await evaluate(criticalHooksExpr(slug))
     await setMock(evaluate, { mode: 'json', status: 200, body: envelope(parityPayload) })
     await delay(1000)
+    await stabilizeViewport(evaluate)
     const after = await evaluate(geometryExpr(slug))
     const afterHooks = await evaluate(criticalHooksExpr(slug))
     if (slug === 'index') {
@@ -1309,6 +1574,21 @@ async function runPageScenarios(slug) {
           JSON.stringify((afterHooks?.frames || []).map((f) => f.src)),
         `${slug} parity: map src changed on content-equal`,
       )
+    } else if (LEGAL_PAGE_SET.has(slug)) {
+      assertGeometryKeys(`${slug} FE-05 parity`, before, after, fe05DelayedMap(slug))
+      assert(beforeHooks?.title === afterHooks?.title, `${slug} parity: title changed`)
+      assert(beforeHooks?.date === afterHooks?.date, `${slug} parity: date changed`)
+      assert(beforeHooks?.h2 === afterHooks?.h2, `${slug} parity: h2 count`)
+      assert(beforeHooks?.operatorCount === afterHooks?.operatorCount, `${slug} parity: operator`)
+      assert(
+        Math.abs((before?.content?.height || 0) - (after?.content?.height || 0)) <= 1,
+        `${slug} parity: content height changed ${JSON.stringify({
+          before: before?.content,
+          after: after?.content,
+        })}`,
+      )
+      assert(afterHooks?.consoleErrors === 0, `${slug} parity: console errors`)
+      assert(afterHooks?.dataLabelOk, `${slug} parity: data-label`)
     } else {
       assertGeometryKeys(`${slug} FE-05 parity`, before, after, fe05DelayedMap(slug))
       assert(
@@ -1360,7 +1640,7 @@ try {
     process.exit(1)
   }
 
-  console.log('\npages-cms hydrate-dom PASS (all six wave-1 pages)')
+  console.log('\npages-cms hydrate-dom PASS (wave-1 + legal pages)')
   cleanup()
   process.exit(0)
 } catch (err) {

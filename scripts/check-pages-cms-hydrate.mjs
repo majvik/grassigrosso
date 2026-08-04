@@ -39,6 +39,7 @@ const {
   BEHAVIOR_ARRAY_ITEMS,
   setPagesApiTimeoutMsForTests,
   PAGES_CMS_SLUGS,
+  LEGAL_PAGES_CMS_SLUGS,
   getPageRootSchema,
   resolveComponentSchema,
   collectUndescribedFixturePaths,
@@ -682,17 +683,12 @@ function assertUnchanged(fallback, before, label) {
   )
   const indexProjection = JSON.parse(JSON.stringify(INDEX_PAGE_DEFAULTS))
   const indexFixture = readFixture('index')
-  const indexSnap = JSON.parse(
-    fs.readFileSync(path.join(root, 'public/pages-index.snapshot.json'), 'utf8'),
-  )
   assert(
     deepEqual(indexProjection, indexFixture),
     'index defaults CMS projection must equal fixture',
   )
-  assert(
-    deepEqual(indexProjection, indexSnap),
-    'index defaults CMS projection must equal public snapshot (content-equal parity)',
-  )
+  // Disk snapshots may use seed-resolved /uploads/pages_cms_* URLs (Phase 6C publish);
+  // React defaults keep public-path media. Content-equal for hydrate is defaults↔fixture.
   assert(indexProjection.solutions.length === 3, 'index defaults: 3 solutions')
   assert(indexProjection.philosophy_cards.length === 2, 'index defaults: 2 philosophy cards')
   assert(indexProjection.collections.length === 5, 'index defaults: 5 collections')
@@ -704,11 +700,7 @@ function assertUnchanged(fallback, before, label) {
   )
   const hotelsProjection = JSON.parse(JSON.stringify(HOTELS_PAGE_DEFAULTS))
   const hotelsFixture = readFixture('hotels')
-  const hotelsSnap = JSON.parse(
-    fs.readFileSync(path.join(root, 'public/pages-hotels.snapshot.json'), 'utf8'),
-  )
   assert(deepEqual(hotelsProjection, hotelsFixture), 'hotels defaults must equal fixture')
-  assert(deepEqual(hotelsProjection, hotelsSnap), 'hotels defaults must equal snapshot')
   assert(hotelsProjection.products.length === 2, 'hotels defaults: 2 products')
   assert(
     hotelsProjection.products.map((p) => p.catalog_key).join(',') === 'boxspring,accessories',
@@ -728,11 +720,7 @@ function assertUnchanged(fallback, before, label) {
   )
   const dealersProjection = JSON.parse(JSON.stringify(DEALERS_PAGE_DEFAULTS))
   const dealersFixture = readFixture('dealers')
-  const dealersSnap = JSON.parse(
-    fs.readFileSync(path.join(root, 'public/pages-dealers.snapshot.json'), 'utf8'),
-  )
   assert(deepEqual(dealersProjection, dealersFixture), 'dealers defaults must equal fixture')
-  assert(deepEqual(dealersProjection, dealersSnap), 'dealers defaults must equal snapshot')
   assert(dealersProjection.packages.length === 3, 'dealers defaults: 3 packages')
   assert(
     dealersProjection.packages.map((p) => p.value).join(',') ===
@@ -754,11 +742,7 @@ function assertUnchanged(fallback, before, label) {
   )
   const contactsProjection = JSON.parse(JSON.stringify(CONTACTS_PAGE_DEFAULTS))
   const contactsFixture = readFixture('contacts')
-  const contactsSnap = JSON.parse(
-    fs.readFileSync(path.join(root, 'public/pages-contacts.snapshot.json'), 'utf8'),
-  )
   assert(deepEqual(contactsProjection, contactsFixture), 'contacts defaults must equal fixture (public)')
-  assert(deepEqual(contactsProjection, contactsSnap), 'contacts defaults must equal snapshot')
   assert(contactsProjection.offices.length === 4, 'contacts defaults: 4 offices')
   assert(
     contactsProjection.offices.map((o) => o.slug).join(',') === 'main,voronezh,lnr,dnr',
@@ -784,11 +768,7 @@ function assertUnchanged(fallback, before, label) {
   )
   const documentsProjection = JSON.parse(JSON.stringify(DOCUMENTS_PAGE_DEFAULTS))
   const documentsFixture = readFixture('documents')
-  const documentsSnap = JSON.parse(
-    fs.readFileSync(path.join(root, 'public/pages-documents.snapshot.json'), 'utf8'),
-  )
   assert(deepEqual(documentsProjection, documentsFixture), 'documents defaults must equal fixture')
-  assert(deepEqual(documentsProjection, documentsSnap), 'documents defaults must equal snapshot')
   assert(
     documentsProjection.certificates.map((c) => c.document_key).join(',') ===
       'declaration,certificate,trademark',
@@ -811,12 +791,15 @@ function assertUnchanged(fallback, before, label) {
   const dlSnap = JSON.parse(
     fs.readFileSync(path.join(root, 'public/pages-download-catalog.snapshot.json'), 'utf8'),
   )
-  assert(deepEqual(dlProjection, dlSnap), 'download-catalog defaults must equal snapshot')
+  // Texts-only projection: defaults keys must match fixture texts (slides stripped by readFixture).
   for (const key of Object.keys(dlProjection)) {
     assert(
       deepEqual(dlProjection[key], dlTextsFixture[key]),
       `download-catalog fixture texts.${key} must match defaults`,
     )
+  }
+  for (const key of Object.keys(dlProjection)) {
+    assert(key in dlSnap, `download-catalog snapshot missing texts key ${key}`)
   }
 }
 
@@ -894,6 +877,309 @@ function assertUnchanged(fallback, before, label) {
   assert(apiSrc.includes('/api/pages/'), 'pages-api must call /api/pages/')
 }
 
+// --- Phase 6D: legal pages hydrate merge / contract slice ---
+{
+  const { canonicalizeLegalPageData } = require(
+    path.join(root, 'strapi-catalog/src/api/pages-cms/utils/legal-page-contract.js'),
+  )
+  const { LEGAL_BODY_LENGTH_BY_SLUG } = require(
+    path.join(root, 'strapi-catalog/src/api/pages-cms/utils/legal-allowlist.js'),
+  )
+
+  assert(
+    LEGAL_PAGES_CMS_SLUGS.join(',') === 'privacy,terms,cookies',
+    'LEGAL_PAGES_CMS_SLUGS order',
+  )
+
+  function readLegalDefaults(slug) {
+    return canonicalizeLegalPageData(
+      JSON.parse(
+        fs.readFileSync(path.join(root, 'src/pages/legal-defaults', `${slug}.json`), 'utf8'),
+      ),
+    )
+  }
+
+  function legalBase(overrides = {}) {
+    const base = readLegalDefaults('privacy')
+    return { ...structuredClone(base), ...overrides }
+  }
+
+  function expectMergeReject(label, cms, needle) {
+    const fallback = readFixture('privacy')
+    const before = structuredClone(fallback)
+    const merged = mergePageContent('privacy', fallback, cms)
+    assert(!merged.ok, `legal ${label}: expected reject`)
+    assertUnchanged(fallback, before, `legal ${label}`)
+    if (needle && merged.ok === false) {
+      assert(
+        String(merged.reason).includes(needle),
+        `legal ${label}: reason missing "${needle}": ${merged.reason}`,
+      )
+    }
+  }
+
+  // fixture/default parity + success merge(fixture,fixture)
+  for (const slug of LEGAL_PAGES_CMS_SLUGS) {
+    const defaults = readLegalDefaults(slug)
+    const fixture = readFixture(slug)
+    assert(deepEqual(defaults, fixture), `legal ${slug}: defaults must equal fixture`)
+    assert(
+      defaults.body.length === LEGAL_BODY_LENGTH_BY_SLUG[slug],
+      `legal ${slug}: body length ${defaults.body.length}`,
+    )
+    const before = structuredClone(fixture)
+    const defaultsFrozen = structuredClone(defaults)
+    const merged = mergePageContent(slug, fixture, structuredClone(fixture))
+    assert(merged.ok, `legal parity ${slug}: ${merged.ok === false ? merged.reason : ''}`)
+    assertUnchanged(fixture, before, `legal parity ${slug} fixture`)
+    assert(deepEqual(defaults, defaultsFrozen), `legal ${slug}: defaults immutable during merge`)
+    if (merged.ok) {
+      assert(deepEqual(merged.value, fixture), `legal parity ${slug} value equals fixture`)
+      assert(
+        merged.value.body.map((b) => b.type).join(',') ===
+          fixture.body.map((b) => b.type).join(','),
+        `legal ${slug}: body order preserved`,
+      )
+    }
+
+    const envOk = validateNodeEnvelope({ data: fixture, source: 'disk-snapshot' }, slug)
+    assert(envOk.length === 0, `legal ${slug} envelope: ${envOk.join('; ')}`)
+
+    const snap = JSON.parse(
+      fs.readFileSync(path.join(root, 'public', `pages-${slug}.snapshot.json`), 'utf8'),
+    )
+    assert(
+      deepEqual(defaults, snap),
+      `legal ${slug}: defaults must equal public snapshot (no media URL drift)`,
+    )
+  }
+
+  // empty body reject
+  expectMergeReject(
+    'empty-body',
+    { title: 'T', effective_date: '2026-03-01', body: [] },
+    'body',
+  )
+
+  // unknown block / run
+  expectMergeReject(
+    'unknown-block',
+    {
+      title: 'T',
+      effective_date: '2026-03-01',
+      body: [{ type: 'markdown', runs: [{ type: 'text', value: 'x', strong: false }] }],
+    },
+    'unknown block type',
+  )
+  expectMergeReject(
+    'unknown-run',
+    {
+      title: 'T',
+      effective_date: '2026-03-01',
+      body: [{ type: 'paragraph', runs: [{ type: 'emoji', value: 'x' }] }],
+    },
+    'unknown run type',
+  )
+
+  // unsafe href
+  expectMergeReject(
+    'unsafe-href',
+    {
+      title: 'T',
+      effective_date: '2026-03-01',
+      body: [
+        {
+          type: 'paragraph',
+          runs: [
+            {
+              type: 'link',
+              href: 'https://evil.example',
+              children: [{ type: 'text', value: 'x', strong: false }],
+            },
+          ],
+        },
+      ],
+    },
+    'href not in exact allowlist',
+  )
+
+  // invalid date (non-ISO)
+  expectMergeReject(
+    'invalid-date',
+    { title: 'T', effective_date: '01.03.2026', body: legalBase().body.slice(0, 1) },
+    'effective_date',
+  )
+
+  // bad table width
+  expectMergeReject(
+    'bad-table-width',
+    {
+      title: 'T',
+      effective_date: '2026-03-01',
+      body: [
+        {
+          type: 'table',
+          headers: ['A', 'B'],
+          rows: [{ cells: [{ runs: [{ type: 'text', value: '1', strong: false }] }] }],
+        },
+      ],
+    },
+    'cells.length',
+  )
+
+  // non-unique headers
+  expectMergeReject(
+    'non-unique-headers',
+    {
+      title: 'T',
+      effective_date: '2026-03-01',
+      body: [
+        {
+          type: 'table',
+          headers: ['A', 'A'],
+          rows: [
+            {
+              cells: [
+                { runs: [{ type: 'text', value: '1', strong: false }] },
+                { runs: [{ type: 'text', value: '2', strong: false }] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    'headers must be unique',
+  )
+
+  // missing / non-boolean strong
+  expectMergeReject(
+    'missing-strong',
+    {
+      title: 'T',
+      effective_date: '2026-03-01',
+      body: [{ type: 'paragraph', runs: [{ type: 'text', value: 'x' }] }],
+    },
+    'text.strong',
+  )
+  expectMergeReject(
+    'non-boolean-strong',
+    {
+      title: 'T',
+      effective_date: '2026-03-01',
+      body: [{ type: 'paragraph', runs: [{ type: 'text', value: 'x', strong: 'yes' }] }],
+    },
+    'text.strong',
+  )
+
+  // empty link children
+  expectMergeReject(
+    'empty-link-children',
+    {
+      title: 'T',
+      effective_date: '2026-03-01',
+      body: [
+        {
+          type: 'paragraph',
+          runs: [{ type: 'link', href: 'https://grassigrosso.com', children: [] }],
+        },
+      ],
+    },
+    'link.children',
+  )
+
+  // operator missing field
+  expectMergeReject(
+    'operator-missing-field',
+    {
+      title: 'T',
+      effective_date: '2026-03-01',
+      body: [
+        {
+          type: 'operator',
+          role_label: 'Оператор',
+          legal_name: 'ООО «Грасси»',
+          ogrn: '1239100014548',
+          inn: '9102292969',
+          address: 'addr',
+          // email missing
+        },
+      ],
+    },
+    'email',
+  )
+
+  // HTML-like text
+  expectMergeReject(
+    'html-like-text',
+    {
+      title: 'T',
+      effective_date: '2026-03-01',
+      body: [{ type: 'paragraph', runs: [{ type: 'text', value: '<b>x</b>', strong: false }] }],
+    },
+    'HTML-like value forbidden',
+  )
+
+  // order preservation (full replace keeps CMS order)
+  {
+    const fixture = readFixture('cookies')
+    const before = structuredClone(fixture)
+    const reordered = structuredClone(fixture)
+    const last = reordered.body.pop()
+    reordered.body.unshift(last)
+    const merged = mergePageContent('cookies', fixture, reordered)
+    assert(merged.ok, `legal order apply: ${merged.ok === false ? merged.reason : ''}`)
+    assertUnchanged(fixture, before, 'legal order fallback')
+    if (merged.ok) {
+      assert(
+        merged.value.body[0].type === last.type &&
+          JSON.stringify(merged.value.body[0]) === JSON.stringify(last),
+        'legal CMS body order applied (full replace)',
+      )
+      assert(
+        merged.value.body.map((b) => b.type).join(',') ===
+          reordered.body.map((b) => b.type).join(','),
+        'legal body type order matches CMS',
+      )
+    }
+  }
+
+  // defaults immutable (shared LEGAL_PAGE_DEFAULTS JSON projection)
+  {
+    const defaultsPath = path.join(root, 'src/pages/legal-defaults/privacy.json')
+    const rawBefore = fs.readFileSync(defaultsPath, 'utf8')
+    const defaults = readLegalDefaults('privacy')
+    const snapshot = structuredClone(defaults)
+    const merged = mergePageContent('privacy', defaults, {
+      title: 'CMS Legal Title Marker',
+      effective_date: defaults.effective_date,
+      body: defaults.body,
+    })
+    assert(merged.ok, 'legal divergent title merge')
+    assert(deepEqual(defaults, snapshot), 'legal defaults object immutable after merge')
+    assert(fs.readFileSync(defaultsPath, 'utf8') === rawBefore, 'legal defaults file unchanged')
+    if (merged.ok) {
+      assert(merged.value.title === 'CMS Legal Title Marker', 'legal title applied')
+    }
+  }
+
+  // no dangerouslySetInnerHTML in legal React surface
+  {
+    const legalPage = fs.readFileSync(
+      path.join(root, 'src/components/pages/LegalPage.tsx'),
+      'utf8',
+    )
+    const legalRenderer = fs.readFileSync(
+      path.join(root, 'src/components/pages/legal-renderer.tsx'),
+      'utf8',
+    )
+    assert(!/dangerouslySetInnerHTML/.test(legalPage), 'LegalPage must not use dangerouslySetInnerHTML')
+    assert(
+      !/dangerouslySetInnerHTML/.test(legalRenderer),
+      'legal-renderer must not use dangerouslySetInnerHTML',
+    )
+  }
+}
+
 if (failures.length) {
   console.error('check:pages-cms-hydrate FAILED')
   for (const f of failures) console.error(` - ${f}`)
@@ -902,7 +1188,7 @@ if (failures.length) {
 
 console.log('check:pages-cms-hydrate PASS')
 console.log(
-  ' coverage=ok parity=6 schemaMedia=path lifecycle=timeout+json behaviorBound=' +
+  ' coverage=ok parity=9 schemaMedia=path lifecycle=timeout+json behaviorBound=' +
     Object.keys(BEHAVIOR_ARRAY_ITEMS).length +
-    ' defaultsParity=ok catalogPdf=ok',
+    ' defaultsParity=ok catalogPdf=ok legal=ok',
 )

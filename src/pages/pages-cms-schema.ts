@@ -5,6 +5,7 @@
 import contract from '../../.planning/phases/02-wave-1-single-types/02-content-contract.json'
 import {
   DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS,
+  isLegalPagesCmsSlug,
   type PagesCmsSlug,
 } from './pages-cms-constants'
 
@@ -204,6 +205,13 @@ export function collectUndescribedFixturePaths(
   slug: PagesCmsSlug,
   data: unknown,
 ): string[] {
+  // Legal payload shape is enforced by canonicalizeLegalPageData (not Wave-1 FieldDesc).
+  if (isLegalPagesCmsSlug(slug)) {
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      return [`${slug}: expected object for coverage`]
+    }
+    return []
+  }
   const failures: string[] = []
   function walk(node: unknown, desc: FieldDesc, path: string) {
     const resolved = resolveFieldDesc(desc)
