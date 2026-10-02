@@ -24,4 +24,4 @@
 
 - [x] **S07: Global Site Chrome** `risk:medium` `depends:[S06]`
   > After this:
-<!-- gsd:state-version=7:0 -->
+<!-- gsd:state-version=10:0 -->

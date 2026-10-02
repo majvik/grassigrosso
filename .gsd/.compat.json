@@ -1,10 +1,10 @@
 {
   "schema": 2,
   "lastWriter": "gsd-pi",
-  "lastProjectedAt": "2026-10-02T16:34:01.554Z",
+  "lastProjectedAt": "2026-10-02T16:36:55.267Z",
   "projections": {
     "phases/01-migration/01-ROADMAP.md": {
-      "sha": "5c7643a72e8b8825",
+      "sha": "bc9e60ec3f01300a",
       "entities": [
         "M001"
       ]
@@ -145,7 +145,7 @@
       "entities": []
     },
     "phases/01-migration/S01-T01-SUMMARY.md": {
-      "sha": "0480662a58d45479",
+      "sha": "48067ddeb240c09e",
       "entities": [
         "M001",
         "M001/S01",
@@ -153,7 +153,7 @@
       ]
     },
     "phases/01-migration/S02-T01-SUMMARY.md": {
-      "sha": "b407908d50c4df97",
+      "sha": "272eb907e0f83c90",
       "entities": [
         "M001",
         "M001/S02",
@@ -161,7 +161,7 @@
       ]
     },
     "phases/01-migration/S03-T01-SUMMARY.md": {
-      "sha": "64964f801f0a8237",
+      "sha": "9f33841bff80ff9e",
       "entities": [
         "M001",
         "M001/S03",
@@ -169,7 +169,7 @@
       ]
     },
     "phases/01-migration/S04-T01-SUMMARY.md": {
-      "sha": "2f08c82e12710c51",
+      "sha": "76c69185e20d0d64",
       "entities": [
         "M001",
         "M001/S04",
@@ -177,7 +177,7 @@
       ]
     },
     "phases/01-migration/S05-T01-SUMMARY.md": {
-      "sha": "48f28ef9ff0cc42b",
+      "sha": "c3e2863f25ac9ab9",
       "entities": [
         "M001",
         "M001/S05",
@@ -185,7 +185,7 @@
       ]
     },
     "phases/01-migration/S06-T01-SUMMARY.md": {
-      "sha": "83def59668c56537",
+      "sha": "89c4f19cb1107b32",
       "entities": [
         "M001",
         "M001/S06",
@@ -193,7 +193,7 @@
       ]
     },
     "phases/01-migration/S07-T01-SUMMARY.md": {
-      "sha": "a8a5c7945669b41b",
+      "sha": "59adaf95da57ed2e",
       "entities": [
         "M001",
         "M001/S07",
