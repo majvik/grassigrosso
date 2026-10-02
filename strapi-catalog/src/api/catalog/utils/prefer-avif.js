@@ -27,24 +27,53 @@ function getStrapiPublicDir() {
   return candidates[0];
 }
 
+/** Допуск на расхождение mtime между оригиналом и сайдкаром, записанными одной командой. */
+const SIDECAR_SKEW_MS = 2000;
+
+function uploadStat(url, publicDir) {
+  if (!url || !String(url).startsWith('/uploads/')) return null;
+  const relativePath = String(url).split('?')[0].replace(/^\//, '');
+  if (relativePath.includes('..')) return null;
+  try {
+    return fs.statSync(path.join(publicDir, relativePath));
+  } catch {
+    return null;
+  }
+}
+
 /**
- * Если рядом с PNG/JPG/JPEG из Strapi-uploads лежит .avif с тем же базовым
- * именем — возвращаем AVIF URL (в 3-10 раз меньше PNG). Иначе возвращаем
- * исходный url без изменений. Файлы AVIF положены в strapi-catalog/public/uploads
- * рядом с PNG; на проде попадают в образ через COPY . . и раздаются Node-прокси.
+ * Сайдкар можно подставлять только если он не старше файла из БД.
+ * Замена медиа в админке часто сохраняет тот же hash/имя, а старый .avif/.webp/.webm
+ * остаётся рядом — без проверки mtime каталог продолжает показывать первоначальное изображение.
+ *
+ * @param {string} sourceUrl
+ * @param {string} sidecarUrl
+ * @param {string} [publicDir]
  */
-function preferAvifVariant(url) {
+function isCurrentUploadSidecar(sourceUrl, sidecarUrl, publicDir = getStrapiPublicDir()) {
+  const sidecar = uploadStat(sidecarUrl, publicDir);
+  if (!sidecar) return false;
+  const source = uploadStat(sourceUrl, publicDir);
+  if (!source) return true;
+  return sidecar.mtimeMs + SIDECAR_SKEW_MS >= source.mtimeMs;
+}
+
+/**
+ * Если рядом с PNG/JPG/JPEG из Strapi-uploads лежит не устаревший .avif с тем же
+ * базовым именем — возвращаем AVIF URL. Иначе исходный url.
+ * Файлы AVIF лежат в strapi-catalog/public/uploads рядом с PNG.
+ *
+ * @param {string} url
+ * @param {string} [publicDir]
+ */
+function preferAvifVariant(url, publicDir = getStrapiPublicDir()) {
   if (!url) return url;
   const match = String(url).match(/^(.+\.)(png|jpe?g)(\?.*)?$/i);
   if (!match) return url;
   const avifUrl = `${match[1]}avif${match[3] || ''}`;
   if (!avifUrl.startsWith('/uploads/')) return url;
-  const relativePath = avifUrl.split('?')[0].replace(/^\//, '');
-  const absPath = path.join(getStrapiPublicDir(), relativePath);
-  try {
-    if (fs.existsSync(absPath)) return avifUrl;
-  } catch {}
+  if (isCurrentUploadSidecar(url, avifUrl, publicDir)) return avifUrl;
   return url;
 }
 
-module.exports = { preferAvifVariant };
+module.exports = { preferAvifVariant, isCurrentUploadSidecar, getStrapiPublicDir };

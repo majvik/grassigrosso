@@ -113,6 +113,10 @@ function itemFromLegacyMedia(media, imageUrl, fallbackName) {
 }
 
 /**
+ * Обложка каталога — поле media. Слайды gallery идут следом.
+ * Если media пустое, первым слайдом становится первая карточка gallery.
+ * image_url остаётся только когда нет ни media, ни gallery.
+ *
  * @param {object} row Product row with optional gallery[], media, image_url, name
  * @returns {{ gallery: Array<{ type: string, src: string, fallbackSrc?: string, sources?: Array<{ type: string, src: string }>, poster?: string, posterSources?: Array<{ type: string, src: string }>, posterFallbackSrc?: string, alt?: string, mime?: string }>, imageUrl: string, imageAlt: string }}
  */
@@ -121,14 +125,16 @@ function buildProductGallery(row) {
   const items = [];
   const seen = new Set();
 
+  pushItem(items, seen, itemFromLegacyMedia(row?.media, '', fallbackName));
+
   const galleryRows = Array.isArray(row?.gallery) ? row.gallery : [];
   for (const galleryRow of galleryRows) {
-    pushItem(items, seen, itemFromGalleryComponentRow(galleryRow, fallbackName));
     if (items.length >= MAX_GALLERY_ITEMS) break;
+    pushItem(items, seen, itemFromGalleryComponentRow(galleryRow, fallbackName));
   }
 
   if (items.length === 0) {
-    pushItem(items, seen, itemFromLegacyMedia(row?.media, row?.image_url, fallbackName));
+    pushItem(items, seen, itemFromLegacyMedia(null, row?.image_url, fallbackName));
   }
 
   const gallery = items.slice(0, MAX_GALLERY_ITEMS);

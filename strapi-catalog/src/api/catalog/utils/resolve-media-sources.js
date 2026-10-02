@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { isCurrentUploadSidecar } = require('./prefer-avif');
 
 function getStrapiPublicDir() {
   try {
@@ -54,7 +55,7 @@ function rasterBaseUrl(url) {
  * @param {string} originalUrl URL from Strapi DB (typically /uploads/foo.png)
  * @returns {{ src: string, fallbackSrc: string, sources: Array<{ type: string, src: string }> }}
  */
-function resolveImageMedia(originalUrl) {
+function resolveImageMedia(originalUrl, publicDir = getStrapiPublicDir()) {
   const url = String(originalUrl || '').trim();
   if (!url) {
     return { src: '', fallbackSrc: '', sources: [] };
@@ -70,10 +71,10 @@ function resolveImageMedia(originalUrl) {
   const dbFallback = url.match(/\.(png|jpe?g)(\?.*)?$/i) ? url : withQuery(`${base}png`, url);
 
   const sources = [];
-  if (fileExistsForUploadUrl(avifUrl)) {
+  if (isCurrentUploadSidecar(url, avifUrl, publicDir)) {
     sources.push({ type: 'image/avif', src: avifUrl });
   }
-  if (fileExistsForUploadUrl(webpUrl)) {
+  if (isCurrentUploadSidecar(url, webpUrl, publicDir)) {
     sources.push({ type: 'image/webp', src: webpUrl });
   }
 
@@ -88,7 +89,7 @@ function resolveImageMedia(originalUrl) {
  * @param {string} originalUrl
  * @returns {{ src: string, fallbackSrc: string, mime: string }}
  */
-function resolveVideoMedia(originalUrl) {
+function resolveVideoMedia(originalUrl, publicDir = getStrapiPublicDir()) {
   const url = String(originalUrl || '').trim();
   if (!url) {
     return { src: '', fallbackSrc: '', mime: 'video/mp4' };
@@ -102,7 +103,7 @@ function resolveVideoMedia(originalUrl) {
 
   const webmUrl = withQuery(`${match[1]}webm`, url);
   const fallbackSrc = url;
-  if (fileExistsForUploadUrl(webmUrl)) {
+  if (isCurrentUploadSidecar(url, webmUrl, publicDir)) {
     return { src: webmUrl, fallbackSrc, mime: 'video/webm' };
   }
 
@@ -118,8 +119,8 @@ function resolveVideoMedia(originalUrl) {
  * @param {string} originalUrl
  * @returns {{ src: string, fallbackSrc: string, sources: Array<{ type: string, src: string }> }}
  */
-function resolvePosterMedia(originalUrl) {
-  return resolveImageMedia(originalUrl);
+function resolvePosterMedia(originalUrl, publicDir = getStrapiPublicDir()) {
+  return resolveImageMedia(originalUrl, publicDir);
 }
 
 module.exports = {

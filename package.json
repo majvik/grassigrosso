@@ -70,6 +70,8 @@
     "start": "bash scripts/start-services.sh",
     "check:catalog-filter-help-copy": "node scripts/check-catalog-filter-help-copy.mjs",
     "check:catalog-api": "node scripts/check-catalog-api.mjs",
+    "check:catalog-media-sidecars": "node scripts/check-catalog-media-sidecars.mjs",
+    "check:catalog-gallery-order": "node scripts/check-catalog-gallery-order.mjs",
     "check:catalog-ui": "node scripts/check-catalog-ui.mjs",
     "check:catalog-perf": "node scripts/check-catalog-perf.mjs",
     "catalog-import:build": "python3 scripts/build-catalog-import.py",
