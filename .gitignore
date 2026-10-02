@@ -67,6 +67,7 @@ LOCAL_DOWNLOAD_LINKS.md
 .gsd/runtime/
 .gsd/worktrees/
 .gsd/parallel/
+.gsd/quarantine/
 .gsd/auto.lock
 .gsd/metrics.json
 .gsd/completed-units*.json
