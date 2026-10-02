@@ -1,0 +1,211 @@
+{
+  "schema": 2,
+  "lastWriter": "gsd-pi",
+  "lastProjectedAt": "2026-10-02T16:34:01.554Z",
+  "projections": {
+    "phases/01-migration/01-ROADMAP.md": {
+      "sha": "5c7643a72e8b8825",
+      "entities": [
+        "M001"
+      ]
+    },
+    "phases/01-migration/01-CONTEXT.md": {
+      "sha": "285e78106419dc5b",
+      "entities": [
+        "M001"
+      ]
+    },
+    "phases/01-migration/01-VALIDATION.md": {
+      "sha": "a4b3c16576baa440",
+      "entities": [
+        "M001"
+      ]
+    },
+    "phases/01-migration/01-01-RESEARCH.md": {
+      "sha": "8c5f5f6cbcc250f3",
+      "entities": [
+        "M001",
+        "M001/S01"
+      ]
+    },
+    "phases/01-migration/01-01-SUMMARY.md": {
+      "sha": "0b4260d36facb240",
+      "entities": [
+        "M001",
+        "M001/S01"
+      ]
+    },
+    "phases/01-migration/01-01-PLAN.md": {
+      "sha": "76ca7866f79a1fc1",
+      "entities": [
+        "M001",
+        "M001/S01"
+      ]
+    },
+    "phases/01-migration/01-02-RESEARCH.md": {
+      "sha": "ad42294bdd224f65",
+      "entities": [
+        "M001",
+        "M001/S02"
+      ]
+    },
+    "phases/01-migration/01-02-SUMMARY.md": {
+      "sha": "66d0a357d56f1e41",
+      "entities": [
+        "M001",
+        "M001/S02"
+      ]
+    },
+    "phases/01-migration/01-02-PLAN.md": {
+      "sha": "b22466a9499123e6",
+      "entities": [
+        "M001",
+        "M001/S02"
+      ]
+    },
+    "phases/01-migration/01-03-RESEARCH.md": {
+      "sha": "90f7a3bd4e6db2d1",
+      "entities": [
+        "M001",
+        "M001/S03"
+      ]
+    },
+    "phases/01-migration/01-03-SUMMARY.md": {
+      "sha": "1a396977ce66180a",
+      "entities": [
+        "M001",
+        "M001/S03"
+      ]
+    },
+    "phases/01-migration/01-03-PLAN.md": {
+      "sha": "22ac0e2051e30a02",
+      "entities": [
+        "M001",
+        "M001/S03"
+      ]
+    },
+    "phases/01-migration/01-04-SUMMARY.md": {
+      "sha": "47df977cd8923d55",
+      "entities": [
+        "M001",
+        "M001/S04"
+      ]
+    },
+    "phases/01-migration/01-04-PLAN.md": {
+      "sha": "e0f0a64e9d9cae99",
+      "entities": [
+        "M001",
+        "M001/S04"
+      ]
+    },
+    "phases/01-migration/01-05-SUMMARY.md": {
+      "sha": "f50471111b7810d3",
+      "entities": [
+        "M001",
+        "M001/S05"
+      ]
+    },
+    "phases/01-migration/01-05-PLAN.md": {
+      "sha": "4a4685d1ec30e04f",
+      "entities": [
+        "M001",
+        "M001/S05"
+      ]
+    },
+    "phases/01-migration/01-06-SUMMARY.md": {
+      "sha": "0596782cbe2249a1",
+      "entities": [
+        "M001",
+        "M001/S06"
+      ]
+    },
+    "phases/01-migration/01-06-PLAN.md": {
+      "sha": "458c0babc9d6afde",
+      "entities": [
+        "M001",
+        "M001/S06"
+      ]
+    },
+    "phases/01-migration/01-07-SUMMARY.md": {
+      "sha": "74099f2f07d96107",
+      "entities": [
+        "M001",
+        "M001/S07"
+      ]
+    },
+    "phases/01-migration/01-07-PLAN.md": {
+      "sha": "c4540e7ad571e2b8",
+      "entities": [
+        "M001",
+        "M001/S07"
+      ]
+    },
+    "DECISIONS.md": {
+      "sha": "5789862a38133eb9",
+      "entities": []
+    },
+    "phases/01-migration/S01-T01-SUMMARY.md": {
+      "sha": "0480662a58d45479",
+      "entities": [
+        "M001",
+        "M001/S01",
+        "M001/S01/T01"
+      ]
+    },
+    "phases/01-migration/S02-T01-SUMMARY.md": {
+      "sha": "b407908d50c4df97",
+      "entities": [
+        "M001",
+        "M001/S02",
+        "M001/S02/T01"
+      ]
+    },
+    "phases/01-migration/S03-T01-SUMMARY.md": {
+      "sha": "64964f801f0a8237",
+      "entities": [
+        "M001",
+        "M001/S03",
+        "M001/S03/T01"
+      ]
+    },
+    "phases/01-migration/S04-T01-SUMMARY.md": {
+      "sha": "2f08c82e12710c51",
+      "entities": [
+        "M001",
+        "M001/S04",
+        "M001/S04/T01"
+      ]
+    },
+    "phases/01-migration/S05-T01-SUMMARY.md": {
+      "sha": "48f28ef9ff0cc42b",
+      "entities": [
+        "M001",
+        "M001/S05",
+        "M001/S05/T01"
+      ]
+    },
+    "phases/01-migration/S06-T01-SUMMARY.md": {
+      "sha": "83def59668c56537",
+      "entities": [
+        "M001",
+        "M001/S06",
+        "M001/S06/T01"
+      ]
+    },
+    "phases/01-migration/S07-T01-SUMMARY.md": {
+      "sha": "a8a5c7945669b41b",
+      "entities": [
+        "M001",
+        "M001/S07",
+        "M001/S07/T01"
+      ]
+    }
+  },
+  "planning": {
+    "active": false,
+    "layout": null,
+    "projections": {},
+    "passthrough": {}
+  },
+  "piVersion": ""
+}

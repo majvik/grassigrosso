@@ -1,0 +1,107 @@
+# Requirements: Grassigrosso Pages CMS
+
+**Defined:** 2026-08-03
+**Core Value:** Редактор меняет тексты/медиа публичных страниц в Strapi Admin на русском без деплоя фронта.
+
+## v1 Requirements
+
+### Schema & Admin (RU)
+
+- [x] **ADM-01**: Shared компоненты `page.*` (hero, section, faq-item, list-item) с русскими лейблами
+- [x] **ADM-02**: Single types волны 1: Главная, Отелям, Дилерам, Контакты, Документы — displayName и поля на русском
+- [x] **ADM-03**: `download-catalog-page` расширен title/lead/CTA/PDF; существующие слайды сохранены
+- [x] **ADM-04**: Полные ключи в `strapi-catalog/src/admin/translations/ru.json` (content-manager + content-type-builder); в админке нет английских fallback у новых типов
+- [x] **ADM-05**: Content-contract matrix покрывает все текущие render inputs волны 1; каждый элемент помечен CMS-owned или обоснованно code-owned
+- [x] **ADM-06**: Репрезентативные fixtures всех single types проходят schema validation до начала feed/frontend-фаз
+
+### Feeds & Proxy
+
+- [x] **API-01**: Публичный feed на каждый page single type (или единый feed по slug)
+- [x] **API-02**: Node `GET /api/pages/:slug` с cache + disk snapshot fallback
+- [x] **API-03**: Export snapshots в `public/pages-*.snapshot.json` (или эквивалент) + manifest
+- [x] **API-04**: Идемпотентный seed текущего hardcoded-контента из React в Strapi
+- [x] **API-05**: Page proxy использует allowlist slug, не заменяет валидный snapshot пустым/404-ответом и сообщает источник (`strapi`, `memory-cache`, `disk-snapshot`)
+- [x] **API-06**: Map iframe из CMS преобразуется feed-слоем в allowlisted HTTPS embed URL; произвольный HTML не отдаётся фронту
+
+### Frontend
+
+- [x] **FE-01**: React pages волны 1 гидрируют контент из Node API с fallback на текущий TSX
+- [x] **FE-02**: Layout/визуал страниц не ломается после hydrate
+- [x] **FE-03**: `getPageName` / `PAGE_EMAIL_ROUTING` не изменены CMS-слоем
+- [x] **FE-04**: Стабильные `id`, `data-*`, document keys, package values и прочие runtime hooks сохранены
+- [x] **FE-05**: Нет заметного layout shift/пустого первого кадра из-за поздней загрузки CMS; hardcoded fallback остаётся первым безопасным render
+
+### Local acceptance gate
+
+- [x] **QA-01**: Каждая новая/изменённая логика покрыта автоматическими тестами; каждый баг имеет regression test
+- [x] **QA-02**: Все релевантные tests/typecheck/build/API/UI checks проходят локально, команды и результаты записаны в plan
+- [x] **QA-03**: До отдельного явного разрешения пользователя не выполняются push, PR, remote deploy или remote mutation; проверка ведётся только локально
+
+## v2 Requirements
+
+### Legal
+
+- [x] **LEG-01**: Single types или эквивалент для privacy / terms / cookies
+- [x] **LEG-02**: Rich text / блоковая структура + hydrate `legal-content.tsx`
+
+## v3 Requirements — Global Site Chrome
+
+- [x] **CHR-01**: Один RU single type управляет header и footer через структурированные компоненты
+- [x] **CHR-02**: Desktop header и mobile menu используют один ordered navigation contract
+- [x] **CHR-03**: Node API + cache/stale/disk snapshot обслуживают chrome без frontend→Strapi
+- [x] **CHR-04**: Полный header/mobile/footer присутствует в первом HTML-кадре всех contracted страниц
+- [x] **CHR-05**: Atomic hydrate сохраняет layout, hooks, security, email-routing и fallback
+- [x] **CHR-06**: Phase 7 gate покрывает Admin save/reload, degraded mode и все page consumers
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Отдельный CMS frontend bundle | Запрет AGENTS.md |
+| Generic marketing-page collection | Выбран per-page single type |
+| CMS 404 / unsubscribe | Низкая ценность |
+| Email routing в CMS | Критичный код-контракт |
+| Перенос catalog products/filters | Уже в Strapi |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| ADM-01 | Phase 1 | Complete |
+| ADM-02 | Phase 2 | Complete |
+| ADM-03 | Phase 2 | Complete |
+| ADM-04 | Phase 2 | Complete |
+| ADM-05 | Phase 2 | Complete |
+| ADM-06 | Phase 2 | Complete |
+| API-01 | Phase 3 | Complete (`26302bd` feeds; gate `check:pages-cms-phase-c`) |
+| API-02 | Phase 3 | Complete (`27d6550` / `ead6d4d` Node proxy + cache/disk) |
+| API-03 | Phase 3 | Complete (`pages:export-snapshot` + `public/pages-*.snapshot.json`) |
+| API-04 | Phase 3 | Complete (`f2a1a91` / Phase B seed into `.tmp`) |
+| API-05 | Phase 3 | Complete (N1–N5 in `check:pages-api`) |
+| API-06 | Phase 3 | Complete (Phase A map allowlist + feed/Node strip) |
+| FE-01 | Phase 4 | Complete — `usePageCms` on 6 wave-1 pages; evidence `check:pages-cms-hydrate` + `check:pages-cms-hydrate-dom` (2026-08-04) |
+| FE-02 | Phase 4 | Complete — section allowlists + FE-05 geometry in hydrate-dom (2026-08-04) |
+| FE-03 | Phase 4 | Complete — hydrate unit + `check:routes` assert routing keys unchanged (2026-08-04) |
+| FE-04 | Phase 4 | Complete — DOM hooks (`data-catalog`, `data-package`, `data-document`, map tabs/frames) (2026-08-04) |
+| FE-05 | Phase 4 | Complete — delayed first-paint + content-equal geometry ≤1px in hydrate-dom (2026-08-04) |
+| QA-01 | Every phase + Phase 5 gate | Complete — `05-COVERAGE.md` + aggregator 2026-08-04 |
+| QA-02 | Every phase + Phase 5 gate | Complete — `check:pages-cms-phase-5` + `05-SUITE-RESULTS.md` |
+| QA-03 | Every phase + Phase 5 gate | Complete — attested no push / no sync-seed; listeners unchanged |
+| LEG-01 | Phase 6 | Complete |
+| LEG-02 | Phase 6 | Complete |
+| CHR-01 | Phase 7 | Complete |
+| CHR-02 | Phase 7 | Complete |
+| CHR-03 | Phase 7 | Complete |
+| CHR-04 | Phase 7 | Complete |
+| CHR-05 | Phase 7 | Complete |
+| CHR-06 | Phase 7 | Complete |
+
+**Coverage:**
+- v1 requirements: 20 total
+- Mapped to phases: 20/20
+- LEG (v2, Phase 6): 2/2
+- Unmapped: 0
+
+---
+*Requirements defined: 2026-08-03*
+*Last updated: 2026-08-04 — Phase 7A contract complete locally; Phase B next*

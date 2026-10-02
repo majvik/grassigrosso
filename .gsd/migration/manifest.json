@@ -1,0 +1,1577 @@
+{
+  "sourcePath": "/Users/vik/Projects/grassigrosso/.planning",
+  "targetRoot": "/Users/vik/Projects/grassigrosso",
+  "backupPath": "/Users/vik/Projects/grassigrosso/.gsd-backups/migrate-20261002-152758",
+  "startedAt": "2026-10-02T12:27:54.780Z",
+  "completedAt": "2026-10-02T12:28:08.905Z",
+  "preview": {
+    "decisions": {
+      "total": 15
+    },
+    "migrationInputs": {
+      "milestonePhaseDirs": 0,
+      "decisions": 0,
+      "seeds": 0
+    },
+    "milestoneCount": 1,
+    "totalSlices": 7,
+    "totalTasks": 7,
+    "doneSlices": 7,
+    "doneTasks": 7,
+    "sliceCompletionPct": 100,
+    "taskCompletionPct": 100,
+    "requirements": {
+      "active": 0,
+      "validated": 28,
+      "deferred": 0,
+      "outOfScope": 0,
+      "total": 28
+    }
+  },
+  "written": {
+    "roadmaps": 1,
+    "plans": 7,
+    "taskPlans": 7,
+    "taskSummaries": 7,
+    "sliceSummaries": 7,
+    "research": 3,
+    "requirements": 1,
+    "contexts": 1,
+    "other": 5
+  },
+  "imported": {
+    "decisions": 15,
+    "requirements": 28,
+    "artifacts": 22,
+    "hierarchy": {
+      "milestones": 1,
+      "slices": 7,
+      "tasks": 7
+    },
+    "targets": [
+      {
+        "targetKind": "milestone",
+        "targetKey": "M001",
+        "contentHash": "sha256:4f4f86a6919ec824df79583d4fe7fa3ee448b0de2e1545dcdde3af7796d4f02c"
+      },
+      {
+        "targetKind": "slice",
+        "targetKey": "M001/S01",
+        "contentHash": "sha256:2c6688d56ff72fe01435154f596b6c868bb0bbf6696d2da6cc62d151c5d0a450"
+      },
+      {
+        "targetKind": "slice",
+        "targetKey": "M001/S02",
+        "contentHash": "sha256:e92f5384eaee50d1aa1676463b792f94911063ee49a4c4d3cf01e594a7621c83"
+      },
+      {
+        "targetKind": "slice",
+        "targetKey": "M001/S03",
+        "contentHash": "sha256:a85702e68f1aeaa0d96175ba78758ae16c9f71ae3345562b01e41a440afe401d"
+      },
+      {
+        "targetKind": "slice",
+        "targetKey": "M001/S04",
+        "contentHash": "sha256:eb8cfa6021f4cf76e3fbf0fc8eac005ec20b3c3828152e4798ae3d752bf0ffaf"
+      },
+      {
+        "targetKind": "slice",
+        "targetKey": "M001/S05",
+        "contentHash": "sha256:be9de814ec0f92521182f78e23289999d835498e8da577821be086728a85386a"
+      },
+      {
+        "targetKind": "slice",
+        "targetKey": "M001/S06",
+        "contentHash": "sha256:fc9839460b4eadbc404c420f7f84b3cb7b752d7c1c71996687e6975bb0480ce9"
+      },
+      {
+        "targetKind": "slice",
+        "targetKey": "M001/S07",
+        "contentHash": "sha256:5e705d479bd719c6f88112caa11c6ba37c3875ca028adcfe6a63819ae976b7dd"
+      },
+      {
+        "targetKind": "task",
+        "targetKey": "M001/S01/T01",
+        "contentHash": "sha256:e51dd5bf210f20c8e13c0daaf71551bbb22986f7db05c1ef9fd9444f5308f33c"
+      },
+      {
+        "targetKind": "task",
+        "targetKey": "M001/S02/T01",
+        "contentHash": "sha256:9073b3fe2166a66dc73411e1f332013acac8f7d68f420b14371ed82269534a0e"
+      },
+      {
+        "targetKind": "task",
+        "targetKey": "M001/S03/T01",
+        "contentHash": "sha256:bb6b7def44484fe84f364f167053b6d923c98c3d68458a78f44e39b65e9feb00"
+      },
+      {
+        "targetKind": "task",
+        "targetKey": "M001/S04/T01",
+        "contentHash": "sha256:af299198072089b8a9806266d09a74aa16a754f03f218ad5164b08c722409eb1"
+      },
+      {
+        "targetKind": "task",
+        "targetKey": "M001/S05/T01",
+        "contentHash": "sha256:5700ec53617115573ffe12a80f8a4e3bcafc46625fc55381a782e578de11b4ba"
+      },
+      {
+        "targetKind": "task",
+        "targetKey": "M001/S06/T01",
+        "contentHash": "sha256:ef0ac2436b9cd585b6e2a3da59966bfff40fb9c48cc905a377059f8eb599c3d2"
+      },
+      {
+        "targetKind": "task",
+        "targetKey": "M001/S07/T01",
+        "contentHash": "sha256:3e7ab96edd84eb52bf6cf991be6c31914b30642aee4e499fd17e63a6bb6a4a75"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "ADM-01",
+        "contentHash": "sha256:a0bcd374139e5d67ad57eb0086597f08c2e018a55b5c1a9c39f3c5c968b11f7c"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "ADM-02",
+        "contentHash": "sha256:c3119ef0c5118dbb3c38dc746e823216800c3017644f8669d73cf84cdf4a7f02"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "ADM-03",
+        "contentHash": "sha256:932564b278877de4033e05aff9aac9a285370111635f30c61cb4621c6dea016e"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "ADM-04",
+        "contentHash": "sha256:09142d1c815c9627070f58e36af01c8480f4cd995e1acb41ec003b3ccecf2c12"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "ADM-05",
+        "contentHash": "sha256:84daf00e69aa52be27db512b45f5181317fde6117360bd158acd15691a699a0b"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "ADM-06",
+        "contentHash": "sha256:acdd0cfc8587ffe3af5fdf0a50239efbc9406cf4def76deed904b14a463d4cf8"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "API-01",
+        "contentHash": "sha256:add0c2597130b737e55b98a9f8a053ad1e7a1c5ede1515bb03adf10415396b41"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "API-02",
+        "contentHash": "sha256:853044c4e69350db938747a6628fafccd6c1c65b807276e5c1cae856226b4674"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "API-03",
+        "contentHash": "sha256:a04f1406264de8912f55621819322a71be2c0442f14888862d28c23b6e1e8701"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "API-04",
+        "contentHash": "sha256:c287cd0b10137a49f59cd163890662be3334cb42066dc424ec4308e68f8861fb"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "API-05",
+        "contentHash": "sha256:7ef7b721faa41358d9532f05b2ac6821ecc1272d513e99ee9ebddad97bc75780"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "API-06",
+        "contentHash": "sha256:4d8dcf6862ff1fda2f26a6e7739869550e91131a1ad739c2088d654d3efab0a0"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "CHR-01",
+        "contentHash": "sha256:c17d14e7f38b24563d0c31d41bf62bac1baea3aeef7849c759cc674cc84a9fdc"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "CHR-02",
+        "contentHash": "sha256:1c291796f97a93f1c1124114d28f8630aca6fd1c90fdfeb04503cafe1857a8bf"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "CHR-03",
+        "contentHash": "sha256:4b59e9a310701755e415fee78171e2b95280ea2cbb6cef63f4d64f930a603b0f"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "CHR-04",
+        "contentHash": "sha256:999b54e0c67365dbac8aaa14cf64e2c3e4da991705470329ef4fd7c0c82b6d1a"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "CHR-05",
+        "contentHash": "sha256:a46efb78d55666e1edb112ed6b67f7c493d7ada60cfb41216abbbc5bb39596d7"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "CHR-06",
+        "contentHash": "sha256:3526c88305775d68db9d0cacd24c619d00e70ee2f9b960da177ed82d4947d4e9"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "FE-01",
+        "contentHash": "sha256:0b8c9bbb7adf57ea325ccdbd9050b80fa19895c83e9cf443496780a2d2912f1d"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "FE-02",
+        "contentHash": "sha256:e7541f4fc89f96a4e716c140a76ed106f820283a1ef5f84dd0cd64629d19fde4"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "FE-03",
+        "contentHash": "sha256:46d69f481533649e1f3ba83ccbf8a5171942f0ac80e05fe01e9dfc69354e3afb"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "FE-04",
+        "contentHash": "sha256:c2b3a5035c50d5fccd7a7d84058c6801aa74acd49f3ac3c49b90e573e1c157df"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "FE-05",
+        "contentHash": "sha256:2cd6917df973582908674a4f0477a47700e09c4348af65b5497c758ae1502678"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "LEG-01",
+        "contentHash": "sha256:e33c7fcb1db2a079a433d753430ad3f44b3737f5aedd9b7a577ef0a142799436"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "LEG-02",
+        "contentHash": "sha256:27c7064e789194b8d359ade3b11cb5bda1a116fb34f65130baefcd4ae62b6b11"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "QA-01",
+        "contentHash": "sha256:8e35f3b2682d8caa5681a35e89378c33d910acef56ad464ef4e1682113755794"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "QA-02",
+        "contentHash": "sha256:d067a3482867bf41f2958437f22d9f17c000a3837519f9803339b90a5145f700"
+      },
+      {
+        "targetKind": "requirement",
+        "targetKey": "QA-03",
+        "contentHash": "sha256:db86b2e2a1bb79aff1b100185a8711a6ee071275310e7464e9b8e570799a683d"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D001",
+        "contentHash": "sha256:7558a60c096f1a8cc0c31438eb12d6849fcf7b1f27da56a2032abb318b6defdc"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D002",
+        "contentHash": "sha256:eb9b1e7677eab49942c9844748e0d7f751829ea80a29b24d073093ba472e94ac"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D003",
+        "contentHash": "sha256:34a0c6f1151ff31898753b8d8af683323aadf32666fb51f30450d9b2a71f3182"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D004",
+        "contentHash": "sha256:bebef24340700ef80ab0713a7bf68630753319bc741c84860a8b5f9259cb62d6"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D005",
+        "contentHash": "sha256:c6b3823f1d1245986906428336345638f52f5359f35a6bfa55b1c4b595f6c37b"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D006",
+        "contentHash": "sha256:41f12ef644364eed26bcde74ee57759f0392923d80884fa2f1c5cc66eb0996a7"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D007",
+        "contentHash": "sha256:0f60a9641258ca3e490c224335b94d9259ce0efc4cb461499845b10d89aa940d"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D008",
+        "contentHash": "sha256:0dd4b6c80c440d06196d856bfc7ea73f5e0420bf309fdbf03b1e130ca31cc244"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D009",
+        "contentHash": "sha256:e354c1c65ebb6975a26effa832efeb85269c46775afafd3ebbba6c132d08aac3"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D010",
+        "contentHash": "sha256:79330e83b8adc6751bf163e8b43d6820315c141cd37788979d413586d8e71950"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D011",
+        "contentHash": "sha256:0007d82cb4695911a25a572c2715bbe8d69cd8af0ff18d9ac2121ca49e76ad38"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D012",
+        "contentHash": "sha256:26f2eaa6d811f7d1a67181c3cf897edee51ff5bf3af22fe751f2425592990bd0"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D013",
+        "contentHash": "sha256:1bf5f0fa82a536e333f7702d8ccbcf6ab6ca18bcb5d4a9e7895dd1da3b679647"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D014",
+        "contentHash": "sha256:7978920f709bbcee91f5549baff06aac13429f4b8a3d8f76d658ca219ba810fe"
+      },
+      {
+        "targetKind": "decision",
+        "targetKey": "D015",
+        "contentHash": "sha256:c5034ded88e5816640eda1b390e0de036cd7e87742b1e3ef0e2e9c8fc4604c7f"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/PROJECT.md",
+        "contentHash": "sha256:d6a2ef1ad05d2b949bd8391e3d5d4f34e277f735de5f5e40cdb0c389e7e8d5b3"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/STATE.md",
+        "contentHash": "sha256:970c5a4b82cb8dec1ba7c7f6538e64349d31877d2699db076a930c76e60accd8"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/M001-CONTEXT.md",
+        "contentHash": "sha256:5120f9377a514587b2e01783381ad54ca026c8918af93af9a58aaa8700d58669"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/M001-SUMMARY.md",
+        "contentHash": "sha256:f4ae2a8185a18f4323603dbbd74294b87ecd5cda0a800133c4afa0c06ff04e51"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/M001-VALIDATION.md",
+        "contentHash": "sha256:7827c3b3bda14215e235fbcce304b2c6d6cf7c64fc4deb6a77f7de13ff7f7989"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S01/S01-RESEARCH.md",
+        "contentHash": "sha256:140f2f4fc553677c32eef696a53cf1be640f52a1e4081d225b040bd13ffcd106"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S01/S01-SUMMARY.md",
+        "contentHash": "sha256:a854d47917f04e1c2cd8aedd01e385e1059fb1a3db25c41eeac4e1220300652a"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S01/tasks/T01-SUMMARY.md",
+        "contentHash": "sha256:63dbc10b0400e126291383fab0889e69f0faccdf1130b2cf00b0210b69eeb19d"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S02/S02-RESEARCH.md",
+        "contentHash": "sha256:725cba536262d50c86f749ca70cb0b485ec2788b963378a78fded66cc3f8a44e"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S02/S02-SUMMARY.md",
+        "contentHash": "sha256:4b04746eb9b33d33d94894a019293a8bc88f2f533706a74b8f282aefe90f24f9"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S02/tasks/T01-SUMMARY.md",
+        "contentHash": "sha256:f4709efff8791bfcef1de99ba03d2e634bed934a7b0296439632313d3c055fa9"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S03/S03-RESEARCH.md",
+        "contentHash": "sha256:8f71e2a14abe1265bed22d4ddc0fa352c72949ea1960818bfd5a18217d32e962"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S03/S03-SUMMARY.md",
+        "contentHash": "sha256:e47a275c67e702d8a808e25c3cfc8028e36fe77374633dee9a7cbd16abd09f80"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S03/tasks/T01-SUMMARY.md",
+        "contentHash": "sha256:cce8981f294056e422fe332b37711dbd8ee2bfd1138f73a86139dbac579afce5"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S04/S04-SUMMARY.md",
+        "contentHash": "sha256:37c10d4c007930ebce9010bd420093e29b00ce17141688055fa68a75bb913fb3"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S04/tasks/T01-SUMMARY.md",
+        "contentHash": "sha256:d8de2d26fe2d9e73b3148a8afa8bd6c3771ca747262a8b9d0228e35864e1a784"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S05/S05-SUMMARY.md",
+        "contentHash": "sha256:2b280a5ed2699c3f7985db46b44338797c64b0a27e9b12f43668b32818889f3a"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S05/tasks/T01-SUMMARY.md",
+        "contentHash": "sha256:9f5c3947ef7d78ec9d50da6d5b191cffa0c06b0c82317db3e9cd8095d9c78e79"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S06/S06-SUMMARY.md",
+        "contentHash": "sha256:e7691fd6c1b0b8c7723fbccf31f09e70c62c62d2c3f1ce72a5cecc5b276d4752"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S06/tasks/T01-SUMMARY.md",
+        "contentHash": "sha256:fc8a2949efd6730d171eb2f2b8d874ec0be8c7c845bf0de7fae5b6c7ea0d84c0"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S07/S07-SUMMARY.md",
+        "contentHash": "sha256:9bdf620769ca156b834da37ca73ea62e22c8dcffbab409c97cc2e766b8f30296"
+      },
+      {
+        "targetKind": "artifact",
+        "targetKey": ".gsd/milestones/M001/slices/S07/tasks/T01-SUMMARY.md",
+        "contentHash": "sha256:f355b38bb2ee9ea85fb1b9943053e818aee5e779e9a92b8b81b85e939fd58636"
+      },
+      {
+        "targetKind": "slice-dependencies",
+        "targetKey": "M001/S01",
+        "contentHash": "sha256:46e3d5fba34a6318fa7ac4061360f106ec387e43aaced72cbca1819e8c3b1a0a"
+      },
+      {
+        "targetKind": "slice-dependencies",
+        "targetKey": "M001/S02",
+        "contentHash": "sha256:603a9a1ac61a7ad228abac87ca17f68ae3c5de7fe60b80876d9e90e059711c89"
+      },
+      {
+        "targetKind": "slice-dependencies",
+        "targetKey": "M001/S03",
+        "contentHash": "sha256:64bedc557a4420245855ee2e4895f2bddaa5beba05ca7c1b2ec03612789040c0"
+      },
+      {
+        "targetKind": "slice-dependencies",
+        "targetKey": "M001/S04",
+        "contentHash": "sha256:f470889e78da6ce681aec90a163f9101e3fba83d345ac96e92b491383fe7ecf8"
+      },
+      {
+        "targetKind": "slice-dependencies",
+        "targetKey": "M001/S05",
+        "contentHash": "sha256:2a3fea307de938163ae8ebc93a09278b358a7f6a7dc7e0bb5b3fffc37f43faf5"
+      },
+      {
+        "targetKind": "slice-dependencies",
+        "targetKey": "M001/S06",
+        "contentHash": "sha256:9fbc90d47529009abfb614b3f622f837d6b5a6df178ec4472195f2f67f5bd013"
+      },
+      {
+        "targetKind": "slice-dependencies",
+        "targetKey": "M001/S07",
+        "contentHash": "sha256:bbc12bc652fe61be9edc405df21cf1696a4ce669497e56f6e942c772c9d6a701"
+      },
+      {
+        "targetKind": "milestone-lifecycle",
+        "targetKey": "M001",
+        "contentHash": "sha256:650ee65cd070ef12fed0c325b7275937fb975d8be29e9684eb852d9fe2d9c4b3"
+      },
+      {
+        "targetKind": "slice-lifecycle",
+        "targetKey": "M001/S01",
+        "contentHash": "sha256:321bf62eb51eac69bdf7ee73629f87d778bca86f72b63461bf01612894a39dff"
+      },
+      {
+        "targetKind": "slice-lifecycle",
+        "targetKey": "M001/S02",
+        "contentHash": "sha256:7ee99e71078c0066b465ac1314711bb91c65516f793ed6cc328095d8fe812be6"
+      },
+      {
+        "targetKind": "slice-lifecycle",
+        "targetKey": "M001/S03",
+        "contentHash": "sha256:1404ff921ad556a089261522392226269e6bf5cbdabee5b6a8d07c0e23be06f5"
+      },
+      {
+        "targetKind": "slice-lifecycle",
+        "targetKey": "M001/S04",
+        "contentHash": "sha256:0c054d72a996e1cfa759b8f3ce70946ea4f3079f5c1a62a72de97dab2f0cb276"
+      },
+      {
+        "targetKind": "slice-lifecycle",
+        "targetKey": "M001/S05",
+        "contentHash": "sha256:b8605fb7a52ac2f600d8209210bba9b8d16f737f8554085a56e6b7bb43a86ef3"
+      },
+      {
+        "targetKind": "slice-lifecycle",
+        "targetKey": "M001/S06",
+        "contentHash": "sha256:083286ba6e1c7bee78c5e5f9c8d93781b03229273d57b382a6e65f1041fe6278"
+      },
+      {
+        "targetKind": "slice-lifecycle",
+        "targetKey": "M001/S07",
+        "contentHash": "sha256:0b11cdd9de0075bad2fe61f5856ec1a467e27f9a58fde5c19da8640ef5ec8f25"
+      },
+      {
+        "targetKind": "task-lifecycle",
+        "targetKey": "M001/S01/T01",
+        "contentHash": "sha256:b2ac9b66d98f6bbfb60613821a52f375348dfdfef319b4d1eeec13ff8cb9c57d"
+      },
+      {
+        "targetKind": "task-lifecycle",
+        "targetKey": "M001/S02/T01",
+        "contentHash": "sha256:6a3e0dc40b94df408542b3538a7cb4152f295835c8138bea211a248fc2248cba"
+      },
+      {
+        "targetKind": "task-lifecycle",
+        "targetKey": "M001/S03/T01",
+        "contentHash": "sha256:aa6682ea0f828fea74eaf84b5eb93eba5b7b6934a063c0ec54aac15be0993f6b"
+      },
+      {
+        "targetKind": "task-lifecycle",
+        "targetKey": "M001/S04/T01",
+        "contentHash": "sha256:d08a93fd6b44cf0414da57c506816a6cbe17059614a401abf0bbf33282c1389f"
+      },
+      {
+        "targetKind": "task-lifecycle",
+        "targetKey": "M001/S05/T01",
+        "contentHash": "sha256:aabf9ff017d45c52c2c630fe53d7477f7ab868191d8da152cf5cb1f35dfeb65b"
+      },
+      {
+        "targetKind": "task-lifecycle",
+        "targetKey": "M001/S06/T01",
+        "contentHash": "sha256:0022d767ae1be3e9a759b3dd46ff1caadfd485f21fdb52b79d9dd001b389724b"
+      },
+      {
+        "targetKind": "task-lifecycle",
+        "targetKey": "M001/S07/T01",
+        "contentHash": "sha256:93dda1298716fba831e99783dc2e98fb412974f68657ded3a7077f61e20bfd9d"
+      },
+      {
+        "targetKind": "slice-quality-gate",
+        "targetKey": "M001/S01",
+        "contentHash": "sha256:d0fe558c55e6d6cbfce5511e1590b00851618a9929cf994dfd0b2c721a1b00ef"
+      },
+      {
+        "targetKind": "slice-quality-gate",
+        "targetKey": "M001/S02",
+        "contentHash": "sha256:117f9039ee7fc33c50741aea6ab2fc64841d2a632a1b75a55d9330c70317ab67"
+      },
+      {
+        "targetKind": "slice-quality-gate",
+        "targetKey": "M001/S03",
+        "contentHash": "sha256:573e66358c74cdec715dc9c879122d1ee7e220510885300054f9396af51e98ef"
+      },
+      {
+        "targetKind": "slice-quality-gate",
+        "targetKey": "M001/S04",
+        "contentHash": "sha256:468f9b2d5f25950b78d8b89be0a0ead8054cdbc465498d13b9e00aa97270953f"
+      },
+      {
+        "targetKind": "slice-quality-gate",
+        "targetKey": "M001/S05",
+        "contentHash": "sha256:1964719c6c0f362b77069d6bf2f759f548bef12617356a4c5516370dea8e928e"
+      },
+      {
+        "targetKind": "slice-quality-gate",
+        "targetKey": "M001/S06",
+        "contentHash": "sha256:c80a5dd7499411b71b60d1d644365128e854d0fb2d1a8f5b6fe5bd7457685158"
+      },
+      {
+        "targetKind": "slice-quality-gate",
+        "targetKey": "M001/S07",
+        "contentHash": "sha256:dac0e635ae4899bb7d1f79eeb236268751254e92554716ead39d86dd3e48cfa1"
+      }
+    ],
+    "application": {
+      "operationId": "8a4cc73b-0f33-452d-b3b4-98acd6af68f3",
+      "previewId": "sha256:04aa2df8a8e5617512691fa6acea45a4ad333fcc526dd08193f1bf294594feaf",
+      "resultingRevision": 1,
+      "resultingAuthorityEpoch": 0,
+      "previewHash": "sha256:937b08e3eb918cfad843c7ba8d68e5e1639f2b437797f5d01213c028e731e440",
+      "sourceSetHash": "sha256:47099be290233e1910677b915e959ecc5d1e376d5a091d89d8b5fda8f00d9cd6",
+      "changeSetHash": "sha256:b14d2b86ae9eaf76baf4953c01d33ce17e6adca6e848271a410ff6202da7c0b5",
+      "applicationRelevantRowsHash": "sha256:1fe3f35668f921a638171a307feceae37df41b9aa9b9a7ed5617e96a6e5a1688",
+      "projectionTargets": [
+        {
+          "sourceId": "sha256:f48bdaea0cf8186d40d5173b43f79dbe3bdf3cb6913dd8a54958744cee66f397",
+          "logicalPath": "DECISIONS.md",
+          "sha256": "sha256:5789862a38133eb9cf7d1b2df5573162d0588e846976f60e8fc748685d136c78"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/M001-CONTEXT.md",
+          "logicalPath": "milestones/M001/M001-CONTEXT.md",
+          "sha256": "sha256:59b54425268a2a91046e8d7d32c7723b422ebaa486c5066d4aea04a0b8757624"
+        },
+        {
+          "sourceId": "sha256:cc86a4ad330991b160b945c5281e0a5b56183c17ebdf8a67aaf3b23ad413a9d9",
+          "logicalPath": "milestones/M001/M001-ROADMAP.md",
+          "sha256": "sha256:abfde72392d87969c435c68fd58453d62dec54b59c740e5be1b0ed2c17e87b27"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/M001-SUMMARY.md",
+          "logicalPath": "milestones/M001/M001-SUMMARY.md",
+          "sha256": "sha256:f126ce556f5f5e69c399a440a89ad9173aae471cfb604107b2a652970231961b"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/M001-VALIDATION.md",
+          "logicalPath": "milestones/M001/M001-VALIDATION.md",
+          "sha256": "sha256:8be3ffb1f5b2fddcf1addbf5febfaa7c369eb8aec475c3947eabdfcb4d48d4ba"
+        },
+        {
+          "sourceId": "sha256:b9d474a00cffc660f92ce522f65a76bd287cf6e932e8acd20ce3c185bffde820",
+          "logicalPath": "milestones/M001/slices/S01/S01-PLAN.md",
+          "sha256": "sha256:60b618d29878d463c54c4c5b69dabe5d5ce35398e614b05df923d3d2a3867f88"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S01/S01-RESEARCH.md",
+          "logicalPath": "milestones/M001/slices/S01/S01-RESEARCH.md",
+          "sha256": "sha256:407d8539c182105d9b9aa0fb561a8b5c0e7e0241d9be3ca3ef2e2a73b23f14a2"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S01/S01-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S01/S01-SUMMARY.md",
+          "sha256": "sha256:fc51e3ad985b20290cb63f151c9d34348d7f03780b4801549c2f8f14a004d75c"
+        },
+        {
+          "sourceId": "sha256:a136d82e6f078556c66f24d1e4738100def284db46aba4d28054500843f8a450",
+          "logicalPath": "milestones/M001/slices/S01/tasks/T01-PLAN.md",
+          "sha256": "sha256:c8baee49947f564fdacec9ffbcedf8ac4eee3349a8f8383e958e0a138a9e3b29"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S01/tasks/T01-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S01/tasks/T01-SUMMARY.md",
+          "sha256": "sha256:8d5bb8cfc958a5e64818546efe6821179636ea016e331f5ca6bc76fa659c58eb"
+        },
+        {
+          "sourceId": "sha256:be23dc83f0efe76cb1c3d6e4b9411b703bb84d1670ac4697d385da58ac3b2424",
+          "logicalPath": "milestones/M001/slices/S02/S02-PLAN.md",
+          "sha256": "sha256:e5b353afdaf272de0f908ee6f3d63d3332640e39a9a4a3508aa220865b5767c5"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S02/S02-RESEARCH.md",
+          "logicalPath": "milestones/M001/slices/S02/S02-RESEARCH.md",
+          "sha256": "sha256:94163e381d73562209980936edbb1ac425fd6478e762ca1e8f6bacfad6a3a984"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S02/S02-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S02/S02-SUMMARY.md",
+          "sha256": "sha256:4e67a9747112a69dc99b9d2d401b9072de1a0a3bde2ace7d8d318e6666c30878"
+        },
+        {
+          "sourceId": "sha256:4b84404635c065ac0f8e3f4aff1c7541d0cd7abe661010874cb24935207cf780",
+          "logicalPath": "milestones/M001/slices/S02/tasks/T01-PLAN.md",
+          "sha256": "sha256:1b95f84cfc387c1e0c7ff4a58317c58f16df673a1579348548a69a9ddcb565ea"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S02/tasks/T01-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S02/tasks/T01-SUMMARY.md",
+          "sha256": "sha256:765ac3343326b657ca0a87ec4daafec853b4f792f9897d9842e1a2b1f86954bd"
+        },
+        {
+          "sourceId": "sha256:2784b1c9e997f89b76a032d886a92f301b912fbc60394d3ece1f838a9638f226",
+          "logicalPath": "milestones/M001/slices/S03/S03-PLAN.md",
+          "sha256": "sha256:f3bcc820b56920444863b84ebd583b4a551ce7b9b74a69a406213e0d70a41af6"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S03/S03-RESEARCH.md",
+          "logicalPath": "milestones/M001/slices/S03/S03-RESEARCH.md",
+          "sha256": "sha256:61966eada17868b571e49d48664f9acc63b2915af0f4c345be9d911605b14c99"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S03/S03-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S03/S03-SUMMARY.md",
+          "sha256": "sha256:5849b5fd94e16529939358caedc4c56b8aee4a8378ae8d22c28429387c93165b"
+        },
+        {
+          "sourceId": "sha256:cc4e8e01a0ee382efa3f010a3d7f88983d5348dd277b7479e98887e2bd010ec3",
+          "logicalPath": "milestones/M001/slices/S03/tasks/T01-PLAN.md",
+          "sha256": "sha256:c568c53275778b0cff9bcdf8256cf0a7cfc3717205e623c7257ea20acc14e788"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S03/tasks/T01-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S03/tasks/T01-SUMMARY.md",
+          "sha256": "sha256:21e0c4be71382b61bc3040e14f56531b87654ce00f942a0800d9bafe10da2910"
+        },
+        {
+          "sourceId": "sha256:486243b0326d5de1cc33fae9122e0c1211e442b456365e984a59b203ec65ce67",
+          "logicalPath": "milestones/M001/slices/S04/S04-PLAN.md",
+          "sha256": "sha256:4202810aae43b7abaf39f06eeb33ffeb4bbd2e50e0123ce4a869457016fd03d0"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S04/S04-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S04/S04-SUMMARY.md",
+          "sha256": "sha256:269c3f3110ccc354562dfdae309ef8f63f26f81e0a21697dfadfddf1982a4c6f"
+        },
+        {
+          "sourceId": "sha256:83980e7da89bb597b899aecd7be70c7e45393eaf65f6ff5a39e3b94b0ac064f2",
+          "logicalPath": "milestones/M001/slices/S04/tasks/T01-PLAN.md",
+          "sha256": "sha256:de444301debc724c9d3ce5dca8c4b90d77f900a356c42f2071217868c5cf6bf2"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S04/tasks/T01-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S04/tasks/T01-SUMMARY.md",
+          "sha256": "sha256:c7aab68cc28ac931f88cb82e982e62b92ffdc08b4e7c94129918bbd969250eea"
+        },
+        {
+          "sourceId": "sha256:680a1b9fca0dea14805c10a05c0fabdde6fb4ed14c6e163b6dbd9efa38482cb9",
+          "logicalPath": "milestones/M001/slices/S05/S05-PLAN.md",
+          "sha256": "sha256:9b0195d6eb98c37a77a554999747092458d6afa14072205fe48ec9b72d81e1c3"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S05/S05-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S05/S05-SUMMARY.md",
+          "sha256": "sha256:2ea4a61b97e639c7f671bbf42e938f18ab4cd5ceb3db427b1732df2dec1f669b"
+        },
+        {
+          "sourceId": "sha256:39eeee3732d0aaa129c40351aa362e484cf586985325de336bcb1f0b71ef3a38",
+          "logicalPath": "milestones/M001/slices/S05/tasks/T01-PLAN.md",
+          "sha256": "sha256:6903b64d052999bd9514442bea4061cb518c1aa0f0a468b3e522acbe6d4817fb"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S05/tasks/T01-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S05/tasks/T01-SUMMARY.md",
+          "sha256": "sha256:b2f6a9de058a7d83d1c1440e8664d060ddb6a437f7407c08aa417d719ee93ce7"
+        },
+        {
+          "sourceId": "sha256:091f607aa7ac1f56264eb3c5f9656f76079fe18a2ea0336588f4d262f3192cb5",
+          "logicalPath": "milestones/M001/slices/S06/S06-PLAN.md",
+          "sha256": "sha256:ef57121f10b38e39a0661d84271bae9b5307db32a1922b466fa53356cbeebeea"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S06/S06-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S06/S06-SUMMARY.md",
+          "sha256": "sha256:348836dfc2835ddb73f11fe7e1ad23323154af61929f6dae0342665f6442b61f"
+        },
+        {
+          "sourceId": "sha256:4881f33b22207cf052ff8b5363042368b08014b034af514ba5eecfa0faa5d1c2",
+          "logicalPath": "milestones/M001/slices/S06/tasks/T01-PLAN.md",
+          "sha256": "sha256:dba4c32c32cfaabb6df4e9a72140b59f49d87be083b9a1edcfc2ccb7ac611488"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S06/tasks/T01-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S06/tasks/T01-SUMMARY.md",
+          "sha256": "sha256:145e8ce2ad6c8b86542e77ea41939c77e265e783dff78ae876587d9aa3a1d5b9"
+        },
+        {
+          "sourceId": "sha256:2a32cccd53f06ffd7b420cb040d8170ec1671dad7bff63fbf665ca8735750002",
+          "logicalPath": "milestones/M001/slices/S07/S07-PLAN.md",
+          "sha256": "sha256:d6468f51dc73f4ae79acc602759ab0eff369ade777bea554afb8ceb10e93908b"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S07/S07-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S07/S07-SUMMARY.md",
+          "sha256": "sha256:6bb0f47b95b5a7ac270f0b2d46fb9035d66686bc2672dbd075144a1602a11cfd"
+        },
+        {
+          "sourceId": "sha256:1f5edf4a0d41c646b8f8698022bc426ddd25015562c4c891298ad40477d98e61",
+          "logicalPath": "milestones/M001/slices/S07/tasks/T01-PLAN.md",
+          "sha256": "sha256:4be71d00684afca00d0156022d1e2bd598a175561bf59fc2f05d62385779e6a5"
+        },
+        {
+          "sourceId": "migration-artifact:milestones/M001/slices/S07/tasks/T01-SUMMARY.md",
+          "logicalPath": "milestones/M001/slices/S07/tasks/T01-SUMMARY.md",
+          "sha256": "sha256:65eddb2d3099fe3cde9fbe0259c86f81d8f88ce685bd08017cfdd783a5afb107"
+        },
+        {
+          "sourceId": "migration-artifact:PROJECT.md",
+          "logicalPath": "PROJECT.md",
+          "sha256": "sha256:29b05ea94fe71df49cb4db132c181d061c1f5b6565012cc73848336ccb71b5c9"
+        },
+        {
+          "sourceId": "sha256:be4e306d9193d598f709cda73058ced59a95109ed961dc5b9f0afa8ba81823d8",
+          "logicalPath": "REQUIREMENTS.md",
+          "sha256": "sha256:786d832ed3113566855d90cd3bce675c0ffccb6b5274eb48582639c7e769a8bf"
+        },
+        {
+          "sourceId": "migration-artifact:STATE.md",
+          "logicalPath": "STATE.md",
+          "sha256": "sha256:568e40fe8b83cda11bebfbf8e8ba2256c95176489d46eee041f3ec71db546521"
+        }
+      ],
+      "targets": [
+        {
+          "targetKind": "milestone",
+          "targetKey": "M001",
+          "contentHash": "sha256:4f4f86a6919ec824df79583d4fe7fa3ee448b0de2e1545dcdde3af7796d4f02c"
+        },
+        {
+          "targetKind": "slice",
+          "targetKey": "M001/S01",
+          "contentHash": "sha256:2c6688d56ff72fe01435154f596b6c868bb0bbf6696d2da6cc62d151c5d0a450"
+        },
+        {
+          "targetKind": "slice",
+          "targetKey": "M001/S02",
+          "contentHash": "sha256:e92f5384eaee50d1aa1676463b792f94911063ee49a4c4d3cf01e594a7621c83"
+        },
+        {
+          "targetKind": "slice",
+          "targetKey": "M001/S03",
+          "contentHash": "sha256:a85702e68f1aeaa0d96175ba78758ae16c9f71ae3345562b01e41a440afe401d"
+        },
+        {
+          "targetKind": "slice",
+          "targetKey": "M001/S04",
+          "contentHash": "sha256:eb8cfa6021f4cf76e3fbf0fc8eac005ec20b3c3828152e4798ae3d752bf0ffaf"
+        },
+        {
+          "targetKind": "slice",
+          "targetKey": "M001/S05",
+          "contentHash": "sha256:be9de814ec0f92521182f78e23289999d835498e8da577821be086728a85386a"
+        },
+        {
+          "targetKind": "slice",
+          "targetKey": "M001/S06",
+          "contentHash": "sha256:fc9839460b4eadbc404c420f7f84b3cb7b752d7c1c71996687e6975bb0480ce9"
+        },
+        {
+          "targetKind": "slice",
+          "targetKey": "M001/S07",
+          "contentHash": "sha256:5e705d479bd719c6f88112caa11c6ba37c3875ca028adcfe6a63819ae976b7dd"
+        },
+        {
+          "targetKind": "task",
+          "targetKey": "M001/S01/T01",
+          "contentHash": "sha256:e51dd5bf210f20c8e13c0daaf71551bbb22986f7db05c1ef9fd9444f5308f33c"
+        },
+        {
+          "targetKind": "task",
+          "targetKey": "M001/S02/T01",
+          "contentHash": "sha256:9073b3fe2166a66dc73411e1f332013acac8f7d68f420b14371ed82269534a0e"
+        },
+        {
+          "targetKind": "task",
+          "targetKey": "M001/S03/T01",
+          "contentHash": "sha256:bb6b7def44484fe84f364f167053b6d923c98c3d68458a78f44e39b65e9feb00"
+        },
+        {
+          "targetKind": "task",
+          "targetKey": "M001/S04/T01",
+          "contentHash": "sha256:af299198072089b8a9806266d09a74aa16a754f03f218ad5164b08c722409eb1"
+        },
+        {
+          "targetKind": "task",
+          "targetKey": "M001/S05/T01",
+          "contentHash": "sha256:5700ec53617115573ffe12a80f8a4e3bcafc46625fc55381a782e578de11b4ba"
+        },
+        {
+          "targetKind": "task",
+          "targetKey": "M001/S06/T01",
+          "contentHash": "sha256:ef0ac2436b9cd585b6e2a3da59966bfff40fb9c48cc905a377059f8eb599c3d2"
+        },
+        {
+          "targetKind": "task",
+          "targetKey": "M001/S07/T01",
+          "contentHash": "sha256:3e7ab96edd84eb52bf6cf991be6c31914b30642aee4e499fd17e63a6bb6a4a75"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "ADM-01",
+          "contentHash": "sha256:a0bcd374139e5d67ad57eb0086597f08c2e018a55b5c1a9c39f3c5c968b11f7c"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "ADM-02",
+          "contentHash": "sha256:c3119ef0c5118dbb3c38dc746e823216800c3017644f8669d73cf84cdf4a7f02"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "ADM-03",
+          "contentHash": "sha256:932564b278877de4033e05aff9aac9a285370111635f30c61cb4621c6dea016e"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "ADM-04",
+          "contentHash": "sha256:09142d1c815c9627070f58e36af01c8480f4cd995e1acb41ec003b3ccecf2c12"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "ADM-05",
+          "contentHash": "sha256:84daf00e69aa52be27db512b45f5181317fde6117360bd158acd15691a699a0b"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "ADM-06",
+          "contentHash": "sha256:acdd0cfc8587ffe3af5fdf0a50239efbc9406cf4def76deed904b14a463d4cf8"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "API-01",
+          "contentHash": "sha256:add0c2597130b737e55b98a9f8a053ad1e7a1c5ede1515bb03adf10415396b41"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "API-02",
+          "contentHash": "sha256:853044c4e69350db938747a6628fafccd6c1c65b807276e5c1cae856226b4674"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "API-03",
+          "contentHash": "sha256:a04f1406264de8912f55621819322a71be2c0442f14888862d28c23b6e1e8701"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "API-04",
+          "contentHash": "sha256:c287cd0b10137a49f59cd163890662be3334cb42066dc424ec4308e68f8861fb"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "API-05",
+          "contentHash": "sha256:7ef7b721faa41358d9532f05b2ac6821ecc1272d513e99ee9ebddad97bc75780"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "API-06",
+          "contentHash": "sha256:4d8dcf6862ff1fda2f26a6e7739869550e91131a1ad739c2088d654d3efab0a0"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "CHR-01",
+          "contentHash": "sha256:c17d14e7f38b24563d0c31d41bf62bac1baea3aeef7849c759cc674cc84a9fdc"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "CHR-02",
+          "contentHash": "sha256:1c291796f97a93f1c1124114d28f8630aca6fd1c90fdfeb04503cafe1857a8bf"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "CHR-03",
+          "contentHash": "sha256:4b59e9a310701755e415fee78171e2b95280ea2cbb6cef63f4d64f930a603b0f"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "CHR-04",
+          "contentHash": "sha256:999b54e0c67365dbac8aaa14cf64e2c3e4da991705470329ef4fd7c0c82b6d1a"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "CHR-05",
+          "contentHash": "sha256:a46efb78d55666e1edb112ed6b67f7c493d7ada60cfb41216abbbc5bb39596d7"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "CHR-06",
+          "contentHash": "sha256:3526c88305775d68db9d0cacd24c619d00e70ee2f9b960da177ed82d4947d4e9"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "FE-01",
+          "contentHash": "sha256:0b8c9bbb7adf57ea325ccdbd9050b80fa19895c83e9cf443496780a2d2912f1d"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "FE-02",
+          "contentHash": "sha256:e7541f4fc89f96a4e716c140a76ed106f820283a1ef5f84dd0cd64629d19fde4"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "FE-03",
+          "contentHash": "sha256:46d69f481533649e1f3ba83ccbf8a5171942f0ac80e05fe01e9dfc69354e3afb"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "FE-04",
+          "contentHash": "sha256:c2b3a5035c50d5fccd7a7d84058c6801aa74acd49f3ac3c49b90e573e1c157df"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "FE-05",
+          "contentHash": "sha256:2cd6917df973582908674a4f0477a47700e09c4348af65b5497c758ae1502678"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "LEG-01",
+          "contentHash": "sha256:e33c7fcb1db2a079a433d753430ad3f44b3737f5aedd9b7a577ef0a142799436"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "LEG-02",
+          "contentHash": "sha256:27c7064e789194b8d359ade3b11cb5bda1a116fb34f65130baefcd4ae62b6b11"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "QA-01",
+          "contentHash": "sha256:8e35f3b2682d8caa5681a35e89378c33d910acef56ad464ef4e1682113755794"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "QA-02",
+          "contentHash": "sha256:d067a3482867bf41f2958437f22d9f17c000a3837519f9803339b90a5145f700"
+        },
+        {
+          "targetKind": "requirement",
+          "targetKey": "QA-03",
+          "contentHash": "sha256:db86b2e2a1bb79aff1b100185a8711a6ee071275310e7464e9b8e570799a683d"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D001",
+          "contentHash": "sha256:7558a60c096f1a8cc0c31438eb12d6849fcf7b1f27da56a2032abb318b6defdc"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D002",
+          "contentHash": "sha256:eb9b1e7677eab49942c9844748e0d7f751829ea80a29b24d073093ba472e94ac"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D003",
+          "contentHash": "sha256:34a0c6f1151ff31898753b8d8af683323aadf32666fb51f30450d9b2a71f3182"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D004",
+          "contentHash": "sha256:bebef24340700ef80ab0713a7bf68630753319bc741c84860a8b5f9259cb62d6"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D005",
+          "contentHash": "sha256:c6b3823f1d1245986906428336345638f52f5359f35a6bfa55b1c4b595f6c37b"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D006",
+          "contentHash": "sha256:41f12ef644364eed26bcde74ee57759f0392923d80884fa2f1c5cc66eb0996a7"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D007",
+          "contentHash": "sha256:0f60a9641258ca3e490c224335b94d9259ce0efc4cb461499845b10d89aa940d"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D008",
+          "contentHash": "sha256:0dd4b6c80c440d06196d856bfc7ea73f5e0420bf309fdbf03b1e130ca31cc244"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D009",
+          "contentHash": "sha256:e354c1c65ebb6975a26effa832efeb85269c46775afafd3ebbba6c132d08aac3"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D010",
+          "contentHash": "sha256:79330e83b8adc6751bf163e8b43d6820315c141cd37788979d413586d8e71950"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D011",
+          "contentHash": "sha256:0007d82cb4695911a25a572c2715bbe8d69cd8af0ff18d9ac2121ca49e76ad38"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D012",
+          "contentHash": "sha256:26f2eaa6d811f7d1a67181c3cf897edee51ff5bf3af22fe751f2425592990bd0"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D013",
+          "contentHash": "sha256:1bf5f0fa82a536e333f7702d8ccbcf6ab6ca18bcb5d4a9e7895dd1da3b679647"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D014",
+          "contentHash": "sha256:7978920f709bbcee91f5549baff06aac13429f4b8a3d8f76d658ca219ba810fe"
+        },
+        {
+          "targetKind": "decision",
+          "targetKey": "D015",
+          "contentHash": "sha256:c5034ded88e5816640eda1b390e0de036cd7e87742b1e3ef0e2e9c8fc4604c7f"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/PROJECT.md",
+          "contentHash": "sha256:d6a2ef1ad05d2b949bd8391e3d5d4f34e277f735de5f5e40cdb0c389e7e8d5b3"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/STATE.md",
+          "contentHash": "sha256:970c5a4b82cb8dec1ba7c7f6538e64349d31877d2699db076a930c76e60accd8"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/M001-CONTEXT.md",
+          "contentHash": "sha256:5120f9377a514587b2e01783381ad54ca026c8918af93af9a58aaa8700d58669"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/M001-SUMMARY.md",
+          "contentHash": "sha256:f4ae2a8185a18f4323603dbbd74294b87ecd5cda0a800133c4afa0c06ff04e51"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/M001-VALIDATION.md",
+          "contentHash": "sha256:7827c3b3bda14215e235fbcce304b2c6d6cf7c64fc4deb6a77f7de13ff7f7989"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S01/S01-RESEARCH.md",
+          "contentHash": "sha256:140f2f4fc553677c32eef696a53cf1be640f52a1e4081d225b040bd13ffcd106"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S01/S01-SUMMARY.md",
+          "contentHash": "sha256:a854d47917f04e1c2cd8aedd01e385e1059fb1a3db25c41eeac4e1220300652a"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S01/tasks/T01-SUMMARY.md",
+          "contentHash": "sha256:63dbc10b0400e126291383fab0889e69f0faccdf1130b2cf00b0210b69eeb19d"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S02/S02-RESEARCH.md",
+          "contentHash": "sha256:725cba536262d50c86f749ca70cb0b485ec2788b963378a78fded66cc3f8a44e"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S02/S02-SUMMARY.md",
+          "contentHash": "sha256:4b04746eb9b33d33d94894a019293a8bc88f2f533706a74b8f282aefe90f24f9"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S02/tasks/T01-SUMMARY.md",
+          "contentHash": "sha256:f4709efff8791bfcef1de99ba03d2e634bed934a7b0296439632313d3c055fa9"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S03/S03-RESEARCH.md",
+          "contentHash": "sha256:8f71e2a14abe1265bed22d4ddc0fa352c72949ea1960818bfd5a18217d32e962"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S03/S03-SUMMARY.md",
+          "contentHash": "sha256:e47a275c67e702d8a808e25c3cfc8028e36fe77374633dee9a7cbd16abd09f80"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S03/tasks/T01-SUMMARY.md",
+          "contentHash": "sha256:cce8981f294056e422fe332b37711dbd8ee2bfd1138f73a86139dbac579afce5"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S04/S04-SUMMARY.md",
+          "contentHash": "sha256:37c10d4c007930ebce9010bd420093e29b00ce17141688055fa68a75bb913fb3"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S04/tasks/T01-SUMMARY.md",
+          "contentHash": "sha256:d8de2d26fe2d9e73b3148a8afa8bd6c3771ca747262a8b9d0228e35864e1a784"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S05/S05-SUMMARY.md",
+          "contentHash": "sha256:2b280a5ed2699c3f7985db46b44338797c64b0a27e9b12f43668b32818889f3a"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S05/tasks/T01-SUMMARY.md",
+          "contentHash": "sha256:9f5c3947ef7d78ec9d50da6d5b191cffa0c06b0c82317db3e9cd8095d9c78e79"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S06/S06-SUMMARY.md",
+          "contentHash": "sha256:e7691fd6c1b0b8c7723fbccf31f09e70c62c62d2c3f1ce72a5cecc5b276d4752"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S06/tasks/T01-SUMMARY.md",
+          "contentHash": "sha256:fc8a2949efd6730d171eb2f2b8d874ec0be8c7c845bf0de7fae5b6c7ea0d84c0"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S07/S07-SUMMARY.md",
+          "contentHash": "sha256:9bdf620769ca156b834da37ca73ea62e22c8dcffbab409c97cc2e766b8f30296"
+        },
+        {
+          "targetKind": "artifact",
+          "targetKey": ".gsd/milestones/M001/slices/S07/tasks/T01-SUMMARY.md",
+          "contentHash": "sha256:f355b38bb2ee9ea85fb1b9943053e818aee5e779e9a92b8b81b85e939fd58636"
+        },
+        {
+          "targetKind": "slice-dependencies",
+          "targetKey": "M001/S01",
+          "contentHash": "sha256:46e3d5fba34a6318fa7ac4061360f106ec387e43aaced72cbca1819e8c3b1a0a"
+        },
+        {
+          "targetKind": "slice-dependencies",
+          "targetKey": "M001/S02",
+          "contentHash": "sha256:603a9a1ac61a7ad228abac87ca17f68ae3c5de7fe60b80876d9e90e059711c89"
+        },
+        {
+          "targetKind": "slice-dependencies",
+          "targetKey": "M001/S03",
+          "contentHash": "sha256:64bedc557a4420245855ee2e4895f2bddaa5beba05ca7c1b2ec03612789040c0"
+        },
+        {
+          "targetKind": "slice-dependencies",
+          "targetKey": "M001/S04",
+          "contentHash": "sha256:f470889e78da6ce681aec90a163f9101e3fba83d345ac96e92b491383fe7ecf8"
+        },
+        {
+          "targetKind": "slice-dependencies",
+          "targetKey": "M001/S05",
+          "contentHash": "sha256:2a3fea307de938163ae8ebc93a09278b358a7f6a7dc7e0bb5b3fffc37f43faf5"
+        },
+        {
+          "targetKind": "slice-dependencies",
+          "targetKey": "M001/S06",
+          "contentHash": "sha256:9fbc90d47529009abfb614b3f622f837d6b5a6df178ec4472195f2f67f5bd013"
+        },
+        {
+          "targetKind": "slice-dependencies",
+          "targetKey": "M001/S07",
+          "contentHash": "sha256:bbc12bc652fe61be9edc405df21cf1696a4ce669497e56f6e942c772c9d6a701"
+        },
+        {
+          "targetKind": "milestone-lifecycle",
+          "targetKey": "M001",
+          "contentHash": "sha256:650ee65cd070ef12fed0c325b7275937fb975d8be29e9684eb852d9fe2d9c4b3"
+        },
+        {
+          "targetKind": "slice-lifecycle",
+          "targetKey": "M001/S01",
+          "contentHash": "sha256:321bf62eb51eac69bdf7ee73629f87d778bca86f72b63461bf01612894a39dff"
+        },
+        {
+          "targetKind": "slice-lifecycle",
+          "targetKey": "M001/S02",
+          "contentHash": "sha256:7ee99e71078c0066b465ac1314711bb91c65516f793ed6cc328095d8fe812be6"
+        },
+        {
+          "targetKind": "slice-lifecycle",
+          "targetKey": "M001/S03",
+          "contentHash": "sha256:1404ff921ad556a089261522392226269e6bf5cbdabee5b6a8d07c0e23be06f5"
+        },
+        {
+          "targetKind": "slice-lifecycle",
+          "targetKey": "M001/S04",
+          "contentHash": "sha256:0c054d72a996e1cfa759b8f3ce70946ea4f3079f5c1a62a72de97dab2f0cb276"
+        },
+        {
+          "targetKind": "slice-lifecycle",
+          "targetKey": "M001/S05",
+          "contentHash": "sha256:b8605fb7a52ac2f600d8209210bba9b8d16f737f8554085a56e6b7bb43a86ef3"
+        },
+        {
+          "targetKind": "slice-lifecycle",
+          "targetKey": "M001/S06",
+          "contentHash": "sha256:083286ba6e1c7bee78c5e5f9c8d93781b03229273d57b382a6e65f1041fe6278"
+        },
+        {
+          "targetKind": "slice-lifecycle",
+          "targetKey": "M001/S07",
+          "contentHash": "sha256:0b11cdd9de0075bad2fe61f5856ec1a467e27f9a58fde5c19da8640ef5ec8f25"
+        },
+        {
+          "targetKind": "task-lifecycle",
+          "targetKey": "M001/S01/T01",
+          "contentHash": "sha256:b2ac9b66d98f6bbfb60613821a52f375348dfdfef319b4d1eeec13ff8cb9c57d"
+        },
+        {
+          "targetKind": "task-lifecycle",
+          "targetKey": "M001/S02/T01",
+          "contentHash": "sha256:6a3e0dc40b94df408542b3538a7cb4152f295835c8138bea211a248fc2248cba"
+        },
+        {
+          "targetKind": "task-lifecycle",
+          "targetKey": "M001/S03/T01",
+          "contentHash": "sha256:aa6682ea0f828fea74eaf84b5eb93eba5b7b6934a063c0ec54aac15be0993f6b"
+        },
+        {
+          "targetKind": "task-lifecycle",
+          "targetKey": "M001/S04/T01",
+          "contentHash": "sha256:d08a93fd6b44cf0414da57c506816a6cbe17059614a401abf0bbf33282c1389f"
+        },
+        {
+          "targetKind": "task-lifecycle",
+          "targetKey": "M001/S05/T01",
+          "contentHash": "sha256:aabf9ff017d45c52c2c630fe53d7477f7ab868191d8da152cf5cb1f35dfeb65b"
+        },
+        {
+          "targetKind": "task-lifecycle",
+          "targetKey": "M001/S06/T01",
+          "contentHash": "sha256:0022d767ae1be3e9a759b3dd46ff1caadfd485f21fdb52b79d9dd001b389724b"
+        },
+        {
+          "targetKind": "task-lifecycle",
+          "targetKey": "M001/S07/T01",
+          "contentHash": "sha256:93dda1298716fba831e99783dc2e98fb412974f68657ded3a7077f61e20bfd9d"
+        },
+        {
+          "targetKind": "slice-quality-gate",
+          "targetKey": "M001/S01",
+          "contentHash": "sha256:d0fe558c55e6d6cbfce5511e1590b00851618a9929cf994dfd0b2c721a1b00ef"
+        },
+        {
+          "targetKind": "slice-quality-gate",
+          "targetKey": "M001/S02",
+          "contentHash": "sha256:117f9039ee7fc33c50741aea6ab2fc64841d2a632a1b75a55d9330c70317ab67"
+        },
+        {
+          "targetKind": "slice-quality-gate",
+          "targetKey": "M001/S03",
+          "contentHash": "sha256:573e66358c74cdec715dc9c879122d1ee7e220510885300054f9396af51e98ef"
+        },
+        {
+          "targetKind": "slice-quality-gate",
+          "targetKey": "M001/S04",
+          "contentHash": "sha256:468f9b2d5f25950b78d8b89be0a0ead8054cdbc465498d13b9e00aa97270953f"
+        },
+        {
+          "targetKind": "slice-quality-gate",
+          "targetKey": "M001/S05",
+          "contentHash": "sha256:1964719c6c0f362b77069d6bf2f759f548bef12617356a4c5516370dea8e928e"
+        },
+        {
+          "targetKind": "slice-quality-gate",
+          "targetKey": "M001/S06",
+          "contentHash": "sha256:c80a5dd7499411b71b60d1d644365128e854d0fb2d1a8f5b6fe5bd7457685158"
+        },
+        {
+          "targetKind": "slice-quality-gate",
+          "targetKey": "M001/S07",
+          "contentHash": "sha256:dac0e635ae4899bb7d1f79eeb236268751254e92554716ead39d86dd3e48cfa1"
+        }
+      ]
+    }
+  },
+  "legacyArchive": {
+    "archived": true,
+    "path": "migration/legacy/planning",
+    "manifestPath": "migration/legacy/manifest.json",
+    "strategy": "full-source-copy"
+  },
+  "verification": {
+    "markdown": {
+      "milestones": 1,
+      "slices": 7,
+      "tasks": 7
+    },
+    "db": {
+      "milestones": 1,
+      "slices": 7,
+      "tasks": 7
+    },
+    "dbReadiness": {
+      "phase": "validating-milestone",
+      "registry": 1
+    },
+    "rendered": 0,
+    "skipped": 0,
+    "errors": [],
+    "importedTargets": [
+      {
+        "sourceId": "sha256:f48bdaea0cf8186d40d5173b43f79dbe3bdf3cb6913dd8a54958744cee66f397",
+        "logicalPath": "DECISIONS.md",
+        "sha256": "sha256:5789862a38133eb9cf7d1b2df5573162d0588e846976f60e8fc748685d136c78"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/M001-CONTEXT.md",
+        "logicalPath": "milestones/M001/M001-CONTEXT.md",
+        "sha256": "sha256:59b54425268a2a91046e8d7d32c7723b422ebaa486c5066d4aea04a0b8757624"
+      },
+      {
+        "sourceId": "sha256:cc86a4ad330991b160b945c5281e0a5b56183c17ebdf8a67aaf3b23ad413a9d9",
+        "logicalPath": "milestones/M001/M001-ROADMAP.md",
+        "sha256": "sha256:abfde72392d87969c435c68fd58453d62dec54b59c740e5be1b0ed2c17e87b27"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/M001-SUMMARY.md",
+        "logicalPath": "milestones/M001/M001-SUMMARY.md",
+        "sha256": "sha256:f126ce556f5f5e69c399a440a89ad9173aae471cfb604107b2a652970231961b"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/M001-VALIDATION.md",
+        "logicalPath": "milestones/M001/M001-VALIDATION.md",
+        "sha256": "sha256:8be3ffb1f5b2fddcf1addbf5febfaa7c369eb8aec475c3947eabdfcb4d48d4ba"
+      },
+      {
+        "sourceId": "sha256:b9d474a00cffc660f92ce522f65a76bd287cf6e932e8acd20ce3c185bffde820",
+        "logicalPath": "milestones/M001/slices/S01/S01-PLAN.md",
+        "sha256": "sha256:60b618d29878d463c54c4c5b69dabe5d5ce35398e614b05df923d3d2a3867f88"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S01/S01-RESEARCH.md",
+        "logicalPath": "milestones/M001/slices/S01/S01-RESEARCH.md",
+        "sha256": "sha256:407d8539c182105d9b9aa0fb561a8b5c0e7e0241d9be3ca3ef2e2a73b23f14a2"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S01/S01-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S01/S01-SUMMARY.md",
+        "sha256": "sha256:fc51e3ad985b20290cb63f151c9d34348d7f03780b4801549c2f8f14a004d75c"
+      },
+      {
+        "sourceId": "sha256:a136d82e6f078556c66f24d1e4738100def284db46aba4d28054500843f8a450",
+        "logicalPath": "milestones/M001/slices/S01/tasks/T01-PLAN.md",
+        "sha256": "sha256:c8baee49947f564fdacec9ffbcedf8ac4eee3349a8f8383e958e0a138a9e3b29"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S01/tasks/T01-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S01/tasks/T01-SUMMARY.md",
+        "sha256": "sha256:8d5bb8cfc958a5e64818546efe6821179636ea016e331f5ca6bc76fa659c58eb"
+      },
+      {
+        "sourceId": "sha256:be23dc83f0efe76cb1c3d6e4b9411b703bb84d1670ac4697d385da58ac3b2424",
+        "logicalPath": "milestones/M001/slices/S02/S02-PLAN.md",
+        "sha256": "sha256:e5b353afdaf272de0f908ee6f3d63d3332640e39a9a4a3508aa220865b5767c5"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S02/S02-RESEARCH.md",
+        "logicalPath": "milestones/M001/slices/S02/S02-RESEARCH.md",
+        "sha256": "sha256:94163e381d73562209980936edbb1ac425fd6478e762ca1e8f6bacfad6a3a984"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S02/S02-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S02/S02-SUMMARY.md",
+        "sha256": "sha256:4e67a9747112a69dc99b9d2d401b9072de1a0a3bde2ace7d8d318e6666c30878"
+      },
+      {
+        "sourceId": "sha256:4b84404635c065ac0f8e3f4aff1c7541d0cd7abe661010874cb24935207cf780",
+        "logicalPath": "milestones/M001/slices/S02/tasks/T01-PLAN.md",
+        "sha256": "sha256:1b95f84cfc387c1e0c7ff4a58317c58f16df673a1579348548a69a9ddcb565ea"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S02/tasks/T01-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S02/tasks/T01-SUMMARY.md",
+        "sha256": "sha256:765ac3343326b657ca0a87ec4daafec853b4f792f9897d9842e1a2b1f86954bd"
+      },
+      {
+        "sourceId": "sha256:2784b1c9e997f89b76a032d886a92f301b912fbc60394d3ece1f838a9638f226",
+        "logicalPath": "milestones/M001/slices/S03/S03-PLAN.md",
+        "sha256": "sha256:f3bcc820b56920444863b84ebd583b4a551ce7b9b74a69a406213e0d70a41af6"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S03/S03-RESEARCH.md",
+        "logicalPath": "milestones/M001/slices/S03/S03-RESEARCH.md",
+        "sha256": "sha256:61966eada17868b571e49d48664f9acc63b2915af0f4c345be9d911605b14c99"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S03/S03-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S03/S03-SUMMARY.md",
+        "sha256": "sha256:5849b5fd94e16529939358caedc4c56b8aee4a8378ae8d22c28429387c93165b"
+      },
+      {
+        "sourceId": "sha256:cc4e8e01a0ee382efa3f010a3d7f88983d5348dd277b7479e98887e2bd010ec3",
+        "logicalPath": "milestones/M001/slices/S03/tasks/T01-PLAN.md",
+        "sha256": "sha256:c568c53275778b0cff9bcdf8256cf0a7cfc3717205e623c7257ea20acc14e788"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S03/tasks/T01-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S03/tasks/T01-SUMMARY.md",
+        "sha256": "sha256:21e0c4be71382b61bc3040e14f56531b87654ce00f942a0800d9bafe10da2910"
+      },
+      {
+        "sourceId": "sha256:486243b0326d5de1cc33fae9122e0c1211e442b456365e984a59b203ec65ce67",
+        "logicalPath": "milestones/M001/slices/S04/S04-PLAN.md",
+        "sha256": "sha256:4202810aae43b7abaf39f06eeb33ffeb4bbd2e50e0123ce4a869457016fd03d0"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S04/S04-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S04/S04-SUMMARY.md",
+        "sha256": "sha256:269c3f3110ccc354562dfdae309ef8f63f26f81e0a21697dfadfddf1982a4c6f"
+      },
+      {
+        "sourceId": "sha256:83980e7da89bb597b899aecd7be70c7e45393eaf65f6ff5a39e3b94b0ac064f2",
+        "logicalPath": "milestones/M001/slices/S04/tasks/T01-PLAN.md",
+        "sha256": "sha256:de444301debc724c9d3ce5dca8c4b90d77f900a356c42f2071217868c5cf6bf2"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S04/tasks/T01-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S04/tasks/T01-SUMMARY.md",
+        "sha256": "sha256:c7aab68cc28ac931f88cb82e982e62b92ffdc08b4e7c94129918bbd969250eea"
+      },
+      {
+        "sourceId": "sha256:680a1b9fca0dea14805c10a05c0fabdde6fb4ed14c6e163b6dbd9efa38482cb9",
+        "logicalPath": "milestones/M001/slices/S05/S05-PLAN.md",
+        "sha256": "sha256:9b0195d6eb98c37a77a554999747092458d6afa14072205fe48ec9b72d81e1c3"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S05/S05-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S05/S05-SUMMARY.md",
+        "sha256": "sha256:2ea4a61b97e639c7f671bbf42e938f18ab4cd5ceb3db427b1732df2dec1f669b"
+      },
+      {
+        "sourceId": "sha256:39eeee3732d0aaa129c40351aa362e484cf586985325de336bcb1f0b71ef3a38",
+        "logicalPath": "milestones/M001/slices/S05/tasks/T01-PLAN.md",
+        "sha256": "sha256:6903b64d052999bd9514442bea4061cb518c1aa0f0a468b3e522acbe6d4817fb"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S05/tasks/T01-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S05/tasks/T01-SUMMARY.md",
+        "sha256": "sha256:b2f6a9de058a7d83d1c1440e8664d060ddb6a437f7407c08aa417d719ee93ce7"
+      },
+      {
+        "sourceId": "sha256:091f607aa7ac1f56264eb3c5f9656f76079fe18a2ea0336588f4d262f3192cb5",
+        "logicalPath": "milestones/M001/slices/S06/S06-PLAN.md",
+        "sha256": "sha256:ef57121f10b38e39a0661d84271bae9b5307db32a1922b466fa53356cbeebeea"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S06/S06-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S06/S06-SUMMARY.md",
+        "sha256": "sha256:348836dfc2835ddb73f11fe7e1ad23323154af61929f6dae0342665f6442b61f"
+      },
+      {
+        "sourceId": "sha256:4881f33b22207cf052ff8b5363042368b08014b034af514ba5eecfa0faa5d1c2",
+        "logicalPath": "milestones/M001/slices/S06/tasks/T01-PLAN.md",
+        "sha256": "sha256:dba4c32c32cfaabb6df4e9a72140b59f49d87be083b9a1edcfc2ccb7ac611488"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S06/tasks/T01-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S06/tasks/T01-SUMMARY.md",
+        "sha256": "sha256:145e8ce2ad6c8b86542e77ea41939c77e265e783dff78ae876587d9aa3a1d5b9"
+      },
+      {
+        "sourceId": "sha256:2a32cccd53f06ffd7b420cb040d8170ec1671dad7bff63fbf665ca8735750002",
+        "logicalPath": "milestones/M001/slices/S07/S07-PLAN.md",
+        "sha256": "sha256:d6468f51dc73f4ae79acc602759ab0eff369ade777bea554afb8ceb10e93908b"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S07/S07-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S07/S07-SUMMARY.md",
+        "sha256": "sha256:6bb0f47b95b5a7ac270f0b2d46fb9035d66686bc2672dbd075144a1602a11cfd"
+      },
+      {
+        "sourceId": "sha256:1f5edf4a0d41c646b8f8698022bc426ddd25015562c4c891298ad40477d98e61",
+        "logicalPath": "milestones/M001/slices/S07/tasks/T01-PLAN.md",
+        "sha256": "sha256:4be71d00684afca00d0156022d1e2bd598a175561bf59fc2f05d62385779e6a5"
+      },
+      {
+        "sourceId": "migration-artifact:milestones/M001/slices/S07/tasks/T01-SUMMARY.md",
+        "logicalPath": "milestones/M001/slices/S07/tasks/T01-SUMMARY.md",
+        "sha256": "sha256:65eddb2d3099fe3cde9fbe0259c86f81d8f88ce685bd08017cfdd783a5afb107"
+      },
+      {
+        "sourceId": "migration-artifact:PROJECT.md",
+        "logicalPath": "PROJECT.md",
+        "sha256": "sha256:29b05ea94fe71df49cb4db132c181d061c1f5b6565012cc73848336ccb71b5c9"
+      },
+      {
+        "sourceId": "sha256:be4e306d9193d598f709cda73058ced59a95109ed961dc5b9f0afa8ba81823d8",
+        "logicalPath": "REQUIREMENTS.md",
+        "sha256": "sha256:786d832ed3113566855d90cd3bce675c0ffccb6b5274eb48582639c7e769a8bf"
+      },
+      {
+        "sourceId": "migration-artifact:STATE.md",
+        "logicalPath": "STATE.md",
+        "sha256": "sha256:568e40fe8b83cda11bebfbf8e8ba2256c95176489d46eee041f3ec71db546521"
+      }
+    ],
+    "applicationOperationId": "8a4cc73b-0f33-452d-b3b4-98acd6af68f3",
+    "forwardRepairOperationId": null
+  }
+}
