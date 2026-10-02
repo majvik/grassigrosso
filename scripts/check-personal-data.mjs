@@ -348,6 +348,30 @@ if (failures.length === 0) {
     })
     await contacts.cdp.send('Page.reload', { ignoreCache: true })
     await delay(1200)
+    const contactInfo = await contacts.cdp.evaluate(`(() => {
+      const info = document.querySelector('#contact-form .contact-info')
+      if (!info) return { ok: false }
+      const kids = [...info.children].map((el) => el.className.split(/\\s+/)[0])
+      const item = info.querySelector('.contact-info-item')
+      const divider = info.querySelector('.contact-info-divider')
+      const space = item && divider
+        ? Math.round(divider.getBoundingClientRect().top - item.getBoundingClientRect().bottom)
+        : 0
+      return { ok: true, kids, space }
+    })()`)
+    check(contactInfo.ok, 'contact info is present')
+    check(
+      JSON.stringify(contactInfo.kids) ===
+        JSON.stringify([
+          'contact-info-item',
+          'contact-info-divider',
+          'contact-info-item',
+          'contact-info-divider',
+          'contact-info-item',
+        ]),
+      'contact info items and dividers are flex siblings',
+    )
+    check(contactInfo.space >= 32, 'contact divider is spaced from the item')
     const placeholder = await contacts.cdp.evaluate(`(() => {
       const frame = document.querySelector('[data-map-frame]:not([hidden])')
       const picture = frame?.querySelector('picture')
@@ -355,13 +379,20 @@ if (failures.length === 0) {
       const accept = frame?.querySelector('[data-map-consent-accept]')
       const style = accept ? getComputedStyle(accept) : null
       const textStyle = frame?.querySelector('.contacts-map-consent-copy')
-      const align = textStyle ? getComputedStyle(textStyle).textAlign : ''
+      const copyStyle = textStyle ? getComputedStyle(textStyle) : null
+      const frameRect = frame?.getBoundingClientRect()
+      const copyRect = textStyle?.getBoundingClientRect()
+      const centerDelta = frameRect && copyRect
+        ? Math.abs((copyRect.left + copyRect.right) / 2 - (frameRect.left + frameRect.right) / 2)
+        : 99
       return {
         sources: picture ? [...picture.querySelectorAll('source')].map((node) => node.type + ' ' + node.srcset) : [],
-        buttons: frame?.querySelectorAll('button').length || 0,
+        acceptTag: accept?.tagName || '',
+        acceptClass: accept?.className || '',
         detailsInside: paragraph?.querySelector('a')?.getAttribute('href') || '',
-        acceptBlock: style?.display || '',
-        align,
+        acceptDisplay: style?.display || '',
+        align: copyStyle?.textAlign || '',
+        copyCentered: centerDelta < 8,
         key: frame?.getAttribute('data-map-placeholder') || '',
         remote: [...document.querySelectorAll('iframe, script')].some((node) => /api-maps|yandex/.test(node.src || '')),
       }
@@ -370,10 +401,10 @@ if (failures.length === 0) {
     check(placeholder.sources.some((item) => item.includes('image/avif') && item.includes('@2x.avif')), 'avif srcset')
     check(placeholder.sources.some((item) => item.includes('image/webp')), 'webp srcset')
     check(placeholder.sources.some((item) => item.includes('image/png')), 'png srcset')
-    check(placeholder.buttons === 0, 'placeholder has no buttons')
+    check(placeholder.acceptTag === 'BUTTON' && String(placeholder.acceptClass).includes('btn-contact'), 'map accept uses contact button')
     check(placeholder.detailsInside === '/cookies#yandex-maps', 'details link inside the paragraph')
-    check(placeholder.acceptBlock === 'block', 'accept link is on its own line')
-    check(placeholder.align === 'center', 'consent copy is centered')
+    check(placeholder.acceptDisplay.includes('flex'), 'accept button is compact')
+    check(placeholder.align === 'center' && placeholder.copyCentered, 'consent copy is centered')
     check(placeholder.remote === false, 'maps sdk is not requested before consent')
     const clicked = await contacts.cdp.evaluate(`(() => {
       const link = document.querySelector('[data-map-consent-accept]')
@@ -388,11 +419,26 @@ if (failures.length === 0) {
     await delay(400)
     const afterAccept = await contacts.cdp.evaluate(`(() => {
       const raw = JSON.parse(localStorage.getItem('grassigrosso-cookie-consent-v1'))
-      return { analytics: raw.choices.analytics.status, maps: raw.choices.yandexMaps.status, pins: document.querySelectorAll('.test-office-pin').length, marks: window.__placemarks.length }
+      const frame = document.querySelector('[data-map-frame]:not([hidden])')
+      const canvas = frame?.querySelector('[data-map-canvas]')
+      const frameStyle = frame ? getComputedStyle(frame) : null
+      return {
+        analytics: raw.choices.analytics.status,
+        maps: raw.choices.yandexMaps.status,
+        pins: document.querySelectorAll('.test-office-pin').length,
+        marks: window.__placemarks.length,
+        overflow: frameStyle?.overflow || '',
+        radius: frameStyle?.borderRadius || '',
+        hasCanvas: Boolean(canvas),
+      }
     })()`)
     check(afterAccept.analytics === 'unset', 'map accept does not grant analytics')
     check(afterAccept.maps === 'granted', 'map accept grants maps')
     check(afterAccept.marks >= 1 && afterAccept.pins >= 1, 'accepted office renders one placemark')
+    check(
+      afterAccept.hasCanvas && afterAccept.overflow === 'hidden' && afterAccept.radius.includes('24px'),
+      'accepted map keeps rounded clip',
+    )
     }
   } finally {
     await contacts.close()

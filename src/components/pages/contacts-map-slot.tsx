@@ -57,9 +57,9 @@ export function OfficeMapSlot({ slug, active }: { slug: OfficeSlug; active: bool
               {MAP_CONSENT_TEXT}
               <a href="/cookies#yandex-maps">Подробнее</a>
             </p>
-            <a href={`#map-${slug}`} data-map-consent-accept>
+            <button type="button" className="btn-contact" data-map-consent-accept>
               Принять и отобразить карту
-            </a>
+            </button>
           </div>
         </>
       )}

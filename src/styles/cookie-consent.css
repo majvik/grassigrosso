@@ -180,8 +180,7 @@
 .cookie-banner a:focus-visible,
 .cookie-banner .modal-close:focus-visible,
 .cookie-banner .btn-contact:focus-visible,
-.cookie-banner .form-checkbox input:focus-visible + label .checkbox-custom,
-.contacts-map-consent-copy a:focus-visible {
+.cookie-banner .form-checkbox input:focus-visible + label .checkbox-custom {
   outline: 2px solid var(--color-accent-soft);
   outline-offset: 3px;
 }
@@ -252,7 +251,7 @@
   width: 100%;
   aspect-ratio: 1280 / 549;
   border-radius: 24px;
-  overflow: visible;
+  overflow: hidden;
   background: var(--color-partner-cell, #e7e4dc);
 }
 
@@ -272,39 +271,67 @@
 .contacts-map-frame [data-map-canvas] {
   position: absolute;
   inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
 }
 
 .contacts-map-consent-copy {
   grid-area: 1 / 1;
+  place-self: center;
   position: relative;
-  align-self: start;
-  justify-self: center;
-  margin-top: clamp(24px, 8%, 64px);
-  width: min(720px, calc(100% - 32px));
-  text-align: center;
-  color: #1c1c1c;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 12px rgba(255, 255, 255, 0.9);
   z-index: 2;
-}
-
-.contacts-map-consent-copy p,
-.contacts-map-consent-copy a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: min(560px, calc(100% - 32px));
+  margin: 0;
+  box-sizing: border-box;
   text-align: center;
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  font-weight: 400;
+  line-height: 1.4;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 12px rgba(255, 255, 255, 0.9);
 }
 
 .contacts-map-consent-copy p {
   margin: 0;
+  width: 100%;
+  text-align: center;
 }
 
-.contacts-map-consent-copy a[data-map-consent-accept] {
-  display: block;
-  margin-top: 12px;
+.contacts-map-consent-copy p a {
   color: inherit;
   text-decoration: underline;
 }
 
+.contacts-map-consent-copy .btn-contact[data-map-consent-accept] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  text-shadow: none;
+}
+
+.contacts-map-consent-copy a:focus-visible,
+.contacts-map-consent-copy .btn-contact:focus-visible {
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 3px;
+}
+
 @media (max-width: 599px) {
   .contacts-map-consent-copy {
-    width: min(720px, calc(100% - 32px));
+    width: min(560px, calc(100% - 32px));
+  }
+
+  .contacts-map-consent-copy .btn-contact[data-map-consent-accept] {
+    width: 100%;
+    min-height: 48px;
   }
 }

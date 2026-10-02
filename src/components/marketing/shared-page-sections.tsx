@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { Fragment, type ReactNode } from 'react'
 
 interface ContactInfoItemData {
   href?: string
@@ -151,7 +151,7 @@ export function ContactSection({
         </div>
         <div className="contact-info">
           {contactInfoItems.map((item, index) => (
-            <div key={`${item.title}-${index}`}>
+            <Fragment key={`${item.title}-${index}`}>
               <div className="contact-info-item">
                 <div className="contact-info-icon">
                   <img src={item.iconSrc} alt="" />
@@ -165,7 +165,7 @@ export function ContactSection({
                 </div>
               </div>
               {index < contactInfoItems.length - 1 ? <div className="contact-info-divider" /> : null}
-            </div>
+            </Fragment>
           ))}
         </div>
       </div>
