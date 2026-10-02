@@ -37,7 +37,8 @@ The design extends existing boundaries rather than introducing a second applicat
 5. `POST /api/submit` persists an accepted lead synchronously in `lib/db.cjs`, then returns `202` before asynchronous email/Telegram delivery. This persistence boundary, not eventual message delivery, is the primary conversion.
 6. Strapi currently defaults to SQLite, although `strapi-catalog/config/database.js` already supports PostgreSQL.
 7. Production startup currently can replace the runtime Strapi database when the committed seed manifest changes. That model is incompatible with autonomous production editing: an experiment created in Admin could be overwritten by a later deployment.
-8. Nginx currently serves production HTML as static files before Node. A reliable no-flicker experiment therefore requires a narrow change to document delivery; an asynchronous DOM replacement after first paint would contaminate variant B with a visible control experience.
+8. The default local upload provider writes to `strapi-catalog/public/uploads`, which is copied into the image but is not on the current `/app/data` persistent volume. Production Admin uploads can therefore disappear on rebuild. Self-service image experiments require persistent media storage before launch.
+9. Nginx currently serves production HTML as static files before Node. A reliable no-flicker experiment therefore requires a narrow change to document delivery; an asynchronous DOM replacement after first paint would contaminate variant B with a visible control experience.
 
 ## 3. Approaches considered
 
@@ -95,7 +96,7 @@ ANALYSIS      Logs API extractor + local journal
                     immutable result record
 ```
 
-Ambrosia is never imported by Vite, Node or Strapi runtime. It runs in a pinned Python environment as an on-demand/scheduled analysis job.
+Ambrosia is never imported by Vite, Node or Strapi request handling. For the first single-host deployment, an isolated Python worker process in the same self-hosted application image shares only the required persistent data paths, polls authenticated analysis jobs from Strapi, runs the Logs/Ambrosia pipeline and writes normalized results back. Its failure cannot stop Node or Strapi. The process can move to a separate container later without changing the job/result contract. The same package exposes a manual CLI for recovery and local verification.
 
 ## 5. Stable domain contracts
 
@@ -110,8 +111,11 @@ Editable planning data in Strapi:
 - audience and page scope;
 - registered `slot_key`;
 - primary, secondary and guardrail metric keys;
-- alpha, beta, MDE, alternative and intended allocation;
+- alpha, beta, MDE, minimum practical effect, alternative and intended allocation;
+- the MDE unit (`relative_lift` for the v1 binary metric) and the exact Ambrosia method/interval configuration;
 - conversion window;
+- minimum and maximum enrollment duration;
+- predeclared absolute delivery/analytics coverage gates;
 - planned sample size per group;
 - owner and audit metadata.
 
@@ -123,12 +127,13 @@ An immutable launch artifact containing:
 
 - `experiment_key`;
 - monotonically increasing `revision` and `allocation_version`;
-- salt and assignment algorithm version;
+- assignment algorithm and canonicalization versions;
+- assignment and token-signing key IDs;
 - exact variant weights in basis points;
 - frozen A and B payloads, including the control value resolved at launch;
 - frozen media URLs and alt text;
 - complete statistical plan;
-- `definition_hash` (SHA-256 of canonical JSON);
+- `definition_hash` (SHA-256 over the RFC 8785/JCS canonical representation of the frozen revision, excluding the hash field itself);
 - launch timestamp and operator.
 
 Control is snapshotted rather than read live. Editing ordinary page content during a running test therefore cannot silently change only group A.
@@ -163,10 +168,11 @@ Use Community-edition content types and a local Strapi admin extension. Do not d
 - `experiment`: editable definition and current public state;
 - `experiment-revision`: immutable launch snapshots;
 - `experiment-result`: immutable analysis output and decision;
+- `experiment-analysis-job`: retryable `design` or `final` jobs claimed by the Python worker;
 - `experiment-audit-event`: append-only actor/action/time/detail history;
 - repeatable variant components restricted to A and B for v1.
 
-The content manager edits the experiment through Strapi. A small Admin extension adds Russian actions for preview, validate, launch, emergency stop and archive. It is an extension of the existing Admin build, not a second frontend application.
+The content manager edits the experiment through Strapi. A small Admin extension adds Russian actions for preview, calculate design, validate, launch, emergency stop and archive. It is an extension of the existing Admin build, not a second frontend application. `Calculate design` creates an authenticated worker job and displays its success/failure; the manager does not run Python manually. Jobs carry an idempotency key, frozen input hash, attempt count and expiring claim lease, so retries cannot create conflicting design/result records.
 
 ### 6.2 State machine
 
@@ -186,14 +192,27 @@ Rules:
 - changing content, weights, metric plan or audience requires a new revision;
 - a stopped revision cannot be resumed; restart means a new revision;
 - emergency stop immediately serves control and closes enrollment;
+- launch/stop commands are atomic and idempotent; retries cannot create a second revision or contradictory audit events;
+- launched revisions, results and audit events cannot be edited or deleted through REST, Content Manager, custom controllers or Document Service; archival changes visibility, not evidence;
+- an experiment definition with any launched revision cannot be deleted; it can only be archived;
 - v1 permits one running confirmatory experiment per page; the data model retains an `exclusion_scope` field for future safe concurrency;
 - launch is refused when control/variant payloads fail the slot schema, when A and B are not exactly 5,000 basis points each, or when the Ambrosia design fields are incomplete. Unequal allocation is a future protocol change, not a v1 setting.
+
+Runtime semantics are explicit: `running` accepts new subjects and preserves prior assignments; `enrollment_closed` accepts no new subjects but continues serving an already assigned subject until that subject's conversion window ends; `analyzing`, `completed`, `stopped` and `archived` serve control. Closing enrollment never truncates the observation window of the last enrolled subject.
+
+Preview uses a clean redirect flow: the Admin action opens a short-lived same-origin activation URL; Node validates the one-time token, sets a 15-minute `HttpOnly; Secure; SameSite=Strict` preview cookie and redirects to the ordinary page URL. Preview responses suppress experiment journaling and Metrica parameters, and the token does not remain in the address bar or referrer.
 
 ### 6.3 Runtime source of truth
 
 Production Strapi becomes operational source of truth. Seed application is bootstrap-only for an empty database; it must not overwrite a non-empty runtime database automatically. Before this switch, take and verify a backup of the current production database.
 
+This is an intentional cutover from the current “edit locally, deploy the whole seed database” workflow: after cutover, `strapi:sync-seed` remains useful for bootstrap/dev fixtures but is not a production content deployment mechanism. Production edits are moved between environments only through a reviewed export/import or migration process, never by copying a whole SQLite file over live operational data.
+
 SQLite is acceptable for the first low-write experimentation milestone on a persistent single-instance volume. PostgreSQL is required before multi-instance Strapi or the commerce milestone, but the commerce database remains separate from Strapi in all cases.
+
+Production media also becomes operational data. `/app/data/strapi/uploads` is the canonical persistent directory (or a later self-hosted S3-compatible provider). In the current local-provider topology, startup migrates image-bundled files into that directory and mounts/symlinks it at `strapi-catalog/public/uploads`; the disk-first `/uploads/*` handler is configured to resolve the same canonical root. The migration is idempotent and never overwrites a different newer file. Backups and restore drills cover the Strapi database and uploads as one recoverable set.
+
+The runtime revision feed is an authenticated internal endpoint. Its persisted last-known-good snapshot contains the revision hash, generation time and a maximum five-minute lease for new enrollment. Node refreshes it in the background; after lease expiry it must serve control rather than experiment traffic or enroll from an indefinitely stale revision.
 
 ## 7. Slot and variant model
 
@@ -219,7 +238,7 @@ Variant payloads use a tagged envelope:
 }
 ```
 
-Image values contain only a same-origin Strapi upload URL and alt text. Raw HTML, URLs outside the configured media origin, scriptable SVG, styling, event handlers and layout properties are rejected.
+Image values contain only a same-origin Strapi raster upload and alt text. Validation checks decoded file signatures as well as MIME/extension and applies slot-specific byte/dimension limits. Raw HTML, URLs outside the configured media origin, SVG, styling, event handlers and layout properties are rejected. At launch, both image variants are copied to a content-addressed immutable experiment-media path and their SHA-256 hashes are stored in the revision. Deleting or replacing an ordinary Media Library item therefore cannot alter a running or historical revision.
 
 The overlay order is fixed:
 
@@ -233,10 +252,12 @@ The experiment overlay is reapplied after any later CMS hydrate so normal conten
 
 ### 8.1 Eligibility and identity
 
-- The existing analytics choice is mirrored into a minimal server-readable first-party consent cookie when the user changes it.
+- When the user changes analytics consent, the browser posts the versioned choice to a same-origin consent endpoint. Node validates `Origin`, records no experiment identity for denial, and sets or clears a signed `HttpOnly; Secure; SameSite=Lax` server mirror containing the analytics-consent version and policy version. A client-writable value can never grant eligibility.
+- Revocation is fail-closed: before the network request, the browser sets a same-origin `analytics_opt_out=1` tombstone and stops Metrica. Node honors that tombstone over any older signed grant. A successful new grant replaces the signed mirror and clears the tombstone; a failed revocation request can therefore disable experimentation but cannot accidentally keep it enabled on the next navigation.
 - A visitor becomes experiment-eligible only on a document request where analytics consent was already granted. Granting consent on the current page takes effect on the next navigation/reload, avoiding a mid-page control-to-variant switch.
-- Only an eligible visitor receives a random opaque first-party experiment subject cookie.
+- Only an eligible visitor receives a random opaque, signed `HttpOnly; Secure; SameSite=Lax` first-party experiment subject cookie.
 - Unset or denied analytics consent always receives control and is excluded from assignment and analysis.
+- A version mismatch, invalid signature or consent withdrawal clears the experiment subject/preview cookies and prevents new assignment, exposure, identity-link and Metrica events. Already collected records follow the declared retention/deletion policy and are never silently relabeled.
 - The consent/identifier design and retention wording require a legal/privacy review before production activation.
 
 ### 8.2 Assignment algorithm
@@ -256,17 +277,19 @@ The bucket is mapped to the frozen basis-point ranges. The same inputs always re
 
 Golden test vectors lock the algorithm so refactors cannot change historical allocation.
 
+Secrets are key rings, not single mutable values. Every revision records `assignment_key_id`; every token records `signing_key_id`; every Yandex identity-link row records `analytics_link_key_id`. A key cannot be removed until all revisions, tokens or retained link rows using it are beyond their observation/retention window. The token expiry is fixed to `assigned_at + conversion_window`; reissuing a bootstrap for the same assignment preserves that original expiry and can never slide the window forward. A token is accepted only while its consent mirror remains valid and when its revision and subject hash match the current signed subject cookie and stored assignment.
+
 ### 8.3 No-flicker document path
 
 Nginx continues serving versioned assets and uploads directly, but extensionless HTML/document routes are proxied to Node. Node reads the built HTML, resolves the active cached revision, performs assignment and injects a small escaped JSON bootstrap before the module entrypoint.
 
-React reads the bootstrap synchronously before its first render and applies the experiment overlay to the fallback content. This avoids showing A before B. HTML remains `Cache-Control: no-cache`; assets retain current long-lived caching.
+React reads the bootstrap synchronously before its first render and applies the experiment overlay to the fallback content. This avoids showing A before B. Bootstrap serialization escapes `<`, `>`, `&`, U+2028, U+2029 and closing-script sequences before insertion. HTML remains `Cache-Control: no-cache`; assets retain current long-lived caching.
 
 If the experiment store or revision is unavailable/invalid before response generation, Node serves control without an assignment. It never chooses a random fallback variant.
 
 ### 8.4 Assignment and exposure semantics
 
-- The server journals the assignment at document delivery; this is the intent-to-treat cohort used for the primary analysis.
+- The server journals the assignment at document delivery; this is the intent-to-treat cohort used for the primary analysis. After the full observation window, lack of an attributed accepted lead is `lead_submitted = 0`, not a missing row.
 - The browser sends an idempotent exposure beacon after the registered React slot commits. Exposure is a delivery-quality diagnostic, not a post-randomization filter for the primary result.
 - The signed token accompanies `POST /api/submit`. A valid token creates a `lead_experiment_attribution` row in the existing leads database in the same transaction as lead persistence. The analysis adapter turns that row into the authoritative `lead_submitted` observation.
 - Missing, expired or invalid experiment metadata never blocks a real lead; the lead is accepted without experimental attribution and a security/quality event is logged.
@@ -284,7 +307,7 @@ It also sends goals for secondary behavioral actions and a client confirmation o
 
 No PII, raw experiment subject ID, lead ID, email, phone or account ID is sent to Metrica.
 
-After Metrica initializes, the browser obtains its `clientID` and sends it with the signed assignment token to a same-origin linking endpoint. Node immediately transforms it with a separate HMAC analytics-link secret and stores only the resulting hash next to the local subject hash. The Logs pipeline applies the same HMAC to `ym:pv:clientID` / `ym:s:clientID` before joining and does not retain the raw identifier. This bridge lets secondary Metrica behavior and the authoritative local lead outcome become one visitor-level row without disclosing the local experiment identifier to Yandex.
+After Metrica initializes, the browser obtains its decimal-string `clientID` and sends it with the signed assignment token to a same-origin linking endpoint. Node accepts only canonical unsigned decimal form, immediately transforms `counter_id + ":" + clientID` with a separate HMAC analytics-link secret and stores only the resulting hash next to the local subject hash. Request/application logs redact this field. The Logs pipeline performs the same canonicalization/HMAC for `ym:pv:clientID` / `ym:s:clientID` before joining and does not retain the raw identifier. This bridge lets secondary Metrica behavior and the authoritative local lead outcome become one visitor-level row without disclosing the local experiment identifier to Yandex.
 
 The Logs API extractor:
 
@@ -302,7 +325,7 @@ Pin `ambrosia==0.5.3.post1` in an isolated Python package/container. Its public 
 
 ### 10.1 Before launch: `Designer`
 
-The first release includes a measurement-only calibration period before the first real A/B test. If usable historical visitor-to-lead data is unavailable, collect at least two complete business cycles with control-only instrumentation.
+The first release includes a measurement-only calibration period before the first real A/B test. If usable historical visitor-to-lead data is unavailable, enroll control-only measurement traffic for 14 complete days, then wait the seven-day conversion window plus the three-day Logs reconciliation window before design.
 
 For each proposed test, the analysis job uses historical unit-level data to calculate sample size or achievable MDE with:
 
@@ -311,15 +334,17 @@ For each proposed test, the analysis job uses historical unit-level data to calc
 - power: `0.80` (`beta = 0.20`);
 - alternative: two-sided;
 - equal group sizes for v1;
+- design method: `Designer(...).run(to_design='size', method='theory', stabilizing_method='asin')`;
+- MDE: relative lift multiplier recorded in the revision (for example `1.10` means a 10% relative lift), with the implied absolute percentage-point difference also persisted for operator clarity;
 - minimum conversion window: seven days after first assignment.
 
-The calculated per-group sample size is copied into the immutable revision. A test cannot launch without this design result. If expected duration is operationally unreasonable, the decision is to change the hypothesis/MDE or not run the test—not to substitute CTA clicks as the primary metric silently.
+For v1, the content owner explicitly records the smallest business-relevant effect; it normally equals the chosen MDE but remains a separate frozen field so statistical power and rollout policy are not conflated. The calculated per-group sample size and expected duration are copied into the immutable revision. A test cannot launch without this design result and a predeclared maximum enrollment deadline. If expected duration is operationally unreasonable, the decision is to change the hypothesis/MDE or not run the test—not to substitute CTA clicks as the primary metric silently.
 
 ### 10.2 During the test
 
 The system displays operational counts and SRM/data-loss diagnostics only. It does not display a provisional winner or permit significance-based early stopping. Variant content and traffic weights stay frozen.
 
-Enrollment closes after the planned sample size and minimum business-cycle requirement are both met. Final analysis waits for the seven-day conversion window and the three-day Logs API reconciliation window.
+Normal enrollment closes only after both the planned per-group sample and 14 complete calendar days are reached. A frozen hard deadline also closes enrollment so a low-traffic test cannot run forever; if the deadline arrives before planned sample, the final record is `inconclusive_underpowered` and cannot declare a winner. Final analysis starts only after the last enrolled subject's seven-day conversion window and the following three-day Logs API reconciliation window are complete.
 
 ### 10.3 Final dataset
 
@@ -349,28 +374,36 @@ Before effect estimation:
 - verify revision hash and date window;
 - deduplicate by randomization unit;
 - reject cross-variant units;
-- run Ambrosia SRM with expected ratios A=0.5/B=0.5 and `alpha=0.0005`;
+- run Ambrosia SRM over the complete assignment cohort, before any exposure/link filtering, with expected ratios A=0.5/B=0.5 and `alpha=0.0005`;
 - compare assignment-to-exposure and assignment-to-Metrica-link loss by variant; either absolute A/B loss-rate difference above 2 percentage points invalidates the run;
-- require the planned sample and completed observation window.
+- require at least 95% exposure coverage in each variant; falling below it means the tested UI was not delivered reliably and invalidates the run;
+- require at least 80% Metrica-link coverage in each variant to analyze Metrica-derived secondary metrics; symmetric lower coverage suppresses those secondary results but does not invalidate the authoritative local primary metric;
+- require a completed observation window; a predeclared hard deadline may produce the explicit underpowered outcome above instead of masquerading as a data-quality failure.
 
-The primary binary metric is analyzed using the method selected and recorded during design. Secondary metrics are one declared family and use Ambrosia's multiple-testing correction (Holm by platform convention). Results include group sizes, rates, absolute and relative effect, confidence interval, raw/adjusted p-values, MDE comparison and a decision of `winner`, `loser`, `inconclusive` or `invalid`.
+The confirmatory primary metric is a separate Ambrosia call: `Tester.run(method='binary', effect_type='absolute', interval_type='newcombe', alternative='two-sided', correction_method=None)`. It alone determines the experiment decision at alpha `0.05`. Relative lift is reported descriptively when the control rate is non-zero.
+
+All declared secondary binary metrics are passed as a separate family with `method='binary'`, `effect_type='absolute'`, `interval_type='newcombe'` and `correction_method='holm'`. Ambrosia's Holm path adjusts this family's p-values but leaves its confidence intervals at the nominal level, so the UI labels those intervals accordingly. Secondary results explain behavior but cannot overturn an inconclusive primary metric. Guardrails can invalidate or stop a test under predeclared safety rules, but cannot create a winner.
+
+Ambrosia's `Tester` emits an SRM warning rather than enforcing a stop. The adapter therefore calls `ambrosia.tools.srm.check_srm` explicitly, persists its structured result and aborts effect evaluation when `srm_detected` is true.
+
+Results keep two concepts separate. The statistical verdict is `positive`, `negative`, `no_evidence`, `underpowered` or `invalid`. A rollout recommendation can be `winner`, `loser` or `hold`: `winner` requires a valid positive primary result at alpha `0.05`, an observed effect meeting the frozen minimum practical effect and no failed guardrail; a significant positive result below that threshold is reported but remains `hold`. Nothing is promoted automatically—the responsible manager records the final business decision.
 
 An SRM failure, revision mixture, incomplete window or either loss-rate delta above the 2-percentage-point limit makes the run `invalid`; it cannot be promoted as a winner.
 
 ### 10.5 A/A gate
 
-Before the first content-changing experiment, run an A/A revision through the complete production pipeline. It must demonstrate stable 50/50 allocation, no SRM, no cross-variant units, symmetric assignment-to-exposure loss and no false content difference. This is a deployment gate, not an optional smoke test.
+Before the first content-changing experiment, run an A/A revision through the complete production pipeline. It must demonstrate identical immutable payload hashes, stable 50/50 allocation, no SRM, no cross-variant units, the absolute exposure/secondary coverage thresholds and both loss-rate deltas within the 2-percentage-point limits. The statistical result is recorded but `p > 0.05` is not itself an acceptance criterion: a valid A/A test has a 5% false-positive probability at alpha `0.05`. A significant A/A result triggers an instrumentation/randomization investigation and an independently scheduled repeat, never repeated sampling until a convenient result and never a declared winner. This is a deployment gate, not an optional smoke test.
 
 ## 11. Storage boundaries
 
 ### Current milestone
 
 - Strapi DB: definitions, immutable revisions, audit trail and summarized results;
-- dedicated local experiment SQLite DB: assignments, exposures, Metrica identity-link hashes and analysis-run bookkeeping;
+- dedicated persistent experiment SQLite DB (for example `/app/data/experiments/events.db`): assignments, exposures, Metrica identity-link hashes and analysis-run bookkeeping;
 - existing leads SQLite DB: lead and consent records plus `lead_experiment_attributions`, inserted transactionally when a valid token exists;
 - filesystem outside git: encrypted/restricted Logs API extracts and parquet analysis marts.
 
-Node accesses assignment/exposure storage through an `ExperimentEventStore` interface. The analysis input adapter reads both stores and emits one canonical observation table. SQLite uses WAL, idempotency keys and unique constraints. This is sufficient for current traffic and one process.
+Node accesses assignment/exposure storage through an `ExperimentEventStore` interface. The analysis input adapter reads both stores and emits one canonical observation table. SQLite uses WAL, idempotency keys and unique constraints. This is sufficient for current traffic and one process. The operational backup/restore procedure covers the Strapi DB/uploads, experiment DB, leads DB and worker checkpoints; each SQLite file is backed up through a consistent SQLite backup operation rather than a live filesystem copy.
 
 ### Future scale
 
@@ -378,21 +411,25 @@ Move the event-store adapter to PostgreSQL when traffic, multi-instance deployme
 
 Strapi never becomes the database for passwords, sessions, carts, orders, payments or refunds.
 
+Default retention is explicit: prepared Yandex files are deleted from the API after verified download; local raw downloads are deleted within 7 days after a verified mart is produced; subject-level experiment rows and marts are deleted 180 days after experiment completion; non-identifying aggregate results and revision hashes may be retained indefinitely. `lead_experiment_attributions` are also removed when their lead bundle is deleted, even if that is earlier. Legal review may shorten these maxima but may not extend collection silently.
+
 ## 12. Failure and rollback behavior
 
 | Failure | Required behavior |
 |---|---|
-| Strapi unavailable | Use validated last-known-good runtime revision snapshot; otherwise control/no enrollment |
+| Strapi unavailable | Use a validated last-known-good runtime revision snapshot only within its lease; otherwise control/no enrollment |
 | Revision payload invalid | Control/no enrollment; alert; never partial apply |
 | Experiment event DB unavailable before document response | Control/no enrollment |
 | Exposure beacon fails | Retry idempotently; assignment remains in intent-to-treat cohort; flag loss rate |
-| Metrica unavailable after prior consent | Local assignment and business flow continue; missing identity-link/exposure rates are surfaced by the quality gate |
+| Metrica unavailable after prior consent | Local assignment, same-origin exposure and business flow continue; missing identity-link/secondary coverage is surfaced by the quality gate |
 | Consent unset or denied | No Metrica calls, subject cookie or enrollment; control and normal business flow continue |
 | Invalid assignment token on form | Accept valid lead, omit attribution, record diagnostic |
-| Ambrosia/Logs job fails | Runtime test continues only until planned enrollment cap; no result is declared; job retries from checkpoint |
+| Ambrosia/Logs job fails | Runtime test continues only until the planned enrollment cap or hard deadline; no result is declared; job retries from checkpoint |
 | Emergency stop | New document requests receive control immediately after runtime cache invalidation; old revision remains auditable |
 
 Global environment kill switch `EXPERIMENTS_ENABLED=0` overrides Strapi and forces control without deleting definitions or results.
+
+Launch/stop actions send a signed internal cache-invalidation message from Strapi to Node. If that message fails, the runtime feed has a maximum 15-second TTL; the Admin reports activation as pending until Node confirms the target revision. “Running” in the editor is not presented as active traffic until this acknowledgement exists.
 
 ## 13. Privacy and security requirements
 
@@ -401,6 +438,7 @@ Global environment kill switch `EXPERIMENTS_ENABLED=0` overrides Strapi and forc
 - admin mutation endpoints require Strapi admin authentication and explicit plugin permissions;
 - preview tokens are signed, short-lived and excluded from analytics;
 - all event endpoints are same-origin, rate-limited and idempotent;
+- consent, linking and event mutations require allowed `Origin`/`Sec-Fetch-Site` values and are protected against cross-site requests;
 - experiment content is rendered through typed React props; no `dangerouslySetInnerHTML` path;
 - local raw logs and subject-level marts are access-restricted and receive an explicit retention policy;
 - cookie/privacy documents and consent behavior must be reviewed before production activation;
@@ -416,7 +454,8 @@ The future store integrates without changing the first milestone's assignment mo
 4. Cart, checkout and payment decisions are resolved server-side. Client-provided variant values are never trusted for price, discount, availability or payment logic.
 5. The canonical source for `payment_succeeded`, revenue and refunds is the commerce database/payment webhook ledger, not Metrica.
 6. New payload adapters are introduced explicitly:
-   - `section_graph_v1` for add/remove/reorder section tests;
+   - `page_composition_v1` for add/remove/reorder section tests and code-approved dynamic page templates;
+   - `navigation_model_v1` for navigation membership/order tests;
    - `form_schema_v1` for form/field tests;
    - `catalog_policy_v1` for ranking, filters and product options;
    - `feature_config_v1` for account/checkout functionality.
@@ -491,6 +530,13 @@ Implementation is test-first and locally verified. Required automated coverage i
 - pinned Ambrosia adapter output is normalized into the internal result schema;
 - full A/A acceptance gate.
 
+### Performance
+
+- warm-cache HTML assignment/injection adds no more than 20 ms p95 server processing time in the local benchmark;
+- document delivery performs no synchronous call to Strapi or Ambrosia on the request path;
+- tested slots require no additional render-blocking browser request;
+- existing catalog/page performance checks remain within their established thresholds.
+
 ### Project gates
 
 - `npm run typecheck`;
@@ -504,12 +550,12 @@ Implementation is test-first and locally verified. Required automated coverage i
 
 The implementation plan will decompose the milestone into independently verifiable slices:
 
-1. Operational preflight: runtime Strapi source-of-truth/backup policy and baseline measurement readiness.
+1. Operational preflight: runtime Strapi database/uploads source-of-truth, backup/restore policy and baseline measurement readiness.
 2. Shared experiment schemas, slot registry, revision hash and deterministic kernel.
 3. Strapi experiment models, Russian Admin workflow, preview and immutable launch/stop lifecycle.
 4. Dynamic HTML bootstrap, no-flicker React overlay and local assignment/exposure store.
 5. Transactional lead attribution and consent-gated Yandex instrumentation.
-6. Logs API extraction, unit mart and pinned Ambrosia Designer/Tester adapter.
+6. Self-hosted analysis worker, Logs API extraction, unit mart and pinned Ambrosia Designer/Tester adapter.
 7. End-to-end A/A validation, failure drills, operator documentation and first-test launch gate.
 
 Each slice must leave the existing site functional and has its own automated test gate. No real A/B content test launches until slices 1–7 pass locally and the A/A production-readiness procedure is approved.
@@ -523,7 +569,7 @@ The platform is ready for its first content-changing test only when:
 3. Eligible returning visitors receive a stable assignment before first React render; non-consented visitors remain control and untracked. Statistical conclusions explicitly apply to the analytics-consented population rather than all visitors.
 4. A successful server-side lead is attributed from a signed assignment without weakening form acceptance or consent handling.
 5. Yandex receives only consented, non-PII experiment parameters and the Logs API pipeline reconciles delayed data.
-6. Ambrosia designs the sample size, detects SRM/data-quality failures and produces the fixed-horizon result from one row per visitor.
+6. The self-hosted worker lets the manager request Ambrosia design from Admin, detects SRM/data-quality failures and produces the fixed-horizon result from one row per visitor.
 7. The A/A gate passes and kill-switch/outage scenarios fall back safely.
 8. Existing CMS, catalog, forms, privacy behavior and performance checks remain green.
 9. No commerce/account/payment component has been built, while their future outcome and randomization-unit adapters are explicitly supported by the stable contracts above.
