@@ -28,7 +28,7 @@
       "gallery": [
         {
           "type": "image",
-          "alt": "Ориент — коллекция Classic",
+          "alt": "photo_2026-06-01_18-03-28.jpg",
           "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.avif",
           "fallbackSrc": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.jpg",
           "sources": [
@@ -108,7 +108,7 @@
         }
       ],
       "imageUrl": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.avif",
-      "imageAlt": "Ориент — коллекция Classic",
+      "imageAlt": "photo_2026-06-01_18-03-28.jpg",
       "coverDescription": "Жаккард, стёганный на синтепоне",
       "layersCatalog": "1. высокоэластичная пена \"flexi\" (20мм)\n2. термовойлок\n3. 500 пружин на одно спальное место (h – 140мм)\n4. войлок\n5. высокоэластичная пена flexi (20мм)\n6. еврокаркас",
       "tags": [
@@ -147,7 +147,7 @@
       "gallery": [
         {
           "type": "image",
-          "alt": "Ориент Плюс — коллекция Classic",
+          "alt": "photo_2026-06-01_18-03-34.jpg",
           "src": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.avif",
           "fallbackSrc": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.jpg",
           "sources": [
@@ -227,7 +227,7 @@
         }
       ],
       "imageUrl": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.avif",
-      "imageAlt": "Ориент Плюс — коллекция Classic",
+      "imageAlt": "photo_2026-06-01_18-03-34.jpg",
       "coverDescription": "Жаккард, стёганный на синтепоне",
       "layersCatalog": "1. высокоэластичная пена \"flexi\"  (20мм)\n2. термовойлок\n3. 500 пружин на одно спальное место (h – 140мм)\n4. термовойлок\n5. кокосовая койра (10мм)\n6. высокоэластичная пена \"flexi\" (20мм)\n7. еврокаркас",
       "tags": [
@@ -1017,9 +1017,541 @@
               "src": "/uploads/davos_f60728f139.webp"
             }
           ]
+        },
+        {
+          "type": "image",
+          "alt": "davos_product-extreme-macro_pilot-03.png",
+          "src": "/uploads/davos_product_extreme_macro_pilot_03_c9cc9e687e.avif",
+          "fallbackSrc": "/uploads/davos_product_extreme_macro_pilot_03_c9cc9e687e.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/davos_product_extreme_macro_pilot_03_c9cc9e687e.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/davos_product_extreme_macro_pilot_03_c9cc9e687e.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "davos_product-studio_pilot-01.png",
+          "src": "/uploads/davos_product_studio_pilot_01_605d8327e4.avif",
+          "fallbackSrc": "/uploads/davos_product_studio_pilot_01_605d8327e4.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/davos_product_studio_pilot_01_605d8327e4.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/davos_product_studio_pilot_01_605d8327e4.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "davos_interior_pilot-01.png",
+          "src": "/uploads/davos_interior_pilot_01_37e208e0c8.avif",
+          "fallbackSrc": "/uploads/davos_interior_pilot_01_37e208e0c8.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/davos_interior_pilot_01_37e208e0c8.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/davos_interior_pilot_01_37e208e0c8.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "davos_material-textile-top_01.png",
+          "src": "/uploads/davos_material_textile_top_01_8162c06b96.avif",
+          "fallbackSrc": "/uploads/davos_material_textile_top_01_8162c06b96.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/davos_material_textile_top_01_8162c06b96.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/davos_material_textile_top_01_8162c06b96.webp"
+            }
+          ]
         }
       ],
       "imageUrl": "/uploads/davos_f60728f139.avif",
+      "imageAlt": "Давос — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. кокосовая койра (20мм)\n2. хлопковый войлок\n3. 1000 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (20мм)\n6. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Давос-2",
+      "slug": "davos-2",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 150,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "davos_product-closeup_pilot-02.png",
+          "src": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.avif",
+          "fallbackSrc": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "Давос — коллекция Relax",
+          "src": "/uploads/v1_01_1990c78964.avif",
+          "fallbackSrc": "/uploads/v1_01_1990c78964.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v1_01_1990c78964.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v1_01_1990c78964.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v1-02.png",
+          "src": "/uploads/v1_02_6916d35e7e.avif",
+          "fallbackSrc": "/uploads/v1_02_6916d35e7e.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v1_02_6916d35e7e.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v1_02_6916d35e7e.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v1-03.png",
+          "src": "/uploads/v1_03_4bf5175478.avif",
+          "fallbackSrc": "/uploads/v1_03_4bf5175478.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v1_03_4bf5175478.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v1_03_4bf5175478.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v1-04.png",
+          "src": "/uploads/v1_04_28ea1829a5.avif",
+          "fallbackSrc": "/uploads/v1_04_28ea1829a5.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v1_04_28ea1829a5.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v1_04_28ea1829a5.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.avif",
+      "imageAlt": "davos_product-closeup_pilot-02.png",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. кокосовая койра (20мм)\n2. хлопковый войлок\n3. 1000 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (20мм)\n6. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Давос-3",
+      "slug": "davos-3",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 150,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Давос — коллекция Relax",
+          "src": "/uploads/v2_01_fee14dbf1d.avif",
+          "fallbackSrc": "/uploads/v2_01_fee14dbf1d.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v2_01_fee14dbf1d.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v2_01_fee14dbf1d.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v2-02.png",
+          "src": "/uploads/v2_02_f1f083a631.avif",
+          "fallbackSrc": "/uploads/v2_02_f1f083a631.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v2_02_f1f083a631.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v2_02_f1f083a631.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v2-03.png",
+          "src": "/uploads/v2_03_d21eacf59f.avif",
+          "fallbackSrc": "/uploads/v2_03_d21eacf59f.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v2_03_d21eacf59f.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v2_03_d21eacf59f.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v2-04.png",
+          "src": "/uploads/v2_04_44704b27e2.avif",
+          "fallbackSrc": "/uploads/v2_04_44704b27e2.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v2_04_44704b27e2.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v2_04_44704b27e2.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v2-05.png",
+          "src": "/uploads/v2_05_d867e03bae.avif",
+          "fallbackSrc": "/uploads/v2_05_d867e03bae.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v2_05_d867e03bae.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v2_05_d867e03bae.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/v2_01_fee14dbf1d.avif",
+      "imageAlt": "Давос — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. кокосовая койра (20мм)\n2. хлопковый войлок\n3. 1000 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (20мм)\n6. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Давос-4",
+      "slug": "davos-4",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 150,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Давос — коллекция Relax",
+          "src": "/uploads/v3_01_fa34d05ee4.avif",
+          "fallbackSrc": "/uploads/v3_01_fa34d05ee4.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v3_01_fa34d05ee4.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v3_01_fa34d05ee4.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v3-02.png",
+          "src": "/uploads/v3_02_851486594e.avif",
+          "fallbackSrc": "/uploads/v3_02_851486594e.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v3_02_851486594e.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v3_02_851486594e.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v3-03.png",
+          "src": "/uploads/v3_03_a183cb95bd.avif",
+          "fallbackSrc": "/uploads/v3_03_a183cb95bd.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v3_03_a183cb95bd.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v3_03_a183cb95bd.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v3-04.png",
+          "src": "/uploads/v3_04_2afd03ad73.avif",
+          "fallbackSrc": "/uploads/v3_04_2afd03ad73.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v3_04_2afd03ad73.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v3_04_2afd03ad73.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v3-05.png",
+          "src": "/uploads/v3_05_4fb616afc4.avif",
+          "fallbackSrc": "/uploads/v3_05_4fb616afc4.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v3_05_4fb616afc4.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v3_05_4fb616afc4.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/v3_01_fa34d05ee4.avif",
+      "imageAlt": "Давос — коллекция Relax",
+      "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
+      "layersCatalog": "1. кокосовая койра (20мм)\n2. хлопковый войлок\n3. 1000 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (20мм)\n6. татами борт",
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Давос-5",
+      "slug": "davos-5",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 150,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "Давос — коллекция Relax",
+          "src": "/uploads/v4_01_d336014a25.avif",
+          "fallbackSrc": "/uploads/v4_01_d336014a25.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v4_01_d336014a25.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v4_01_d336014a25.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v4-02.png",
+          "src": "/uploads/v4_02_2e0d970ea1.avif",
+          "fallbackSrc": "/uploads/v4_02_2e0d970ea1.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v4_02_2e0d970ea1.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v4_02_2e0d970ea1.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v4-03.png",
+          "src": "/uploads/v4_03_747b9d77a5.avif",
+          "fallbackSrc": "/uploads/v4_03_747b9d77a5.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v4_03_747b9d77a5.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v4_03_747b9d77a5.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v4-04.png",
+          "src": "/uploads/v4_04_42e61f97d2.avif",
+          "fallbackSrc": "/uploads/v4_04_42e61f97d2.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v4_04_42e61f97d2.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v4_04_42e61f97d2.webp"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v4-05.png",
+          "src": "/uploads/v4_05_eeb572e79b.avif",
+          "fallbackSrc": "/uploads/v4_05_eeb572e79b.png",
+          "sources": [
+            {
+              "type": "image/avif",
+              "src": "/uploads/v4_05_eeb572e79b.avif"
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v4_05_eeb572e79b.webp"
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/v4_01_d336014a25.avif",
       "imageAlt": "Давос — коллекция Relax",
       "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
       "layersCatalog": "1. кокосовая койра (20мм)\n2. хлопковый войлок\n3. 1000 пружин на одно спальное место (h – 140мм)\n4. хлопковый войлок\n5. кокосовая койра (20мм)\n6. татами борт",
@@ -1603,7 +2135,7 @@
       "gallery": [
         {
           "type": "image",
-          "alt": "docId test",
+          "alt": "Эдванс — коллекция Trend",
           "src": "/uploads/advance_3b197e92a3.avif",
           "fallbackSrc": "/uploads/advance_3b197e92a3.png",
           "sources": [
@@ -1619,7 +2151,7 @@
         }
       ],
       "imageUrl": "/uploads/advance_3b197e92a3.avif",
-      "imageAlt": "docId test",
+      "imageAlt": "Эдванс — коллекция Trend",
       "coverDescription": "Премиальный трикотаж с объёмной стежкой на холконе",
       "layersCatalog": "1. высокоэластичная пена \"flexi\" (20мм)\n2. кокосовая койра (10мм)\n3. хлопковый войлок\n4. 500 пружин на одно спальное место (h – 140мм)\n5. хлопковый войлок\n6. кокосовая койра (10мм)\n7. высокоэластичная пена \"flexi\" (20мм)\n8. еврокаркас",
       "tags": [

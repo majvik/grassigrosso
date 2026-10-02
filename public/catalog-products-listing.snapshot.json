@@ -29,7 +29,7 @@
         {
           "type": "image",
           "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.avif",
-          "alt": "Ориент — коллекция Classic",
+          "alt": "photo_2026-06-01_18-03-28.jpg",
           "fallbackSrc": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.jpg"
         }
       ],
@@ -70,7 +70,7 @@
         {
           "type": "image",
           "src": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.avif",
-          "alt": "Ориент Плюс — коллекция Classic",
+          "alt": "photo_2026-06-01_18-03-34.jpg",
           "fallbackSrc": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.jpg"
         }
       ],
@@ -664,6 +664,162 @@
       "isActive": true
     },
     {
+      "name": "Давос-2",
+      "slug": "davos-2",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 150,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.avif",
+          "alt": "davos_product-closeup_pilot-02.png",
+          "fallbackSrc": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.png"
+        }
+      ],
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Давос-3",
+      "slug": "davos-3",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 150,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/v2_01_fee14dbf1d.avif",
+          "alt": "Давос — коллекция Relax",
+          "fallbackSrc": "/uploads/v2_01_fee14dbf1d.png"
+        }
+      ],
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Давос-4",
+      "slug": "davos-4",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 150,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/v3_01_fa34d05ee4.avif",
+          "alt": "Давос — коллекция Relax",
+          "fallbackSrc": "/uploads/v3_01_fa34d05ee4.png"
+        }
+      ],
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
+      "name": "Давос-5",
+      "slug": "davos-5",
+      "collectionName": "Relax",
+      "collectionSlug": "relax",
+      "firmness": "hard",
+      "mattressType": "spring",
+      "heightCm": 22,
+      "maxLoadKg": 150,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/v4_01_d336014a25.avif",
+          "alt": "Давос — коллекция Relax",
+          "fallbackSrc": "/uploads/v4_01_d336014a25.png"
+        }
+      ],
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "isActive": true
+    },
+    {
       "name": "Давос Микс",
       "slug": "davos-mix",
       "collectionName": "Relax",
@@ -1098,7 +1254,7 @@
         {
           "type": "image",
           "src": "/uploads/advance_3b197e92a3.avif",
-          "alt": "docId test",
+          "alt": "Эдванс — коллекция Trend",
           "fallbackSrc": "/uploads/advance_3b197e92a3.png"
         }
       ],

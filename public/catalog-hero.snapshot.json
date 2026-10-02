@@ -30,5 +30,5 @@
     }
   ],
   "autoplayMs": 6500,
-  "source": "strapi-catalog-hero-feed"
+  "source": "disk-snapshot"
 }

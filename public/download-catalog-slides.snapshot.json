@@ -10,5 +10,5 @@
   ],
   "autoplayMs": 6500,
   "displayMode": "image_only",
-  "source": "strapi-download-catalog-feed"
+  "source": "disk-snapshot"
 }
