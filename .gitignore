@@ -53,3 +53,36 @@ LOCAL_DOWNLOAD_LINKS.md
 
 # Local client document analysis
 /client-documents/
+
+# ── GSD-pi: local runtime / ephemeral state ──
+.gsd-worktrees/
+.gsd-backups/
+.gsd-migration-import-*/
+.gsd/activity/
+.gsd/audit/
+.gsd/backups/
+.gsd/forensics/
+.gsd/migration-applications/
+.gsd/recovery-applications/
+.gsd/runtime/
+.gsd/worktrees/
+.gsd/parallel/
+.gsd/auto.lock
+.gsd/metrics.json
+.gsd/completed-units*.json
+.gsd/state-manifest.json
+.gsd/state.json
+.gsd/STATE.md
+.gsd/gsd.db*
+.gsd/journal/
+.gsd/doctor-history.jsonl
+.gsd/event-log.jsonl
+.gsd/notifications.jsonl
+.gsd/notifications.lock
+.gsd/DISCUSSION-MANIFEST.json
+.gsd/milestones/**/*-CONTINUE.md
+.gsd/milestones/**/continue.md
+.gsd-id
+.mcp.json
+.bg-shell/
+.claude/settings.local.json
