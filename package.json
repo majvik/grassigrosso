@@ -68,6 +68,7 @@
     "preview": "vite preview",
     "new-page": "node scripts/new-page.mjs",
     "start": "bash scripts/start-services.sh",
+    "check:catalog-filter-help-copy": "node scripts/check-catalog-filter-help-copy.mjs",
     "check:catalog-api": "node scripts/check-catalog-api.mjs",
     "check:catalog-ui": "node scripts/check-catalog-ui.mjs",
     "check:catalog-perf": "node scripts/check-catalog-perf.mjs",
