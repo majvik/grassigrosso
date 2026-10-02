@@ -2,7 +2,7 @@
  * Schema-derived merge descriptors from content-contract (canonical path / component type).
  * Public hydrate shape: offices use map_embed_url (not map_iframe_html); download-catalog texts omit slides.
  */
-import contract from '../../.planning/phases/02-wave-1-single-types/02-content-contract.json'
+import contract from '../contracts/pages-cms/wave-1.json'
 import {
   DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS,
   isLegalPagesCmsSlug,

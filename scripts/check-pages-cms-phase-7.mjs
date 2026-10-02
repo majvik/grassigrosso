@@ -21,6 +21,6 @@ const after = spawnSync('git', ['status','--porcelain=v1','--untracked-files=all
 if (after !== before) throw new Error(`Phase 7 gate changed porcelain\nBEFORE:\n${before}\nAFTER:\n${after}`)
 if (record) {
   const lines = ['# Phase 7 Suite Results', '', `Recorded: ${new Date().toISOString()}`, '', '| Gate | Result | Seconds |', '|---|---:|---:|', ...results.map((r) => `| \`${r.script}\` | **${r.status}** | ${r.seconds} |`), '', '- Porcelain unchanged: **PASS**', '- Push / deploy / `strapi:sync-seed`: **not performed**', '']
-  fs.writeFileSync(path.join(root, '.planning/phases/07-global-site-chrome/07-SUITE-RESULTS.md'), lines.join('\n'))
+  fs.writeFileSync(path.join(root, 'docs/pages-cms/results/phase-7.md'), lines.join('\n'))
 }
 console.log(`check:pages-cms-phase-7 PASS (steps=${steps.length} record=${record ? 'yes' : 'no'} porcelain=unchanged)`)

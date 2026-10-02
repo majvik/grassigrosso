@@ -42,7 +42,7 @@ const {
 const { syncDistRuntimeAssets } = require(path.join(strapiRoot, 'scripts/prepare-dist.cjs'))
 
 const contract = JSON.parse(
-  fs.readFileSync(path.join(root, '.planning/phases/06-legal-pages/06-content-contract.json'), 'utf8'),
+  fs.readFileSync(path.join(root, 'src/contracts/pages-cms/legal.json'), 'utf8'),
 )
 const ru = JSON.parse(fs.readFileSync(path.join(strapiRoot, 'src/admin/translations/ru.json'), 'utf8'))
 

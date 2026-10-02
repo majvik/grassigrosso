@@ -370,8 +370,8 @@ function assertNoReservedComponentAttributes(c) {
   }
 }
 
-const contractRel = '.planning/phases/02-wave-1-single-types/02-content-contract.json'
-const contractMdRel = '.planning/phases/02-wave-1-single-types/02-CONTENT-CONTRACT.md'
+const contractRel = 'src/contracts/pages-cms/wave-1.json'
+const contractMdRel = 'docs/pages-cms/contracts/wave-1.md'
 const contract = readJson(contractRel)
 if (!fs.existsSync(abs(contractMdRel))) fail(`Missing ${contractMdRel}`)
 

@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 
-const contractPath = '.planning/phases/07-global-site-chrome/07-content-contract.json'
+const contractPath = 'src/contracts/pages-cms/global-chrome.json'
 const contract = JSON.parse(fs.readFileSync(contractPath, 'utf8'))
 const expectedNav = [
   ['/hotels', 'Отелям'], ['/dealers', 'Дилерам'], ['/catalog', 'Каталог'],
@@ -11,7 +11,7 @@ const expectedNav = [
 const expectedFooter = [
   '/hotels', '/dealers', '/catalog', '/documents', '/contacts',
   'tel:+79782484380', 'mailto:sales@grassigrosso.com',
-  '/privacy', '/terms', '/cookies',
+  '/privacy', '/terms', '/cookies', '#cookie-settings',
 ]
 
 function anchors(fragment) {

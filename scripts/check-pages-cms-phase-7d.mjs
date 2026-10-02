@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const contract = JSON.parse(fs.readFileSync(path.join(root, '.planning/phases/07-global-site-chrome/07-content-contract.json'), 'utf8'))
+const contract = JSON.parse(fs.readFileSync(path.join(root, 'src/contracts/pages-cms/global-chrome.json'), 'utf8'))
 const failures = []
 const count = (text, re) => [...text.matchAll(re)].length
 for (const file of contract.files) {

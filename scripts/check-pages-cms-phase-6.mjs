@@ -11,7 +11,7 @@
  *   npm run check:pages-cms-phase-6
  *     Normal verify — never writes tracked files; requires clean postconditions.
  *   npm run check:pages-cms-phase-6:record
- *     Same suite, then writes `.planning/.../06-SUITE-RESULTS.md` (dirty until commit).
+ *     Same suite, then writes `docs/pages-cms/results/phase-6.md` (dirty until commit).
  *     After commit, re-run normal mode to prove clean-tree contract.
  *
  * Pre/post: default listeners (:1337/:3000/:5174), uploads fingerprint, porcelain.
@@ -49,7 +49,7 @@ const recordMode =
 
 const uploadsDir = uploadsDirForRoot(root)
 const publicDir = path.join(root, 'public')
-const resultsPath = path.join(root, '.planning/phases/06-legal-pages/06-SUITE-RESULTS.md')
+const resultsPath = path.join(root, 'docs/pages-cms/results/phase-6.md')
 
 /**
  * Ordered Phase 6 suite.
