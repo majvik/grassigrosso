@@ -550,21 +550,21 @@ Implementation is test-first and locally verified. Required automated coverage i
 
 ## 17. Delivery slices
 
-The implementation plan will decompose the milestone into independently verifiable slices:
+The implementation plan decomposes the milestone into risk-first vertical slices. Each slice ends in a demoable capability through real system boundaries rather than a completed technical layer:
 
-1. Operational preflight: runtime Strapi database/uploads source-of-truth, backup/restore policy and baseline measurement readiness.
-2. Shared experiment schemas, slot registry, revision hash and deterministic kernel.
-3. Strapi experiment models, Russian Admin workflow, preview and immutable launch/stop lifecycle.
-4. Dynamic HTML bootstrap, no-flicker React overlay and local assignment/exposure store.
-5. Transactional lead attribution and consent-gated Yandex instrumentation.
-6. Self-hosted analysis worker, Logs API extraction, unit mart and pinned Ambrosia Designer/Tester adapter.
-7. End-to-end A/A validation, failure drills, operator documentation and first-test launch gate.
+1. No-flicker tracer: closed content contracts, deterministic online kernel, document bootstrap, typed React overlay and automated first-frame control fallback.
+2. Safe control plane: operational Strapi storage, immutable media/revisions, pinned design worker and signed feed/ack launch through authenticated APIs.
+3. Russian operator loop: draft, validate, design status, one-time preview, launch, stop and audit in Strapi Admin.
+4. Consent and authoritative primary outcome: consent mirror/revocation, privacy-safe exposure/Yandex link and transactional persisted-lead attribution.
+5. Yandex reconciliation: restart-safe multi-part Logs extraction, D-3..D-1 reconciliation, immediate keyed identity derivation, retention and aggregate health.
+6. Ambrosia final analysis: one-row-per-unit mart, completeness/coverage/SRM gates, frozen fixed-horizon Tester result and immutable Russian result presentation.
+7. Local release qualification: independently supervised runtime, full local E2E/A/A harness, outage/recovery drills, runbooks and all repository regression gates.
 
-Each slice must leave the existing site functional and has its own automated test gate. No real A/B content test launches until slices 1–7 pass locally and the A/A production-readiness procedure is approved.
+Each slice must leave the existing site functional and has its own automated test gate. No real A/B content test launches until slices 1–7 pass locally and a separately authorized production storage cutover and production A/A procedure are completed.
 
 ## 18. Acceptance criteria for the first milestone
 
-The platform is ready for its first content-changing test only when:
+The M001 local release candidate is accepted only when:
 
 1. An authorized content manager can create A/B text or image variants, preview both and launch/stop them in Russian Strapi Admin.
 2. A running revision cannot change in place and is reproducible from its hash and audit record.
@@ -572,9 +572,11 @@ The platform is ready for its first content-changing test only when:
 4. A successful server-side lead is attributed from a signed assignment without weakening form acceptance or consent handling.
 5. Yandex receives only consented, non-PII experiment parameters and the Logs API pipeline reconciles delayed data.
 6. The self-hosted worker lets the manager request Ambrosia design from Admin, detects SRM/data-quality failures and produces the fixed-horizon result from one row per visitor.
-7. The A/A gate passes and kill-switch/outage scenarios fall back safely.
+7. The local production-path A/A harness passes and kill-switch/outage scenarios fall back safely.
 8. Existing CMS, catalog, forms, privacy behavior and performance checks remain green.
 9. No commerce/account/payment component has been built, while their future outcome and randomization-unit adapters are explicitly supported by the stable contracts above.
+
+Readiness for a real content-changing production test is a separate M002 decision. It additionally requires explicit deployment authorization, legal/privacy approval, verified production storage/rollback, and a completed production A/A enrollment plus conversion/reconciliation window. M001 does not authorize those actions.
 
 ## 19. Primary references
 
