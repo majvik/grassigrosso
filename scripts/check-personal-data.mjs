@@ -339,7 +339,18 @@ if (failures.length === 0) {
             destroy() {}
           },
           Placemark: class {
-            constructor(center, props) { window.__placemarks.push({ center, props }); this.props = props }
+            constructor(center, props, options) {
+              this.center = center
+              this.props = props
+              this.options = options || {}
+              this._handlers = {}
+              this.events = { add: (name, fn) => { this._handlers[name] = fn } }
+              this.balloon = {
+                open: () => { window.__balloonState = 'open' },
+                close: () => { window.__balloonState = 'closed' },
+              }
+              window.__placemarks.push(this)
+            }
           }
         };`,
     })
@@ -430,6 +441,16 @@ if (failures.length === 0) {
         overflow: frameStyle?.overflow || '',
         radius: frameStyle?.borderRadius || '',
         hasCanvas: Boolean(canvas),
+        openOnClick: window.__placemarks[0]?.options?.openBalloonOnClick,
+        hasHint: window.__placemarks[0]?.options?.hasHint,
+        hoverOpen: (() => {
+          window.__placemarks[0]?._handlers?.mouseenter?.()
+          return window.__balloonState
+        })(),
+        hoverClose: (() => {
+          window.__placemarks[0]?._handlers?.mouseleave?.()
+          return window.__balloonState
+        })(),
       }
     })()`)
     check(afterAccept.analytics === 'unset', 'map accept does not grant analytics')
@@ -439,6 +460,11 @@ if (failures.length === 0) {
       afterAccept.hasCanvas && afterAccept.overflow === 'hidden' && afterAccept.radius.includes('24px'),
       'accepted map keeps rounded clip',
     )
+    check(
+      afterAccept.openOnClick === false && afterAccept.hasHint === false,
+      'placemark balloon is not bound to click',
+    )
+    check(afterAccept.hoverOpen === 'open' && afterAccept.hoverClose === 'closed', 'placemark balloon opens on hover')
     }
   } finally {
     await contacts.close()

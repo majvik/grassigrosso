@@ -62,14 +62,21 @@ function createOfficeMap(host, office) {
     {
       balloonContentHeader: `<strong>${office.title}</strong>`,
       balloonContentBody: office.address,
-      hintContent: `${office.title}. ${office.address}`,
     },
     {
       preset: 'islands#circleDotIcon',
       iconColor: CONTACTS_MARKER_COLOR,
+      hasHint: false,
+      openBalloonOnClick: false,
       hideIconOnBalloonOpen: false,
     },
   )
+  placemark.events.add('mouseenter', () => {
+    placemark.balloon.open()
+  })
+  placemark.events.add('mouseleave', () => {
+    placemark.balloon.close()
+  })
   map.geoObjects.add(placemark)
   mapsBySlug.set(office.id, { canvas, map, placemark, host })
   host.dataset.ymapsReady = '1'
