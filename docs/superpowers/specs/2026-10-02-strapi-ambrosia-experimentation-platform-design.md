@@ -2,7 +2,9 @@
 
 **Date:** 2026-10-02
 
-**Status:** ready for user review; implementation plan is blocked until this spec is approved
+**Status:** approved by the user on 2026-10-02; implementation is governed by the execution plan below
+
+**Execution plan:** `docs/superpowers/plans/2026-10-02-strapi-ambrosia-experimentation-platform.md`
 
 **Target milestone:** first production A/B test of text or image in an existing page slot
 
