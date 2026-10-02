@@ -99,7 +99,7 @@ function validateForm(form) {
     }
   }
 
-  const privacyCheckbox = form.querySelector('#privacy')
+  const privacyCheckbox = findConsentCheckbox(form)
   if (privacyCheckbox && !privacyCheckbox.checked) {
     window.dispatchEvent(new CustomEvent('app:toast', {
       detail: { message: 'Согласитесь на обработку данных', tone: 'warning' },
@@ -149,6 +149,7 @@ function attachBlurValidation(form) {
 }
 
 import { resolveDocumentDownloadHref } from './document-download.mjs'
+import { findConsentCheckbox, withConsent } from './form-consent'
 
 /**
  * Prefer hydrated CMS PDF on download-catalog forms; else code-owned /api/download/:id.
@@ -199,6 +200,7 @@ export function initContactForms() {
         website: form.querySelector('#website')?.value.trim() || '',
         page: getPageName(),
       }
+      Object.assign(formData, withConsent(formData, form.dataset.formId || form.id || 'contact-form'))
       const packageSelect = form.querySelector('#dealer-package')
       if (packageSelect) formData.package = packageSelect.value || ''
 
@@ -252,7 +254,7 @@ export function initContactForms() {
         )
       } finally {
         if (submitBtn) {
-          submitBtn.disabled = Boolean(form.querySelector('#privacy') && !form.querySelector('#privacy')?.checked)
+          submitBtn.disabled = Boolean(findConsentCheckbox(form) && !findConsentCheckbox(form)?.checked)
           submitBtn.textContent = originalText
         }
       }

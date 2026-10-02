@@ -3,15 +3,20 @@
   "updated": "2026-08-04",
   "phase": "6B",
   "mechanicalBodyLength": {
-    "privacy": 55,
+    "privacy": 58,
     "terms": 37,
-    "cookies": 17
+    "cookies": 14,
+    "personal-data-consent": 15
   },
   "unowned": 0,
   "hrefAllowlist": [
     "https://grassigrosso.com",
     "mailto:office@grassigrosso.com",
-    "/privacy"
+    "/privacy",
+    "/cookies",
+    "/personal-data-consent",
+    "/documents/Grassigrosso-form-withdrawal-of-consent.docx",
+    "/documents/Grassigrosso-form-data-subject-request.docx"
   ],
   "blockTypes": ["paragraph", "list", "table", "operator"],
   "runTypes": ["text", "link"],
@@ -29,12 +34,14 @@
   "legalSingleTypes": [
     "privacy-page",
     "terms-page",
-    "cookies-page"
+    "cookies-page",
+    "personal-data-consent-page"
   ],
   "feedPaths": {
     "privacy": "/api/privacy-page-feed",
     "terms": "/api/terms-page-feed",
-    "cookies": "/api/cookies-page-feed"
+    "cookies": "/api/cookies-page-feed",
+    "personal-data-consent": "/api/personal-data-consent-page-feed"
   },
   "wave1SlugCount": 6,
   "definitions": {
@@ -128,6 +135,23 @@
       },
       "terms-page": {
         "displayName": "Пользовательское соглашение",
+        "attributes": {
+          "title": { "type": "string", "required": true },
+          "effective_date": { "type": "date", "required": true },
+          "body": {
+            "type": "dynamiczone",
+            "required": true,
+            "components": [
+              "legal.paragraph-block",
+              "legal.list-block",
+              "legal.table-block",
+              "legal.operator-block"
+            ]
+          }
+        }
+      },
+      "personal-data-consent-page": {
+        "displayName": "Согласие на обработку персональных данных",
         "attributes": {
           "title": { "type": "string", "required": true },
           "effective_date": { "type": "date", "required": true },

@@ -324,6 +324,11 @@ const trackedBefore = fingerprintPagesSnapshotDir(publicDir)
         effective_date: '2026-03-01',
         body: [{ type: 'paragraph', runs: [{ type: 'text', value: 'c', strong: false }] }],
       },
+      'personal-data-consent': {
+        title: 'Consent',
+        effective_date: '2026-09-14',
+        body: [{ type: 'paragraph', runs: [{ type: 'text', value: 's', strong: false }] }],
+      },
     })
   }
   const beforeLate = fingerprintPagesSnapshotDir(victimDir)
@@ -409,6 +414,14 @@ const trackedBefore = fingerprintPagesSnapshotDir(publicDir)
         title: 'Cookies',
         effective_date: '2026-03-01',
         body: [{ type: 'paragraph', runs: [{ type: 'text', value: 'c', strong: false }] }],
+      },
+      source: 'strapi',
+    },
+    'personal-data-consent': {
+      data: {
+        title: 'Consent',
+        effective_date: '2026-09-14',
+        body: [{ type: 'paragraph', runs: [{ type: 'text', value: 's', strong: false }] }],
       },
       source: 'strapi',
     },

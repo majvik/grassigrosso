@@ -1,0 +1,310 @@
+.cookie-banner {
+  position: fixed;
+  z-index: var(--z-floating);
+  top: auto;
+  left: auto;
+  right: max(var(--space-5), env(safe-area-inset-right));
+  transform: none;
+  bottom: max(var(--space-5), env(safe-area-inset-bottom));
+  width: min(520px, calc(100vw - 48px));
+  max-width: 520px;
+  max-height: calc(100dvh - var(--space-4) - env(safe-area-inset-bottom));
+  overflow: auto;
+  box-sizing: border-box;
+  display: block;
+  height: auto;
+  margin: 0;
+  padding: var(--space-5);
+  background: var(--color-bg-beige);
+  color: var(--color-text);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0px 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.cookie-banner[hidden] {
+  display: none !important;
+}
+
+.cookie-banner-panel {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.cookie-banner-panel--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  flex-wrap: nowrap;
+}
+
+.cookie-banner-divider {
+  margin: var(--space-4) 0;
+  flex-shrink: 0;
+}
+
+.cookie-banner-panel--stack .cookie-banner-copy,
+.cookie-banner-panel--stack .cookie-settings-list,
+.cookie-banner-panel--stack .cookie-banner-actions {
+  flex: none;
+  width: 100%;
+}
+
+.cookie-banner-panel--stack .cookie-banner-actions {
+  justify-content: flex-end;
+}
+
+.cookie-banner-copy {
+  flex: 1 1 320px;
+  min-width: 0;
+  text-align: left;
+}
+
+.cookie-banner .commercial-offer-title {
+  margin: 0 0 var(--space-2);
+  padding-right: 48px;
+}
+
+.cookie-banner .modal-close {
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: var(--color-primary);
+}
+
+.cookie-banner .modal-close svg {
+  width: 28px;
+  height: 28px;
+}
+
+.cookie-banner .cookie-text {
+  margin: 0;
+  opacity: 0.8;
+}
+
+.cookie-banner-links {
+  display: block;
+  margin-top: var(--space-2);
+}
+
+.cookie-banner-actions,
+.cookie-settings-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.cookie-banner button.btn-contact {
+  width: auto;
+  min-height: 0;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.cookie-banner button.btn-contact.is-secondary {
+  background-color: var(--color-bg-white);
+  color: var(--color-primary);
+  box-shadow: inset 0 0 0 1.5px var(--color-primary);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.cookie-banner button.btn-contact.is-secondary:hover {
+  background-color: var(--color-surface-muted);
+  box-shadow: inset 0 0 0 1.5px var(--color-primary-hover);
+  color: var(--color-primary-hover);
+}
+
+.cookie-text .separator {
+  display: inline-block;
+  width: 1px;
+  height: 15px;
+  margin: 0 var(--space-2);
+  vertical-align: middle;
+  background-color: var(--color-text-gray);
+}
+
+.cookie-settings-list {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  margin-top: var(--space-4);
+}
+
+.cookie-banner .form-checkbox {
+  width: 100%;
+}
+
+.cookie-banner .form-checkbox,
+.cookie-banner .form-checkbox label {
+  align-items: center;
+}
+
+.cookie-banner .form-checkbox label {
+  font-size: var(--font-size-body);
+  color: var(--color-text);
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+.cookie-banner .checkbox-custom {
+  margin-top: 0;
+}
+
+.cookie-banner .form-checkbox input:disabled + label {
+  cursor: default;
+}
+
+.cookie-banner .form-checkbox input:disabled + label .checkmark {
+  stroke: var(--color-text-gray);
+}
+
+.cookie-banner .form-checkbox input:disabled + label .checkbox-fill {
+  fill: var(--color-partner-cell);
+}
+
+.cookie-banner a:focus-visible,
+.cookie-banner .modal-close:focus-visible,
+.cookie-banner .btn-contact:focus-visible,
+.cookie-banner .form-checkbox input:focus-visible + label .checkbox-custom,
+.contacts-map-consent-copy a:focus-visible {
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .cookie-banner .form-checkbox label {
+    font-size: var(--font-size-caption);
+  }
+}
+
+@media (max-width: 899px) and (min-width: 600px) {
+  .cookie-banner.is-settings .cookie-banner-panel--stack {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 599px) {
+  .cookie-banner {
+    left: 16px;
+    right: 16px;
+    transform: none;
+    width: auto;
+    max-width: none;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    padding: 32px 20px 24px;
+  }
+
+  .cookie-banner .commercial-offer-title {
+    padding-right: 40px;
+  }
+
+  .cookie-banner .modal-close {
+    top: var(--space-2);
+    right: var(--space-2);
+    width: 44px;
+    height: 44px;
+  }
+
+  .cookie-banner .modal-close svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .cookie-banner-panel,
+  .cookie-banner-actions,
+  .cookie-settings-list {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cookie-banner .btn-contact {
+    width: 100%;
+    min-height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cookie-banner,
+  .cookie-banner * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.contacts-map-frame {
+  position: relative;
+  display: grid;
+  width: 100%;
+  aspect-ratio: 1280 / 549;
+  border-radius: 24px;
+  overflow: visible;
+  background: var(--color-partner-cell, #e7e4dc);
+}
+
+.contacts-map-frame[hidden] {
+  display: none !important;
+}
+
+.contacts-map-frame picture,
+.contacts-map-frame img {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+.contacts-map-frame [data-map-canvas] {
+  position: absolute;
+  inset: 0;
+}
+
+.contacts-map-consent-copy {
+  grid-area: 1 / 1;
+  position: relative;
+  align-self: start;
+  justify-self: center;
+  margin-top: clamp(24px, 8%, 64px);
+  width: min(720px, calc(100% - 32px));
+  text-align: center;
+  color: #1c1c1c;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 12px rgba(255, 255, 255, 0.9);
+  z-index: 2;
+}
+
+.contacts-map-consent-copy p,
+.contacts-map-consent-copy a {
+  text-align: center;
+}
+
+.contacts-map-consent-copy p {
+  margin: 0;
+}
+
+.contacts-map-consent-copy a[data-map-consent-accept] {
+  display: block;
+  margin-top: 12px;
+  color: inherit;
+  text-decoration: underline;
+}
+
+@media (max-width: 599px) {
+  .contacts-map-consent-copy {
+    width: min(720px, calc(100% - 32px));
+  }
+}

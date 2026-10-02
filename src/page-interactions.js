@@ -40,26 +40,7 @@ function setupWelcomeModal({ lockScroll, unlockScroll }) {
 }
 
 function setupCookieBanner() {
-  const cookieBanner = document.querySelector('.cookie-banner')
-  const cookieBtn = document.querySelector('.btn-cookie')
-
-  if (!cookieBtn || !cookieBanner) return
-
-  if (localStorage.getItem('cookieAccepted')) {
-    cookieBanner.style.display = 'none'
-    document.body.classList.remove('cookie-visible')
-  } else {
-    document.body.classList.add('cookie-visible')
-  }
-
-  cookieBtn.addEventListener('click', () => {
-    cookieBanner.classList.add('hiding')
-    document.body.classList.remove('cookie-visible')
-    setTimeout(() => {
-      cookieBanner.style.display = 'none'
-    }, 300)
-    localStorage.setItem('cookieAccepted', 'true')
-  })
+  /* Cookie decisions live in cookie-consent.ts. */
 }
 
 function setupCopyToast(copyToastRoot) {

@@ -50,11 +50,11 @@ interface FaqSectionProps {
   toggleElement?: 'div' | 'span'
 }
 
-function PrivacyCheckbox() {
+export function ConsentCheckbox({ id = 'privacy' }: { id?: string }) {
   return (
     <div className="form-checkbox">
-      <input type="checkbox" id="privacy" name="privacy" />
-      <label htmlFor="privacy">
+      <input type="checkbox" id={id} name="consent" required />
+      <label htmlFor={id}>
         <span className="checkbox-custom">
           <svg
             className="checkbox-icon"
@@ -70,8 +70,9 @@ function PrivacyCheckbox() {
           </svg>
         </span>
         <span className="checkbox-text">
-          Я согласен на обработку моих персональных данных в соответствии с{' '}
-          <a href="/privacy">Политикой конфиденциальности</a>
+          Я даю согласие на обработку персональных данных на условиях{' '}
+          <a href="/personal-data-consent">Согласия</a>.{' '}
+          <a href="/privacy">Политика обработки персональных данных</a>
         </span>
       </label>
     </div>
@@ -119,7 +120,7 @@ export function ContactSection({
       <div className="contact-grid">
         <div className="contact-form-wrapper">
           <h3 className="contact-form-title">{formTitle}</h3>
-          <form className="contact-form" data-contact-form>
+          <form className="contact-form" data-contact-form data-form-id="contact-section">
             <HiddenTrapField />
             {selectField ? (
               <div className="form-group form-group-package" data-form-group>
@@ -141,7 +142,7 @@ export function ContactSection({
               </div>
             ))}
             <div className="form-submit-group">
-              <PrivacyCheckbox />
+              <ConsentCheckbox />
               <button type="submit" className="btn-primary" disabled>
                 {submitLabel}
               </button>

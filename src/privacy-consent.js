@@ -10,7 +10,7 @@ function showPrivacyToast() {
 }
 
 function findPrivacyCheckbox(form) {
-  return form.querySelector('input[type="checkbox"][name="privacy"], #privacy, #co-privacy, #cr-privacy, #dr-privacy, #hd-privacy, #cim-privacy')
+  return form.querySelector('input[type="checkbox"][name="consent"], input[type="checkbox"][name="privacy"], #privacy, #co-privacy, #cr-privacy, #dr-privacy, #hd-privacy, #cim-privacy')
 }
 
 function findSubmitButton(form) {

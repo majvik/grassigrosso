@@ -1,3 +1,4 @@
+import { ConsentCheckbox } from '@/components/marketing/shared-page-sections'
 import { usePageCms } from '@/pages/use-page-cms'
 import styles from './download-catalog.module.css'
 
@@ -114,34 +115,6 @@ function DownloadCatalogSlider() {
   )
 }
 
-function PrivacyCheckbox() {
-  return (
-    <div className="form-checkbox">
-      <input type="checkbox" id="privacy" name="privacy" required />
-      <label htmlFor="privacy">
-        <span className="checkbox-custom">
-          <svg
-            className="checkbox-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
-            <path d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white" />
-            <path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" strokeOpacity="0.1" />
-            <path className="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" strokeWidth="2" />
-          </svg>
-        </span>
-        <span className="checkbox-text">
-          Я согласен на обработку моих персональных данных в соответствии с{' '}
-          <a href="/privacy">Политикой конфиденциальности</a>
-        </span>
-      </label>
-    </div>
-  )
-}
-
 function HiddenTrapField() {
   return (
     <div
@@ -196,6 +169,7 @@ export function DownloadCatalogPage() {
               data-contact-form
               data-download-doc="catalog"
               data-catalog-pdf={pdfUrl || undefined}
+              data-form-id="download-catalog"
             >
               <HiddenTrapField />
               <div className="form-group" data-form-group>
@@ -211,7 +185,7 @@ export function DownloadCatalogPage() {
                 <input type="email" id="email" placeholder="example@company.com" required />
               </div>
               <div className="form-submit-group">
-                <PrivacyCheckbox />
+                <ConsentCheckbox />
                 <button type="submit" className="btn-primary" disabled>
                   {data.submit_label}
                 </button>

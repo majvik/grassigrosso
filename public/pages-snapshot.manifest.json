@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-08-04T09:51:23.554Z",
+  "syncedAt": "2026-10-01T23:59:56.217Z",
   "slugs": [
     "index",
     "hotels",
@@ -9,7 +9,8 @@
     "download-catalog",
     "privacy",
     "terms",
-    "cookies"
+    "cookies",
+    "personal-data-consent"
   ],
   "sha256BySlug": {
     "index": "e1fb9691050839dc13e0dc74a0d37c35651e596f4055f09fd009275d08760b1d",
@@ -18,8 +19,9 @@
     "contacts": "b2810bbc0bc32139ddcbceb42ec84828839b1bd6461f205070ac2fe2254ec43b",
     "documents": "3194e1dc19ac160f84143705c1382500a4de03fa08ff630ee5e472f13eca35d4",
     "download-catalog": "2ab0f715e6783bfbbc03a74b7ff3eaa5d4d599b05ed49455376af03866e18cc2",
-    "privacy": "e8286cd4ce101228ad83671425feb6aee391b825bafbce3af21ddbbba4d127eb",
+    "privacy": "828dbcd739b798c9101a6e60189ff9af74a0386949bdc9855f0f2e58b555d44b",
     "terms": "ba692251c1e44c6c65b2f64a5c7e561f6cbc3e37eaadd66375b05f57bb9fd175",
-    "cookies": "99cd99c1c6cc0829df715b87bcff4e19c79a41e89926ebe9a7af5183985ab80a"
+    "cookies": "89d96009f71b762733b9d092eaab3cf698cee69e5e704b7b5fabbd9128ead23c",
+    "personal-data-consent": "17d13230a16efcb21094c136002204bbcfce25b1dd35f25fdab75fd5c1681c7b"
   }
 }

@@ -123,6 +123,10 @@ async function main() {
       email: 'qa@example.test',
       page: 'Скачать каталог',
       website: '',
+      consentAccepted: true,
+      consentDocumentId: 'personal-data-consent',
+      formId: 'download-catalog',
+      pagePath: '/download-catalog',
     }),
     signal: AbortSignal.timeout(2_000),
   })

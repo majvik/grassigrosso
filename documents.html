@@ -30,25 +30,12 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <style id="vite-critical-css"></style>
-    <!-- Yandex.Metrika counter -->
-    <script type="text/javascript">
-      (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a);
-      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107738086', 'ym');
-
-      ym(107738086, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
-    </script>
-    <!-- /Yandex.Metrika counter -->
-    <link rel="stylesheet" href="./src/style.css" />
+<link rel="stylesheet" href="./src/style.css" />
     <link rel="preload" href="./src/fonts/nunito-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="./src/fonts/bounded-variable.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
-    <noscript><div><img src="https://mc.yandex.ru/watch/107738086" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- Preloader -->
+<!-- Preloader -->
     <div class="preloader" id="preloader">
       <div class="preloader-spinner"></div>
     </div>
@@ -350,6 +337,8 @@
           </div>
           <div class="footer-policies footer-policies-right">
             <a href="/cookies">Использование cookie</a>
+            <span class="separator"></span>
+            <a href="#cookie-settings" data-cookie-settings>Настройки cookie</a>
           </div>
         </div>
         <div class="footer-divider footer-divider-secondary"></div>
@@ -384,7 +373,7 @@
           </div>
           <div class="form-submit-group">
             <div class="form-checkbox">
-              <input type="checkbox" id="dr-privacy" name="privacy" required />
+              <input type="checkbox" id="dr-privacy" name="consent" required />
               <label for="dr-privacy">
                 <span class="checkbox-custom">
                   <svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -393,7 +382,7 @@
                     <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2"/>
                   </svg>
                 </span>
-                <span class="checkbox-text">Я согласен на обработку персональных данных в соответствии с <a href="/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
+                <span class="checkbox-text">Я даю согласие на обработку персональных данных на условиях <a href="/personal-data-consent">Согласия</a>. <a href="/privacy">Политика обработки персональных данных</a></span>
               </label>
             </div>
             <div class="catalog-request-buttons">
@@ -430,7 +419,7 @@
           </div>
           <div class="form-submit-group">
             <div class="form-checkbox">
-              <input type="checkbox" id="hd-privacy" name="privacy" required />
+              <input type="checkbox" id="hd-privacy" name="consent" required />
               <label for="hd-privacy">
                 <span class="checkbox-custom">
                   <svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -439,7 +428,7 @@
                     <path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2"/>
                   </svg>
                 </span>
-                <span class="checkbox-text">Я согласен на обработку персональных данных в соответствии с <a href="/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
+                <span class="checkbox-text">Я даю согласие на обработку персональных данных на условиях <a href="/personal-data-consent">Согласия</a>. <a href="/privacy">Политика обработки персональных данных</a></span>
               </label>
             </div>
             <div class="catalog-request-buttons">

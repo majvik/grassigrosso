@@ -149,7 +149,17 @@ export function initCommercialOfferModal({ lockScroll, unlockScroll }) {
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, email, comment, page: 'Главная (КП)' }),
+        body: JSON.stringify({
+          name,
+          phone,
+          email,
+          comment,
+          page: 'Главная (КП)',
+          consentAccepted: true,
+          consentDocumentId: 'personal-data-consent',
+          formId: 'commercial-offer',
+          pagePath: window.location.pathname,
+        }),
       })
       const data = await response.json().catch(() => ({}))
 

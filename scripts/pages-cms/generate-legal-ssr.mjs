@@ -92,7 +92,8 @@ function renderRuns(runs) {
     if (run.type === 'link') {
       assertAllowlistedHref(run.href)
       const label = (run.children || []).map((c) => escapeHtml(c.value)).join('')
-      out += `<a href="${escapeHtml(run.href)}">${label}</a>`
+      const download = String(run.href).endsWith('.docx') ? ' download' : ''
+      out += `<a href="${escapeHtml(run.href)}"${download}>${label}</a>`
       continue
     }
     throw new Error(`unknown run type: ${run && run.type}`)
@@ -126,7 +127,8 @@ function renderOperatorParagraph(block) {
 function renderBlock(block) {
   const lines = []
   if (block.heading) {
-    lines.push(`${BLOCK_INDENT}<h2>${escapeHtml(block.heading)}</h2>`)
+    const headingId = block.heading === '3. Яндекс Карты' ? ' id="yandex-maps"' : ''
+    lines.push(`${BLOCK_INDENT}<h2${headingId}>${escapeHtml(block.heading)}</h2>`)
   }
   if (block.type === 'paragraph') {
     lines.push(`${BLOCK_INDENT}<p>${renderRuns(block.runs)}</p>`)

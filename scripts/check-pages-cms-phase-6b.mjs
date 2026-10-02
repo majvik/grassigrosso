@@ -203,9 +203,10 @@ const validMinimal = {
 
 // ========== Static gates ==========
 assert(contract.unowned === 0, 'unowned must be 0')
-assert(LEGAL_BODY_LENGTH_BY_SLUG.privacy === 55, 'privacy body length 55')
+assert(LEGAL_BODY_LENGTH_BY_SLUG.privacy === 58, 'privacy body length 58')
 assert(LEGAL_BODY_LENGTH_BY_SLUG.terms === 37, 'terms body length 37')
-assert(LEGAL_BODY_LENGTH_BY_SLUG.cookies === 17, 'cookies body length 17')
+assert(LEGAL_BODY_LENGTH_BY_SLUG.cookies === 14, 'cookies body length 14')
+assert(LEGAL_BODY_LENGTH_BY_SLUG['personal-data-consent'] === 15, 'consent body length 15')
 for (const slug of LEGAL_PAGES_CMS_SLUGS) {
   assert(
     LEGAL_BODY_LENGTH_BY_SLUG[slug] === contract.mechanicalBodyLength[slug],
@@ -213,9 +214,9 @@ for (const slug of LEGAL_PAGES_CMS_SLUGS) {
   )
 }
 
-assert(LEGAL_PAGES_CMS_SLUGS.length === 3, 'exactly 3 legal slugs')
-assert(contract.legalSingleTypes.length === 3, 'exactly 3 legal single types')
-assert(PAGES_CMS_SLUGS.length === 9, 'public Pages CMS allowlist is nine slugs')
+assert(LEGAL_PAGES_CMS_SLUGS.length === 4, 'exactly 4 legal slugs')
+assert(contract.legalSingleTypes.length === 4, 'exactly 4 legal single types')
+assert(PAGES_CMS_SLUGS.length === 10, 'public Pages CMS allowlist is ten slugs')
 assert(
   PAGES_CMS_SLUGS.filter((s) => !LEGAL_PAGES_CMS_SLUGS.includes(s)).length ===
     contract.wave1SlugCount,
@@ -617,7 +618,7 @@ assert(permutedOut.body.map((b) => b.type).join(',') === 'table,paragraph,operat
 const apiSrc = fs.readFileSync(path.join(root, 'lib/pages-cms-api.cjs'), 'utf8')
 assert(apiSrc.includes("privacy: '/api/privacy-page-feed'") || apiSrc.includes('LEGAL_FEED_PATH_BY_SLUG'), 'Phase C: Node FEED_PATH must include privacy')
 assert(Object.keys(WAVE1_FEED_PATHS).length === 6, 'wave1 feeds 6')
-assert(PAGES_CMS_SLUGS.length === 9, 'Phase C: nine public slugs')
+assert(PAGES_CMS_SLUGS.length === 10, 'Phase C: ten public slugs')
 
 // ========== Strapi boot + feed smoke (owned dynamic port) ==========
 const SAMPLE_PRIVACY_BODY = [

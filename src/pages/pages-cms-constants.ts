@@ -14,6 +14,7 @@ export const PAGES_CMS_SLUGS = [
   'privacy',
   'terms',
   'cookies',
+  'personal-data-consent',
 ] as const
 
 export type PagesCmsSlug = (typeof PAGES_CMS_SLUGS)[number]
@@ -32,6 +33,7 @@ export const CANONICAL_REQUIRED_KEYS: Readonly<Record<PagesCmsSlug, readonly str
   privacy: ['title', 'effective_date', 'body'],
   terms: ['title', 'effective_date', 'body'],
   cookies: ['title', 'effective_date', 'body'],
+  'personal-data-consent': ['title', 'effective_date', 'body'],
 }
 
 export const DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS = [
@@ -40,7 +42,7 @@ export const DOWNLOAD_CATALOG_TEXTS_FORBIDDEN_KEYS = [
   'slider_autoplay_ms',
 ] as const
 
-export const LEGAL_PAGES_CMS_SLUGS = ['privacy', 'terms', 'cookies'] as const
+export const LEGAL_PAGES_CMS_SLUGS = ['privacy', 'terms', 'cookies', 'personal-data-consent'] as const
 
 export type LegalPagesCmsSlug = (typeof LEGAL_PAGES_CMS_SLUGS)[number]
 

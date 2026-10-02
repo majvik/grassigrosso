@@ -135,7 +135,7 @@ export function resolveComponentSchema(uid: string): FieldDesc {
 }
 
 function buildPageRootSchema(slug: PagesCmsSlug): FieldDesc {
-  if (slug === 'privacy' || slug === 'terms' || slug === 'cookies') {
+  if (slug === 'privacy' || slug === 'terms' || slug === 'cookies' || slug === 'personal-data-consent') {
     return {
       kind: 'object',
       component: `${slug}-page`,

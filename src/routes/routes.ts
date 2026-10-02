@@ -17,6 +17,7 @@ export const SITE_ROUTES = [
   { id: 'privacy', title: 'Политика конфиденциальности', path: '/privacy', htmlFile: 'privacy.html', nav: 'legal' },
   { id: 'terms', title: 'Пользовательское соглашение', path: '/terms', htmlFile: 'terms.html', nav: 'legal' },
   { id: 'cookies', title: 'Использование cookie', path: '/cookies', htmlFile: 'cookies.html', nav: 'legal' },
+  { id: 'personal-data-consent', title: 'Согласие на обработку персональных данных', path: '/personal-data-consent', htmlFile: 'personal-data-consent.html', nav: 'legal' },
   { id: 'unsubscribe', title: 'Отписка', path: '/unsubscribe', htmlFile: 'unsubscribe.html', nav: 'service' },
   { id: '404', title: 'Страница не найдена', path: '/404', htmlFile: '404.html', nav: 'service' },
 ] as const satisfies readonly SiteRoute[]

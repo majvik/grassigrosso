@@ -61,6 +61,15 @@ function getApiUrl() {
   return import.meta.env.VITE_API_URL || '/api/submit'
 }
 
+function consentFields(formId) {
+  return {
+    consentAccepted: true,
+    consentDocumentId: 'personal-data-consent',
+    formId,
+    pagePath: window.location.pathname,
+  }
+}
+
 async function submitLead({ payload, submitBtn, onSuccess, errorContainer, successMessage }) {
   const originalText = submitBtn?.textContent
   if (submitBtn) {
@@ -102,7 +111,7 @@ async function submitLead({ payload, submitBtn, onSuccess, errorContainer, succe
     )
   } finally {
     if (submitBtn) {
-      const privacyCheck = submitBtn.closest('form')?.querySelector('input[type="checkbox"][name="privacy"]')
+      const privacyCheck = submitBtn.closest('form')?.querySelector('input[type="checkbox"][name="consent"], input[type="checkbox"][name="privacy"]')
       submitBtn.disabled = Boolean(privacyCheck && !privacyCheck.checked)
       submitBtn.textContent = originalText
     }
@@ -244,6 +253,7 @@ export function initResourceModals({ lockScroll, unlockScroll, ensureVideoSource
           email: catalogRequestForm.querySelector('#cr-email')?.value.trim() || '',
           comment: `Запрос каталога: ${CATALOG_LABELS[catalogType] || catalogType || 'каталог'}.`,
           page: 'Отелям (каталог)',
+          ...consentFields('hotels-catalog-request'),
         },
         submitBtn,
         errorContainer: container,
@@ -337,6 +347,7 @@ export function initResourceModals({ lockScroll, unlockScroll, ensureVideoSource
           email: documentRequestForm.querySelector('#dr-email')?.value.trim() || '',
           comment: `Запрос документа: ${DOCUMENT_LABELS[documentType] || documentType}.`,
           page: 'Документы',
+          ...consentFields('document-request'),
         },
         submitBtn,
         errorContainer: container,
@@ -407,6 +418,7 @@ export function initResourceModals({ lockScroll, unlockScroll, ensureVideoSource
           email: helpDocumentsForm.querySelector('#hd-email')?.value.trim() || '',
           comment: 'Запрос помощи с документами.',
           page: 'Документы (помощь)',
+          ...consentFields('documents-help'),
         },
         submitBtn,
         errorContainer: container,

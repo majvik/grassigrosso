@@ -104,7 +104,7 @@ export function parseInlineRunsFromHtml(innerHtml) {
  * @param {string} preview
  */
 function isOperatorParagraph(preview) {
-  return preview.includes('ОГРН') && preview.includes('ИНН')
+  return /^[^:]+:\s*.+,\s*ОГРН\s+\S+,\s*ИНН\s+\S+,\s*адрес:\s*.+,\s*\S+@\S+$/.test(preview)
 }
 
 /**
@@ -539,7 +539,7 @@ export function negativeSwapBlocks(slug = 'privacy') {
 }
 
 /** @param {string} [slug] */
-export function negativeChangeStrongBoundary(slug = 'cookies') {
+export function negativeChangeStrongBoundary(slug = 'terms') {
   const data = structuredClone(loadLegalDefaults(slug))
   let found = false
   for (const block of data.body) {
@@ -579,7 +579,7 @@ export function negativeChangeHref(slug = 'privacy') {
 }
 
 /** @param {string} [slug] */
-export function negativeChangeOperatorField(slug = 'privacy') {
+export function negativeChangeOperatorField(slug = 'terms') {
   const data = structuredClone(loadLegalDefaults(slug))
   const op = data.body.find((b) => b.type === 'operator')
   if (!op) throw new Error('no operator')

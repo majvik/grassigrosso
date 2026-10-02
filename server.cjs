@@ -9,6 +9,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const { createAntiSpamProtector } = require('./lib/anti-spam.cjs');
 const { normalizeOriginList, buildCorsOptions } = require('./lib/cors-config.cjs');
 const db = require('./lib/db.cjs');
+const consentRegistry = require('./lib/consent-registry.cjs');
 const { buildConfirmationEmail } = require('./lib/confirmation-email.cjs');
 const { createPagesCmsApi } = require('./lib/pages-cms-api.cjs');
 const { createSiteChromeApi } = require('./lib/site-chrome-api.cjs');
@@ -655,6 +656,9 @@ function applyMediaResponseHeaders(res, urlPath) {
   if (!urlPath) return;
   if (/\.avif$/i.test(urlPath)) {
     res.setHeader('Content-Type', 'image/avif');
+  }
+  if (/\.docx$/i.test(urlPath)) {
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
   }
   if (STATIC_HASHED_ASSETS_RE.test(urlPath)) {
     res.setHeader('Cache-Control', CACHE_IMMUTABLE);
@@ -1571,6 +1575,11 @@ app.post('/api/submit', async (req, res) => {
     }
   }
 
+  const consentError = consentRegistry.consentRequestError(req.body);
+  if (consentError) {
+    return res.status(400).json({ error: 'Требуется согласие на обработку персональных данных' });
+  }
+
   if (!lead.name || !lead.phone || !lead.email) {
     return res.status(400).json({
       error: 'name, phone и email обязательны'
@@ -1585,7 +1594,13 @@ app.post('/api/submit', async (req, res) => {
 
   let leadId;
   try {
-    leadId = db.insertLead(lead);
+    leadId = db.insertLeadWithConsent(lead, consentRegistry.consentProof(
+      req.body.formId,
+      req.body.pagePath,
+      new Date().toISOString(),
+      getClientIp(req),
+      req.get('user-agent') || '',
+    ));
   } catch (dbErr) {
     console.error('❌ Ошибка записи в БД:', extractErrorDetails(dbErr));
     return res.status(500).json({ error: 'Ошибка обработки заявки' });

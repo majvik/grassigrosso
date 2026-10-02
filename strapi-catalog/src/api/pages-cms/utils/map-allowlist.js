@@ -19,7 +19,12 @@ const WAVE1_PAGES_CMS_SLUGS = Object.freeze([
   'download-catalog',
 ]);
 
-const LEGAL_PAGES_CMS_SLUGS = Object.freeze(['privacy', 'terms', 'cookies']);
+const LEGAL_PAGES_CMS_SLUGS = Object.freeze([
+  'privacy',
+  'terms',
+  'cookies',
+  'personal-data-consent',
+]);
 
 /** All nine public pages CMS slugs (Wave 1 + legal). */
 const PAGES_CMS_SLUGS = Object.freeze([...WAVE1_PAGES_CMS_SLUGS, ...LEGAL_PAGES_CMS_SLUGS]);
@@ -34,6 +39,7 @@ const SLUG_TO_UID = Object.freeze({
   privacy: 'api::privacy-page.privacy-page',
   terms: 'api::terms-page.terms-page',
   cookies: 'api::cookies-page.cookies-page',
+  'personal-data-consent': 'api::personal-data-consent-page.personal-data-consent-page',
 });
 
 module.exports = {

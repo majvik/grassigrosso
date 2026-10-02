@@ -124,9 +124,9 @@ const baselineUploads = uploadsFingerprint(uploadsDir)
   assert(audit.ok, `pre: untracked pages_cms uploads: ${JSON.stringify(audit.leftovers)}`)
 }
 
-assert(PAGES_CMS_SLUGS.length === 9, 'nine slugs')
+assert(PAGES_CMS_SLUGS.length === 10, 'ten slugs')
 assert(WAVE1_PAGES_CMS_SLUGS.length === 6, 'six wave1')
-assert(LEGAL_PAGES_CMS_SLUGS.length === 3, 'three legal')
+assert(LEGAL_PAGES_CMS_SLUGS.length === 4, 'four legal')
 assert(
   LEGAL_FROM_MAP.join(',') === LEGAL_PAGES_CMS_SLUGS.join(','),
   'map-allowlist legal slugs match',
@@ -141,7 +141,7 @@ assert(
   assert(extract.status === 0, `fixture parity: ${extract.stderr || extract.stdout}`)
 }
 
-const expectedHeadings = { privacy: 16, terms: 13, cookies: 8 }
+const expectedHeadings = { privacy: 13, terms: 13, cookies: 6, 'personal-data-consent': 5 }
 for (const slug of LEGAL_PAGES_CMS_SLUGS) {
   const data = readFixture(slug)
   const canonFails = validateCanonicalPageContent(data, slug)
@@ -150,26 +150,32 @@ for (const slug of LEGAL_PAGES_CMS_SLUGS) {
   assert(st.bodyLength === LEGAL_BODY_LENGTH_BY_SLUG[slug], `${slug} body length`)
   assert(st.headings === expectedHeadings[slug], `${slug} headings ${st.headings}`)
   if (slug === 'privacy') {
-    assert(st.lists === 6, 'privacy lists')
-    assert(st.tables.length === 1 && st.tables[0].headers.length === 6, 'privacy table headers')
-    assert(st.tables[0].rows.length === 9, 'privacy table rows')
-    assert(st.operators === 1, 'privacy operator')
+    assert(st.lists === 1, 'privacy lists')
+    assert(st.tables.length === 0, 'privacy tables')
+    assert(st.operators === 0, 'privacy operator')
   }
   if (slug === 'terms') {
     assert(st.lists === 3, 'terms lists')
     assert(st.operators === 1, 'terms operator')
   }
   if (slug === 'cookies') {
-    assert(st.lists === 1, 'cookies lists')
+    assert(st.lists === 0, 'cookies lists')
     assert(st.tables.length === 1 && st.tables[0].headers.length === 4, 'cookies table headers')
-    assert(st.tables[0].rows.length === 4, 'cookies table rows')
+    assert(st.tables[0].rows.length === 3, 'cookies table rows')
     assert(st.operators === 0, 'cookies no operator')
+  }
+  if (slug === 'personal-data-consent') {
+    assert(st.lists === 1, 'consent lists')
+    assert(st.tables.length === 0, 'consent tables')
+    assert(st.operators === 0, 'consent operator')
   }
   // no duplicated OGRN free-text paragraphs
   for (const block of data.body) {
     if (block.type !== 'paragraph') continue
     const text = (block.runs || []).map((r) => (r.type === 'text' ? r.value : '')).join('')
-    assert(!(text.includes('ОГРН') && text.includes('ИНН')), `${slug}: free-text requisites paragraph`)
+    if (slug === 'terms') {
+      assert(!(text.includes('ОГРН') && text.includes('ИНН')), `${slug}: free-text requisites paragraph`)
+    }
   }
   const hrefs = []
   JSON.stringify(data, (k, v) => {

@@ -38,7 +38,7 @@ export function applySiteChrome(data: SiteChrome): void {
   const headerLogoLinks = exact<HTMLAnchorElement>('.header-main a.logo, .mobile-menu a.logo', 2)
   const footerColumns = exact<HTMLElement>('.footer-content > .footer-column:not(.footer-about):not(.footer-contacts)', 2)
   const footerContacts = exact<HTMLElement>('.footer-contacts .contact-item', 3)
-  const policies = exact<HTMLAnchorElement>('.footer-policies a', 3)
+  const policies = exact<HTMLAnchorElement>('.footer-policies a:not([data-cookie-settings])', 3)
   const topSlot = exact<HTMLElement>('.header-top-right', 1)[0]
   if (!topSlot.querySelector('a') || !topSlot.querySelector('span:last-child')) throw new Error('header top slots')
   if (footerColumns.some((column, i) => !column.querySelector('.footer-heading') || column.querySelectorAll('.footer-links a').length !== f.navigation_groups[i].links.length)) throw new Error('footer group slots')

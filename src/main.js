@@ -11,6 +11,8 @@ import {
 import { initCommercialOfferModal } from './commercial-offer'
 import { initCollectionsSlider } from './collections-slider'
 import { initContactForms } from './contact-forms'
+import { initAnalyticsConsent } from './analytics-consent'
+import { initCookieConsent } from './cookie-consent'
 import { initContactsMaps } from './contacts-maps'
 import { initPrivacyConsentGuards } from './privacy-consent'
 import { initGeographyEffects } from './geography-effects'
@@ -31,7 +33,9 @@ import { hydrateSiteChrome } from './site-chrome'
 const isCatalogPage = document.body.dataset.page === 'catalog'
 const isDownloadCatalogPage = document.body.dataset.page === 'download-catalog'
 const pagesCmsPrefetchSlug = (() => {
-  const page = document.body.dataset.page
+  const page =
+    document.body.dataset.page ||
+    document.querySelector('[data-react-page]')?.getAttribute('data-react-page')
   if (
     page === 'index' ||
     page === 'download-catalog' ||
@@ -41,7 +45,8 @@ const pagesCmsPrefetchSlug = (() => {
     page === 'documents' ||
     page === 'privacy' ||
     page === 'terms' ||
-    page === 'cookies'
+    page === 'cookies' ||
+    page === 'personal-data-consent'
   ) {
     return page
   }
@@ -70,6 +75,8 @@ const downloadCatalogRuntimePromise = isDownloadCatalogPage
   ? import('./catalog-hero-slider')
   : Promise.resolve(null)
 
+initCookieConsent()
+initAnalyticsConsent()
 applyWidowFix()
 void hydrateSiteChrome()
 

@@ -2724,7 +2724,7 @@ a:hover .arrow-medium {
   }
 
   body.cookie-visible {
-    padding-top: 120px;
+    padding-top: 0;
   }
 
   .cookie-icon {

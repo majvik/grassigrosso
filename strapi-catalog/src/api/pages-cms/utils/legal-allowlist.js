@@ -4,18 +4,25 @@
  * Phase 6 legal pages — Strapi feed allowlist + fixture→Strapi transform (Phase C).
  */
 
-const LEGAL_PAGES_CMS_SLUGS = Object.freeze(['privacy', 'terms', 'cookies']);
+const LEGAL_PAGES_CMS_SLUGS = Object.freeze([
+  'privacy',
+  'terms',
+  'cookies',
+  'personal-data-consent',
+]);
 
 const LEGAL_SLUG_TO_UID = Object.freeze({
   privacy: 'api::privacy-page.privacy-page',
   terms: 'api::terms-page.terms-page',
   cookies: 'api::cookies-page.cookies-page',
+  'personal-data-consent': 'api::personal-data-consent-page.personal-data-consent-page',
 });
 
 const LEGAL_FEED_PATH_BY_SLUG = Object.freeze({
   privacy: '/api/privacy-page-feed',
   terms: '/api/terms-page-feed',
   cookies: '/api/cookies-page-feed',
+  'personal-data-consent': '/api/personal-data-consent-page-feed',
 });
 
 /** Exact href allowlist (contract v2.1). */
@@ -23,6 +30,10 @@ const LEGAL_HREF_ALLOWLIST = Object.freeze([
   'https://grassigrosso.com',
   'mailto:office@grassigrosso.com',
   '/privacy',
+  '/cookies',
+  '/personal-data-consent',
+  '/documents/Grassigrosso-form-withdrawal-of-consent.docx',
+  '/documents/Grassigrosso-form-data-subject-request.docx',
 ]);
 
 const LEGAL_BLOCK_TYPES = Object.freeze(['paragraph', 'list', 'table', 'operator']);
@@ -30,9 +41,10 @@ const LEGAL_RUN_TYPES = Object.freeze(['text', 'link']);
 
 /** Mechanical CMS body.length from Phase A matrix. */
 const LEGAL_BODY_LENGTH_BY_SLUG = Object.freeze({
-  privacy: 55,
+  privacy: 58,
   terms: 37,
-  cookies: 17,
+  cookies: 14,
+  'personal-data-consent': 15,
 });
 
 const COMPONENT_TO_BLOCK_TYPE = Object.freeze({

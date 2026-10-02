@@ -34,13 +34,18 @@ export const LEGAL_HREF_ALLOWLIST: readonly string[] = Object.freeze([
   'https://grassigrosso.com',
   'mailto:office@grassigrosso.com',
   '/privacy',
+  '/cookies',
+  '/personal-data-consent',
+  '/documents/Grassigrosso-form-withdrawal-of-consent.docx',
+  '/documents/Grassigrosso-form-data-subject-request.docx',
 ])
 
 /** Mechanical CMS body.length from Phase A matrix. */
 export const LEGAL_BODY_LENGTH_BY_SLUG: Readonly<Record<LegalPageId, number>> = Object.freeze({
-  privacy: 55,
+  privacy: 58,
   terms: 37,
-  cookies: 17,
+  cookies: 14,
+  'personal-data-consent': 15,
 })
 
 const LEGAL_BLOCK_TYPES = ['paragraph', 'list', 'table', 'operator'] as const

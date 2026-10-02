@@ -620,6 +620,10 @@ export function initCatalogImageModal(
       city,
       comment: commentParts.join('\n\n'),
       page: CATALOG_PAGE_NAME,
+      consentAccepted: true,
+      consentDocumentId: 'personal-data-consent',
+      formId: 'catalog-image-modal',
+      pagePath: window.location.pathname,
     }
 
     const submitBtn = elements.contactForm.querySelector<HTMLButtonElement>('#catalogueImageModalContactSubmit')

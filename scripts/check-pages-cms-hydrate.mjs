@@ -887,7 +887,7 @@ function assertUnchanged(fallback, before, label) {
   )
 
   assert(
-    LEGAL_PAGES_CMS_SLUGS.join(',') === 'privacy,terms,cookies',
+    LEGAL_PAGES_CMS_SLUGS.join(',') === 'privacy,terms,cookies,personal-data-consent',
     'LEGAL_PAGES_CMS_SLUGS order',
   )
 

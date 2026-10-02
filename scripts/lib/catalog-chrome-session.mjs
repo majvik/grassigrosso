@@ -108,7 +108,8 @@ export function createCdpClient(socket) {
       returnByValue: true,
     }, timeoutMs)
     if (result.exceptionDetails) {
-      throw new Error(result.exceptionDetails.text || 'Runtime.evaluate exception')
+      const details = result.exceptionDetails
+      throw new Error(details.exception?.description || details.text || 'Runtime.evaluate exception')
     }
     return result.result?.value
   }

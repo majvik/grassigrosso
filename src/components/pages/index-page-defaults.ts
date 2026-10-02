@@ -137,7 +137,7 @@ export const INDEX_PAGE_DEFAULTS: IndexPageContent = {
     title_tm: 'Ⓒ',
     description:
       'Мы создаем продуманные системы для сна и естественного восстановления, чтобы каждое утро начиналось легко и спокойно.',
-    cta_label: 'Получить подробную информацию',
+    cta_label: 'Получить подробную\nинформацию',
     poster: media('/grassigrosso-poster.avif'),
     poster_alt: 'Grassigrosso',
     video_desktop: media('/grassigrosso-silent.mp4'),

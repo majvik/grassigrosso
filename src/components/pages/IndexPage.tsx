@@ -75,7 +75,15 @@ export function IndexPage() {
               id="heroCommercialOfferLink"
               aria-haspopup="dialog"
             >
-              <span>{data.hero.cta_label}</span>
+              <span>
+                <MultilineText
+                  text={
+                    data.hero.cta_label === 'Получить подробную информацию'
+                      ? 'Получить подробную\nинформацию'
+                      : data.hero.cta_label
+                  }
+                />
+              </span>
               <span className="arrow-icon">
                 <img src="/arrow-down.svg" alt="" />
               </span>

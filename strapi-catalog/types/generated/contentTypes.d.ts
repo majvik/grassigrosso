@@ -1150,6 +1150,45 @@ export interface ApiMattressTypeOptionMattressTypeOption
   };
 }
 
+export interface ApiPersonalDataConsentPagePersonalDataConsentPage
+  extends Struct.SingleTypeSchema {
+  collectionName: 'personal_data_consent_pages';
+  info: {
+    displayName: '\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u043D\u0430 \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445';
+    pluralName: 'personal-data-consent-pages';
+    singularName: 'personal-data-consent-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    body: Schema.Attribute.DynamicZone<
+      [
+        'legal.paragraph-block',
+        'legal.list-block',
+        'legal.table-block',
+        'legal.operator-block',
+      ]
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    effective_date: Schema.Attribute.Date & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::personal-data-consent-page.personal-data-consent-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPrivacyPagePrivacyPage extends Struct.SingleTypeSchema {
   collectionName: 'privacy_pages';
   info: {
@@ -1934,6 +1973,7 @@ declare module '@strapi/strapi' {
       'api::load-range-option.load-range-option': ApiLoadRangeOptionLoadRangeOption;
       'api::mattress-size.mattress-size': ApiMattressSizeMattressSize;
       'api::mattress-type-option.mattress-type-option': ApiMattressTypeOptionMattressTypeOption;
+      'api::personal-data-consent-page.personal-data-consent-page': ApiPersonalDataConsentPagePersonalDataConsentPage;
       'api::privacy-page.privacy-page': ApiPrivacyPagePrivacyPage;
       'api::product.product': ApiProductProduct;
       'api::site-chrome.site-chrome': ApiSiteChromeSiteChrome;

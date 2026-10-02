@@ -16,6 +16,7 @@
     "build": "npm run build:web && npm run build:strapi",
     "browser:smoke": "agent-browser --help",
     "check:submit-queue-fast": "node scripts/check-submit-queue-fast.mjs",
+    "check:personal-data": "node scripts/check-personal-data.mjs",
     "check:docker-runtime-contract": "node scripts/check-docker-runtime-contract.mjs",
     "repair:pages-cms-upload-records": "node scripts/repair-pages-cms-upload-records.mjs",
     "typecheck": "tsc --noEmit",

@@ -50,3 +50,6 @@ strapi-catalog/tsconfig.tsbuildinfo
 
 # Local-only helper docs
 LOCAL_DOWNLOAD_LINKS.md
+
+# Local client document analysis
+/client-documents/

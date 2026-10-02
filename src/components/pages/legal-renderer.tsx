@@ -16,8 +16,9 @@ function renderRuns(runs: LegalRun[]): ReactNode[] {
     if (!LEGAL_HREF_ALLOWLIST.includes(run.href)) {
       throw new Error(`legal renderer: href not allowlisted: ${run.href}`)
     }
+    const download = run.href.endsWith('.docx') ? true : undefined
     return (
-      <a key={index} href={run.href}>
+      <a key={index} href={run.href} download={download}>
         {renderRuns(run.children)}
       </a>
     )
@@ -66,7 +67,11 @@ function renderTable(block: LegalTableBlock): ReactNode {
 }
 
 function renderBlock(block: LegalBlock, index: number): ReactNode {
-  const heading = block.heading ? <h2 key={`h-${index}`}>{block.heading}</h2> : null
+  const heading = block.heading ? (
+    <h2 key={`h-${index}`} id={block.heading === '3. Яндекс Карты' ? 'yandex-maps' : undefined}>
+      {block.heading}
+    </h2>
+  ) : null
 
   switch (block.type) {
     case 'paragraph':

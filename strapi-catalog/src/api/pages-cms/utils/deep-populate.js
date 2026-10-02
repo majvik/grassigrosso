@@ -123,6 +123,9 @@ const DEEP_POPULATE_BY_SLUG = Object.freeze({
   cookies: {
     body: LEGAL_BODY_POPULATE,
   },
+  'personal-data-consent': {
+    body: LEGAL_BODY_POPULATE,
+  },
 });
 
 /** Paths integration harness asserts after populate (texts feed — no slides). */
@@ -202,6 +205,7 @@ const POPULATE_ASSERT_PATHS_BY_SLUG = Object.freeze({
   privacy: ['title', 'effective_date', 'body'],
   terms: ['title', 'effective_date', 'body'],
   cookies: ['title', 'effective_date', 'body'],
+  'personal-data-consent': ['title', 'effective_date', 'body'],
 });
 
 /** Keys forbidden on download-catalog texts/canonical payloads (slides feed owns these). */

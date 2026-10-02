@@ -16,6 +16,7 @@ const routes = [
   { path: '/privacy', htmlFile: 'privacy.html' },
   { path: '/terms', htmlFile: 'terms.html' },
   { path: '/cookies', htmlFile: 'cookies.html' },
+  { path: '/personal-data-consent', htmlFile: 'personal-data-consent.html' },
   { path: '/404', htmlFile: '404.html' },
   { path: '/unsubscribe', htmlFile: 'unsubscribe.html' },
 ]
@@ -36,7 +37,7 @@ const htmlFiles = routes.map((route) => route.htmlFile).concat(['templates/marke
 const dirtyHrefRe = /\b(?:href|action)=["'][^"']+\.html(?:[#?][^"']*)?["']/g
 const requiredHtmlSnippets = [
   ['vite-critical-css placeholder', '<style id="vite-critical-css"></style>'],
-  ['Yandex.Metrika script', 'mc.yandex.ru/metrika/tag.js'],
+  ['cookie settings link', 'data-cookie-settings'],
   ['main stylesheet', '<link rel="stylesheet" href="./src/style.css" />'],
   ['apple touch icon', '<link rel="apple-touch-icon"'],
   ['site manifest', '<link rel="manifest" href="/site.webmanifest" />'],
@@ -65,6 +66,9 @@ for (const file of htmlFiles) {
     if (!source.includes(snippet)) {
       failures.push(`${file}: missing ${label}`)
     }
+  }
+  if (source.includes('mc.yandex.ru') || source.includes('ym(')) {
+    failures.push(`${file}: embedded Yandex Metrika must stay out of HTML`)
   }
 }
 

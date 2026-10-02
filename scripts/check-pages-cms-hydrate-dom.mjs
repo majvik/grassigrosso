@@ -452,6 +452,7 @@ function criticalHooksExpr(slug) {
           ),
         ).size,
         heroTitle: (document.querySelector('.hero-title')?.textContent || '').replace(/\\s+/g, ' ').trim(),
+        heroCtaHasBr: !!document.querySelector('#heroCommercialOfferLink br'),
         poster: document.querySelector('.hero-poster img')?.getAttribute('src') || '',
         partners: document.querySelector('.partners-img-normal')?.getAttribute('src') || '',
         mainText: (document.querySelector('main')?.innerText || '').trim().length,
@@ -874,6 +875,7 @@ function assertFirstPaintBaseline(slug, snap) {
     assert(snap?.collections === 5, `${slug} baseline: expected 5 collections, got ${snap?.collections}`)
     assert(snap?.testimonials === 14, `${slug} baseline: expected 14 testimonials, got ${snap?.testimonials}`)
     assert(String(snap?.heroTitle || '').includes('Любовь с первого утра'), `${slug} baseline: hero title`)
+    assert(snap?.heroCtaHasBr === true, `${slug} baseline: hero CTA keeps line break`)
   } else if (slug === 'download-catalog') {
     assert(snap?.title === 'Скачать каталог', `${slug} baseline: title`)
     assert(snap?.downloadDoc && snap?.honeypot && snap?.slide0, `${slug} baseline: hooks/slides`)

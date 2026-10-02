@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { ContactSection } from '@/components/marketing/shared-page-sections'
+import { OfficeMapSlot } from './contacts-map-slot'
 import { usePageCms } from '@/pages/use-page-cms'
 import {
   CONTACT_ICON_SRC,
@@ -19,6 +21,7 @@ export function ContactsPage() {
     CONTACTS_PAGE_DEFAULTS as ContactsPageContent & Record<string, unknown>,
   ) as ContactsPageContent
 
+  const [activeOffice, setActiveOffice] = useState(data.offices[0]?.slug ?? 'main')
   const contactInfoItems = data.contact_info.map((item) => ({
     title: item.title,
     value: item.value,
@@ -125,12 +128,14 @@ export function ContactsPage() {
         <div className="contacts-map-header">
           <h2 className="section-title">{data.map_title}</h2>
           <div className="contacts-map-tabs">
-            {data.offices.map((office, index) => (
+            {data.offices.map((office) => (
               <button
-                className={`contacts-map-tab${index === 0 ? ' active' : ''}`}
+                className={`contacts-map-tab${office.slug === activeOffice ? ' active' : ''}`}
                 data-office={office.slug}
                 data-map-tab
                 key={office.slug}
+                type="button"
+                onClick={() => setActiveOffice(office.slug)}
               >
                 {office.tab_label}
               </button>
@@ -138,30 +143,13 @@ export function ContactsPage() {
           </div>
         </div>
         <div className="contacts-map-container">
-          {data.offices.map((office, index) =>
-            office.map_embed_url ? (
-              <iframe
-                className="contacts-map-frame"
-                id={`map-${office.slug}`}
-                data-office={office.slug}
-                data-map-frame
-                data-map-embed="1"
-                src={office.map_embed_url}
-                title={`Карта: ${office.city}`}
-                hidden={index !== 0}
-                key={office.slug}
-              />
-            ) : (
-              <div
-                className="contacts-map-placeholder contacts-map-frame"
-                id={`map-${office.slug}`}
-                data-office={office.slug}
-                data-map-frame
-                hidden={index !== 0}
-                key={office.slug}
-              />
-            ),
-          )}
+          {data.offices.map((office) => (
+            <OfficeMapSlot
+              key={office.slug}
+              slug={office.slug}
+              active={office.slug === activeOffice}
+            />
+          ))}
         </div>
       </section>
 

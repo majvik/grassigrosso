@@ -15,6 +15,7 @@ const cleanHtmlRoutes = {
   '/privacy': 'privacy.html',
   '/terms': 'terms.html',
   '/cookies': 'cookies.html',
+  '/personal-data-consent': 'personal-data-consent.html',
   '/404': '404.html',
   '/unsubscribe': 'unsubscribe.html',
   '/download-catalog': 'download-catalog.html',
@@ -42,6 +43,7 @@ function catalogImportPreviewPlugin() {
     '.png': 'image/png',
     '.md': 'text/markdown; charset=utf-8',
     '.json': 'application/json; charset=utf-8',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   }
 
   return {
@@ -61,6 +63,24 @@ function catalogImportPreviewPlugin() {
         const ext = path.extname(filePath).toLowerCase()
         res.statusCode = 200
         res.setHeader('Content-Type', mimeByExt[ext] || 'application/octet-stream')
+        fs.createReadStream(filePath).on('error', next).pipe(res)
+      })
+    },
+  }
+}
+
+function docxMimePlugin() {
+  return {
+    name: 'grassigrosso-docx-mime',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const pathname = decodeURIComponent((req.url || '').split('?')[0])
+        if (!pathname.toLowerCase().endsWith('.docx')) return next()
+        const filePath = path.resolve(__dirname, 'public', `.${pathname}`)
+        const publicRoot = path.resolve(__dirname, 'public')
+        if (!filePath.startsWith(publicRoot) || !fs.existsSync(filePath)) return next()
+        res.statusCode = 200
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         fs.createReadStream(filePath).on('error', next).pipe(res)
       })
     },
@@ -110,7 +130,7 @@ export default defineConfig(({ mode }) => {
   return {
     root: '.',
     base: './',
-    plugins: [react(), catalogImportPreviewPlugin(), cleanUrlDevPlugin(), criticalPreloaderPlugin(), siteOriginPlugin(siteOrigin)],
+    plugins: [react(), docxMimePlugin(), catalogImportPreviewPlugin(), cleanUrlDevPlugin(), criticalPreloaderPlugin(), siteOriginPlugin(siteOrigin)],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
@@ -130,6 +150,7 @@ export default defineConfig(({ mode }) => {
           privacy: './privacy.html',
           terms: './terms.html',
           cookies: './cookies.html',
+          'personal-data-consent': './personal-data-consent.html',
           '404': './404.html',
           unsubscribe: './unsubscribe.html',
           'download-catalog': './download-catalog.html',

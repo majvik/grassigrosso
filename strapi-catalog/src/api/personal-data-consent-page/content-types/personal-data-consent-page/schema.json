@@ -1,0 +1,35 @@
+{
+  "kind": "singleType",
+  "collectionName": "personal_data_consent_pages",
+  "info": {
+    "singularName": "personal-data-consent-page",
+    "pluralName": "personal-data-consent-pages",
+    "displayName": "Согласие на обработку персональных данных"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "displayName": "Заголовок"
+    },
+    "effective_date": {
+      "type": "date",
+      "required": true,
+      "displayName": "Дата обновления"
+    },
+    "body": {
+      "type": "dynamiczone",
+      "components": [
+        "legal.paragraph-block",
+        "legal.list-block",
+        "legal.table-block",
+        "legal.operator-block"
+      ],
+      "required": true,
+      "displayName": "Содержание"
+    }
+  }
+}

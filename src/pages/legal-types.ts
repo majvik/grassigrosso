@@ -25,4 +25,4 @@ export type LegalBlock =
   | LegalTableBlock
   | LegalOperatorBlock
 export type LegalPageData = { title: string; effective_date: string; body: LegalBlock[] }
-export type LegalPageId = 'privacy' | 'terms' | 'cookies'
+export type LegalPageId = 'privacy' | 'terms' | 'cookies' | 'personal-data-consent'
