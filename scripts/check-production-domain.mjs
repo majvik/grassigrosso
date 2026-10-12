@@ -45,6 +45,11 @@ const redirectCases = [
     expected: null,
   },
   {
+    name: 'Timeweb development host remains directly accessible',
+    input: { hostHeader: 'majvik-grassigrosso-e3cd.twc1.net', originalUrl: '/catalog' },
+    expected: null,
+  },
+  {
     name: 'legacy html URL redirects in one hop',
     input: { hostHeader: 'grassigrosso.com', originalUrl: '/catalog.html?source=test' },
     expected: 'https://grassigrosso.ru/catalog?source=test',
