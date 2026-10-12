@@ -143,6 +143,15 @@ const consentRegistry = (await import('../lib/consent-registry.cjs')).default
     const file = path.join(root, 'public/documents', name)
     check(fs.existsSync(file), `${name} published`)
   }
+  const mascotFrames = ['idle', 'look-left', 'look-right', 'idea', 'welcome', 'approve', 'point-right', 'point-left', 'jump', 'celebrate']
+  for (const name of mascotFrames) {
+    for (const suffix of ['', '@2x']) {
+      for (const extension of ['avif', 'webp', 'jpg']) {
+        const fileName = `${name}${suffix}.${extension}`
+        check(fs.existsSync(path.join(root, 'public/cookie-mascot', fileName)), `cookie mascot frame ${fileName} published`)
+      }
+    }
+  }
 }
 
 const base = process.env.PERSONAL_DATA_BASE_URL || 'http://127.0.0.1:5174'
@@ -186,6 +195,9 @@ if (failures.length === 0) {
       const buttons = [...banner.querySelectorAll('button')].map((node) => node.textContent.trim()).filter(Boolean)
       const close = banner.querySelector('.modal-close')
       const configure = banner.querySelector('[data-cookie-configure]')
+      const reject = banner.querySelector('[data-cookie-necessary]')
+      const mascot = banner.querySelector('[data-cookie-mascot]')
+      const title = banner.querySelector('#cookie-consent-title')
       return {
         hidden: banner.hidden,
         overflow: document.documentElement.scrollWidth > window.innerWidth + 1,
@@ -194,6 +206,17 @@ if (failures.length === 0) {
         buttons,
         closeLabel: close?.getAttribute('aria-label') || '',
         configureTag: configure?.tagName || '',
+        rejectTag: reject?.tagName || '',
+        rejectText: reject?.textContent.replace(/\u00a0/g, ' ').trim() || '',
+        description: banner.querySelector('#cookie-consent-desc')?.textContent.replace(/\u00a0/g, ' ').replace(/ПодробнееНастроить$/, '').trim() || '',
+        highlightText: banner.querySelector('.cookie-copy-highlight')?.textContent.replace(/\u00a0/g, ' ').trim() || '',
+        highlightWeight: getComputedStyle(banner.querySelector('.cookie-copy-highlight')).fontWeight,
+        acceptText: banner.querySelector('[data-cookie-accept-all]')?.textContent.replace(/\u00a0/g, ' ').trim() || '',
+        mascotSize: mascot ? [Math.round(mascot.getBoundingClientRect().width), Math.round(mascot.getBoundingClientRect().height)] : [],
+        mascotAboveTitle: mascot && title ? mascot.getBoundingClientRect().bottom <= title.getBoundingClientRect().top : false,
+        mascotImage: banner.querySelector('[data-cookie-mascot-image]')?.getAttribute('src') || '',
+        mascotSources: [...banner.querySelectorAll('.cookie-mascot-picture source')].map((node) => [node.getAttribute('type'), node.getAttribute('srcset')]),
+        actionGap: getComputedStyle(banner.querySelector('.cookie-banner-actions--prompt')).gap,
         metrika: !!document.querySelector('script[src*="mc.yandex.ru"]'),
       }
     })()`)
@@ -201,13 +224,33 @@ if (failures.length === 0) {
     check(layout.overflow === false, 'banner page has no horizontal scroll')
     check(layout.inside, 'banner stays inside the viewport')
     check(layout.fullWidth, 'mobile banner is full width')
-    check(layout.buttons.includes('Принять все') && layout.buttons.includes('Только необходимые') && layout.configureTag === 'A', 'banner actions')
+    check(layout.acceptText === 'Принять и продолжить' && layout.configureTag === 'A', 'banner primary and configure actions')
+    check(layout.rejectTag === 'A' && layout.rejectText === 'Отказаться от аналитики', 'analytics rejection is a link')
+    check(layout.description === 'Сайт использует анонимные данные Яндекс Аналитики для улучшения пользовательского опыта и формирования персональных предложений. Все данные обрабатываются в соответствии с Федеральными законами № 152-ФЗ «О персональных данных» и № 149-ФЗ «Об информации».', 'banner description copy')
+    check(layout.highlightText === 'анонимные данные' && Number(layout.highlightWeight) >= 600, 'anonymous data copy uses semibold weight')
+    check(JSON.stringify(layout.mascotSize) === JSON.stringify([128, 128]) && layout.mascotAboveTitle, 'mobile mascot slot is 128px above title')
+    check(layout.mascotImage === '/cookie-mascot/idle.jpg', 'mascot JPEG fallback is rendered')
+    check(layout.mascotSources[0]?.[0] === 'image/avif' && layout.mascotSources[0]?.[1]?.includes('idle@2x.avif 2x'), 'mascot AVIF source is first')
+    check(layout.mascotSources[1]?.[0] === 'image/webp' && layout.mascotSources[1]?.[1]?.includes('idle@2x.webp 2x'), 'mascot WebP source is second')
+    check(layout.actionGap === '24px', 'prompt actions have a 24px gap')
     check(layout.closeLabel === 'Закрыть', 'banner has modal close')
     check(layout.metrika === false, 'metrika script absent before consent')
     await home.cdp.evaluate(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`)
     await delay(200)
     const still = await home.cdp.evaluate(`document.querySelector('.cookie-banner')?.hidden === false`)
     check(still, 'escape does not dismiss the first banner')
+    const closeResult = await home.cdp.evaluate(`(() => {
+      document.querySelector('[data-cookie-close]')?.click()
+      return {
+        hidden: document.querySelector('.cookie-banner')?.hidden === true,
+        stored: localStorage.getItem('grassigrosso-cookie-consent-v1'),
+      }
+    })()`)
+    check(closeResult.hidden && closeResult.stored === null, 'close hides prompt without recording rejection')
+    await home.cdp.send('Page.reload', { ignoreCache: true })
+    await delay(800)
+    const visibleAfterReload = await home.cdp.evaluate(`document.querySelector('.cookie-banner')?.hidden === false`)
+    check(visibleAfterReload, 'dismissed prompt returns after page reload')
     await home.cdp.evaluate(`document.documentElement.style.fontSize = '32px'`)
     await delay(100)
     const zoomed = await home.cdp.evaluate(`(() => {
@@ -232,8 +275,28 @@ if (failures.length === 0) {
         width: Math.round(rect.width),
         rightGap: Math.round(window.innerWidth - rect.right),
         leftGap: Math.round(rect.left),
-        actionHeights: [...banner.querySelectorAll('[data-cookie-necessary], [data-cookie-accept-all]')].map((node) => Math.round(node.getBoundingClientRect().height)),
-        necessaryInset: getComputedStyle(banner.querySelector('[data-cookie-necessary]')).boxShadow.includes('inset'),
+        mascotSize: (() => {
+          const mascot = banner.querySelector('[data-cookie-mascot]').getBoundingClientRect()
+          return [Math.round(mascot.width), Math.round(mascot.height)]
+        })(),
+        mascotLeftOfCopy: (() => {
+          const mascot = banner.querySelector('[data-cookie-mascot]').getBoundingClientRect()
+          const copy = banner.querySelector('.cookie-banner-copy').getBoundingClientRect()
+          return mascot.right <= copy.left
+        })(),
+        mascotTransparent: getComputedStyle(banner.querySelector('[data-cookie-mascot]')).backgroundColor === 'rgba(0, 0, 0, 0)',
+        rejectDecoration: getComputedStyle(banner.querySelector('[data-cookie-necessary]')).textDecorationLine,
+        rejectAlignedWithLinks: (() => {
+          const links = banner.querySelector('.cookie-banner-links').getBoundingClientRect()
+          const reject = banner.querySelector('[data-cookie-necessary]').getBoundingClientRect()
+          return Math.abs(links.left - reject.left) < 2
+        })(),
+        dividerBetweenLinksAndActions: (() => {
+          const links = banner.querySelector('.cookie-banner-links').getBoundingClientRect()
+          const divider = banner.querySelector('.cookie-banner-divider').getBoundingClientRect()
+          const reject = banner.querySelector('[data-cookie-necessary]').getBoundingClientRect()
+          return links.bottom <= divider.top && divider.bottom <= reject.top
+        })(),
         closeOffset: (() => {
           const close = banner.querySelector('.modal-close').getBoundingClientRect()
           return {
@@ -258,11 +321,34 @@ if (failures.length === 0) {
         })(),
       }
     })()`)
-    check(desktop.width === 520, 'desktop banner matches modal width')
+    check(desktop.width === 700, 'desktop banner includes mascot column')
     check(desktop.rightGap >= 16 && desktop.rightGap <= 32 && desktop.leftGap > desktop.rightGap, 'desktop banner is right-aligned')
-    check(desktop.necessaryInset && desktop.actionHeights[0] === desktop.actionHeights[1], 'necessary button uses inner stroke')
+    check(JSON.stringify(desktop.mascotSize) === JSON.stringify([128, 128]) && desktop.mascotLeftOfCopy, 'desktop mascot slot is 128px left of copy')
+    check(desktop.mascotTransparent, 'desktop mascot slot has no fill')
+    check(desktop.rejectDecoration.includes('underline'), 'analytics rejection looks like a link')
+    check(desktop.rejectAlignedWithLinks, 'analytics rejection aligns with details links')
+    check(desktop.dividerBetweenLinksAndActions, 'divider stays between details links and rejection action')
     check(desktop.closeOffset.top === 8 && desktop.closeOffset.right === 8, 'close button inset is 8px')
     check(desktop.linksOnNewLine, 'details and settings stay on a new line')
+    await home.cdp.evaluate(`window.dispatchEvent(new PointerEvent('pointermove', { clientX: 0, clientY: 100, bubbles: true }))`)
+    await delay(80)
+    const mascotLooksLeft = await home.cdp.evaluate(`(() => {
+      const slot = document.querySelector('[data-cookie-mascot]')
+      const image = document.querySelector('[data-cookie-mascot-image]')
+      return image?.getAttribute('src') === '/cookie-mascot/look-left.jpg' && image?.getAttribute('srcset')?.includes('look-left@2x.jpg 2x') && getComputedStyle(slot).transform !== 'none'
+    })()`)
+    check(mascotLooksLeft, 'desktop mascot reacts to cursor position')
+    const mascotClickReaction = await home.cdp.evaluate(`(() => {
+      const slot = document.querySelector('[data-cookie-mascot]')
+      slot?.click()
+      return {
+        state: slot?.dataset.mascotState,
+        animated: slot?.classList.contains('is-bouncing') || slot?.classList.contains('is-celebrating'),
+        cursor: slot ? getComputedStyle(slot).cursor : '',
+      }
+    })()`)
+    check(['idea', 'welcome', 'approve', 'pointRight', 'pointLeft', 'jump', 'celebrate'].includes(mascotClickReaction.state) && mascotClickReaction.animated, 'mascot click plays a random approval reaction')
+    check(mascotClickReaction.cursor === 'default', 'mascot keeps the default arrow cursor')
     await setViewport(home.cdp, 768, 1024)
     await delay(200)
     const tablet = await home.cdp.evaluate(`(() => {
@@ -274,7 +360,7 @@ if (failures.length === 0) {
         leftGap: Math.round(rect.left),
       }
     })()`)
-    check(tablet.width === 520, 'tablet banner matches modal width')
+    check(tablet.width === 700, 'tablet banner includes mascot column')
     check(tablet.rightGap >= 16 && tablet.rightGap <= 32 && tablet.leftGap > tablet.rightGap, 'tablet banner is right-aligned')
     await setViewport(home.cdp, 1280, 800)
     await delay(200)
@@ -285,34 +371,82 @@ if (failures.length === 0) {
       const rect = banner.getBoundingClientRect()
       const divider = banner.querySelector('.cookie-banner-divider')
       const save = banner.querySelector('[data-cookie-save]')
+      const cancel = banner.querySelector('[data-cookie-cancel]')
       const list = banner.querySelector('.cookie-settings-list')
-      if (!divider || !save || !list) return { ok: false }
+      if (!divider || !save || !cancel || !list) return { ok: false }
       const dividerRect = divider.getBoundingClientRect()
       const saveRect = save.getBoundingClientRect()
       const listRect = list.getBoundingClientRect()
       return {
         ok: true,
         height: Math.round(rect.height),
+        clientHeight: banner.clientHeight,
+        scrollHeight: banner.scrollHeight,
         saveRight: Math.round(rect.right - saveRect.right),
         saveAfterDivider: saveRect.top >= dividerRect.bottom - 1,
         dividerAfterList: dividerRect.top >= listRect.bottom - 1,
         saveFullWidth: Math.abs(saveRect.width - listRect.width) < 8,
+        cancelTag: cancel.tagName,
+        cancelText: cancel.textContent.replace(/\u00a0/g, ' ').trim(),
+        cancelAlignedWithCopy: Math.abs(cancel.getBoundingClientRect().left - banner.querySelector('.cookie-banner-copy').getBoundingClientRect().left) < 2,
         labelSize: getComputedStyle(banner.querySelector('.checkbox-text')).fontSize,
         descSize: getComputedStyle(banner.querySelector('#cookie-consent-desc')).fontSize,
         labelAlign: getComputedStyle(banner.querySelector('.form-checkbox label')).alignItems,
         disabledStroke: getComputedStyle(banner.querySelector('#cookie-necessary + label .checkmark')).stroke,
         disabledFill: getComputedStyle(banner.querySelector('#cookie-necessary + label .checkbox-fill')).fill,
         enabledFill: getComputedStyle(banner.querySelector('#cookie-analytics + label .checkbox-fill')).fill,
+        settingTitles: [...banner.querySelectorAll('.cookie-setting-title')].map((node) => node.textContent.replace(/\u00a0/g, ' ').trim()),
+        settingDescriptions: [...banner.querySelectorAll('.cookie-setting-description')].map((node) => node.textContent.replace(/\u00a0/g, ' ').trim()),
+        settingTitleWeight: getComputedStyle(banner.querySelector('.cookie-setting-title')).fontWeight,
       }
     })()`)
     check(settings.ok, 'settings panel renders save and divider')
-    check(settings.height > 0 && settings.height <= 480, 'settings banner hugs content height')
+    check(settings.height > 0 && settings.height <= 760 && settings.clientHeight === settings.scrollHeight, 'settings banner hugs content height')
     check(settings.saveAfterDivider && settings.dividerAfterList, 'save sits below the divider')
     check(settings.saveRight <= 32 && settings.saveFullWidth === false, 'save is right-aligned')
+    check(settings.cancelTag === 'A' && settings.cancelText === 'Отмена' && settings.cancelAlignedWithCopy, 'settings cancel link aligns with copy')
     check(settings.labelSize === settings.descSize, 'settings labels match description size')
-    check(settings.labelAlign === 'center', 'settings labels are vertically centered')
+    check(settings.labelAlign === 'flex-start', 'settings labels align with multi-line copy')
     check(settings.disabledStroke.includes('107, 114, 128') || settings.disabledStroke.includes('6b7280') || settings.disabledStroke === 'rgb(107, 114, 128)', 'necessary checkmark is gray')
     check(settings.disabledFill === 'rgb(225, 225, 225)' && settings.enabledFill !== settings.disabledFill, 'necessary checkbox fill is disabled gray')
+    check(JSON.stringify(settings.settingTitles) === JSON.stringify(['Необходимые', 'Яндекс Аналитика', 'Интерактивные Яндекс Карты']), 'settings titles')
+    check(settings.settingDescriptions.every((text) => text.length > 40), 'settings descriptions are present')
+    check(Number(settings.settingTitleWeight) >= 600, 'settings titles use semibold weight')
+    const checkboxReaction = await home.cdp.evaluate(`(() => {
+      const checkbox = document.querySelector('[data-cookie-analytics]')
+      checkbox.click()
+      const slot = document.querySelector('[data-cookie-mascot]')
+      return {
+        state: slot?.dataset.mascotState,
+        bouncing: slot?.classList.contains('is-bouncing'),
+        image: document.querySelector('[data-cookie-mascot-image]')?.getAttribute('src'),
+      }
+    })()`)
+    check(checkboxReaction.state === 'approve' && checkboxReaction.bouncing && checkboxReaction.image === '/cookie-mascot/approve.jpg', 'mascot approves an accepted checkbox')
+    await delay(520)
+    await home.cdp.evaluate(`document.querySelector('[data-cookie-cancel]')?.click()`)
+    await delay(100)
+    const acceptReaction = await home.cdp.evaluate(`(() => {
+      document.querySelector('[data-cookie-accept-all]')?.click()
+      const slot = document.querySelector('[data-cookie-mascot]')
+      return {
+        visible: document.querySelector('.cookie-banner')?.hidden === false,
+        state: slot?.dataset.mascotState,
+        celebrating: slot?.classList.contains('is-celebrating'),
+        stored: localStorage.getItem('grassigrosso-cookie-consent-v1'),
+      }
+    })()`)
+    check(acceptReaction.visible && acceptReaction.state === 'celebrate' && acceptReaction.celebrating && acceptReaction.stored === null, 'accept-all plays celebration before closing')
+    await delay(700)
+    const acceptedAfterCelebration = await home.cdp.evaluate(`(() => {
+      const raw = JSON.parse(localStorage.getItem('grassigrosso-cookie-consent-v1'))
+      return {
+        hidden: document.querySelector('.cookie-banner')?.hidden === true,
+        analytics: raw?.choices?.analytics?.status,
+        maps: raw?.choices?.yandexMaps?.status,
+      }
+    })()`)
+    check(acceptedAfterCelebration.hidden && acceptedAfterCelebration.analytics === 'granted' && acceptedAfterCelebration.maps === 'granted', 'accept-all stores consent after celebration')
   } finally {
     await home.close()
   }

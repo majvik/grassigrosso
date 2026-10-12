@@ -84,6 +84,8 @@ function bannerRoot(): HTMLElement | null {
 
 let returnFocus: HTMLElement | null = null
 let mode: 'prompt' | 'settings' | 'hidden' = 'hidden'
+let promptDismissedForPage = false
+let cleanupMascot: (() => void) | null = null
 
 function choiceChecked(status: OptionalConsentStatus) {
   return status === 'granted'
@@ -93,15 +95,53 @@ const CLOSE_BUTTON = `<button type="button" class="modal-close" data-cookie-clos
 
 const CHECKBOX_MARK = `<span class="checkbox-custom"><svg class="checkbox-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path class="checkbox-fill" d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z" fill="white"/><path d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4C0.5 2.067 2.067 0.5 4 0.5Z" stroke="#283E37" stroke-opacity="0.1"/><path class="checkmark" d="M6 10.5L11 16L18 8" stroke="#283E37" stroke-width="2"/></svg></span>`
 
-function settingRow(id: string, label: string, inputAttrs: string) {
-  return `<div class="form-checkbox"><input type="checkbox" id="${id}" ${inputAttrs} /><label for="${id}">${CHECKBOX_MARK}<span class="checkbox-text">${label}</span></label></div>`
+const MASCOT_IMAGES = {
+  idle: 'idle',
+  left: 'look-left',
+  right: 'look-right',
+  idea: 'idea',
+  welcome: 'welcome',
+  approve: 'approve',
+  pointRight: 'point-right',
+  pointLeft: 'point-left',
+  jump: 'jump',
+  celebrate: 'celebrate',
+} as const
+
+type MascotState = keyof typeof MASCOT_IMAGES
+
+const MASCOT_APPROVAL_STATES: readonly MascotState[] = [
+  'idea',
+  'welcome',
+  'approve',
+  'pointRight',
+  'pointLeft',
+  'jump',
+  'celebrate',
+]
+
+function mascotSrcSet(name: string, extension: 'avif' | 'webp' | 'jpg') {
+  return `/cookie-mascot/${name}.${extension} 1x, /cookie-mascot/${name}@2x.${extension} 2x`
+}
+
+const MASCOT_SLOT = `<div class="cookie-mascot-slot" data-cookie-mascot aria-hidden="true"><picture class="cookie-mascot-picture"><source data-cookie-mascot-avif type="image/avif" srcset="${mascotSrcSet(MASCOT_IMAGES.idle, 'avif')}" /><source data-cookie-mascot-webp type="image/webp" srcset="${mascotSrcSet(MASCOT_IMAGES.idle, 'webp')}" /><img class="cookie-mascot-image" data-cookie-mascot-image src="/cookie-mascot/${MASCOT_IMAGES.idle}.jpg" srcset="${mascotSrcSet(MASCOT_IMAGES.idle, 'jpg')}" alt="" width="128" height="128" /></picture></div>`
+
+function settingRow(id: string, title: string, description: string, inputAttrs: string) {
+  return `<div class="form-checkbox"><input type="checkbox" id="${id}" ${inputAttrs} /><label for="${id}">${CHECKBOX_MARK}<span class="checkbox-text"><strong class="cookie-setting-title">${title}</strong><span class="cookie-setting-description">${description}</span></span></label></div>`
 }
 
 function renderBanner() {
   const root = bannerRoot()
   if (!root) return
+  cleanupMascot?.()
+  cleanupMascot = null
   const effective = readEffectiveConsent()
   const showPrompt = effective.analytics === 'unset' || effective.yandexMaps === 'unset'
+  if (mode === 'hidden' && showPrompt && promptDismissedForPage) {
+    root.hidden = true
+    root.innerHTML = ''
+    return
+  }
   if (mode === 'hidden' && !showPrompt) {
     root.hidden = true
     root.innerHTML = ''
@@ -119,48 +159,150 @@ function renderBanner() {
   if (mode === 'settings') {
     root.innerHTML = `
       ${CLOSE_BUTTON}
-      <div class="cookie-banner-panel cookie-banner-panel--stack">
-        <div class="cookie-banner-copy">
-          <h2 class="commercial-offer-title" id="cookie-consent-title">Настройки cookie</h2>
-          <p class="cookie-text" id="cookie-consent-desc">Необходимые технологии включены всегда. Аналитика и интерактивные Яндекс Карты включаются отдельно.</p>
-        </div>
-        <div class="cookie-settings-list">
-          ${settingRow('cookie-necessary', 'Необходимые', 'checked disabled')}
-          ${settingRow('cookie-analytics', 'Аналитика', `data-cookie-analytics ${choiceChecked(effective.analytics) ? 'checked' : ''}`)}
-          ${settingRow('cookie-maps', 'Интерактивные Яндекс Карты', `data-cookie-maps ${choiceChecked(effective.yandexMaps) ? 'checked' : ''}`)}
-        </div>
-        <div class="section-divider cookie-banner-divider" aria-hidden="true"></div>
-        <div class="cookie-banner-actions">
-          <button type="button" class="btn-contact" data-cookie-save>Сохранить выбор</button>
+      <div class="cookie-banner-layout">
+        ${MASCOT_SLOT}
+        <div class="cookie-banner-panel cookie-banner-panel--stack">
+          <div class="cookie-banner-copy">
+            <h2 class="commercial-offer-title" id="cookie-consent-title">Настройки cookie</h2>
+            <p class="cookie-text" id="cookie-consent-desc">Необходимые технологии включены всегда. Аналитика и интерактивные Яндекс Карты включаются отдельно.</p>
+          </div>
+          <div class="cookie-settings-list">
+            ${settingRow('cookie-necessary', 'Необходимые', 'Без этих технологий сайт не может работать. Они сохраняют историю посещения и настройки только в вашем браузере и никому не передаются.', 'checked disabled')}
+            ${settingRow('cookie-analytics', 'Яндекс Аналитика', 'Помогает нам улучшать сайт и пользовательский опыт, а вам — получать более выгодные предложения.', `data-cookie-analytics ${choiceChecked(effective.analytics) ? 'checked' : ''}`)}
+            ${settingRow('cookie-maps', 'Интерактивные Яндекс Карты', 'Яндекс обрабатывает данные, чтобы корректно показать расположение наших офисов и построить оптимальный маршрут.', `data-cookie-maps ${choiceChecked(effective.yandexMaps) ? 'checked' : ''}`)}
+          </div>
+          <div class="section-divider cookie-banner-divider" aria-hidden="true"></div>
+          <div class="cookie-banner-actions cookie-banner-actions--settings">
+            <a href="#cookie-cancel-settings" class="cookie-reject-link" data-cookie-cancel>Отмена</a>
+            <button type="button" class="btn-contact" data-cookie-save>Сохранить выбор</button>
+          </div>
         </div>
       </div>`
   } else {
     root.innerHTML = `
       ${CLOSE_BUTTON}
-      <div class="cookie-banner-panel cookie-banner-panel--stack">
-        <div class="cookie-banner-copy">
-          <h2 class="commercial-offer-title" id="cookie-consent-title">Настройки cookie</h2>
-          <p class="cookie-text" id="cookie-consent-desc">Сайт использует необходимые технологии для работы. Яндекс Метрика и интерактивные Яндекс Карты загружаются только после вашего выбора. <span class="cookie-banner-links"><a class="cookie-link" href="/cookies">Подробнее</a><span class="separator" aria-hidden="true"></span><a href="#cookie-settings" class="cookie-link" data-cookie-configure>Настроить</a></span></p>
-        </div>
-        <div class="section-divider cookie-banner-divider" aria-hidden="true"></div>
-        <div class="cookie-banner-actions">
-          <button type="button" class="btn-contact is-secondary" data-cookie-necessary>Только необходимые</button>
-          <button type="button" class="btn-contact" data-cookie-accept-all>Принять все</button>
+      <div class="cookie-banner-layout">
+        ${MASCOT_SLOT}
+        <div class="cookie-banner-panel cookie-banner-panel--stack">
+          <div class="cookie-banner-copy">
+            <h2 class="commercial-offer-title" id="cookie-consent-title">Настройки cookie</h2>
+            <p class="cookie-text" id="cookie-consent-desc">Сайт использует <strong class="cookie-copy-highlight">анонимные данные</strong> Яндекс Аналитики для улучшения пользовательского опыта и формирования персональных предложений. Все данные обрабатываются в соответствии с Федеральными законами № 152-ФЗ «О персональных данных» и № 149-ФЗ «Об информации». <span class="cookie-banner-links"><a class="cookie-link" href="/cookies">Подробнее</a><span class="separator" aria-hidden="true"></span><a href="#cookie-settings" class="cookie-link" data-cookie-configure>Настроить</a></span></p>
+          </div>
+          <div class="section-divider cookie-banner-divider" aria-hidden="true"></div>
+          <div class="cookie-banner-actions cookie-banner-actions--prompt">
+            <a href="#cookie-reject-analytics" class="cookie-reject-link" data-cookie-necessary>Отказаться от аналитики</a>
+            <button type="button" class="btn-contact" data-cookie-accept-all>Принять и продолжить</button>
+          </div>
         </div>
       </div>`
   }
+  bindMascot(root)
   bindBanner(root)
+}
+
+function bindMascot(root: HTMLElement) {
+  const slot = root.querySelector<HTMLElement>('[data-cookie-mascot]')
+  const image = root.querySelector<HTMLImageElement>('[data-cookie-mascot-image]')
+  if (!slot || !image) return
+
+  const desktopPointer = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 721px)')
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  let actionTimer = 0
+  let lastState: MascotState = 'idle'
+
+  const setState = (state: MascotState) => {
+    if (lastState === state) return
+    lastState = state
+    const name = MASCOT_IMAGES[state]
+    const avif = slot.querySelector<HTMLSourceElement>('[data-cookie-mascot-avif]')
+    const webp = slot.querySelector<HTMLSourceElement>('[data-cookie-mascot-webp]')
+    if (avif) avif.srcset = mascotSrcSet(name, 'avif')
+    if (webp) webp.srcset = mascotSrcSet(name, 'webp')
+    image.src = `/cookie-mascot/${name}.jpg`
+    image.srcset = mascotSrcSet(name, 'jpg')
+    slot.dataset.mascotState = state
+  }
+
+  const resetAction = () => {
+    window.clearTimeout(actionTimer)
+    slot.classList.remove('is-bouncing', 'is-celebrating')
+    slot.dataset.mascotLocked = 'false'
+    setState('idle')
+  }
+
+  const playAction = (state: MascotState, onComplete?: () => void) => {
+    resetAction()
+    slot.dataset.mascotLocked = 'true'
+    setState(state)
+    if (reducedMotion.matches) {
+      onComplete?.()
+      return
+    }
+    const strongReaction = state === 'jump' || state === 'celebrate'
+    slot.classList.add(strongReaction ? 'is-celebrating' : 'is-bouncing')
+    actionTimer = window.setTimeout(() => {
+      resetAction()
+      onComplete?.()
+    }, strongReaction ? 620 : 480)
+  }
+
+  const onPointerMove = (event: PointerEvent) => {
+    if (!desktopPointer.matches || reducedMotion.matches || slot.dataset.mascotLocked === 'true') return
+    const rect = slot.getBoundingClientRect()
+    const dx = event.clientX - (rect.left + rect.width / 2)
+    const dy = event.clientY - (rect.top + rect.height / 2)
+    const normalizedX = Math.max(-1, Math.min(1, dx / (window.innerWidth / 2)))
+    const normalizedY = Math.max(-1, Math.min(1, dy / (window.innerHeight / 2)))
+    slot.style.setProperty('--mascot-x', `${(normalizedX * 4).toFixed(2)}px`)
+    slot.style.setProperty('--mascot-y', `${(normalizedY * 3).toFixed(2)}px`)
+    slot.style.setProperty('--mascot-rotate', `${(normalizedX * 3).toFixed(2)}deg`)
+    setState(dx < -48 ? 'left' : dx > 48 ? 'right' : 'idle')
+  }
+
+  window.addEventListener('pointermove', onPointerMove, { passive: true })
+  const onMascotClick = () => {
+    if (slot.dataset.mascotLocked === 'true') return
+    const state = MASCOT_APPROVAL_STATES[Math.floor(Math.random() * MASCOT_APPROVAL_STATES.length)] ?? 'approve'
+    playAction(state)
+  }
+  slot.addEventListener('click', onMascotClick)
+  root.querySelectorAll<HTMLInputElement>('[data-cookie-analytics], [data-cookie-maps]').forEach((checkbox) => {
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) playAction('approve')
+    })
+  })
+
+  root.querySelector('[data-cookie-accept-all]')?.addEventListener('click', (event) => {
+    event.preventDefault()
+    event.stopImmediatePropagation()
+    playAction('celebrate', () => {
+      acceptAllCookieConsent()
+      promptDismissedForPage = false
+      mode = 'hidden'
+      returnFocus = null
+      renderBanner()
+    })
+  })
+
+  cleanupMascot = () => {
+    window.removeEventListener('pointermove', onPointerMove)
+    slot.removeEventListener('click', onMascotClick)
+    window.clearTimeout(actionTimer)
+  }
 }
 
 function bindBanner(root: HTMLElement) {
   root.querySelector('[data-cookie-accept-all]')?.addEventListener('click', () => {
     acceptAllCookieConsent()
+    promptDismissedForPage = false
     mode = 'hidden'
     returnFocus = null
     renderBanner()
   })
-  root.querySelector('[data-cookie-necessary]')?.addEventListener('click', () => {
+  root.querySelector('[data-cookie-necessary]')?.addEventListener('click', (event) => {
+    event.preventDefault()
     rejectOptionalCookieConsent()
+    promptDismissedForPage = false
     mode = 'hidden'
     returnFocus = null
     renderBanner()
@@ -169,6 +311,10 @@ function bindBanner(root: HTMLElement) {
     event.preventDefault()
     mode = 'settings'
     renderBanner()
+  })
+  root.querySelector('[data-cookie-cancel]')?.addEventListener('click', (event) => {
+    event.preventDefault()
+    closeSettings()
   })
   root.querySelector('[data-cookie-save]')?.addEventListener('click', () => {
     const analytics = root.querySelector<HTMLInputElement>('[data-cookie-analytics]')?.checked ? 'granted' : 'denied'
@@ -185,7 +331,7 @@ function bindBanner(root: HTMLElement) {
       closeSettings()
       return
     }
-    rejectOptionalCookieConsent()
+    promptDismissedForPage = true
     mode = 'hidden'
     returnFocus = null
     renderBanner()
