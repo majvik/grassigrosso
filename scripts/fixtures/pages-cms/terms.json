@@ -12,11 +12,11 @@
         },
         {
           "type": "link",
-          "href": "https://grassigrosso.com",
+          "href": "https://grassigrosso.ru",
           "children": [
             {
               "type": "text",
-              "value": "https://grassigrosso.com",
+              "value": "https://grassigrosso.ru",
               "strong": false
             }
           ]
@@ -70,7 +70,7 @@
             },
             {
               "type": "text",
-              "value": " – совокупность программ, баз данных, интерфейсов и материалов, доступных по доменному имени grassigrosso.com.",
+              "value": " – совокупность программ, баз данных, интерфейсов и материалов, доступных по доменному имени grassigrosso.ru.",
               "strong": false
             }
           ]

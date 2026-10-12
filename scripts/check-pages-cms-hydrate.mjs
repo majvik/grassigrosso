@@ -1080,7 +1080,7 @@ function assertUnchanged(fallback, before, label) {
       body: [
         {
           type: 'paragraph',
-          runs: [{ type: 'link', href: 'https://grassigrosso.com', children: [] }],
+          runs: [{ type: 'link', href: 'https://grassigrosso.ru', children: [] }],
         },
       ],
     },

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://grassigrosso.com/sitemap.xml
+Sitemap: https://grassigrosso.ru/sitemap.xml

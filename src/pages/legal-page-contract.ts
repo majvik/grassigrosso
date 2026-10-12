@@ -31,7 +31,7 @@ export type {
 
 /** Exact href allowlist (contract v2.1). */
 export const LEGAL_HREF_ALLOWLIST: readonly string[] = Object.freeze([
-  'https://grassigrosso.com',
+  'https://grassigrosso.ru',
   'mailto:office@grassigrosso.com',
   '/privacy',
   '/cookies',

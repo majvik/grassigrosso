@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
-import { readFile } from 'node:fs/promises'
-import { resolve } from 'node:path'
+import { readdir, readFile } from 'node:fs/promises'
+import { extname, relative, resolve } from 'node:path'
 
 const root = resolve(import.meta.dirname, '..')
 const require = createRequire(import.meta.url)
@@ -80,5 +80,79 @@ for (const mailbox of requiredMailboxes) {
 }
 
 assert(!serverSource.includes('@grassigrosso.ru'), 'mail routing must stay on @grassigrosso.com')
+
+const textExtensions = new Set(['.cjs', '.html', '.js', '.json', '.md', '.mjs', '.ts', '.tsx', '.txt', '.xml'])
+const runtimeFiles = [
+  resolve(root, '.env.example'),
+  resolve(root, 'vite.config.mjs'),
+  resolve(root, 'server.cjs'),
+]
+
+for (const entry of await readdir(root, { withFileTypes: true })) {
+  if (entry.isFile() && entry.name.endsWith('.html')) {
+    runtimeFiles.push(resolve(root, entry.name))
+  }
+}
+
+async function collectTextFiles(directory) {
+  const entries = await readdir(directory, { withFileTypes: true })
+  for (const entry of entries) {
+    const absolutePath = resolve(directory, entry.name)
+    if (entry.isDirectory()) {
+      await collectTextFiles(absolutePath)
+    } else if (textExtensions.has(extname(entry.name))) {
+      runtimeFiles.push(absolutePath)
+    }
+  }
+}
+
+for (const directory of [
+  'public',
+  'templates',
+  'src',
+  'lib',
+  'scripts/fixtures/pages-cms',
+  'strapi-catalog/src/api/pages-cms',
+]) {
+  await collectTextFiles(resolve(root, directory))
+}
+
+const websiteDomainViolations = []
+const ruMailboxViolations = []
+
+for (const file of runtimeFiles) {
+  const source = await readFile(file, 'utf8')
+  const lines = source.split('\n')
+  lines.forEach((line, index) => {
+    if (/(?<!@)grassigrosso\.com/.test(line)) {
+      websiteDomainViolations.push(`${relative(root, file)}:${index + 1}`)
+    }
+    if (/@grassigrosso\.ru\b/.test(line)) {
+      ruMailboxViolations.push(`${relative(root, file)}:${index + 1}`)
+    }
+  })
+}
+
+assert.deepEqual(
+  websiteDomainViolations,
+  [],
+  `website references still use grassigrosso.com:\n${websiteDomainViolations.join('\n')}`,
+)
+assert.deepEqual(
+  ruMailboxViolations,
+  [],
+  `mailboxes must stay on grassigrosso.com:\n${ruMailboxViolations.join('\n')}`,
+)
+
+const sitemap = await readFile(resolve(root, 'public/sitemap.xml'), 'utf8')
+const robots = await readFile(resolve(root, 'public/robots.txt'), 'utf8')
+const envExample = await readFile(resolve(root, '.env.example'), 'utf8')
+assert(sitemap.includes('<loc>https://grassigrosso.ru/</loc>'), 'sitemap root must use grassigrosso.ru')
+assert(robots.includes('Sitemap: https://grassigrosso.ru/sitemap.xml'), 'robots sitemap must use grassigrosso.ru')
+assert.match(
+  envExample,
+  /^CORS_ALLOWED_ORIGINS=.*https:\/\/grassigrosso\.ru/m,
+  '.env.example CORS allowlist must include the production .ru origin',
+)
 
 console.log(`Production domain redirect contract: OK (${redirectCases.length} cases)`)

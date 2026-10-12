@@ -27,7 +27,7 @@ const LEGAL_FEED_PATH_BY_SLUG = Object.freeze({
 
 /** Exact href allowlist (contract v2.1). */
 const LEGAL_HREF_ALLOWLIST = Object.freeze([
-  'https://grassigrosso.com',
+  'https://grassigrosso.ru',
   'mailto:office@grassigrosso.com',
   '/privacy',
   '/cookies',

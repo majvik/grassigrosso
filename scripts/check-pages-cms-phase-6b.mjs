@@ -161,7 +161,7 @@ const validMinimal = {
         { type: 'text', value: 'Текст ', strong: false },
         {
           type: 'link',
-          href: 'https://grassigrosso.com',
+          href: 'https://grassigrosso.ru',
           children: [{ type: 'text', value: 'сайта', strong: false }],
         },
       ],
@@ -629,7 +629,7 @@ const SAMPLE_PRIVACY_BODY = [
       { type: 'text', value: 'См. ', strong: false },
       {
         type: 'link',
-        href: 'https://grassigrosso.com',
+        href: 'https://grassigrosso.ru',
         link_label: 'сайт',
         strong: false,
       },
@@ -782,7 +782,7 @@ async function runStrapiSmokeForEnv(nodeEnv) {
       const r = await fetchJson(LEGAL_FEED_PATH_BY_SLUG[slug])
       assert(
         (r.status === 404 || r.status === 200) && r.body && 'data' in r.body,
-        `${nodeEnv}: ${slug} feed status=${r.status}`,
+        `${nodeEnv}: ${slug} feed status=${r.status} body=${JSON.stringify(r.body)}`,
       )
     }
 
