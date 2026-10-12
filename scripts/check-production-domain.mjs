@@ -21,6 +21,7 @@ const redirectCases = [
   ['old www host redirects to the new apex', { hostHeader: 'www.grassigrosso.com', originalUrl: '/documents' }, 'https://grassigrosso.ru/documents'],
   ['new www host redirects to the new apex', { hostHeader: 'www.grassigrosso.ru', originalUrl: '/contacts' }, 'https://grassigrosso.ru/contacts'],
   ['host ports are ignored', { hostHeader: 'grassigrosso.ru:443', originalUrl: '/catalog' }, null],
+  ['Timeweb development host remains directly accessible', { hostHeader: 'majvik-grassigrosso-e3cd.twc1.net', originalUrl: '/catalog' }, null],
   ['legacy html URL redirects in one hop', { hostHeader: 'grassigrosso.com', originalUrl: '/catalog.html?source=test' }, 'https://grassigrosso.ru/catalog?source=test'],
   ['index html maps to root', { hostHeader: 'grassigrosso.ru', originalUrl: '/index.html?source=test' }, 'https://grassigrosso.ru/?source=test'],
 ]
