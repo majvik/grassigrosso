@@ -95,7 +95,10 @@ const SPAM_MAX_PHONE_LENGTH = Number(process.env.SPAM_MAX_PHONE_LENGTH || 40);
 const SPAM_MAX_EMAIL_LENGTH = Number(process.env.SPAM_MAX_EMAIL_LENGTH || 160);
 const SPAM_DISABLE_IN_NON_PROD = (process.env.SPAM_DISABLE_IN_NON_PROD || 'true') === 'true';
 const CORS_ALLOWED_ORIGINS = normalizeOriginList(
-  process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173'
+  [
+    process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173',
+    'https://grassigrosso.ru',
+  ].join(',')
 );
 
 /** TTL кэша ответов Strapi для GET /api/catalog/* (мс). 0 — отключено. В production по умолчанию 45s — меньше нагрузка на SQLite при трафике на /catalog. */
