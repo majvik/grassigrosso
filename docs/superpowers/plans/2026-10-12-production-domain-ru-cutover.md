@@ -32,9 +32,9 @@
 ## Phase Status
 
 - [x] Phase 1 — `strapi-full-cms`: RED contract, implementation, CMS/default synchronization, local verify
-- [ ] Phase 2 — `main`: equivalent production implementation and local verify
-- [ ] Phase 3 — Timeweb domains/environment, dev deploy, production deploy
-- [ ] Phase 4 — live verification matrix and post-cutover metrics
+- [x] Phase 2 — `main`: equivalent production implementation and local verify
+- [x] Phase 3 — Timeweb domains/environment, dev deploy, production deploy
+- [x] Phase 4 — live verification matrix and post-cutover metrics
 
 ---
 
@@ -166,21 +166,21 @@
 - Same helper contract as Task 1, implemented against the older `main` server layout.
 - No React/CMS source is introduced into `main`.
 
-- [ ] **Step 1: Switch to `main` without restoring unrelated stashed work**
+- [x] **Step 1: Switch to `main` without restoring unrelated stashed work**
 
   Confirm `git status --short --branch` contains no tracked changes from Phase 1.
 
-- [ ] **Step 2: Add/port the contract first and observe RED**
+- [x] **Step 2: Add/port the contract first and observe RED**
 
   Run: `npm run check:production-domain`
 
   Expected: FAIL before implementation on `main`.
 
-- [ ] **Step 3: Implement the helper, server redirect, SEO, sitemap/robots, and legal-site changes**
+- [x] **Step 3: Implement the helper, server redirect, SEO, sitemap/robots, and legal-site changes**
 
   Port behavior rather than wholesale files. Preserve the older branch's existing routes, assets, email values, and build structure.
 
-- [ ] **Step 4: Run production-branch gates**
+- [x] **Step 4: Run production-branch gates**
 
   Run exactly:
 
@@ -191,7 +191,7 @@
 
   Expected: all exit `0`. Existing Vite parse warnings may be recorded, but the build must exit `0`. Inspect `dist/index.html`, `dist/privacy.html`, `dist/terms.html`, `dist/sitemap.xml`, and `dist/robots.txt` for `.ru` website origin and preserved `.com` emails.
 
-- [ ] **Step 5: Update this plan with exact results and commit**
+- [x] **Step 5: Update this plan with exact results and commit**
 
   Mark Phase 2 complete only after local gates are recorded. Commit with message: `fix(domain): migrate production web origin to ru`.
 
@@ -209,19 +209,19 @@
 - Preserved variables: all SMTP/mail values on `.com`
 - Custom domains: apex and `www` for both `.ru` and `.com`, with valid TLS.
 
-- [ ] **Step 1: Capture current Timeweb values without exposing secrets**
+- [x] **Step 1: Capture current Timeweb values without exposing secrets**
 
   Record domain attachments, primary-domain selection, `SITE_URL`, and origin allowlist. Do not copy secret values into the plan or terminal output.
 
-- [ ] **Step 2: Update domain/environment configuration**
+- [x] **Step 2: Update domain/environment configuration**
 
   Set `.ru` as primary, attach/repair both `www` aliases, set `SITE_URL`, add `.ru` to CORS, and leave email/SMTP variables unchanged.
 
-- [ ] **Step 3: Push and verify dev deployment**
+- [x] **Step 3: Push and verify dev deployment**
 
   Push `strapi-full-cms`, wait for build completion, then verify dev `/health`, homepage, canonical/OG, and absence of the retired modal.
 
-- [ ] **Step 4: Push and verify production deployment**
+- [x] **Step 4: Push and verify production deployment**
 
   Push `main`, wait for build completion, and do not declare completion from CI status alone; proceed to Task 5 live checks.
 
@@ -236,23 +236,23 @@
 - Consumes the deployed domain matrix.
 - Produces final evidence and rollback decision.
 
-- [ ] **Step 1: Verify response matrix**
+- [x] **Step 1: Verify response matrix**
 
   Check apex/`www`, `.com`/`.ru`, clean/`.html`, nested paths, query preservation, `/health`, sitemap, and robots. Every old-domain response must be `301`, not `302` or a `200` duplicate.
 
-- [ ] **Step 2: Verify built SEO and legal output**
+- [x] **Step 2: Verify built SEO and legal output**
 
   Fetch live home, catalog, privacy, terms, sitemap, and robots. Confirm canonical/OG/legal site addresses use `.ru`; confirm displayed email contacts remain `.com`.
 
-- [ ] **Step 3: Verify CORS without submitting a lead**
+- [x] **Step 3: Verify CORS without submitting a lead**
 
   Send an `OPTIONS /api/submit` preflight with `Origin: https://grassigrosso.ru`. Expect success and `Access-Control-Allow-Origin: https://grassigrosso.ru`. Do not send a real form submission.
 
-- [ ] **Step 4: Verify TLS**
+- [x] **Step 4: Verify TLS**
 
   Confirm valid TLS handshakes for all four hostnames. Any `www` TLS error leaves Phase 4 incomplete.
 
-- [ ] **Step 5: Record final evidence**
+- [x] **Step 5: Record final evidence**
 
   Fill Post-cutover Metrics below with timestamps, status codes, locations, canonical origins, CORS result, build identifiers, and any warnings. Mark Phases 3–4 complete only if every success criterion in the spec is satisfied.
 
@@ -262,15 +262,15 @@ This section is intentionally a results ledger. Append exact observed values; do
 
 | Gate | Result | Evidence |
 | --- | --- | --- |
-| `strapi-full-cms` contract/typecheck/checks/build | PASS — 2026-10-12 13:17 MSK | `check:production-domain` 7/7; `typecheck`, `check:routes`, `check:personal-data`, `check:pages-cms-contract`, `check:pages-cms-hydrate`, legal fixtures/parity, `check:pages-cms-phase-6b`, and `SITE_URL=https://grassigrosso.ru npm run build` all exited 0. CMS fixtures were seeded locally, the versioned seed was synchronized (`ca1ac7fa13a1…`), and pages/site-chrome snapshots were exported from `source=strapi`. Dist uses `.ru` for website origins while `.com` mailbox values remain present. |
-| `main` contract/checks/build | Pending | Commands listed in Task 3 |
-| Dev deployment | Pending | Build ID/time and `/health` |
-| Production deployment | Pending | Build ID/time and `/health` |
-| `.com → .ru` redirects | Pending | Status/location matrix |
-| apex/`www` TLS | Pending | Four-host handshake results |
-| canonical/OG/sitemap/robots | Pending | Live fetched values |
-| `.ru` CORS preflight | Pending | Response headers |
-| `.com` email preservation | Pending | Contract test and live contact values |
+| `strapi-full-cms` contract/typecheck/checks/build | PASS — 2026-10-12 | `check:production-domain` 8/8; `typecheck`, `check:routes`, `check:personal-data`, `check:pages-cms-contract`, `check:pages-cms-hydrate`, legal fixtures/parity, `check:pages-cms-phase-6b`, and `SITE_URL=https://grassigrosso.ru npm run build` all exited 0. CMS fixtures were seeded locally, the versioned seed was synchronized (`ca1ac7fa13a1…`), and pages/site-chrome snapshots were exported from `source=strapi`. Dist uses `.ru` for website origins while `.com` mailbox values remain present. |
+| `main` contract/checks/build | PASS — 2026-10-12 | `check:production-domain` 8/8, `check:download-catalog-sales`, `check:submit-queue-fast`, and `SITE_URL=https://grassigrosso.ru npm run build` all exited 0. Existing non-fatal Vite/parse5 warnings remained; build exited 0. |
+| Dev deployment | PASS — commit `f16aafd`, verified 2026-10-12 | `https://majvik-grassigrosso-e3cd.twc1.net/` and `/catalog` return 200; `/health` reports `status=ok`; retired modal is absent; canonical/OG use `.ru`; CORS preflight allows `.ru`. |
+| Production deployment | PASS — commit `3cf0bd0`, verified 2026-10-12 | `.ru` home/catalog return 200; `/health` reports `status=ok`; live SEO and CORS checks pass. |
+| `.com → .ru` redirects | PASS — verified 2026-10-12 | Apex `.com` and clean/`.html` catalog paths return 301 to apex `.ru`, preserving path/query and removing `.html`; follow test reaches 200 in one redirect. |
+| apex/`www` TLS | PASS — verified 2026-10-12 14:29 MSK | Timeweb production app now has both `www` aliases attached and Let's Encrypt installed. All four hosts present a hostname-matching certificate with `Verify return code: 0 (ok)`. Apex `.ru`, `www.ru`, apex `.com`, and `www.com` each return one 301 for `/catalog.html?source=final` to `https://grassigrosso.ru/catalog?source=final`, followed by 200. |
+| canonical/OG/sitemap/robots | PASS — verified 2026-10-12 | Live home, catalog, privacy, terms, sitemap, and robots use `https://grassigrosso.ru`; no website-origin `.com` remains in checked output. |
+| `.ru` CORS preflight | PASS — verified 2026-10-12 | `OPTIONS /api/submit` returns 204 with `Access-Control-Allow-Origin: https://grassigrosso.ru` on prod and dev. |
+| `.com` email preservation | PASS — verified 2026-10-12 | Contract test passes; live homepage still displays `sales@grassigrosso.com`; no `.ru` mailbox migration was made. |
 
 ## Plan Self-review
 
