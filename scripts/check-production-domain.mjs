@@ -42,6 +42,11 @@ for (const mailbox of [
   assert(serverSource.includes(mailbox), `required mailbox changed or missing: ${mailbox}`)
 }
 assert(!serverSource.includes('@grassigrosso.ru'), 'mail routing must stay on @grassigrosso.com')
+assert.match(
+  serverSource,
+  /CORS_ALLOWED_ORIGINS[\s\S]{0,300}https:\/\/grassigrosso\.ru/,
+  'runtime CORS allowlist must always include the production .ru origin',
+)
 
 const textExtensions = new Set(['.cjs', '.html', '.js', '.json', '.mjs', '.ts', '.tsx', '.txt', '.xml'])
 const runtimeFiles = [resolve(root, '.env.example'), resolve(root, 'vite.config.mjs'), resolve(root, 'server.cjs')]

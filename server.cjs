@@ -47,7 +47,10 @@ const SPAM_MAX_NAME_LENGTH = Number(process.env.SPAM_MAX_NAME_LENGTH || 120);
 const SPAM_MAX_PHONE_LENGTH = Number(process.env.SPAM_MAX_PHONE_LENGTH || 40);
 const SPAM_MAX_EMAIL_LENGTH = Number(process.env.SPAM_MAX_EMAIL_LENGTH || 160);
 const CORS_ALLOWED_ORIGINS = normalizeOriginList(
-  process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173'
+  [
+    process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173',
+    'https://grassigrosso.ru',
+  ].join(',')
 );
 
 let isQueueProcessing = false;
