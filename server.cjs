@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { createAntiSpamProtector } = require('./lib/anti-spam.cjs');
 const { normalizeOriginList, buildCorsOptions } = require('./lib/cors-config.cjs');
+const { buildCanonicalRedirect } = require('./lib/canonical-domain.cjs');
 const db = require('./lib/db.cjs');
 const { buildConfirmationEmail } = require('./lib/confirmation-email.cjs');
 require('dotenv').config();
@@ -60,30 +61,15 @@ app.set('trust proxy', true);
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Canonical domain redirect (production only)
-const PRIMARY_HOST = 'grassigrosso.com';
+// Canonical domain and clean-URL redirect (production only)
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
-    const host = String(req.headers.host || '').replace(/:\d+$/, '').toLowerCase();
-
-    if (!host || host === PRIMARY_HOST) {
-      return next();
-    }
-
-    const targetUrl = `https://${PRIMARY_HOST}${req.originalUrl || '/'}`;
+    const targetUrl = buildCanonicalRedirect({
+      hostHeader: req.headers.host,
+      originalUrl: req.originalUrl,
+    });
+    if (!targetUrl) return next();
     return res.redirect(301, targetUrl);
-  });
-
-  // Канонические URL без .html (совпадают с canonical в HTML и sitemap)
-  app.use((req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
-    if (req.path.startsWith('/assets/')) return next();
-    if (!req.path.endsWith('.html')) return next();
-
-    const q = req.originalUrl.indexOf('?');
-    const qs = q >= 0 ? req.originalUrl.slice(q) : '';
-    const dest = req.path === '/index.html' ? `/${qs}` : `${req.path.slice(0, -5)}${qs}`;
-    return res.redirect(301, dest);
   });
 }
 

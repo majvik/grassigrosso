@@ -31,8 +31,8 @@
 
 ## Phase Status
 
-- [ ] Phase 1 — `strapi-full-cms`: RED contract, implementation, CMS/default synchronization, local verify
-- [ ] Phase 2 — `main`: equivalent production implementation and local verify
+- [x] Phase 1 — `strapi-full-cms`: RED contract, implementation, CMS/default synchronization, local verify
+- [x] Phase 2 — `main`: equivalent production implementation and local verify
 - [ ] Phase 3 — Timeweb domains/environment, dev deploy, production deploy
 - [ ] Phase 4 — live verification matrix and post-cutover metrics
 
@@ -55,31 +55,31 @@
 - Consumes: Express `req.headers.host` and `req.originalUrl`
 - Behavior: returns `null` for an already canonical URL; otherwise returns an absolute `https://grassigrosso.ru/...` location with query preserved and terminal `.html` removed.
 
-- [ ] **Step 1: Move the approved spec and plan to `strapi-full-cms`**
+- [x] **Step 1: Move the approved spec and plan to `strapi-full-cms`**
 
   Record the exact two documentation commit hashes from `main`, switch to `strapi-full-cms`, and cherry-pick only those commits. Confirm unrelated `stash@{0}` remains untouched.
 
-- [ ] **Step 2: Write the failing redirect/domain contract**
+- [x] **Step 2: Write the failing redirect/domain contract**
 
   Add assertions for apex `.ru`, apex `.com`, both `www` hosts, host-with-port, query preservation, `.html` removal, and required `.com` email recipients. Add `check:production-domain` to `package.json`.
 
-- [ ] **Step 3: Run the contract and observe RED**
+- [x] **Step 3: Run the contract and observe RED**
 
   Run: `npm run check:production-domain`
 
   Expected: FAIL because `server.cjs` and the build defaults still designate `.com` as the website origin.
 
-- [ ] **Step 4: Implement canonical redirect helper and server integration**
+- [x] **Step 4: Implement canonical redirect helper and server integration**
 
   Replace the two production redirect middlewares with one helper-backed canonicalization middleware. Keep development behavior unchanged and preserve Express `301` semantics.
 
-- [ ] **Step 5: Run focused redirect tests**
+- [x] **Step 5: Run focused redirect tests**
 
   Run: `npm run check:production-domain`
 
   Expected: redirect-helper cases pass; SEO/legal assertions may remain RED until Task 2.
 
-- [ ] **Step 6: Commit the redirect primitive**
+- [x] **Step 6: Commit the redirect primitive**
 
   Commit exact files with message: `fix(domain): canonicalize production traffic on ru`
 
@@ -103,21 +103,21 @@
 - Produces: `.ru` canonical/OG output and `.ru` code-owned legal website references.
 - Preserves: every string matching an actual mailbox address on `@grassigrosso.com`.
 
-- [ ] **Step 1: Extend the RED contract to runtime/public content**
+- [x] **Step 1: Extend the RED contract to runtime/public content**
 
   Assert `.ru` in default `SITE_URL`, sitemap, robots, legal site URLs, and generated output. Assert required `.com` mailboxes remain present and no `@grassigrosso.ru` recipient appears.
 
-- [ ] **Step 2: Run the expanded contract and observe RED**
+- [x] **Step 2: Run the expanded contract and observe RED**
 
   Run: `npm run check:production-domain`
 
   Expected: FAIL listing remaining website-origin `.com` references, without treating email addresses as failures.
 
-- [ ] **Step 3: Update code-owned SEO and legal sources**
+- [x] **Step 3: Update code-owned SEO and legal sources**
 
   Change only website-origin uses to `.ru`. Keep email text, `mailto:`, JSON-LD email, SMTP, and routing recipients on `.com`.
 
-- [ ] **Step 4: Synchronize CMS defaults/fixtures/snapshots**
+- [x] **Step 4: Synchronize CMS defaults/fixtures/snapshots**
 
   Use existing project generators instead of hand-editing derived files where a generator exists:
 
@@ -128,7 +128,7 @@
 
   If live snapshot exports are required by changed sources, start the local stack and run `npm run pages:export-snapshot` plus `npm run site-chrome:export-snapshot`; do not fabricate snapshot payloads.
 
-- [ ] **Step 5: Run full local gates for the dev branch**
+- [x] **Step 5: Run full local gates for the dev branch**
 
   Run exactly:
 
@@ -144,7 +144,7 @@
 
   Expected: all exit `0`; build output canonical/OG values use `.ru` and contains no rendered website-address `.com` outside email addresses.
 
-- [ ] **Step 6: Update this plan with commands/results and commit**
+- [x] **Step 6: Update this plan with commands/results and commit**
 
   Mark Phase 1 complete only after recording exact results in Post-cutover Metrics. Commit source, generated files, tests, and plan update atomically with message: `fix(domain): migrate dev web origin to ru`.
 
@@ -166,21 +166,21 @@
 - Same helper contract as Task 1, implemented against the older `main` server layout.
 - No React/CMS source is introduced into `main`.
 
-- [ ] **Step 1: Switch to `main` without restoring unrelated stashed work**
+- [x] **Step 1: Switch to `main` without restoring unrelated stashed work**
 
   Confirm `git status --short --branch` contains no tracked changes from Phase 1.
 
-- [ ] **Step 2: Add/port the contract first and observe RED**
+- [x] **Step 2: Add/port the contract first and observe RED**
 
   Run: `npm run check:production-domain`
 
   Expected: FAIL before implementation on `main`.
 
-- [ ] **Step 3: Implement the helper, server redirect, SEO, sitemap/robots, and legal-site changes**
+- [x] **Step 3: Implement the helper, server redirect, SEO, sitemap/robots, and legal-site changes**
 
   Port behavior rather than wholesale files. Preserve the older branch's existing routes, assets, email values, and build structure.
 
-- [ ] **Step 4: Run production-branch gates**
+- [x] **Step 4: Run production-branch gates**
 
   Run exactly:
 
@@ -191,7 +191,7 @@
 
   Expected: all exit `0`. Existing Vite parse warnings may be recorded, but the build must exit `0`. Inspect `dist/index.html`, `dist/privacy.html`, `dist/terms.html`, `dist/sitemap.xml`, and `dist/robots.txt` for `.ru` website origin and preserved `.com` emails.
 
-- [ ] **Step 5: Update this plan with exact results and commit**
+- [x] **Step 5: Update this plan with exact results and commit**
 
   Mark Phase 2 complete only after local gates are recorded. Commit with message: `fix(domain): migrate production web origin to ru`.
 
@@ -262,8 +262,8 @@ This section is intentionally a results ledger. Append exact observed values; do
 
 | Gate | Result | Evidence |
 | --- | --- | --- |
-| `strapi-full-cms` contract/typecheck/checks/build | Pending | Commands listed in Task 2 |
-| `main` contract/checks/build | Pending | Commands listed in Task 3 |
+| `strapi-full-cms` contract/typecheck/checks/build | PASS — 2026-10-12 13:17 MSK | `check:production-domain` 7/7; `typecheck`, `check:routes`, `check:personal-data`, `check:pages-cms-contract`, `check:pages-cms-hydrate`, legal fixtures/parity, `check:pages-cms-phase-6b`, and `SITE_URL=https://grassigrosso.ru npm run build` all exited 0. CMS fixtures were seeded locally, the versioned seed was synchronized (`ca1ac7fa13a1…`), and pages/site-chrome snapshots were exported from `source=strapi`. Dist uses `.ru` for website origins while `.com` mailbox values remain present. |
+| `main` contract/checks/build | PASS — 2026-10-12 13:21 MSK | `check:production-domain` 7/7, `check:download-catalog-sales`, `check:submit-queue-fast`, and `SITE_URL=https://grassigrosso.ru npm run build` exited 0. Existing parse5 `noscript` warnings remained non-fatal. `dist/index.html`, legal pages, sitemap, and robots use `.ru`; rendered mailbox values remain `.com`. |
 | Dev deployment | Pending | Build ID/time and `/health` |
 | Production deployment | Pending | Build ID/time and `/health` |
 | `.com → .ru` redirects | Pending | Status/location matrix |

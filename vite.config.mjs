@@ -31,7 +31,7 @@ function siteOriginPlugin(origin) {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const siteOrigin = (env.SITE_URL || 'https://grassigrosso.com').replace(/\/+$/, '')
+  const siteOrigin = (env.SITE_URL || 'https://grassigrosso.ru').replace(/\/+$/, '')
 
   return {
     root: '.',

@@ -8,6 +8,7 @@
     "build": "vite build",
     "browser:smoke": "agent-browser --help",
     "check:download-catalog-sales": "node scripts/check-download-catalog-sales.mjs",
+    "check:production-domain": "node scripts/check-production-domain.mjs",
     "check:submit-queue-fast": "node scripts/check-submit-queue-fast.mjs",
     "preview": "vite preview",
     "new-page": "node scripts/new-page.mjs",
