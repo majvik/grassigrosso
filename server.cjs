@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { createAntiSpamProtector } = require('./lib/anti-spam.cjs');
 const { normalizeOriginList, buildCorsOptions } = require('./lib/cors-config.cjs');
+const { buildCanonicalRedirect } = require('./lib/canonical-domain.cjs');
 const db = require('./lib/db.cjs');
 const consentRegistry = require('./lib/consent-registry.cjs');
 const { buildConfirmationEmail } = require('./lib/confirmation-email.cjs');
@@ -257,16 +258,7 @@ app.use((req, res, next) => {
   return urlencodedBodyParser(req, res, next);
 });
 
-// Canonical domain redirect (production only)
-const SITE_URL = String(process.env.SITE_URL || '').trim();
-let PRIMARY_HOST = 'grassigrosso.com';
-if (SITE_URL) {
-  try {
-    PRIMARY_HOST = new URL(SITE_URL).host.toLowerCase();
-  } catch {
-    // Keep default if SITE_URL is malformed
-  }
-}
+// Canonical domain and clean-URL redirect (production only)
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
     if (req.path === '/health') {
@@ -276,26 +268,12 @@ if (process.env.NODE_ENV === 'production') {
     if (isStrapiProxiedPath(req)) {
       return next();
     }
-    const host = String(req.headers.host || '').replace(/:\d+$/, '').toLowerCase();
-
-    if (!host || host === PRIMARY_HOST) {
-      return next();
-    }
-
-    const targetUrl = `https://${PRIMARY_HOST}${req.originalUrl || '/'}`;
+    const targetUrl = buildCanonicalRedirect({
+      hostHeader: req.headers.host,
+      originalUrl: req.originalUrl,
+    });
+    if (!targetUrl) return next();
     return res.redirect(301, targetUrl);
-  });
-
-  // Канонические URL без .html (совпадают с canonical в HTML и sitemap)
-  app.use((req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
-    if (req.path.startsWith('/assets/')) return next();
-    if (!req.path.endsWith('.html')) return next();
-
-    const q = req.originalUrl.indexOf('?');
-    const qs = q >= 0 ? req.originalUrl.slice(q) : '';
-    const dest = req.path === '/index.html' ? `/${qs}` : `${req.path.slice(0, -5)}${qs}`;
-    return res.redirect(301, dest);
   });
 
   app.get(['/catalogue-new', '/catalogue-new.html'], (req, res) => {
