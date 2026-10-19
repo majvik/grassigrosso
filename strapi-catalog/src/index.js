@@ -446,21 +446,25 @@ module.exports = {
     }
 
     try {
+      const randomPriceRub = () => (30 + Math.floor(Math.random() * 21)) * 1000;
       const productsForPrice = await productRepo.findMany({});
       const productDocuments = strapi.documents('api::product.product');
       let priceBackfilled = 0;
       for (const product of Array.isArray(productsForPrice) ? productsForPrice : []) {
         if (!product?.documentId) continue;
         const current = Number(product.price_rub);
-        if (Number.isFinite(current) && current > 0) continue;
+        // Fill missing prices, and migrate the previous fixed placeholder (100000).
+        if (Number.isFinite(current) && current > 0 && current !== 100000) continue;
         await productDocuments.update({
           documentId: product.documentId,
-          data: { price_rub: 100000 },
+          data: { price_rub: randomPriceRub() },
         });
         priceBackfilled += 1;
       }
       if (priceBackfilled) {
-        strapi.log.info(`Catalog bootstrap: backfilled price_rub=100000 for ${priceBackfilled} products`);
+        strapi.log.info(
+          `Catalog bootstrap: backfilled price_rub in 30k–50k range for ${priceBackfilled} products`,
+        );
       }
     } catch (e) {
       strapi.log.warn(`Catalog bootstrap: product price backfill skipped: ${e.message}`);

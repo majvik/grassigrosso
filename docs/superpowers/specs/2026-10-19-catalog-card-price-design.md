@@ -16,7 +16,7 @@
 ## Approach
 
 1. Strapi `Product.price_rub` (integer, optional) → feed `priceRub`.
-2. Bootstrap: идемпотентный backfill `100000` для активных товаров без цены (стартовый placeholder).
+2. Bootstrap: идемпотентный backfill случайной цены **30 000–50 000 ₽** (шаг 1000) для товаров без цены или со старым placeholder `100000`.
 3. Карточка: `.catalogue-new-card-price` перед `.catalogue-new-tags-row`.
 4. CSS: зеркало `.catalogue-new-sidebar-title` (32px / Bounded / primary).
 5. Snapshot + unit check скрипт.
