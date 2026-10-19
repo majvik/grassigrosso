@@ -69,8 +69,6 @@ export function SmartSelector() {
       })
       const payload = await response.json() as { filters?: Record<string, string[]>; error?: string }
       if (!response.ok || !payload.filters) throw new Error(payload.error || 'Не удалось подобрать фильтры.')
-      const hasFilters = Object.values(payload.filters).some((values) => Array.isArray(values) && values.length > 0)
-      if (!hasFilters) throw new Error('Не хватает данных. Укажите вес, жёсткость, размер или другое пожелание.')
       setTags(profileTags)
       setInput('')
       window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: { filters: payload.filters } }))

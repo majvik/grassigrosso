@@ -119,6 +119,19 @@ interface ScrollOptions {
 type CatalogSmartFilterGroup = 'collection' | 'size' | 'firmness' | 'type' | 'loadRange' | 'heightRange' | 'fillings' | 'features'
 type CatalogSmartFiltersEvent = CustomEvent<{ filters?: Partial<Record<CatalogSmartFilterGroup, string[]>> }>
 
+// Earlier groups are relaxed first. Physical fit and safe load are deliberately
+// kept longer than preferences such as collection, filling or mattress height.
+const SMART_FILTER_RELAXATION_ORDER: CatalogSmartFilterGroup[] = [
+  'heightRange',
+  'fillings',
+  'features',
+  'collection',
+  'type',
+  'firmness',
+  'loadRange',
+  'size',
+]
+
 function queryElement<T extends Element>(root: ParentNode, selector: string): T | null {
   return root.querySelector(selector) as T | null
 }
@@ -370,6 +383,42 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       if (matchesCatalogCardMeta(meta, candidateState, favSet, priceBounds)) count += 1
     })
     return count
+  }
+
+  function resolveNearestSmartFilterState(): void {
+    const favSet = readCatalogFavourites()
+    const meta = getFilterMeta()
+
+    // `soft` is a valid user preference, but the current CMS catalogue has no
+    // literal soft products. Medium is the closest ordered firmness value.
+    if (
+      state.firmness.size === 1 &&
+      state.firmness.has('soft') &&
+      !meta.some((item) => item.firmness === 'soft') &&
+      meta.some((item) => item.firmness === 'medium')
+    ) {
+      state.firmness.clear()
+      state.firmness.add('medium')
+    }
+
+    while (countMatchesWithState(state, favSet) === 0) {
+      const activeGroups = SMART_FILTER_RELAXATION_ORDER.filter((group) => state[group].size > 0)
+      if (activeGroups.length === 0) break
+
+      let selectedGroup: CatalogSmartFilterGroup | null = null
+      for (const group of activeGroups) {
+        const candidateState = cloneFilterState(state)
+        candidateState[group].clear()
+        const count = countMatchesWithState(candidateState, favSet)
+        if (count > 0) {
+          selectedGroup = group
+          break
+        }
+      }
+      // If one relaxation is not enough, remove the least important active
+      // group and repeat. This keeps size/load constraints until last.
+      state[selectedGroup || activeGroups[0]].clear()
+    }
   }
 
   function getBestZeroResultsResetGroup(favSet: Set<string>): string | null {
@@ -938,21 +987,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       const values = Array.isArray(filters[group]) ? filters[group] : []
       values.filter((value) => typeof value === 'string' && value && value !== 'all').forEach((value) => state[group].add(value))
     })
-    // The CMS currently has no products marked literally as `soft`. For a
-    // preference such as "помягче", show the closest available firmness
-    // instead of producing an empty catalogue.
-    if (state.firmness.size === 1 && state.firmness.has('soft')) {
-      const favSet = readCatalogFavourites()
-      if (countMatchesWithState(state, favSet) === 0) {
-        const nearestState = cloneFilterState(state)
-        nearestState.firmness.clear()
-        nearestState.firmness.add('medium')
-        if (countMatchesWithState(nearestState, favSet) > 0) {
-          state.firmness.clear()
-          state.firmness.add('medium')
-        }
-      }
-    }
+    resolveNearestSmartFilterState()
     syncUiFromState()
     syncFilterDependencies()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE

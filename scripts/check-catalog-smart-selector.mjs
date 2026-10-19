@@ -52,12 +52,12 @@ try {
   await evaluate(`(() => {
     const originalFetch = window.fetch.bind(window)
     window.fetch = (input, init) => String(input).includes('/api/catalog/smart-select')
-      ? Promise.resolve(new Response(JSON.stringify({ filters: { firmness: ['soft'] } }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      ? Promise.resolve(new Response(JSON.stringify({ filters: { firmness: ['soft'], heightRange: ['low'], fillings: ['coir'] } }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
       : originalFetch(input, init)
     return true
   })()`)
   await evaluate(`document.querySelector('[data-smart-selector-quick-submit]')?.click()`)
-  await waitFor(evaluate, 'unavailable soft preference falls back to matching medium products', `(() => {
+  await waitFor(evaluate, 'conflicting smart filters relax to nearest matching products', `(() => {
     const dialogClosed = !document.querySelector('[data-smart-selector-dialog]')
     const medium = document.querySelector('.catalogue-new-chip[data-filter-group="firmness"][data-value="medium"]')
     const soft = document.querySelector('.catalogue-new-chip[data-filter-group="firmness"][data-value="soft"]')
