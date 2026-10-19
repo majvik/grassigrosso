@@ -1331,6 +1331,13 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     max_load_kg: Schema.Attribute.Integer & Schema.Attribute.Required;
     media: Schema.Attribute.Media<'images'>;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    price_rub: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
     publishedAt: Schema.Attribute.DateTime;
     sizes: Schema.Attribute.Relation<
       'manyToMany',
