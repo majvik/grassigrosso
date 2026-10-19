@@ -1,0 +1,47 @@
+#!/usr/bin/env node
+import { createRequire } from 'node:module'
+import assert from 'node:assert/strict'
+
+const require = createRequire(import.meta.url)
+const { createCatalogSmartSelect, normalizeFilters } = require('../lib/catalog-smart-select.cjs')
+
+assert.deepEqual(normalizeFilters({
+  firmness: ['medium', 'invented', 'medium'],
+  loadRange: ['upTo160', 'upTo180'],
+  malicious: ['anything'],
+}), { firmness: ['medium'], loadRange: ['upTo160'] })
+
+let capturedRequest
+const fakeAxios = {
+  async post(url, body, config) {
+    capturedRequest = { url, body, config }
+    return {
+      data: { candidates: [{ content: { parts: [{ text: JSON.stringify({ firmness: ['hard'], size: ['160x200'], features: ['unknown'] }) }] } }] },
+    }
+  },
+}
+
+const selector = createCatalogSmartSelect({
+  axios: fakeAxios,
+  apiKey: 'server-only-key',
+  model: 'test-model',
+  baseUrl: 'http://fake-gemini/v1beta/',
+  timeoutMs: 1234,
+})
+const result = await selector.select('сплю на боку, жесткий 160x200')
+assert.deepEqual(result, { filters: { size: ['160x200'], firmness: ['hard'] } })
+assert.equal(capturedRequest.url, 'http://fake-gemini/v1beta/models/test-model:generateContent')
+assert.equal(capturedRequest.config.headers['x-goog-api-key'], 'server-only-key')
+assert.equal(capturedRequest.config.timeout, 1234)
+assert.equal(capturedRequest.body.generationConfig.responseMimeType, 'application/json')
+assert.ok(capturedRequest.body.generationConfig.responseSchema.properties.firmness.items.enum.includes('medium'))
+assert.ok(capturedRequest.body.contents[0].parts[0].text.includes('<user_text>'))
+
+await assert.rejects(() => selector.select(''), (error) => error.code === 'INVALID_INPUT')
+await assert.rejects(() => selector.select('x'.repeat(1601)), (error) => error.code === 'INPUT_TOO_LONG')
+await assert.rejects(
+  () => createCatalogSmartSelect({ axios: fakeAxios, apiKey: '' }).select('текст'),
+  (error) => error.code === 'NOT_CONFIGURED',
+)
+
+console.log('Catalog smart select API contract ok')

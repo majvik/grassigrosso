@@ -116,6 +116,9 @@ interface ScrollOptions {
   unlockScroll?: () => void
 }
 
+type CatalogSmartFilterGroup = 'collection' | 'size' | 'firmness' | 'type' | 'loadRange' | 'heightRange' | 'fillings' | 'features'
+type CatalogSmartFiltersEvent = CustomEvent<{ filters?: Partial<Record<CatalogSmartFilterGroup, string[]>> }>
+
 function queryElement<T extends Element>(root: ParentNode, selector: string): T | null {
   return root.querySelector(selector) as T | null
 }
@@ -924,6 +927,22 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       visibleCardsLimit = CATALOGUE_PAGE_SIZE
       applyFilters()
     }
+  })
+
+  window.addEventListener('catalogue:apply-smart-filters', (event) => {
+    const filters = (event as CatalogSmartFiltersEvent).detail?.filters
+    if (!filters) return
+    resetCatalogFilterState(state, priceBounds)
+    const groups: CatalogSmartFilterGroup[] = ['collection', 'size', 'firmness', 'type', 'loadRange', 'heightRange', 'fillings', 'features']
+    groups.forEach((group) => {
+      const values = Array.isArray(filters[group]) ? filters[group] : []
+      values.filter((value) => typeof value === 'string' && value && value !== 'all').forEach((value) => state[group].add(value))
+    })
+    syncUiFromState()
+    syncFilterDependencies()
+    visibleCardsLimit = CATALOGUE_PAGE_SIZE
+    applyFilters()
+    scrollToCatalogueToolbar()
   })
 
   if (catalogueNewFavouritesLink) {

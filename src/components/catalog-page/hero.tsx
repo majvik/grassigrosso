@@ -3,6 +3,7 @@ import {
   type CatalogHeroSlideData,
   type CatalogPictureImage,
 } from '@/components/pages/catalog-page-data'
+import { SmartSelector } from './smart-selector'
 
 function HeroSlideAsset({ slide }: { slide: CatalogHeroSlideData }) {
   const { asset } = slide
@@ -102,10 +103,7 @@ export function CatalogHeroSection() {
             формат использования, уровень жесткости и требуемую нагрузку.
           </p>
           <div className="catalog-hero-download">
-            <a href="/download-catalog" className="catalog-link catalog-hero-download-link">
-              <span>Скачать каталог</span>
-              <img src="/arrow-hero-catalog.svg" alt="" className="catalog-arrow" />
-            </a>
+            <SmartSelector />
           </div>
         </div>
         <div className="catalog-hero-image">
