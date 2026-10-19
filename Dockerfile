@@ -1,5 +1,9 @@
 # ---------- build stage ----------
-FROM node:22-slim AS build
+# better-sqlite3 and sharp publish Node 22 binaries for the supported Linux
+# architectures, so installing a compiler toolchain here is unnecessary.  On
+# Timeweb that apt step depended on a very slow Debian mirror and exhausted the
+# complete 28-minute BuildKit allowance before npm even started.
+FROM node:22-bookworm AS build
 WORKDIR /app
 ENV npm_config_audit=false \
     npm_config_fund=false \
@@ -8,9 +12,6 @@ ENV npm_config_audit=false \
     npm_config_fetch_retries=5 \
     npm_config_fetch_retry_mintimeout=20000 \
     npm_config_fetch_retry_maxtimeout=120000
-
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
-  && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
@@ -58,10 +59,8 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/strapi-catalog/package.json ./strapi-catalog/package.json
 COPY --from=build /app/strapi-catalog/package-lock.json ./strapi-catalog/package-lock.json
 RUN --mount=type=cache,target=/root/.npm \
-  apt-get update && apt-get install -y --no-install-recommends curl python3 make g++ \
-  && npm install --prefix strapi-catalog --omit=dev --no-audit --fund=false --no-update-notifier --loglevel=error \
-  && apt-get purge -y --auto-remove python3 make g++ \
-  && rm -rf /var/lib/apt/lists/* /root/.cache
+  npm install --prefix strapi-catalog --omit=dev --no-audit --fund=false --no-update-notifier --loglevel=error \
+  && rm -rf /root/.cache
 
 COPY --from=build /app/strapi-catalog/dist ./strapi-catalog/dist
 COPY --from=build /app/strapi-catalog/src ./strapi-catalog/src

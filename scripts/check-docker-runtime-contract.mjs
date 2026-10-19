@@ -8,6 +8,8 @@ const assert = (condition, message) => { if (!condition) failures.push(message) 
 assert(!dockerfile.includes('COPY --from=build /app/strapi-catalog ./strapi-catalog'), 'whole strapi-catalog copy is forbidden')
 assert(!dockerfile.includes('RUN npm run build --prefix strapi-catalog'), 'duplicate explicit Strapi build is forbidden')
 assert(/npm install --prefix strapi-catalog\b/.test(dockerfile), 'runtime Strapi lockfile-backed npm install is required')
+assert(dockerfile.includes('FROM node:22-bookworm AS build'), 'build stage must use the toolchain-ready Node image')
+assert(!/apt-get install[^\n]*(?:python3|make|g\+\+)/.test(dockerfile), 'network-installed compiler toolchain is forbidden')
 
 for (const required of ['dist', 'src', 'config', 'scripts', 'types', 'public', 'database']) {
   assert(
@@ -31,4 +33,4 @@ if (failures.length) {
   process.exit(1)
 }
 
-console.log('check:docker-runtime-contract PASS (single Strapi build, selective runtime copy, seed/uploads retained)')
+console.log('check:docker-runtime-contract PASS (no apt toolchain download, selective runtime copy, seed/uploads retained)')
