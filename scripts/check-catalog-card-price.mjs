@@ -32,8 +32,8 @@ esbuild.buildSync({
 const { formatCatalogPriceRub } = await import(pathToFileURL(priceBundle).href)
 const { buildCatalogueCardHtml } = await import(pathToFileURL(cardBundle).href)
 
-assert.equal(formatCatalogPriceRub(100000), '100.000 руб')
-assert.equal(formatCatalogPriceRub('2500000'), '2.500.000 руб')
+assert.equal(formatCatalogPriceRub(100000), '100.000 ₽')
+assert.equal(formatCatalogPriceRub('2500000'), '2.500.000 ₽')
 assert.equal(formatCatalogPriceRub(0), '')
 assert.equal(formatCatalogPriceRub(null), '')
 assert.equal(formatCatalogPriceRub(undefined), '')
@@ -52,7 +52,7 @@ const withPrice = buildCatalogueCardHtml({
   imageUrl: '/uploads/orient.png',
 })
 assert.match(withPrice, /catalogue-new-card-price/)
-assert.match(withPrice, /100\.000 руб/)
+assert.match(withPrice, /100\.000 ₽/)
 assert.ok(
   withPrice.indexOf('catalogue-new-card-price') < withPrice.indexOf('catalogue-new-tags-row'),
   'price must render before tags row',
