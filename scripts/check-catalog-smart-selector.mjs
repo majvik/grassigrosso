@@ -29,6 +29,13 @@ try {
     return Boolean(dialog && dialog.textContent.includes('Шаг 1 из 5') && dialog.querySelectorAll('[data-smart-selector-question]').length === 1 && submit?.disabled && submit.textContent.includes('Подобрать матрас') && status?.textContent.includes('Профиль пока не заполнен'))
   })()`)
 
+  await waitFor(evaluate, 'input example is typed into the placeholder', `(() => {
+    const input = document.querySelector('[data-smart-selector-animated-placeholder]')
+    return Boolean(input?.placeholder.startsWith('Например:') && input.placeholder.length > 12)
+  })()`)
+  await evaluate(`document.querySelector('[data-smart-selector-animated-placeholder]')?.focus()`)
+  await waitFor(evaluate, 'animated placeholder clears on focus', `document.querySelector('[data-smart-selector-animated-placeholder]')?.placeholder === ''`)
+
   await evaluate(`(() => {
     const input = document.querySelector('[data-smart-selector-input]')
     if (!input) return false

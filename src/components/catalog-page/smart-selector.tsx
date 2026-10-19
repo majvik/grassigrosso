@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent } from 'react'
+import { useEffect, useState, type KeyboardEvent } from 'react'
 import { Dialog } from '@/components/ui/Dialog'
 import styles from './smart-selector.module.css'
 
@@ -18,17 +18,65 @@ const QUESTIONS: Question[] = [
 
 type Tag = { id: string; label: string }
 
+const INPUT_EXAMPLES = [
+  'Например: высокий спортсмен, сплю на спине',
+  'Например: молодая мама, сплю с ребёнком',
+  'Например: нас двое, вес 60 и 110 кг',
+  'Например: люблю матрас помягче',
+]
+
 export function SmartSelector() {
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState(0)
   const [tags, setTags] = useState<Tag[]>([])
   const [input, setInput] = useState('')
+  const [inputFocused, setInputFocused] = useState(false)
+  const [animatedPlaceholder, setAnimatedPlaceholder] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const question = QUESTIONS[step]
   const hasProfileInput = tags.length > 0 || Boolean(input.trim())
   const answeredQuestionIds = new Set(tags.filter((tag) => QUESTIONS.some((item) => item.id === tag.id)).map((tag) => tag.id))
   const isProfileComplete = answeredQuestionIds.size === QUESTIONS.length
+
+  useEffect(() => {
+    if (inputFocused || tags.length || input) {
+      setAnimatedPlaceholder('')
+      return
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setAnimatedPlaceholder(INPUT_EXAMPLES[0])
+      return
+    }
+
+    let phraseIndex = 0
+    let characterIndex = 0
+    let deleting = false
+    let timeoutId = 0
+
+    const tick = () => {
+      const phrase = INPUT_EXAMPLES[phraseIndex]
+      characterIndex += deleting ? -1 : 1
+      setAnimatedPlaceholder(phrase.slice(0, characterIndex))
+
+      if (!deleting && characterIndex === phrase.length) {
+        deleting = true
+        timeoutId = window.setTimeout(tick, 1600)
+        return
+      }
+      if (deleting && characterIndex === 0) {
+        deleting = false
+        phraseIndex = (phraseIndex + 1) % INPUT_EXAMPLES.length
+        timeoutId = window.setTimeout(tick, 320)
+        return
+      }
+      timeoutId = window.setTimeout(tick, deleting ? 24 : 48)
+    }
+
+    timeoutId = window.setTimeout(tick, 250)
+    return () => window.clearTimeout(timeoutId)
+  }, [input, inputFocused, tags.length])
 
   const addFreeTag = () => {
     const label = input.trim().replace(/,+$/, '').trim()
@@ -111,10 +159,15 @@ export function SmartSelector() {
               value={input}
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={handleInputKeyDown}
-              onBlur={addFreeTag}
-              placeholder={tags.length ? 'Добавить ещё…' : 'Например: сплю на боку…'}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => {
+                setInputFocused(false)
+                addFreeTag()
+              }}
+              placeholder={inputFocused ? '' : tags.length ? 'Добавить ещё…' : animatedPlaceholder}
               aria-label="Свои пожелания"
               data-smart-selector-input
+              data-smart-selector-animated-placeholder
             />
           </div>
           {error ? <p className={styles.error} role="alert" data-smart-selector-error>{error}</p> : null}
