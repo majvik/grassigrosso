@@ -84,6 +84,8 @@ export type CatalogProduct = {
   mattressType?: string | null
   heightCm?: number | string | null
   maxLoadKg?: number | string | null
+  /** Price in whole rubles from Strapi `price_rub`. */
+  priceRub?: number | string | null
   loadRange?: string | null
   heightRange?: string | null
   sizes?: unknown[]

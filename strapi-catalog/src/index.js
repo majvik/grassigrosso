@@ -446,6 +446,27 @@ module.exports = {
     }
 
     try {
+      const productsForPrice = await productRepo.findMany({});
+      const productDocuments = strapi.documents('api::product.product');
+      let priceBackfilled = 0;
+      for (const product of Array.isArray(productsForPrice) ? productsForPrice : []) {
+        if (!product?.documentId) continue;
+        const current = Number(product.price_rub);
+        if (Number.isFinite(current) && current > 0) continue;
+        await productDocuments.update({
+          documentId: product.documentId,
+          data: { price_rub: 100000 },
+        });
+        priceBackfilled += 1;
+      }
+      if (priceBackfilled) {
+        strapi.log.info(`Catalog bootstrap: backfilled price_rub=100000 for ${priceBackfilled} products`);
+      }
+    } catch (e) {
+      strapi.log.warn(`Catalog bootstrap: product price backfill skipped: ${e.message}`);
+    }
+
+    try {
       await seedDownloadCatalogPage(strapi);
     } catch (e) {
       strapi.log.warn(`Catalog bootstrap: download-catalog page seed skipped: ${e.message}`);

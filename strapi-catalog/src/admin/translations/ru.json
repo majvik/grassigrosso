@@ -604,6 +604,8 @@
   "content-type-builder.content-types.api::product.product.attributes.firmness_option": "Жесткость (справочник)",
   "content-manager.content-types.api::product.product.mattress_type_option": "Тип конструкции (справочник)",
   "content-type-builder.content-types.api::product.product.attributes.mattress_type_option": "Тип конструкции (справочник)",
+  "content-manager.content-types.api::product.product.price_rub": "Цена (₽)",
+  "content-type-builder.content-types.api::product.product.attributes.price_rub": "Цена (₽)",
   "content-manager.content-types.api::product.product.height_cm": "Высота (см)",
   "content-type-builder.content-types.api::product.product.attributes.height_cm": "Высота (см)",
   "content-manager.content-types.api::product.product.max_load_kg": "Макс. нагрузка (кг)",

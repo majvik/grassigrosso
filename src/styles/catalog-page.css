@@ -1617,6 +1617,14 @@ html.catalogue-shared-product-view .catalogue-new-content {
   line-height: 1.2;
   color: var(--color-primary);
 }
+.catalogue-new-card-price {
+  margin-top: var(--space-3);
+  font-family: var(--font-bounded);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--color-primary);
+}
 .catalogue-new-meta {
   margin-top: var(--space-2);
   color: var(--color-text-gray);

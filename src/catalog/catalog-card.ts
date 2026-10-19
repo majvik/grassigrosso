@@ -1,4 +1,5 @@
 import type { CatalogProduct } from './catalog-api'
+import { formatCatalogPriceRub } from './catalog-price'
 import { buildCatalogProductMediaHtml } from './catalog-product-gallery'
 import {
   STANDARD_MATTRESS_SIZES,
@@ -75,6 +76,10 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
     coverDescription,
     layersCatalog,
   })
+  const priceLabel = formatCatalogPriceRub(item.priceRub)
+  const priceHtml = priceLabel
+    ? `<div class="catalogue-new-card-price">${escapeHtml(priceLabel)}</div>`
+    : ''
 
   return `
       <article class="catalogue-new-card"
@@ -95,6 +100,7 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
         <div class="catalogue-new-card-body">
           <h3>${name}</h3>
           ${cardMetaHtml}
+          ${priceHtml}
           <div class="catalogue-new-tags-row">
             <div class="catalogue-new-tags">
             ${tags.map((tag) => `<span class="catalogue-new-tag">${escapeHtml(tag)}</span>`).join('')}

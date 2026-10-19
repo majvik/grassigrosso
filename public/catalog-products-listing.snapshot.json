@@ -37,7 +37,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Ориент Плюс",
@@ -78,7 +79,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Аспект",
@@ -118,7 +120,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Эвер Фоам 10",
@@ -155,7 +158,8 @@
         "Беспружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Эвер Фоам 16",
@@ -192,7 +196,8 @@
         "Беспружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Эвер Фоам 20",
@@ -229,7 +234,8 @@
         "Беспружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Ортофоам Стандарт",
@@ -266,7 +272,8 @@
         "Беспружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Ортофоам Плюс",
@@ -303,7 +310,8 @@
         "Беспружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Хард Формат",
@@ -343,7 +351,8 @@
         "Беспружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Скай Фоам",
@@ -384,7 +393,8 @@
         "Беспружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Эволюшен",
@@ -422,7 +432,8 @@
         "Беспружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Гранд",
@@ -460,7 +471,8 @@
         "Беспружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Империо",
@@ -501,7 +513,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Люксор",
@@ -541,7 +554,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Галакси",
@@ -581,7 +595,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Дискавери",
@@ -622,7 +637,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Давос",
@@ -661,7 +677,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Давос-2",
@@ -700,7 +717,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Давос-3",
@@ -739,7 +757,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Давос-4",
@@ -778,7 +797,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Давос-5",
@@ -817,7 +837,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Давос Микс",
@@ -858,7 +879,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Элио",
@@ -900,7 +922,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Премьер",
@@ -940,7 +963,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Премьер Люкс",
@@ -980,7 +1004,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Импринт",
@@ -1020,7 +1045,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Релакс Плюс",
@@ -1061,7 +1087,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Ларго",
@@ -1101,7 +1128,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Твин",
@@ -1142,7 +1170,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Релакс",
@@ -1183,7 +1212,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Оригинал",
@@ -1222,7 +1252,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Эдванс",
@@ -1262,7 +1293,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Оптима",
@@ -1303,7 +1335,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Динамик",
@@ -1342,7 +1375,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Спейс",
@@ -1384,7 +1418,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Сенсо",
@@ -1425,7 +1460,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Лидер",
@@ -1465,7 +1501,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Гравити",
@@ -1505,7 +1542,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Мэджик",
@@ -1546,7 +1584,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Флип Стандарт",
@@ -1583,7 +1622,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Флип Плюс",
@@ -1620,7 +1660,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Эффект",
@@ -1657,7 +1698,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Дуал",
@@ -1695,7 +1737,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Делюкс Мемори",
@@ -1733,7 +1776,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Делюкс Латекс",
@@ -1770,7 +1814,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Софт",
@@ -1807,7 +1852,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     },
     {
       "name": "Сенсетив",
@@ -1842,7 +1888,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true
+      "isActive": true,
+      "priceRub": 100000
     }
   ],
   "source": "strapi-catalog-feed",

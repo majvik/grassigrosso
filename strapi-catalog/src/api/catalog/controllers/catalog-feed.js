@@ -180,6 +180,10 @@ module.exports = {
       mattressType,
       heightCm: Number(row.height_cm || 0),
       maxLoadKg: Number(row.max_load_kg || 0),
+      priceRub: (() => {
+        const n = Number(row.price_rub);
+        return Number.isFinite(n) && n > 0 ? Math.round(n) : null;
+      })(),
       loadRange: normalizeProductLoadRangeSlug(
         row.load_range_option?.slug || mapLoadRange(row.load_range || ''),
         Number(row.max_load_kg || 0),
