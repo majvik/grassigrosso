@@ -31,7 +31,7 @@ try {
 
   await waitFor(evaluate, 'input example is typed into the placeholder', `(() => {
     const input = document.querySelector('[data-smart-selector-animated-placeholder]')
-    return Boolean(input?.placeholder.startsWith('Например:') && input.placeholder.length > 12)
+    return Boolean(input?.placeholder.startsWith('Например:') && input.placeholder.length > 12 && Number(input.dataset.placeholderExampleCount) >= 25)
   })()`)
   await evaluate(`document.querySelector('[data-smart-selector-animated-placeholder]')?.focus()`)
   await waitFor(evaluate, 'animated placeholder clears on focus', `document.querySelector('[data-smart-selector-animated-placeholder]')?.placeholder === ''`)
