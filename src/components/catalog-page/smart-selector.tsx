@@ -1,6 +1,7 @@
 import { useEffect, useState, type KeyboardEvent } from 'react'
 import { Dialog } from '@/components/ui/Dialog'
 import styles from './smart-selector.module.css'
+import INPUT_EXAMPLES from './smart-selector-examples.json'
 
 type Question = {
   id: string
@@ -17,41 +18,6 @@ const QUESTIONS: Question[] = [
 ]
 
 type Tag = { id: string; label: string }
-
-const INPUT_EXAMPLES = [
-  'Например: высокий спортсмен, сплю на спине',
-  'Например: молодая мама, сплю с ребёнком',
-  'Например: нас двое, вес 60 и 110 кг',
-  'Например: люблю матрас помягче',
-  'Например: вешу 95 кг, чаще сплю на боку',
-  'Например: рост 195 см, нужен длинный матрас',
-  'Например: сплю на животе, вес 55 кг',
-  'Например: болит поясница после сна',
-  'Например: нужен матрас для пожилого человека',
-  'Например: ребёнку 8 лет, любит спать на боку',
-  'Например: двое взрослых и маленький ребёнок',
-  'Например: супруг часто переворачивается ночью',
-  'Например: у нас большая разница в весе',
-  'Например: девушка 50 кг, хочется средней жёсткости',
-  'Например: мужчина 120 кг, сплю на спине',
-  'Например: нужен упругий, но не жёсткий матрас',
-  'Например: хочу две разные стороны жёсткости',
-  'Например: сильно потею во время сна',
-  'Например: не люблю эффект проваливания',
-  'Например: хочу матрас с эффектом памяти',
-  'Например: нужен беспружинный матрас',
-  'Например: ищу высокий матрас для кровати',
-  'Например: нужен невысокий матрас на диван',
-  'Например: сплю один, рост 180 см, вес 80 кг',
-  'Например: спим вдвоём преимущественно на боку',
-  'Например: нужен матрас для гостевой комнаты',
-  'Например: хочу жёсткую поддержку для спины',
-  'Например: нужен мягкий верх без проваливания',
-  'Например: часто меняю позу во сне',
-  'Например: нужен матрас для подростка',
-  'Например: партнёр 70 кг, я вешу 100 кг',
-  'Например: важно не чувствовать движения партнёра',
-]
 
 export function SmartSelector() {
   const [open, setOpen] = useState(false)
@@ -147,7 +113,9 @@ export function SmartSelector() {
       if (!response.ok || !payload.filters) throw new Error(payload.error || 'Не удалось подобрать фильтры.')
       setTags(profileTags)
       setInput('')
-      window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: { filters: payload.filters } }))
+      window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', {
+        detail: { filters: payload.filters, queryText: profileTags.map((tag) => tag.label).join('; ') },
+      }))
       setOpen(false)
     } catch (submitError) {
       setError(

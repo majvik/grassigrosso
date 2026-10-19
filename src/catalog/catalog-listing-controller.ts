@@ -117,7 +117,10 @@ interface ScrollOptions {
 }
 
 type CatalogSmartFilterGroup = 'collection' | 'size' | 'firmness' | 'type' | 'loadRange' | 'heightRange' | 'fillings' | 'features'
-type CatalogSmartFiltersEvent = CustomEvent<{ filters?: Partial<Record<CatalogSmartFilterGroup, string[]>> }>
+type CatalogSmartFiltersEvent = CustomEvent<{
+  filters?: Partial<Record<CatalogSmartFilterGroup, string[]>>
+  queryText?: string
+}>
 
 // Earlier groups are relaxed first. Physical fit and safe load are deliberately
 // kept longer than preferences such as collection, filling or mattress height.
@@ -190,6 +193,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   let cardMeta: CatalogCardMeta<HTMLElement>[] = []
   let productCatalog: CatalogProductListingEntry[] | null = null
   let smartPreferenceState: CatalogFilterState | null = null
+  let smartQueryText = ''
   let visibleCardsLimit = CATALOGUE_PAGE_SIZE
   let matchedCards: HTMLElement[] = []
   let matchedResultsCount = 0
@@ -388,36 +392,78 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   function scoreSmartMatch(meta: CatalogCardMeta<HTMLElement>, preferences: CatalogFilterState): number {
     let score = 0
-    if (!preferences.size.size || [...preferences.size].some((value) => meta.sizes.has(value))) score += 100
-    if (!preferences.loadRange.size || preferences.loadRange.has(meta.loadRange)) score += 80
-    if (!preferences.firmness.size) {
-      score += 60
-    } else {
+    const query = smartQueryText.toLowerCase().replace(/ё/g, 'е')
+    const wantsTopper = /на\s+диван|тонк[^.;,]{0,12}матрас|выровн[^.;,]{0,20}стык|топп?ер/.test(query)
+    const isTopper = meta.type === 'topper' || meta.collection === 'topper'
+    score += wantsTopper ? (isTopper ? 200 : -200) : (isTopper ? -200 : 200)
+
+    if (preferences.size.size) {
+      score += [...preferences.size].some((value) => meta.sizes.has(value)) ? 100 : 0
+      if (/рост\s*(?:выше|более|от)?\s*19\d|высок/.test(query) && ![...meta.sizes].some((value) => value.endsWith('x200'))) score -= 60
+    }
+
+    const requestedWeights = [...query.matchAll(/(\d{2,3})\s*кг/g)].map((match) => Number(match[1])).filter((value) => value >= 30 && value <= 250)
+    if (requestedWeights.length) {
+      score += meta.load >= Math.max(...requestedWeights) ? 85 : -100
+    } else if (preferences.loadRange.size) {
+      score += preferences.loadRange.has(meta.loadRange) ? 85 : 0
+    }
+
+    if (preferences.firmness.size) {
       const sides = [meta.firmnessSide1, meta.firmnessSide2]
         .filter((value): value is number => Number.isInteger(value))
       const preferredFirmness = [...preferences.firmness]
       if (sides.length && preferences.firmness.has('dualFirmness') && sides.length === 2) {
         const low = Math.min(...sides)
         const high = Math.max(...sides)
-        score += Math.max(0, 60 - (Math.abs(low - 4) + Math.abs(high - 7)) * 7)
+        score += Math.max(0, 80 - (Math.abs(low - 5) + Math.abs(high - 7)) * 8)
       } else if (sides.length) {
         const targetByFirmness: Record<string, number> = { soft: 3, medium: 5, hard: 7 }
         const targets = preferredFirmness.map((value) => targetByFirmness[value]).filter(Number.isFinite)
         const distance = targets.length
           ? Math.min(...sides.flatMap((side) => targets.map((target) => Math.abs(side - target))))
           : Number.POSITIVE_INFINITY
-        score += Number.isFinite(distance) ? Math.max(0, 60 - distance * 10) : 0
+        score += Number.isFinite(distance) ? Math.max(0, 80 - distance * 12) : 0
       } else if (preferences.firmness.has(meta.firmness)) {
-        score += preferredFirmness.indexOf(meta.firmness) === 0 ? 60 : 50
+        score += preferredFirmness.indexOf(meta.firmness) === 0 ? 80 : 65
       } else if (preferences.firmness.has('soft') && meta.firmness === 'medium') {
-        score += 45
+        score += 50
       }
     }
-    if (!preferences.type.size || preferences.type.has(meta.type)) score += 35
-    if (!preferences.collection.size || preferences.collection.has(meta.collection)) score += 25
-    if (!preferences.heightRange.size || preferences.heightRange.has(meta.heightRange)) score += 15
-    preferences.fillings.forEach((value) => { if (meta.fillings.has(value)) score += 10 })
-    preferences.features.forEach((value) => { if (meta.features.has(value)) score += 10 })
+
+    if (preferences.type.size) score += preferences.type.has(meta.type) ? 40 : 0
+    if (preferences.collection.size) score += preferences.collection.has(meta.collection) ? 25 : 0
+    if (preferences.heightRange.size) score += preferences.heightRange.has(meta.heightRange) ? 30 : 0
+
+    const explicitFillingValues = new Set<string>()
+    if (/эффект(?:ом|а)?\s+памят|memory/.test(query)) explicitFillingValues.add('memoryEffect')
+    if (/латекс/.test(query)) explicitFillingValues.add('latex')
+    if (/кокос|койр/.test(query)) explicitFillingValues.add('coir')
+    if (/форплит/.test(query)) explicitFillingValues.add('forplit')
+    if (/нанопен/.test(query)) explicitFillingValues.add('nanoFoam')
+    if (/ортопедическ[^.;,]{0,8}пен/.test(query)) explicitFillingValues.add('orthoFoam')
+    const fillingMatches = [...preferences.fillings].filter((value) => meta.fillings.has(value)).length
+    if (explicitFillingValues.size) score += [...explicitFillingValues].some((value) => meta.fillings.has(value)) ? 60 : -60
+    else score += Math.min(50, fillingMatches * 30)
+
+    const explicitFeatureValues = new Set<string>()
+    if (/съемн[^.;,]{0,12}чехол/.test(query)) explicitFeatureValues.add('removableCover')
+    if (/зима[- ]лето/.test(query)) explicitFeatureValues.add('winterSummer')
+    if (/усиленн[^.;,]{0,12}(?:край|борт)/.test(query)) explicitFeatureValues.add('edgeSupport')
+    if (/две\s+сторон|разн[^.;,]{0,16}жестк[^.;,]{0,16}сторон/.test(query)) explicitFeatureValues.add('dualFirmness')
+    const featureMatches = [...preferences.features].filter((value) => meta.features.has(value)).length
+    if (explicitFeatureValues.size) score += [...explicitFeatureValues].some((value) => meta.features.has(value)) ? 50 : -50
+    else score += Math.min(45, featureMatches * 25)
+
+    const sideSleep = /(?:сплю|спим|спит|сон)[^.;,]{0,24}на\s+боку|болят?[^.;,]{0,20}(?:плеч|сустав)/.test(query)
+    const hasComfortLayer = ['memoryEffect', 'latex', 'nanoFoam', 'orthoFoam'].some((value) => meta.fillings.has(value))
+    if (sideSleep && meta.fillings.has('coir') && !hasComfortLayer) score -= 50
+
+    const needsEasyRise = /пожил|пенсионер|бол(?:ит|ят)[^.;,]{0,24}(?:спин|поясниц)/.test(query)
+    const heavySleeper = requestedWeights.some((value) => value >= 100)
+    const childBed = /детск(?:ая|ую|ой)\s+кроват|подростк|для\s+ребенк/.test(query)
+    if ((needsEasyRise || heavySleeper) && meta.heightRange === 'low') score -= 30
+    if (childBed && meta.heightRange === 'high') score -= 30
     return score
   }
 
@@ -1027,6 +1073,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   window.addEventListener('catalogue:apply-smart-filters', (event) => {
     const filters = (event as CatalogSmartFiltersEvent).detail?.filters
     if (!filters) return
+    smartQueryText = String((event as CatalogSmartFiltersEvent).detail?.queryText || '')
     resetCatalogFilterState(state, priceBounds)
     smartPreferenceState = null
     const groups: CatalogSmartFilterGroup[] = ['collection', 'size', 'firmness', 'type', 'loadRange', 'heightRange', 'fillings', 'features']

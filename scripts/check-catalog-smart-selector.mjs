@@ -1,5 +1,9 @@
 #!/usr/bin/env node
+import { createRequire } from 'node:module'
 import { cleanupChromeSession, delay, startCatalogChromeSession } from './lib/catalog-chrome-session.mjs'
+
+const require = createRequire(import.meta.url)
+const { applyDomainGuardrails } = require('../lib/catalog-smart-select.cjs')
 
 const baseUrl = String(process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5174').replace(/\/+$/, '')
 const failures = []
@@ -71,8 +75,49 @@ try {
     const resultCount = Number(document.querySelector('.catalogue-new-results strong')?.textContent || 0)
     const emptyState = document.querySelector('.catalogue-new-empty-state')
     const firstCard = document.querySelector('.catalogue-new-card')
-    return Boolean(dialogClosed && medium?.classList.contains('is-active') && !soft?.classList.contains('is-active') && resultCount > 6 && emptyState?.hidden && firstCard?.dataset.firmness === 'medium')
+    const fillings = String(firstCard?.dataset.fillings || '').split(',')
+    return Boolean(dialogClosed && medium?.classList.contains('is-active') && !soft?.classList.contains('is-active') && resultCount > 6 && emptyState?.hidden && firstCard?.dataset.type !== 'topper' && fillings.some((value) => ['memoryEffect', 'latex', 'nanoFoam', 'orthoFoam'].includes(value)))
   })()`)
+
+  const scenarios = [
+    {
+      label: 'heavy side sleeper prioritizes safe load, comfort layers, edge and height',
+      queryText: 'Вешу 105 кг, сплю на боку',
+      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].slice(0, 3).every((card) => {
+        const fillings = String(card.dataset.fillings || '').split(',')
+        const features = String(card.dataset.features || '').split(',')
+        return Number(card.dataset.load) >= 105 && ['mid', 'high'].includes(card.dataset.heightRange) && features.includes('edgeSupport') && fillings.some((value) => ['memoryEffect', 'latex', 'nanoFoam', 'orthoFoam'].includes(value))
+      }))()`,
+    },
+    {
+      label: 'mother with child prioritizes available hygiene-adjacent support',
+      queryText: 'молодая мама, сплю с ребёнком',
+      expression: `(() => {
+        const allCards = [...document.querySelectorAll('.catalogue-new-card')]
+        const catalogHasRemovableCover = allCards.some((card) => String(card.dataset.features || '').split(',').includes('removableCover'))
+        return !catalogHasRemovableCover && allCards.slice(0, 3).every((card) => {
+          const fillings = String(card.dataset.fillings || '').split(',')
+          const features = String(card.dataset.features || '').split(',')
+          return features.includes('edgeSupport') && fillings.some((value) => ['orthoFoam', 'coir', 'forplit'].includes(value))
+        })
+      })()`,
+    },
+    {
+      label: 'back pain prioritizes relax comfort models',
+      queryText: 'болит поясница после сна',
+      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].slice(0, 3).every((card) => {
+        const fillings = String(card.dataset.fillings || '').split(',')
+        const firmnessScores = [Number(card.dataset.firmnessSide1), Number(card.dataset.firmnessSide2)]
+        return card.dataset.collection === 'relax' && ['mid', 'high'].includes(card.dataset.heightRange) && fillings.some((value) => ['memoryEffect', 'latex', 'orthoFoam'].includes(value)) && firmnessScores.some((value) => value >= 5 && value <= 6)
+      }))()`,
+    },
+  ]
+
+  for (const scenario of scenarios) {
+    const filters = applyDomainGuardrails({}, scenario.queryText)
+    await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters, queryText: scenario.queryText })} }))`)
+    await waitFor(evaluate, scenario.label, scenario.expression)
+  }
 } catch (error) {
   failures.push(error.message)
 } finally {
