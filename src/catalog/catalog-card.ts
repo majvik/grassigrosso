@@ -103,12 +103,14 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
         <div class="catalogue-new-card-body">
           <h3>${name}</h3>
           ${cardMetaHtml}
-          ${priceHtml}
-          <div class="catalogue-new-tags-row">
-            <div class="catalogue-new-tags">
-            ${tags.map((tag) => `<span class="catalogue-new-tag">${escapeHtml(tag)}</span>`).join('')}
+          <div class="catalogue-new-card-footer">
+            ${priceHtml}
+            <div class="catalogue-new-tags-row">
+              <div class="catalogue-new-tags">
+              ${tags.map((tag) => `<span class="catalogue-new-tag">${escapeHtml(tag)}</span>`).join('')}
+              </div>
+              ${buildCatalogueFavouriteButton(productSlug)}
             </div>
-            ${buildCatalogueFavouriteButton(productSlug)}
           </div>
         </div>
       </article>

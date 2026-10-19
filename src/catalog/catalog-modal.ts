@@ -146,6 +146,47 @@ function escapeHtmlLite(value: unknown): string {
     .replace(/"/g, '&quot;')
 }
 
+/** Split layers catalog text like `1. a 2. b` into list items (numbers stripped). */
+export function parseCatalogLayerItems(value: unknown): string[] {
+  const stripLeadingIndex = (part: string) => part.replace(/^\d+\.\s*/, '').trim()
+  const raw = String(value ?? '').trim()
+  if (!raw) return []
+  const numbered = raw
+    .split(/(?=\d+\.\s)/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+  if (numbered.length > 1) {
+    return numbered.map(stripLeadingIndex).filter(Boolean)
+  }
+  const byLine = raw
+    .split(/\n+/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+  if (byLine.length > 1) {
+    return byLine.map(stripLeadingIndex).filter(Boolean)
+  }
+  // Single item: drop a leading "1. " so we never show a lone index.
+  return [stripLeadingIndex(raw)].filter(Boolean)
+}
+
+function buildCatalogMetaValueHtml(label: string, value: string): string {
+  if (label === 'Наполнение') {
+    const items = parseCatalogLayerItems(value)
+    // Multiple layers → numbered list; a single layer stays plain text (no "1.").
+    if (items.length > 1) {
+      return (
+        `<ol class="catalogue-new-meta-layers">` +
+        items.map((item) => `<li>${escapeHtmlLite(item)}</li>`).join('') +
+        `</ol>`
+      )
+    }
+    if (items.length === 1) {
+      return `<span class="catalogue-new-meta-value">${escapeHtmlLite(items[0])}</span>`
+    }
+  }
+  return `<span class="catalogue-new-meta-value">${escapeHtmlLite(value)}</span>`
+}
+
 export function buildCatalogCardMetaHtmlFromDataset(dataset: CatalogCardDataset): string {
   const specs = buildCatalogModalSpecs(dataset)
   const byLabel = new Map(specs.map((spec) => [spec.label, spec.value]))
@@ -159,10 +200,15 @@ export function buildCatalogCardMetaHtmlFromDataset(dataset: CatalogCardDataset)
     { label: 'Наполнение', value: byLabel.get('Наполнение') || byLabel.get('Наполнители') || '' },
     { label: 'Особенности', value: byLabel.get('Особенности') || '' },
   ].filter((spec) => spec.value)
-  const lines = orderedSpecs.map(
-    (spec) =>
-      `<span class="catalogue-new-meta-line">${escapeHtmlLite(spec.label)}: <span class="catalogue-new-meta-value">${escapeHtmlLite(spec.value)}</span></span>`,
-  )
+  const lines = orderedSpecs.map((spec) => {
+    const isLayers = spec.label === 'Наполнение'
+    return (
+      `<span class="catalogue-new-meta-line${isLayers ? ' catalogue-new-meta-line--layers' : ''}">` +
+      `<span class="catalogue-new-meta-label">${escapeHtmlLite(spec.label)}:</span> ` +
+      `${buildCatalogMetaValueHtml(spec.label, spec.value)}` +
+      `</span>`
+    )
+  })
   if (!lines.length) return ''
-  return `<p class="catalogue-new-meta">${lines.join('')}</p>`
+  return `<div class="catalogue-new-meta">${lines.join('')}</div>`
 }

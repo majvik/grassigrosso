@@ -151,6 +151,52 @@ export function CatalogSidebarFilters() {
       {CATALOG_FILTER_GROUPS.map((group) => (
         <CatalogFilterGroup key={group.filterGroup} group={group} />
       ))}
+
+      <div className="catalogue-new-filter-group" data-filter-group="price" hidden>
+        <button type="button" className="catalogue-new-filter-accordion-trigger" aria-expanded="false">
+          <h3>Цена</h3>
+          <span className="catalogue-new-tag catalogue-new-filter-selection-count" hidden aria-hidden="true" />
+        </button>
+        <div className="catalogue-new-filter-accordion-panel" hidden>
+          <div className="catalogue-new-price-filter">
+            <div className="catalogue-new-price-inputs">
+              <label className="catalogue-new-price-input">
+                <span className="catalogue-new-price-input-label">от</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  spellCheck={false}
+                  data-price-input="min"
+                  aria-label="Цена от"
+                />
+              </label>
+              <label className="catalogue-new-price-input">
+                <span className="catalogue-new-price-input-label">до</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  spellCheck={false}
+                  data-price-input="max"
+                  aria-label="Цена до"
+                />
+              </label>
+            </div>
+            <div
+              className="catalogue-new-price-range"
+              data-price-range-root
+              style={{ ['--price-range-min' as string]: '0%', ['--price-range-max' as string]: '100%' }}
+            >
+              <div className="catalogue-new-price-range-track" aria-hidden="true">
+                <div className="catalogue-new-price-range-fill" />
+              </div>
+              <input type="range" className="catalogue-new-price-range-input" data-price-range="min" aria-label="Минимальная цена" />
+              <input type="range" className="catalogue-new-price-range-input" data-price-range="max" aria-label="Максимальная цена" />
+            </div>
+          </div>
+        </div>
+      </div>
     </aside>
   )
 }

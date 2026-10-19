@@ -64,6 +64,17 @@ import {
   toggleCatalogFavouritesOnly,
 } from './catalog-filtering'
 import {
+  collectCatalogPriceBounds,
+  isCatalogPriceFilterActive,
+  type CatalogPriceBounds,
+} from './catalog-price'
+import {
+  applyCatalogPriceBoundsToState,
+  bindCatalogPriceFilter,
+  resetCatalogPriceFilter,
+  syncCatalogPriceFilterUi,
+} from './catalog-price-filter'
+import {
   closeCatalogMobileFiltersDrawer,
   openCatalogMobileFiltersDrawer,
 } from './catalog-mobile-filters'
@@ -204,9 +215,12 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     heightRange: new Set<string>(),
     fillings: new Set<string>(),
     features: new Set<string>(),
+    priceMin: null,
+    priceMax: null,
     sort: 'default',
     favouritesOnly: false,
   }
+  let priceBounds: CatalogPriceBounds | null = null
 
   const sortMenuElements = {
     root: catalogueNewSort,
@@ -332,6 +346,8 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       heightRange: new Set(source.heightRange),
       fillings: new Set(source.fillings),
       features: new Set(source.features),
+      priceMin: source.priceMin,
+      priceMax: source.priceMax,
       sort: source.sort,
       favouritesOnly: source.favouritesOnly,
     }
@@ -348,14 +364,14 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   function countMatchesWithState(candidateState: CatalogFilterState, favSet: Set<string>): number {
     let count = 0
     getFilterMeta().forEach((meta) => {
-      if (matchesCatalogCardMeta(meta, candidateState, favSet)) count += 1
+      if (matchesCatalogCardMeta(meta, candidateState, favSet, priceBounds)) count += 1
     })
     return count
   }
 
   function getBestZeroResultsResetGroup(favSet: Set<string>): string | null {
     if (isSharedFavouritesView || isSharedProductView || matchedResultsCount > 0) return null
-    let bestGroup: ZeroResultsFilterGroup | null = null
+    let bestGroup: string | null = null
     let bestCount = -1
     ZERO_RESULTS_FILTER_GROUPS.forEach((group) => {
       if (!hasActiveFilterGroup(group)) return
@@ -367,7 +383,32 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         bestCount = count
       }
     })
+    if (isCatalogPriceFilterActive(state.priceMin, state.priceMax, priceBounds)) {
+      const candidateState = cloneFilterState(state)
+      resetCatalogPriceFilter(candidateState, priceBounds)
+      const count = countMatchesWithState(candidateState, favSet)
+      if (count > bestCount) {
+        bestGroup = 'price'
+        bestCount = count
+      }
+    }
     return bestGroup
+  }
+
+  function refreshPriceBoundsFromCatalog(options: { resetSelection?: boolean } = {}): void {
+    if (!productCatalog) {
+      priceBounds = null
+      applyCatalogPriceBoundsToState(state, null, { resetSelection: true })
+      return
+    }
+    const next = collectCatalogPriceBounds(
+      productCatalog.map((entry) => entry.product.priceRub ?? entry.meta.price),
+    )
+    const hadBounds = Boolean(priceBounds)
+    priceBounds = next
+    applyCatalogPriceBoundsToState(state, priceBounds, {
+      resetSelection: options.resetSelection === true || !hadBounds,
+    })
   }
 
   function syncEmptyStateResetButton(favSet: Set<string>): void {
@@ -550,6 +591,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   function syncUiFromState() {
     syncCatalogueFilterUi(sidebarEl, state, sizeSelectController.resolveMenu)
+    syncCatalogPriceFilterUi(sidebarEl, state, priceBounds)
   }
 
   function syncFilterOptionsFromCards() {
@@ -573,7 +615,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         if (isSharedFavouritesView) {
           return Boolean(entry.meta.slug && sharedSlugs.has(entry.meta.slug))
         }
-        return matchesCatalogCardMeta(entry.meta, state, favSet)
+        return matchesCatalogCardMeta(entry.meta, state, favSet, priceBounds)
       })
       matchedResultsCount = matchedEntries.length
       matchedEntries.sort((a, b) => compareCatalogCardMeta(a.meta, b.meta, state.sort))
@@ -607,7 +649,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
           if (meta.slug && sharedSlugs.has(meta.slug)) matchedCards.push(meta.card)
           return
         }
-        if (matchesCatalogCardMeta(meta, state, favSet)) matchedCards.push(meta.card)
+        if (matchesCatalogCardMeta(meta, state, favSet, priceBounds)) matchedCards.push(meta.card)
       })
       matchedResultsCount = matchedCards.length
 
@@ -643,7 +685,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const restMatchedCount = productCatalog
       ? productCatalog.filter((entry) => {
           if (isSharedFavouritesView || isSharedProductView) return false
-          if (!matchesCatalogCardMeta(entry.meta, state, favSet)) return false
+          if (!matchesCatalogCardMeta(entry.meta, state, favSet, priceBounds)) return false
           return !entry.meta.recommended
         }).length
       : matchedResultsCount
@@ -663,7 +705,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   function resetCatalogueNewFilterChipsAndSort() {
-    resetCatalogFilterState(state)
+    resetCatalogFilterState(state, priceBounds)
     syncUiFromState()
     setCatalogActiveSortOption(sortMenuElements, 'default')
     closeCatalogSortMenu(sortMenuElements)
@@ -699,11 +741,15 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   const runCatalogFilterGroupReset = (groupName: string) => {
-    const group = ZERO_RESULTS_FILTER_GROUPS.find((item) => item === groupName)
-    if (!group) return
     const wasEmptyCatalogue =
       !isSharedFavouritesView && !isSharedProductView && matchedResultsCount === 0
-    clearFilterGroup(state, group)
+    if (groupName === 'price') {
+      resetCatalogPriceFilter(state, priceBounds)
+    } else {
+      const group = ZERO_RESULTS_FILTER_GROUPS.find((item) => item === groupName)
+      if (!group) return
+      clearFilterGroup(state, group)
+    }
     syncUiFromState()
     syncFilterDependencies()
     sizeSelectController.closeMenus()
@@ -748,6 +794,18 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     onLoadRangeReset: runCatalogLoadRangeReset,
   })
 
+  bindCatalogPriceFilter(
+    sidebarEl,
+    () => state,
+    () => priceBounds,
+    {
+      onChange: () => {
+        visibleCardsLimit = CATALOGUE_PAGE_SIZE
+        applyFilters()
+      },
+    },
+  )
+
   function renderCatalogueFilterGroups(groups: CatalogFilterGroups) {
     sizeSelectController.closeMenus()
     const rendered = renderCatalogueFilterGroupsInto(sidebarEl, groups)
@@ -780,6 +838,8 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       entry.product = full
       entry.meta = buildCatalogCardMetaFromProduct(full, entry.meta.initialOrder, entry.meta.card)
     })
+    refreshPriceBoundsFromCatalog()
+    syncUiFromState()
     applyFilters()
   }
 
@@ -818,6 +878,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     hideCatalogLoadError()
     setCatalogProductStore(items)
     productCatalog = buildCatalogProductListingEntries(items)
+    refreshPriceBoundsFromCatalog({ resetSelection: true })
     await new Promise<void>((resolve) => {
       requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
     })

@@ -1,3 +1,4 @@
+import { matchCatalogPrice, type CatalogPriceBounds } from './catalog-price'
 import { STANDARD_MATTRESS_SIZES } from './catalog-sizes'
 
 export type CatalogSortValue =
@@ -19,6 +20,9 @@ export type CatalogFilterState = {
   heightRange: Set<string>
   fillings: Set<string>
   features: Set<string>
+  /** Selected price range (rubles). Null until catalog bounds are known. */
+  priceMin: number | null
+  priceMax: number | null
   sort: CatalogSortValue | string
   favouritesOnly: boolean
 }
@@ -177,6 +181,7 @@ export function matchesCatalogCardMeta<TCard>(
   meta: CatalogCardMeta<TCard>,
   state: CatalogFilterState,
   favouriteSlugs: Set<string>,
+  priceBounds?: CatalogPriceBounds | null,
 ): boolean {
   const matchCollection = !state.collection.size || state.collection.has(meta.collection)
   const matchFirmness = !state.firmness.size || state.firmness.has(meta.firmness)
@@ -191,6 +196,7 @@ export function matchesCatalogCardMeta<TCard>(
   const matchFillings = containsAll(meta.fillings, state.fillings)
   const matchFeatures = containsAll(meta.features, state.features)
   const matchFavourites = !state.favouritesOnly || (meta.slug && favouriteSlugs.has(meta.slug))
+  const matchPrice = matchCatalogPrice(meta.price, state.priceMin, state.priceMax, priceBounds ?? null)
 
   return Boolean(
     matchCollection &&
@@ -201,7 +207,8 @@ export function matchesCatalogCardMeta<TCard>(
       matchHeight &&
       matchFillings &&
       matchFeatures &&
-      matchFavourites,
+      matchFavourites &&
+      matchPrice,
   )
 }
 
@@ -245,7 +252,10 @@ export function collectAvailableCatalogFilters<TCard>(cardMeta: CatalogCardMeta<
   return available
 }
 
-export function resetCatalogFilterState(state: CatalogFilterState): void {
+export function resetCatalogFilterState(
+  state: CatalogFilterState,
+  priceBounds?: CatalogPriceBounds | null,
+): void {
   state.collection.clear()
   state.firmness.clear()
   state.type.clear()
@@ -254,6 +264,13 @@ export function resetCatalogFilterState(state: CatalogFilterState): void {
   state.heightRange.clear()
   state.fillings.clear()
   state.features.clear()
+  if (priceBounds) {
+    state.priceMin = priceBounds.min
+    state.priceMax = priceBounds.max
+  } else {
+    state.priceMin = null
+    state.priceMax = null
+  }
   state.sort = 'default'
 }
 

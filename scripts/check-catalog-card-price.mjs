@@ -65,6 +65,14 @@ assert.match(withPrice, /catalogue-new-card-price/)
 assert.match(withPrice, /100 000 ₽/)
 assert.match(withPrice, /data-price="100000"/)
 assert.ok(
+  withPrice.indexOf('catalogue-new-card-footer') > -1,
+  'price+tags must share card footer',
+)
+assert.ok(
+  withPrice.indexOf('catalogue-new-card-footer') < withPrice.indexOf('catalogue-new-card-price'),
+  'price must render inside card footer',
+)
+assert.ok(
   withPrice.indexOf('catalogue-new-card-price') < withPrice.indexOf('catalogue-new-tags-row'),
   'price must render before tags row',
 )
