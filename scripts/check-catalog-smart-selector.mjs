@@ -52,15 +52,18 @@ try {
   await evaluate(`(() => {
     const originalFetch = window.fetch.bind(window)
     window.fetch = (input, init) => String(input).includes('/api/catalog/smart-select')
-      ? Promise.resolve(new Response(JSON.stringify({ filters: { firmness: ['medium'] } }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      ? Promise.resolve(new Response(JSON.stringify({ filters: { firmness: ['soft'] } }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
       : originalFetch(input, init)
     return true
   })()`)
   await evaluate(`document.querySelector('[data-smart-selector-quick-submit]')?.click()`)
-  await waitFor(evaluate, 'quick submit closes dialog and applies main listing filters', `(() => {
+  await waitFor(evaluate, 'unavailable soft preference falls back to matching medium products', `(() => {
     const dialogClosed = !document.querySelector('[data-smart-selector-dialog]')
     const medium = document.querySelector('.catalogue-new-chip[data-filter-group="firmness"][data-value="medium"]')
-    return Boolean(dialogClosed && medium?.classList.contains('is-active'))
+    const soft = document.querySelector('.catalogue-new-chip[data-filter-group="firmness"][data-value="soft"]')
+    const resultCount = Number(document.querySelector('.catalogue-new-results strong')?.textContent || 0)
+    const emptyState = document.querySelector('.catalogue-new-empty-state')
+    return Boolean(dialogClosed && medium?.classList.contains('is-active') && !soft?.classList.contains('is-active') && resultCount > 0 && emptyState?.hidden)
   })()`)
 } catch (error) {
   failures.push(error.message)

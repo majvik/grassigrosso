@@ -196,7 +196,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   emptyStateEl.hidden = true
   emptyStateEl.innerHTML =
     '<img src="/icons/catalog-empty-monogram.png" alt="" aria-hidden="true" />' +
-    '<p>Выбрано слишком много фильтров.<br />Сбросьте некоторые для обновления выдачи.</p>' +
+    '<p>По выбранным параметрам точных совпадений нет.<br />Попробуйте изменить один из фильтров.</p>' +
     '<button type="button" class="catalogue-new-empty-reset-btn" data-catalog-empty-reset hidden>Сбросить фильтр</button>'
   catalogueNewCardsRoot.insertAdjacentElement('afterend', emptyStateEl)
   const loadErrorEl = documentRef.createElement('div')
@@ -938,6 +938,21 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       const values = Array.isArray(filters[group]) ? filters[group] : []
       values.filter((value) => typeof value === 'string' && value && value !== 'all').forEach((value) => state[group].add(value))
     })
+    // The CMS currently has no products marked literally as `soft`. For a
+    // preference such as "помягче", show the closest available firmness
+    // instead of producing an empty catalogue.
+    if (state.firmness.size === 1 && state.firmness.has('soft')) {
+      const favSet = readCatalogFavourites()
+      if (countMatchesWithState(state, favSet) === 0) {
+        const nearestState = cloneFilterState(state)
+        nearestState.firmness.clear()
+        nearestState.firmness.add('medium')
+        if (countMatchesWithState(nearestState, favSet) > 0) {
+          state.firmness.clear()
+          state.firmness.add('medium')
+        }
+      }
+    }
     syncUiFromState()
     syncFilterDependencies()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
