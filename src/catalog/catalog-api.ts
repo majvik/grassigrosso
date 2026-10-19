@@ -86,6 +86,7 @@ export type CatalogProduct = {
   maxLoadKg?: number | string | null
   /** Price in whole rubles from Strapi `price_rub`. */
   priceRub?: number | string | null
+  isRecommended?: boolean | null
   loadRange?: string | null
   heightRange?: string | null
   sizes?: unknown[]
@@ -126,8 +127,14 @@ export type CatalogProductsView = 'listing' | 'full'
 
 export type CatalogFeedSource = 'api' | 'session-storage' | 'disk-snapshot'
 
+export type CatalogListingSectionsPayload = {
+  recommendedTitle?: string | null
+  allProductsTitle?: string | null
+}
+
 export type CatalogProductsFetchResult = {
   items: CatalogProduct[]
+  sections?: CatalogListingSectionsPayload | null
   source: CatalogFeedSource
 }
 
@@ -153,40 +160,66 @@ function readSessionCatalogProducts(view: CatalogProductsView): CatalogProduct[]
   }
 }
 
-function writeSessionCatalogProducts(view: CatalogProductsView, items: CatalogProduct[]): void {
+function writeSessionCatalogProducts(
+  view: CatalogProductsView,
+  items: CatalogProduct[],
+  sections?: CatalogListingSectionsPayload | null,
+): void {
   try {
     const key = view === 'listing' ? SESSION_CATALOG_PRODUCTS_LISTING_KEY : SESSION_CATALOG_PRODUCTS_FULL_KEY
-    sessionStorage.setItem(key, JSON.stringify({ items, savedAt: Date.now() }))
+    sessionStorage.setItem(key, JSON.stringify({ items, sections: sections || null, savedAt: Date.now() }))
   } catch {
     // sessionStorage may be unavailable
   }
 }
 
-async function fetchCatalogProductsSnapshot(view: CatalogProductsView): Promise<CatalogProduct[]> {
+function readSessionCatalogSections(view: CatalogProductsView): CatalogListingSectionsPayload | null {
+  try {
+    const key = view === 'listing' ? SESSION_CATALOG_PRODUCTS_LISTING_KEY : SESSION_CATALOG_PRODUCTS_FULL_KEY
+    const raw = sessionStorage.getItem(key)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { sections?: CatalogListingSectionsPayload | null }
+    return parsed.sections && typeof parsed.sections === 'object' ? parsed.sections : null
+  } catch {
+    return null
+  }
+}
+
+async function fetchCatalogProductsSnapshot(
+  view: CatalogProductsView,
+): Promise<{ items: CatalogProduct[]; sections: CatalogListingSectionsPayload | null }> {
   const snapshotPath =
     view === 'listing' ? '/catalog-products-listing.snapshot.json' : '/catalog-products.snapshot.json'
-  const payload = await fetchJson<{ items?: CatalogProduct[] }>(snapshotPath)
+  const payload = await fetchJson<{ items?: CatalogProduct[]; sections?: CatalogListingSectionsPayload | null }>(
+    snapshotPath,
+  )
   const items = Array.isArray(payload.items) ? payload.items : []
-  return items.map(normalizeCatalogProductForUi)
+  return {
+    items: items.map(normalizeCatalogProductForUi),
+    sections: payload.sections && typeof payload.sections === 'object' ? payload.sections : null,
+  }
 }
 
 export async function fetchCatalogProductsWithFallback(
   view: CatalogProductsView = 'full',
 ): Promise<CatalogProductsFetchResult> {
   try {
-    const payload = await fetchJson<{ items?: CatalogProduct[] }>(catalogProductsPath(view))
+    const payload = await fetchJson<{ items?: CatalogProduct[]; sections?: CatalogListingSectionsPayload | null }>(
+      catalogProductsPath(view),
+    )
     const items = Array.isArray(payload.items) ? payload.items.map(normalizeCatalogProductForUi) : []
     if (items.length === 0) throw new Error('Empty catalog feed')
-    writeSessionCatalogProducts(view, items)
-    return { items, source: 'api' }
+    const sections = payload.sections && typeof payload.sections === 'object' ? payload.sections : null
+    writeSessionCatalogProducts(view, items, sections)
+    return { items, sections, source: 'api' }
   } catch {
     const cached = readSessionCatalogProducts(view)
     if (cached && cached.length > 0) {
-      return { items: cached, source: 'session-storage' }
+      return { items: cached, sections: readSessionCatalogSections(view), source: 'session-storage' }
     }
-    const snapshotItems = await fetchCatalogProductsSnapshot(view)
-    if (snapshotItems.length > 0) {
-      return { items: snapshotItems, source: 'disk-snapshot' }
+    const snapshot = await fetchCatalogProductsSnapshot(view)
+    if (snapshot.items.length > 0) {
+      return { items: snapshot.items, sections: snapshot.sections, source: 'disk-snapshot' }
     }
     throw new Error('Catalog unavailable')
   }
@@ -226,22 +259,33 @@ export function normalizeCatalogProductForUi(item: CatalogProduct): CatalogProdu
   }
 }
 
-let catalogProductsListingPrefetch: Promise<CatalogProduct[]> | null = null
-let catalogProductsFullPrefetch: Promise<CatalogProduct[]> | null = null
+let catalogProductsListingPrefetch: Promise<CatalogProductsFetchResult> | null = null
+let catalogProductsFullPrefetch: Promise<CatalogProductsFetchResult> | null = null
+let lastCatalogListingSections: CatalogListingSectionsPayload | null = null
 
 function catalogProductsPath(view: CatalogProductsView): string {
   return view === 'listing' ? '/api/catalog/products?view=listing' : '/api/catalog/products'
 }
 
+function rememberCatalogListingSections(sections?: CatalogListingSectionsPayload | null): void {
+  if (sections && typeof sections === 'object') {
+    lastCatalogListingSections = sections
+  }
+}
+
+export function getLastCatalogListingSections(): CatalogListingSectionsPayload | null {
+  return lastCatalogListingSections
+}
+
 export function prefetchCatalogProductsFeed(): void {
-  catalogProductsListingPrefetch = fetchCatalogProducts('listing')
-  catalogProductsFullPrefetch = fetchCatalogProducts('full')
+  catalogProductsListingPrefetch = fetchCatalogProductsWithFallback('listing')
+  catalogProductsFullPrefetch = fetchCatalogProductsWithFallback('full')
 }
 
 export async function fetchCatalogProducts(view: CatalogProductsView = 'full'): Promise<CatalogProduct[]> {
-  const payload = await fetchJson<{ items?: CatalogProduct[] }>(catalogProductsPath(view))
-  const items = Array.isArray(payload.items) ? payload.items : []
-  return items.map(normalizeCatalogProductForUi)
+  const result = await fetchCatalogProductsWithFallback(view)
+  rememberCatalogListingSections(result.sections)
+  return result.items
 }
 
 export async function getCatalogProductsFeed(): Promise<CatalogProduct[]> {
@@ -249,13 +293,17 @@ export async function getCatalogProductsFeed(): Promise<CatalogProduct[]> {
     const pending = catalogProductsListingPrefetch
     catalogProductsListingPrefetch = null
     try {
-      const items = await pending
-      if (items.length > 0) return items
+      const result = await pending
+      if (result.items.length > 0) {
+        rememberCatalogListingSections(result.sections)
+        return result.items
+      }
     } catch {
       // prefetch failed — use fallback chain below
     }
   }
   const result = await fetchCatalogProductsWithFallback('listing')
+  rememberCatalogListingSections(result.sections)
   return result.items
 }
 
@@ -264,13 +312,17 @@ export async function getCatalogProductsFullFeed(): Promise<CatalogProduct[]> {
     const pending = catalogProductsFullPrefetch
     catalogProductsFullPrefetch = null
     try {
-      const items = await pending
-      if (items.length > 0) return items
+      const result = await pending
+      if (result.items.length > 0) {
+        rememberCatalogListingSections(result.sections)
+        return result.items
+      }
     } catch {
       // prefetch failed — use fallback chain below
     }
   }
   const result = await fetchCatalogProductsWithFallback('full')
+  rememberCatalogListingSections(result.sections)
   return result.items
 }
 

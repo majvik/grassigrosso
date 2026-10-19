@@ -22,6 +22,7 @@ const { seedDownloadCatalogPage } = require('./api/catalog/utils/seed-download-c
 const { seedCatalogFilterHelpContent } = require('./api/catalog/utils/seed-catalog-filter-help-content');
 const { seedCatalogShareHelpContent } = require('./api/catalog/utils/seed-catalog-share-help-content');
 const { syncPagesCmsAdminLabels } = require('./api/catalog/utils/sync-pages-cms-admin-labels');
+const { seedCatalogListing } = require('./api/catalog/utils/seed-catalog-listing');
 
 module.exports = {
   register({ strapi }) {
@@ -443,6 +444,12 @@ module.exports = {
       }
     } catch (e) {
       strapi.log.warn(`Catalog bootstrap: product gallery backfill skipped: ${e.message}`);
+    }
+
+    try {
+      await seedCatalogListing(strapi);
+    } catch (e) {
+      strapi.log.warn(`Catalog bootstrap: catalog-listing seed skipped: ${e.message}`);
     }
 
     try {

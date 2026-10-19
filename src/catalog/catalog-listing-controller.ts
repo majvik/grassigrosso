@@ -3,8 +3,19 @@ import {
   openCatalogAccordionGroupExclusive,
   setCatalogAccordionGroupExpanded,
 } from './catalog-accordion'
-import { fetchCatalogFilters, getCatalogProductsFeed, getCatalogProductsFullFeed, type CatalogFilterGroups, type CatalogProduct } from './catalog-api'
+import {
+  fetchCatalogFilters,
+  getCatalogProductsFeed,
+  getCatalogProductsFullFeed,
+  getLastCatalogListingSections,
+  type CatalogFilterGroups,
+  type CatalogProduct,
+} from './catalog-api'
 import { buildCatalogueCardHtml } from './catalog-card'
+import {
+  buildCatalogListingSectionsHtml,
+  normalizeCatalogListingSections,
+} from './catalog-listing-sections'
 import {
   buildCatalogCardMetaFromProduct,
   buildCatalogProductListingEntries,
@@ -567,11 +578,27 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       matchedResultsCount = matchedEntries.length
       matchedEntries.sort((a, b) => compareCatalogCardMeta(a.meta, b.meta, state.sort))
 
-      const limit = isSharedFavouritesView ? Number.MAX_SAFE_INTEGER : visibleCardsLimit
-      const visibleEntries = matchedEntries.slice(0, limit)
-
+      const useSections = !isSharedFavouritesView && !isSharedProductView
       destroyCatalogProductGalleries(cardsRootEl)
-      cardsRootEl.innerHTML = visibleEntries.map((entry) => buildCatalogueCardHtml(entry.product)).join('')
+
+      if (useSections) {
+        const recommendedEntries = matchedEntries.filter((entry) => entry.meta.recommended)
+        const restEntries = matchedEntries.filter((entry) => !entry.meta.recommended)
+        const visibleRest = restEntries.slice(0, visibleCardsLimit)
+        const sections = normalizeCatalogListingSections(getLastCatalogListingSections())
+        cardsRootEl.classList.add('has-listing-sections')
+        cardsRootEl.innerHTML = buildCatalogListingSectionsHtml(
+          recommendedEntries.map((entry) => entry.product),
+          visibleRest.map((entry) => entry.product),
+          sections,
+        )
+      } else {
+        const limit = isSharedFavouritesView ? Number.MAX_SAFE_INTEGER : visibleCardsLimit
+        const visibleEntries = matchedEntries.slice(0, limit)
+        cardsRootEl.classList.remove('has-listing-sections')
+        cardsRootEl.innerHTML = visibleEntries.map((entry) => buildCatalogueCardHtml(entry.product)).join('')
+      }
+
       updateCardsCache()
       matchedCards = [...cards]
     } else {
@@ -613,8 +640,19 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const zeroResultsResetGroup = isEmptyNormalCatalogue ? getBestZeroResultsResetGroup(favSet) : null
     syncCatalogZeroResultsHint(sidebarEl, zeroResultsResetGroup)
     syncEmptyStateResetButton(favSet)
+    const restMatchedCount = productCatalog
+      ? productCatalog.filter((entry) => {
+          if (isSharedFavouritesView || isSharedProductView) return false
+          if (!matchesCatalogCardMeta(entry.meta, state, favSet)) return false
+          return !entry.meta.recommended
+        }).length
+      : matchedResultsCount
+    const infiniteLimitBase =
+      productCatalog && !isSharedFavouritesView && !isSharedProductView
+        ? restMatchedCount
+        : matchedResultsCount
     infiniteSentinel.hidden =
-      isSharedFavouritesView || isSharedProductView || matchedResultsCount <= visibleCardsLimit
+      isSharedFavouritesView || isSharedProductView || infiniteLimitBase <= visibleCardsLimit
     updateResultsCount()
     renderSharedProductView()
     syncVisibleCatalogCardMediaLoading(cardsRootEl)

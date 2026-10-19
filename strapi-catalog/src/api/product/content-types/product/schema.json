@@ -161,6 +161,11 @@
       "repeatable": true,
       "component": "catalog.product-gallery-item"
     },
+    "is_recommended": {
+      "displayName": "Мы рекомендуем",
+      "type": "boolean",
+      "default": false
+    },
     "is_active": {
       "displayName": "Активен",
       "type": "boolean",

@@ -1,0 +1,26 @@
+{
+  "kind": "singleType",
+  "collectionName": "catalog_listings",
+  "info": {
+    "singularName": "catalog-listing",
+    "pluralName": "catalog-listings",
+    "displayName": "Каталог — секции выдачи"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "recommended_section_title": {
+      "displayName": "Заголовок «Мы рекомендуем»",
+      "type": "string",
+      "required": true,
+      "default": "Мы рекомендуем"
+    },
+    "all_products_section_title": {
+      "displayName": "Заголовок «Все товары»",
+      "type": "string",
+      "required": true,
+      "default": "Все товары"
+    }
+  }
+}

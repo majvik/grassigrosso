@@ -91,6 +91,7 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
         data-height="${heightCm}"
         data-load="${maxLoadKg}"
         data-price="${Number.isFinite(priceRub) && priceRub > 0 ? priceRub : ''}"
+        data-recommended="${item.isRecommended === true ? 'true' : 'false'}"
         data-load-range="${escapeHtml(loadRange)}"
         data-height-range="${escapeHtml(heightRange)}"
         data-sizes="${escapeHtml(sizes.join(','))}"

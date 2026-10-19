@@ -481,6 +481,40 @@ export interface ApiCatalogFilterHelpCatalogFilterHelp
   };
 }
 
+export interface ApiCatalogListingCatalogListing
+  extends Struct.SingleTypeSchema {
+  collectionName: 'catalog_listings';
+  info: {
+    displayName: '\u041A\u0430\u0442\u0430\u043B\u043E\u0433 \u2014 \u0441\u0435\u043A\u0446\u0438\u0438 \u0432\u044B\u0434\u0430\u0447\u0438';
+    pluralName: 'catalog-listings';
+    singularName: 'catalog-listing';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    all_products_section_title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0412\u0441\u0435 \u0442\u043E\u0432\u0430\u0440\u044B'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::catalog-listing.catalog-listing'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    recommended_section_title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u041C\u044B \u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0443\u0435\u043C'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCatalogNewHeroCatalogNewHero
   extends Struct.SingleTypeSchema {
   collectionName: 'catalog_new_heroes';
@@ -1293,6 +1327,8 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     >;
     image_url: Schema.Attribute.String;
     is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    is_recommended: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     layers_catalog: Schema.Attribute.Text;
     load_range: Schema.Attribute.Enumeration<
       [
@@ -1963,6 +1999,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::catalog-filter-help.catalog-filter-help': ApiCatalogFilterHelpCatalogFilterHelp;
+      'api::catalog-listing.catalog-listing': ApiCatalogListingCatalogListing;
       'api::catalog-new-hero.catalog-new-hero': ApiCatalogNewHeroCatalogNewHero;
       'api::catalog-share-help.catalog-share-help': ApiCatalogShareHelpCatalogShareHelp;
       'api::collection.collection': ApiCollectionCollection;

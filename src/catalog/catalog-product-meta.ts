@@ -43,6 +43,7 @@ export function buildCatalogCardMetaFromProduct(
     height: Number(product.heightCm || 0),
     load: Number(product.maxLoadKg || 0),
     price: Number(product.priceRub || 0),
+    recommended: product.isRecommended === true,
     loadRange: String(product.loadRange || '').trim(),
     heightRange: String(product.heightRange || '').trim(),
     sizes: new Set(sizes.map((size) => String(size))),

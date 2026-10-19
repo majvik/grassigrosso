@@ -33,6 +33,7 @@ export type CatalogCardMeta<TCard = unknown> = {
   height: number
   load: number
   price: number
+  recommended: boolean
   loadRange: string
   heightRange: string
   sizes: Set<string>

@@ -1193,7 +1193,15 @@ app.get('/api/catalog/products', async (req, res) => {
     }));
     // Treat a successful feed response as authoritative even when list is empty.
     // This avoids false 502 when Strapi /api/products is unavailable in current setup.
-    const payload = { items: normalizedFeedItems, source: 'strapi-catalog-feed' };
+    const sections =
+      feedResponse.data?.sections && typeof feedResponse.data.sections === 'object'
+        ? feedResponse.data.sections
+        : undefined;
+    const payload = {
+      items: normalizedFeedItems,
+      ...(sections ? { sections } : {}),
+      source: 'strapi-catalog-feed',
+    };
     if (normalizedFeedItems.length > 0) {
       setCatalogStrapiCache(cacheKeyFull, payload, { skipEmpty: true });
     }

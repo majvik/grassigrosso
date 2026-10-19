@@ -74,6 +74,7 @@
     "check:catalog-media-sidecars": "node scripts/check-catalog-media-sidecars.mjs",
     "check:catalog-gallery-order": "node scripts/check-catalog-gallery-order.mjs",
     "check:catalog-card-price": "node scripts/check-catalog-card-price.mjs",
+    "check:catalog-recommended-section": "node scripts/check-catalog-recommended-section.mjs",
     "check:catalog-ui": "node scripts/check-catalog-ui.mjs",
     "check:catalog-perf": "node scripts/check-catalog-perf.mjs",
     "catalog-import:build": "python3 scripts/build-catalog-import.py",

@@ -1,6 +1,7 @@
 'use strict';
 
 const { buildProductGallery } = require('../utils/build-product-gallery');
+const { DEFAULT_CATALOG_LISTING_SECTIONS } = require('../utils/seed-catalog-listing');
 
 module.exports = {
   async index(ctx) {
@@ -214,10 +215,26 @@ module.exports = {
       coverDescription: String(row.cover_description || '').trim(),
       layersCatalog: String(row.layers_catalog || '').trim(),
       tags: Array.isArray(row.tags) ? row.tags.map((tag) => tag.name).filter(Boolean) : [],
+      isRecommended: row.is_recommended === true,
       isActive: row.is_active !== false
     };
     });
 
-    ctx.body = { items, source: 'strapi-catalog-feed' };
+    let sections = { ...DEFAULT_CATALOG_LISTING_SECTIONS };
+    try {
+      const listing = await strapi.db.query('api::catalog-listing.catalog-listing').findOne({});
+      if (listing) {
+        const recommendedTitle = String(listing.recommended_section_title || '').trim();
+        const allProductsTitle = String(listing.all_products_section_title || '').trim();
+        sections = {
+          recommendedTitle: recommendedTitle || DEFAULT_CATALOG_LISTING_SECTIONS.recommendedTitle,
+          allProductsTitle: allProductsTitle || DEFAULT_CATALOG_LISTING_SECTIONS.allProductsTitle,
+        };
+      }
+    } catch (error) {
+      strapi.log.warn(`catalog-feed: catalog-listing unavailable: ${error.message}`);
+    }
+
+    ctx.body = { items, sections, source: 'strapi-catalog-feed' };
   }
 };
