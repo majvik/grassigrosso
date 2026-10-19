@@ -390,8 +390,11 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     let score = 0
     if (!preferences.size.size || [...preferences.size].some((value) => meta.sizes.has(value))) score += 100
     if (!preferences.loadRange.size || preferences.loadRange.has(meta.loadRange)) score += 80
-    if (!preferences.firmness.size || preferences.firmness.has(meta.firmness)) {
+    if (!preferences.firmness.size) {
       score += 60
+    } else if (preferences.firmness.has(meta.firmness)) {
+      const preferredFirmness = [...preferences.firmness]
+      score += preferredFirmness.indexOf(meta.firmness) === 0 ? 60 : 50
     } else if (preferences.firmness.has('soft') && meta.firmness === 'medium') {
       score += 45
     }

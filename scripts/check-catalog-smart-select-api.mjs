@@ -3,13 +3,19 @@ import { createRequire } from 'node:module'
 import assert from 'node:assert/strict'
 
 const require = createRequire(import.meta.url)
-const { createCatalogSmartSelect, normalizeFilters } = require('../lib/catalog-smart-select.cjs')
+const { applyDomainGuardrails, createCatalogSmartSelect, normalizeFilters } = require('../lib/catalog-smart-select.cjs')
 
 assert.deepEqual(normalizeFilters({
   firmness: ['medium', 'invented', 'medium'],
   loadRange: ['upTo160', 'upTo180'],
   malicious: ['anything'],
 }), { firmness: ['medium'], loadRange: ['upTo160'] })
+
+assert.deepEqual(applyDomainGuardrails({ heightRange: ['high'] }, 'высокий спортсмен, сплю на спине'), {
+  size: ['140x200', '160x200', '180x200'],
+  firmness: ['hard', 'medium'],
+})
+assert.deepEqual(applyDomainGuardrails({ heightRange: ['high'] }, 'нужен высокий матрас'), { heightRange: ['high'] })
 
 let capturedRequest
 const fakeAxios = {
