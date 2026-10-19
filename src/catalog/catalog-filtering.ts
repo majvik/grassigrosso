@@ -2,6 +2,8 @@ import { STANDARD_MATTRESS_SIZES } from './catalog-sizes'
 
 export type CatalogSortValue =
   | 'default'
+  | 'price-asc'
+  | 'price-desc'
   | 'height-asc'
   | 'height-desc'
   | 'load-desc'
@@ -30,6 +32,7 @@ export type CatalogCardMeta<TCard = unknown> = {
   type: string
   height: number
   load: number
+  price: number
   loadRange: string
   heightRange: string
   sizes: Set<string>
@@ -129,11 +132,28 @@ export function getHeightRangeBucket(height: number): string {
   return 'high'
 }
 
+function catalogPriceSortValue(price: number | undefined): number {
+  const n = Number(price || 0)
+  return Number.isFinite(n) && n > 0 ? n : Number.POSITIVE_INFINITY
+}
+
 export function compareCatalogCardMeta<TCard>(
   metaA: CatalogCardMeta<TCard> | undefined,
   metaB: CatalogCardMeta<TCard> | undefined,
   sort: string,
 ): number {
+  if (sort === 'price-asc') {
+    return catalogPriceSortValue(metaA?.price) - catalogPriceSortValue(metaB?.price)
+  }
+  if (sort === 'price-desc') {
+    const priceA = catalogPriceSortValue(metaA?.price)
+    const priceB = catalogPriceSortValue(metaB?.price)
+    // Missing prices stay at the end for both directions.
+    if (priceA === Number.POSITIVE_INFINITY && priceB === Number.POSITIVE_INFINITY) return 0
+    if (priceA === Number.POSITIVE_INFINITY) return 1
+    if (priceB === Number.POSITIVE_INFINITY) return -1
+    return priceB - priceA
+  }
   if (sort === 'height-asc') {
     return Number(metaA?.height || 0) - Number(metaB?.height || 0)
   }

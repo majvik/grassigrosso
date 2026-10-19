@@ -12,6 +12,7 @@ const esbuild = require('esbuild')
 
 const priceBundle = path.join(os.tmpdir(), `gg-catalog-price-${process.pid}.mjs`)
 const cardBundle = path.join(os.tmpdir(), `gg-catalog-card-${process.pid}.mjs`)
+const filteringBundle = path.join(os.tmpdir(), `gg-catalog-filtering-${process.pid}.mjs`)
 
 esbuild.buildSync({
   entryPoints: [path.join(root, 'src/catalog/catalog-price.ts')],
@@ -29,8 +30,17 @@ esbuild.buildSync({
   outfile: cardBundle,
 })
 
+esbuild.buildSync({
+  entryPoints: [path.join(root, 'src/catalog/catalog-filtering.ts')],
+  bundle: true,
+  format: 'esm',
+  platform: 'node',
+  outfile: filteringBundle,
+})
+
 const { formatCatalogPriceRub } = await import(pathToFileURL(priceBundle).href)
 const { buildCatalogueCardHtml } = await import(pathToFileURL(cardBundle).href)
+const { compareCatalogCardMeta } = await import(pathToFileURL(filteringBundle).href)
 
 assert.equal(formatCatalogPriceRub(100000), '100 000 ₽')
 assert.equal(formatCatalogPriceRub('2500000'), '2 500 000 ₽')
@@ -53,10 +63,30 @@ const withPrice = buildCatalogueCardHtml({
 })
 assert.match(withPrice, /catalogue-new-card-price/)
 assert.match(withPrice, /100 000 ₽/)
+assert.match(withPrice, /data-price="100000"/)
 assert.ok(
   withPrice.indexOf('catalogue-new-card-price') < withPrice.indexOf('catalogue-new-tags-row'),
   'price must render before tags row',
 )
+
+const cheap = { price: 30000, initialOrder: 1 }
+const mid = { price: 40000, initialOrder: 0 }
+const expensive = { price: 50000, initialOrder: 2 }
+const missing = { price: 0, initialOrder: 3 }
+assert.ok(compareCatalogCardMeta(cheap, expensive, 'price-asc') < 0)
+assert.ok(compareCatalogCardMeta(expensive, cheap, 'price-desc') < 0)
+assert.ok(compareCatalogCardMeta(missing, cheap, 'price-asc') > 0)
+assert.ok(compareCatalogCardMeta(missing, cheap, 'price-desc') > 0)
+assert.ok(compareCatalogCardMeta(mid, cheap, 'price-asc') > 0)
+
+const sortOptionsSource = fs.readFileSync(
+  path.join(root, 'src/components/pages/catalog-page-data.ts'),
+  'utf8',
+)
+assert.match(sortOptionsSource, /value: 'price-asc'/)
+assert.match(sortOptionsSource, /value: 'price-desc'/)
+assert.match(sortOptionsSource, /Цена: по возрастанию/)
+assert.match(sortOptionsSource, /Цена: по убыванию/)
 
 const withoutPrice = buildCatalogueCardHtml({
   name: 'Ориент',

@@ -42,6 +42,7 @@ export function buildCatalogCardMetaFromProduct(
     type: String(product.mattressType || '').trim(),
     height: Number(product.heightCm || 0),
     load: Number(product.maxLoadKg || 0),
+    price: Number(product.priceRub || 0),
     loadRange: String(product.loadRange || '').trim(),
     heightRange: String(product.heightRange || '').trim(),
     sizes: new Set(sizes.map((size) => String(size))),

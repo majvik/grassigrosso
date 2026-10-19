@@ -316,6 +316,8 @@ export const CATALOG_FILTER_GROUPS: CatalogFilterGroupData[] = [
 
 export const CATALOG_SORT_OPTIONS = [
   { label: 'Сортировка по умолчанию', value: 'default' },
+  { label: 'Цена: по возрастанию', value: 'price-asc' },
+  { label: 'Цена: по убыванию', value: 'price-desc' },
   { label: 'Высота: по возрастанию', value: 'height-asc' },
   { label: 'Высота: по убыванию', value: 'height-desc' },
   { label: 'Максимальная нагрузка', value: 'load-desc' },

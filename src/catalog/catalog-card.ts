@@ -76,7 +76,8 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
     coverDescription,
     layersCatalog,
   })
-  const priceLabel = formatCatalogPriceRub(item.priceRub)
+  const priceRub = Number(item.priceRub || 0)
+  const priceLabel = formatCatalogPriceRub(priceRub)
   const priceHtml = priceLabel
     ? `<div class="catalogue-new-card-price">${escapeHtml(priceLabel)}</div>`
     : ''
@@ -89,6 +90,7 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
         data-type="${escapeHtml(mattressType)}"
         data-height="${heightCm}"
         data-load="${maxLoadKg}"
+        data-price="${Number.isFinite(priceRub) && priceRub > 0 ? priceRub : ''}"
         data-load-range="${escapeHtml(loadRange)}"
         data-height-range="${escapeHtml(heightRange)}"
         data-sizes="${escapeHtml(sizes.join(','))}"

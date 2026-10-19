@@ -31,6 +31,7 @@ export function readCatalogueCardMeta(card: HTMLElement, index: number): Catalog
     type: String(dataset.type || ''),
     height: Number(dataset.height || 0),
     load: Number(dataset.load || 0),
+    price: Number(dataset.price || 0),
     loadRange: String(dataset.loadRange || '').trim(),
     heightRange: String(dataset.heightRange || '').trim(),
     sizes: (() => {
