@@ -59,7 +59,7 @@ export function SmartSelector() {
     setIsSubmitting(true)
     setError('')
     const controller = new AbortController()
-    const timeoutId = window.setTimeout(() => controller.abort(), 10000)
+    const timeoutId = window.setTimeout(() => controller.abort(), 25000)
     try {
       const response = await fetch('/api/catalog/smart-select', {
         method: 'POST',

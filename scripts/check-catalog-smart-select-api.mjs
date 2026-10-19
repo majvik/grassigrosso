@@ -44,4 +44,24 @@ await assert.rejects(
   (error) => error.code === 'NOT_CONFIGURED',
 )
 
+const attemptedModels = []
+const fallbackSelector = createCatalogSmartSelect({
+  axios: {
+    async post(url) {
+      attemptedModels.push(url)
+      if (url.includes('gemini-2.5-flash-lite')) {
+        const error = new Error('model unavailable')
+        error.response = { status: 404 }
+        throw error
+      }
+      return { data: { candidates: [{ content: { parts: [{ text: '{"firmness":["medium"]}' }] } }] } }
+    },
+  },
+  apiKey: 'server-only-key',
+  model: 'gemini-2.5-flash-lite',
+})
+assert.deepEqual(await fallbackSelector.select('средняя жёсткость'), { filters: { firmness: ['medium'] } })
+assert.equal(attemptedModels.length, 2)
+assert.ok(attemptedModels[1].includes('gemini-3.5-flash-lite'))
+
 console.log('Catalog smart select API contract ok')
