@@ -8,7 +8,7 @@
 - [x] `schema.json`: `price_rub` integer
 - [x] RU admin translations
 - [x] `catalog-feed.js` → `priceRub`
-- [x] Bootstrap backfill missing prices → 100000
+- [x] Demo `priceRub` written once into seed/snapshots (30–50k); no bootstrap re-randomize
 - [x] Inject `priceRub` into catalog product snapshots
 
 **Verify:** schema contains `price_rub`; snapshot items have `priceRub`.
