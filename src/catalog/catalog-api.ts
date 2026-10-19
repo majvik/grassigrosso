@@ -81,6 +81,8 @@ export type CatalogProduct = {
   collectionName?: string | null
   collectionSlug?: string | null
   firmness?: string | null
+  firmnessSide1?: number | string | null
+  firmnessSide2?: number | string | null
   mattressType?: string | null
   heightCm?: number | string | null
   maxLoadKg?: number | string | null

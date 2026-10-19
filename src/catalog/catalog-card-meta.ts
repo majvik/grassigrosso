@@ -28,6 +28,8 @@ export function readCatalogueCardMeta(card: HTMLElement, index: number): Catalog
     slug: String(dataset.productSlug || ''),
     collection: String(dataset.collection || ''),
     firmness: String(dataset.firmness || ''),
+    firmnessSide1: dataset.firmnessSide1 && Number.isInteger(Number(dataset.firmnessSide1)) ? Number(dataset.firmnessSide1) : null,
+    firmnessSide2: dataset.firmnessSide2 && Number.isInteger(Number(dataset.firmnessSide2)) ? Number(dataset.firmnessSide2) : null,
     type: String(dataset.type || ''),
     height: Number(dataset.height || 0),
     load: Number(dataset.load || 0),

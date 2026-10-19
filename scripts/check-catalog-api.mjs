@@ -133,6 +133,12 @@ const products = await readJson('/api/catalog/products')
 if (products) {
   const items = assertList('/api/catalog/products', products.items, 'items')
   for (const product of items) {
+    for (const field of ['firmnessSide1', 'firmnessSide2']) {
+      const value = product[field]
+      if (value !== null && value !== undefined && (!Number.isInteger(value) || value < 1 || value > 10)) {
+        failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} has invalid ${field} ${value}`)
+      }
+    }
     if (!product.slug || typeof product.slug !== 'string') failures.push('/api/catalog/products: product missing slug')
     if (!product.name || typeof product.name !== 'string') failures.push('/api/catalog/products: product missing name')
     if (!product.collectionSlug || typeof product.collectionSlug !== 'string') {
@@ -223,6 +229,11 @@ if (products) {
         }
       }
     }
+  }
+
+  const relaxPlus = items.find((product) => product.slug === 'relax-plus')
+  if (!relaxPlus || relaxPlus.firmnessSide1 !== 5 || relaxPlus.firmnessSide2 !== 7) {
+    failures.push('/api/catalog/products: relax-plus must expose firmness scores 5/7')
   }
 
   const nanoFoamProducts = items.filter((product) => (product.fillings || []).includes('nanoFoam'))

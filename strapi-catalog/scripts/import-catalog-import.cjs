@@ -292,6 +292,8 @@ async function buildProductData(strapi, product, lookups, dryRun = false) {
     is_active: true,
     firmness: FIRMNESS_ENUM[firmnessSlug] || 'средний',
     firmness_option: firmnessOption.id,
+    firmness_side1: Number.isInteger(product.firmness_side1) ? product.firmness_side1 : null,
+    firmness_side2: Number.isInteger(product.firmness_side2) ? product.firmness_side2 : null,
     mattress_type: MATTRESS_TYPE_ENUM[mattressTypeSlug] || 'беспружинный',
     mattress_type_option: mattressTypeOption.id,
     load_range: LOAD_RANGE_ENUM[loadRangeSlug] || null,

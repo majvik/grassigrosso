@@ -6,9 +6,12 @@
       "collectionName": "Classic",
       "collectionSlug": "classic",
       "firmness": "medium",
+      "firmnessSide1": 4,
+      "firmnessSide2": 4,
       "mattressType": "spring",
       "heightCm": 19,
       "maxLoadKg": 120,
+      "priceRub": 45000,
       "loadRange": "upTo120",
       "heightRange": "mid",
       "sizes": [
@@ -37,9 +40,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 45000,
-      "isRecommended": true
+      "isRecommended": true,
+      "isActive": true
     },
     {
       "name": "Ориент Плюс",
@@ -47,9 +49,12 @@
       "collectionName": "Classic",
       "collectionSlug": "classic",
       "firmness": "dualFirmness",
+      "firmnessSide1": 4,
+      "firmnessSide2": 6,
       "mattressType": "spring",
       "heightCm": 20,
       "maxLoadKg": 120,
+      "priceRub": 32000,
       "loadRange": "upTo120",
       "heightRange": "mid",
       "sizes": [
@@ -80,9 +85,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 32000,
-      "isRecommended": true
+      "isRecommended": true,
+      "isActive": true
     },
     {
       "name": "Аспект",
@@ -90,9 +94,12 @@
       "collectionName": "Classic",
       "collectionSlug": "classic",
       "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
       "mattressType": "spring",
       "heightCm": 20,
       "maxLoadKg": 120,
+      "priceRub": 36000,
       "loadRange": "upTo120",
       "heightRange": "mid",
       "sizes": [
@@ -122,9 +129,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 36000,
-      "isRecommended": true
+      "isRecommended": true,
+      "isActive": true
     },
     {
       "name": "Эвер Фоам 10",
@@ -132,9 +138,12 @@
       "collectionName": "Classic",
       "collectionSlug": "classic",
       "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
       "mattressType": "nospring",
       "heightCm": 10,
       "maxLoadKg": 120,
+      "priceRub": 46000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -161,9 +170,8 @@
         "Беспружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 46000,
-      "isRecommended": true
+      "isRecommended": true,
+      "isActive": true
     },
     {
       "name": "Эвер Фоам 16",
@@ -171,9 +179,12 @@
       "collectionName": "Classic",
       "collectionSlug": "classic",
       "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
       "mattressType": "nospring",
       "heightCm": 16,
       "maxLoadKg": 120,
+      "priceRub": 39000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -200,9 +211,8 @@
         "Беспружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 39000,
-      "isRecommended": true
+      "isRecommended": true,
+      "isActive": true
     },
     {
       "name": "Эвер Фоам 20",
@@ -210,9 +220,12 @@
       "collectionName": "Classic",
       "collectionSlug": "classic",
       "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
       "mattressType": "nospring",
       "heightCm": 20,
       "maxLoadKg": 120,
+      "priceRub": 49000,
       "loadRange": "upTo120",
       "heightRange": "mid",
       "sizes": [
@@ -239,9 +252,8 @@
         "Беспружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 49000,
-      "isRecommended": true
+      "isRecommended": true,
+      "isActive": true
     },
     {
       "name": "Ортофоам Стандарт",
@@ -249,9 +261,12 @@
       "collectionName": "Flexi",
       "collectionSlug": "flexi",
       "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
       "mattressType": "nospring",
       "heightCm": 16,
       "maxLoadKg": 120,
+      "priceRub": 38000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -278,9 +293,8 @@
         "Беспружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 38000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Ортофоам Плюс",
@@ -288,9 +302,12 @@
       "collectionName": "Flexi",
       "collectionSlug": "flexi",
       "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
       "mattressType": "nospring",
       "heightCm": 20,
       "maxLoadKg": 120,
+      "priceRub": 39000,
       "loadRange": "upTo120",
       "heightRange": "mid",
       "sizes": [
@@ -317,9 +334,8 @@
         "Беспружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 39000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Хард Формат",
@@ -327,9 +343,12 @@
       "collectionName": "Flexi",
       "collectionSlug": "flexi",
       "firmness": "dualFirmness",
+      "firmnessSide1": 7,
+      "firmnessSide2": 8,
       "mattressType": "nospring",
       "heightCm": 20,
       "maxLoadKg": 140,
+      "priceRub": 37000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -359,9 +378,8 @@
         "Беспружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 37000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Скай Фоам",
@@ -369,9 +387,12 @@
       "collectionName": "Flexi",
       "collectionSlug": "flexi",
       "firmness": "dualFirmness",
+      "firmnessSide1": 4,
+      "firmnessSide2": 6,
       "mattressType": "nospring",
       "heightCm": 21,
       "maxLoadKg": 140,
+      "priceRub": 50000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -402,9 +423,8 @@
         "Беспружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 50000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Эволюшен",
@@ -412,9 +432,12 @@
       "collectionName": "Flexi",
       "collectionSlug": "flexi",
       "firmness": "hard",
+      "firmnessSide1": 7,
+      "firmnessSide2": 7,
       "mattressType": "nospring",
       "heightCm": 23,
       "maxLoadKg": 180,
+      "priceRub": 31000,
       "loadRange": "upTo180",
       "heightRange": "high",
       "sizes": [
@@ -442,9 +465,8 @@
         "Беспружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 31000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Гранд",
@@ -452,9 +474,12 @@
       "collectionName": "Flexi",
       "collectionSlug": "flexi",
       "firmness": "hard",
+      "firmnessSide1": 9,
+      "firmnessSide2": 9,
       "mattressType": "nospring",
       "heightCm": 24,
       "maxLoadKg": 180,
+      "priceRub": 42000,
       "loadRange": "upTo180",
       "heightRange": "high",
       "sizes": [
@@ -482,9 +507,8 @@
         "Беспружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 42000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Империо",
@@ -492,9 +516,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "dualFirmness",
+      "firmnessSide1": 6,
+      "firmnessSide2": 4,
       "mattressType": "spring",
       "heightCm": 24,
       "maxLoadKg": 140,
+      "priceRub": 49000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -525,9 +552,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 49000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Люксор",
@@ -535,9 +561,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "medium",
+      "firmnessSide1": 6,
+      "firmnessSide2": 6,
       "mattressType": "spring",
       "heightCm": 26,
       "maxLoadKg": 160,
+      "priceRub": 49000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -567,9 +596,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 49000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Галакси",
@@ -577,9 +605,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "medium",
+      "firmnessSide1": 6,
+      "firmnessSide2": 6,
       "mattressType": "spring",
       "heightCm": 26,
       "maxLoadKg": 160,
+      "priceRub": 36000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -609,9 +640,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 36000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Дискавери",
@@ -619,9 +649,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "hard",
+      "firmnessSide1": 8,
+      "firmnessSide2": 8,
       "mattressType": "spring",
       "heightCm": 27,
       "maxLoadKg": 160,
+      "priceRub": 37000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -652,9 +685,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 37000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Давос",
@@ -662,9 +694,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "hard",
+      "firmnessSide1": 9,
+      "firmnessSide2": 9,
       "mattressType": "spring",
       "heightCm": 22,
       "maxLoadKg": 150,
+      "priceRub": 45000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -693,9 +728,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 45000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Давос-2",
@@ -703,9 +737,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "hard",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "spring",
       "heightCm": 22,
       "maxLoadKg": 150,
+      "priceRub": 43000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -734,9 +771,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 43000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Давос-3",
@@ -744,9 +780,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "hard",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "spring",
       "heightCm": 22,
       "maxLoadKg": 150,
+      "priceRub": 36000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -775,9 +814,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 36000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Давос-4",
@@ -785,9 +823,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "hard",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "spring",
       "heightCm": 22,
       "maxLoadKg": 150,
+      "priceRub": 44000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -816,9 +857,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 44000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Давос-5",
@@ -826,9 +866,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "hard",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "spring",
       "heightCm": 22,
       "maxLoadKg": 150,
+      "priceRub": 40000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -857,9 +900,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 40000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Давос Микс",
@@ -867,9 +909,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "dualFirmness",
+      "firmnessSide1": 7,
+      "firmnessSide2": 9,
       "mattressType": "spring",
       "heightCm": 23,
       "maxLoadKg": 150,
+      "priceRub": 50000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -900,9 +945,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 50000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Элио",
@@ -910,9 +954,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "dualFirmness",
+      "firmnessSide1": 5,
+      "firmnessSide2": 7,
       "mattressType": "spring",
       "heightCm": 23,
       "maxLoadKg": 140,
+      "priceRub": 50000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -944,9 +991,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 50000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Премьер",
@@ -954,9 +1000,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "hard",
+      "firmnessSide1": 7,
+      "firmnessSide2": 7,
       "mattressType": "spring",
       "heightCm": 24,
       "maxLoadKg": 140,
+      "priceRub": 33000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -986,9 +1035,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 33000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Премьер Люкс",
@@ -996,9 +1044,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "hard",
+      "firmnessSide1": 7,
+      "firmnessSide2": 7,
       "mattressType": "spring",
       "heightCm": 24,
       "maxLoadKg": 140,
+      "priceRub": 47000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -1028,9 +1079,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 47000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Импринт",
@@ -1038,9 +1088,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "medium",
+      "firmnessSide1": 6,
+      "firmnessSide2": 6,
       "mattressType": "spring",
       "heightCm": 23,
       "maxLoadKg": 140,
+      "priceRub": 43000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -1070,9 +1123,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 43000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Релакс Плюс",
@@ -1080,9 +1132,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "dualFirmness",
+      "firmnessSide1": 5,
+      "firmnessSide2": 7,
       "mattressType": "spring",
       "heightCm": 21,
       "maxLoadKg": 140,
+      "priceRub": 46000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -1113,9 +1168,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 46000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Ларго",
@@ -1123,9 +1177,12 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "hard",
+      "firmnessSide1": 7,
+      "firmnessSide2": 7,
       "mattressType": "spring",
       "heightCm": 21,
       "maxLoadKg": 140,
+      "priceRub": 37000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -1155,9 +1212,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 37000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Твин",
@@ -1165,9 +1221,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "dualFirmness",
+      "firmnessSide1": 7,
+      "firmnessSide2": 4,
       "mattressType": "spring",
       "heightCm": 20,
       "maxLoadKg": 120,
+      "priceRub": 43000,
       "loadRange": "upTo120",
       "heightRange": "mid",
       "sizes": [
@@ -1198,9 +1257,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 43000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Релакс",
@@ -1208,9 +1266,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "dualFirmness",
+      "firmnessSide1": 4,
+      "firmnessSide2": 6,
       "mattressType": "spring",
       "heightCm": 21,
       "maxLoadKg": 120,
+      "priceRub": 50000,
       "loadRange": "upTo120",
       "heightRange": "mid",
       "sizes": [
@@ -1241,9 +1302,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 50000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Оригинал",
@@ -1251,9 +1311,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
       "mattressType": "spring",
       "heightCm": 22,
       "maxLoadKg": 120,
+      "priceRub": 43000,
       "loadRange": "upTo120",
       "heightRange": "mid",
       "sizes": [
@@ -1282,9 +1345,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 43000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Эдванс",
@@ -1292,9 +1354,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "medium",
+      "firmnessSide1": 6,
+      "firmnessSide2": 6,
       "mattressType": "spring",
       "heightCm": 23,
       "maxLoadKg": 120,
+      "priceRub": 40000,
       "loadRange": "upTo120",
       "heightRange": "high",
       "sizes": [
@@ -1324,9 +1389,8 @@
         "Пружинный",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 40000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Оптима",
@@ -1334,9 +1398,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "dualFirmness",
+      "firmnessSide1": 7,
+      "firmnessSide2": 6,
       "mattressType": "spring",
       "heightCm": 22,
       "maxLoadKg": 130,
+      "priceRub": 30000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -1367,9 +1434,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 30000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Динамик",
@@ -1377,9 +1443,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "hard",
+      "firmnessSide1": 7,
+      "firmnessSide2": 7,
       "mattressType": "spring",
       "heightCm": 21,
       "maxLoadKg": 130,
+      "priceRub": 50000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -1408,9 +1477,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 50000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Спейс",
@@ -1418,9 +1486,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "dualFirmness",
+      "firmnessSide1": 5,
+      "firmnessSide2": 6,
       "mattressType": "spring",
       "heightCm": 22,
       "maxLoadKg": 120,
+      "priceRub": 48000,
       "loadRange": "upTo120",
       "heightRange": "mid",
       "sizes": [
@@ -1452,9 +1523,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 48000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Сенсо",
@@ -1462,9 +1532,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "dualFirmness",
+      "firmnessSide1": 6,
+      "firmnessSide2": 7,
       "mattressType": "spring",
       "heightCm": 22,
       "maxLoadKg": 130,
+      "priceRub": 39000,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -1495,9 +1568,8 @@
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isActive": true,
-      "priceRub": 39000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Лидер",
@@ -1505,9 +1577,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "hard",
+      "firmnessSide1": 7,
+      "firmnessSide2": 7,
       "mattressType": "spring",
       "heightCm": 26,
       "maxLoadKg": 160,
+      "priceRub": 42000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -1537,9 +1612,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 42000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Гравити",
@@ -1547,9 +1621,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "hard",
+      "firmnessSide1": 8,
+      "firmnessSide2": 8,
       "mattressType": "spring",
       "heightCm": 25,
       "maxLoadKg": 160,
+      "priceRub": 50000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -1579,9 +1656,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 50000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Мэджик",
@@ -1589,9 +1665,12 @@
       "collectionName": "Trend",
       "collectionSlug": "trend",
       "firmness": "hard",
+      "firmnessSide1": 8,
+      "firmnessSide2": 8,
       "mattressType": "spring",
       "heightCm": 27,
       "maxLoadKg": 160,
+      "priceRub": 49000,
       "loadRange": "upTo160",
       "heightRange": "high",
       "sizes": [
@@ -1622,9 +1701,8 @@
         "Пружинный",
         "Жесткий"
       ],
-      "isActive": true,
-      "priceRub": 49000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Флип Стандарт",
@@ -1632,9 +1710,12 @@
       "collectionName": "",
       "collectionSlug": "topper",
       "firmness": "medium",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "topper",
       "heightCm": 4,
       "maxLoadKg": 120,
+      "priceRub": 43000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -1661,9 +1742,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 43000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Флип Плюс",
@@ -1671,9 +1751,12 @@
       "collectionName": "",
       "collectionSlug": "topper",
       "firmness": "medium",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "topper",
       "heightCm": 6,
       "maxLoadKg": 120,
+      "priceRub": 30000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -1700,9 +1783,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 30000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Эффект",
@@ -1710,9 +1792,12 @@
       "collectionName": "",
       "collectionSlug": "topper",
       "firmness": "medium",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "topper",
       "heightCm": 4,
       "maxLoadKg": 120,
+      "priceRub": 48000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -1739,9 +1824,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 48000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Дуал",
@@ -1749,9 +1833,12 @@
       "collectionName": "",
       "collectionSlug": "topper",
       "firmness": "medium",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "topper",
       "heightCm": 6,
       "maxLoadKg": 120,
+      "priceRub": 38000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -1779,9 +1866,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 38000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Делюкс Мемори",
@@ -1789,9 +1875,12 @@
       "collectionName": "",
       "collectionSlug": "topper",
       "firmness": "medium",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "topper",
       "heightCm": 12,
       "maxLoadKg": 120,
+      "priceRub": 47000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -1819,9 +1908,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 47000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Делюкс Латекс",
@@ -1829,9 +1917,12 @@
       "collectionName": "",
       "collectionSlug": "topper",
       "firmness": "medium",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "topper",
       "heightCm": 6,
       "maxLoadKg": 120,
+      "priceRub": 30000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -1858,9 +1949,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 30000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Софт",
@@ -1868,9 +1958,12 @@
       "collectionName": "",
       "collectionSlug": "topper",
       "firmness": "medium",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "topper",
       "heightCm": 6,
       "maxLoadKg": 120,
+      "priceRub": 40000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -1897,9 +1990,8 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 40000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     },
     {
       "name": "Сенсетив",
@@ -1907,9 +1999,12 @@
       "collectionName": "",
       "collectionSlug": "topper",
       "firmness": "medium",
+      "firmnessSide1": null,
+      "firmnessSide2": null,
       "mattressType": "topper",
       "heightCm": 6,
       "maxLoadKg": 120,
+      "priceRub": 42000,
       "loadRange": "upTo120",
       "heightRange": "low",
       "sizes": [
@@ -1934,15 +2029,14 @@
         "Топер",
         "Средний"
       ],
-      "isActive": true,
-      "priceRub": 42000,
-      "isRecommended": false
+      "isRecommended": false,
+      "isActive": true
     }
   ],
-  "source": "strapi-catalog-feed",
-  "view": "listing",
   "sections": {
     "recommendedTitle": "Мы рекомендуем",
     "allProductsTitle": "Все товары"
-  }
+  },
+  "source": "strapi-catalog-feed",
+  "view": "listing"
 }

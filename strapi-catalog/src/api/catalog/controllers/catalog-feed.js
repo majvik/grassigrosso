@@ -178,6 +178,8 @@ module.exports = {
       collectionName: row.collection?.name || '',
       collectionSlug,
       firmness: row.firmness_option?.slug || mapFirmness(row.firmness || ''),
+      firmnessSide1: Number.isInteger(row.firmness_side1) ? row.firmness_side1 : null,
+      firmnessSide2: Number.isInteger(row.firmness_side2) ? row.firmness_side2 : null,
       mattressType,
       heightCm: Number(row.height_cm || 0),
       maxLoadKg: Number(row.max_load_kg || 0),

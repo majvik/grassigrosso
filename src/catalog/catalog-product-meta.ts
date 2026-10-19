@@ -18,6 +18,12 @@ function parseCsvList(value: unknown): string[] {
     .filter(Boolean)
 }
 
+function parseFirmnessScore(value: unknown): number | null {
+  if (value === null || value === undefined || value === '') return null
+  const score = Number(value)
+  return Number.isInteger(score) && score >= 1 && score <= 10 ? score : null
+}
+
 export function buildCatalogCardMetaFromProduct(
   product: CatalogProduct,
   index: number,
@@ -39,6 +45,8 @@ export function buildCatalogCardMetaFromProduct(
     slug: String(product.slug || '').trim(),
     collection: String(product.collectionSlug || product.slug || '').trim(),
     firmness: String(product.firmness || '').trim(),
+    firmnessSide1: parseFirmnessScore(product.firmnessSide1),
+    firmnessSide2: parseFirmnessScore(product.firmnessSide2),
     type: String(product.mattressType || '').trim(),
     height: Number(product.heightCm || 0),
     load: Number(product.maxLoadKg || 0),

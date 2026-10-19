@@ -33,6 +33,8 @@ export type CatalogCardMeta<TCard = unknown> = {
   slug: string
   collection: string
   firmness: string
+  firmnessSide1?: number | null
+  firmnessSide2?: number | null
   type: string
   height: number
   load: number

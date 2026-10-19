@@ -392,11 +392,26 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     if (!preferences.loadRange.size || preferences.loadRange.has(meta.loadRange)) score += 80
     if (!preferences.firmness.size) {
       score += 60
-    } else if (preferences.firmness.has(meta.firmness)) {
+    } else {
+      const sides = [meta.firmnessSide1, meta.firmnessSide2]
+        .filter((value): value is number => Number.isInteger(value))
       const preferredFirmness = [...preferences.firmness]
-      score += preferredFirmness.indexOf(meta.firmness) === 0 ? 60 : 50
-    } else if (preferences.firmness.has('soft') && meta.firmness === 'medium') {
-      score += 45
+      if (sides.length && preferences.firmness.has('dualFirmness') && sides.length === 2) {
+        const low = Math.min(...sides)
+        const high = Math.max(...sides)
+        score += Math.max(0, 60 - (Math.abs(low - 4) + Math.abs(high - 7)) * 7)
+      } else if (sides.length) {
+        const targetByFirmness: Record<string, number> = { soft: 3, medium: 5, hard: 7 }
+        const targets = preferredFirmness.map((value) => targetByFirmness[value]).filter(Number.isFinite)
+        const distance = targets.length
+          ? Math.min(...sides.flatMap((side) => targets.map((target) => Math.abs(side - target))))
+          : Number.POSITIVE_INFINITY
+        score += Number.isFinite(distance) ? Math.max(0, 60 - distance * 10) : 0
+      } else if (preferences.firmness.has(meta.firmness)) {
+        score += preferredFirmness.indexOf(meta.firmness) === 0 ? 60 : 50
+      } else if (preferences.firmness.has('soft') && meta.firmness === 'medium') {
+        score += 45
+      }
     }
     if (!preferences.type.size || preferences.type.has(meta.type)) score += 35
     if (!preferences.collection.size || preferences.collection.has(meta.collection)) score += 25

@@ -80,6 +80,7 @@
     "check:catalog-ui": "node scripts/check-catalog-ui.mjs",
     "check:catalog-smart-selector": "node scripts/check-catalog-smart-selector.mjs",
     "check:catalog-smart-select-api": "node scripts/check-catalog-smart-select-api.mjs",
+    "check:catalog-firmness-scores": "node scripts/check-catalog-firmness-scores.mjs",
     "check:catalog-perf": "node scripts/check-catalog-perf.mjs",
     "catalog-import:build": "python3 scripts/build-catalog-import.py",
     "catalog-import:validate": "node scripts/validate-catalog-import.mjs",

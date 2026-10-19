@@ -6,9 +6,58 @@
       "poster": "",
       "alt": "Каталог продукции Grassigrosso",
       "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/s2_3x_95e6a820a8.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 2",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/s3_3x_ddb534a715.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 3",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/s4_3x_12a5c929e0.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 4",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/s5_3x_37b55d605b.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 5",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/s6_3x_6fea2f37cf.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 6",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/s7_3x_fe32368707.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 7",
+      "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/s8_3x_3fcd92cad1.avif",
+      "poster": "",
+      "alt": "Grassigrosso — слайд 8",
+      "mime": ""
     }
   ],
   "autoplayMs": 6500,
-  "displayMode": "image_only",
-  "source": "disk-snapshot"
+  "displayMode": "slider",
+  "source": "strapi-download-catalog-feed"
 }

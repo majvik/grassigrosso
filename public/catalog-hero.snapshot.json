@@ -27,8 +27,15 @@
       "poster": "",
       "alt": "Светлая спальня",
       "mime": ""
+    },
+    {
+      "type": "image",
+      "src": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.avif",
+      "poster": "",
+      "alt": "davos_interior_variant-02_architectural-morning.png",
+      "mime": ""
     }
   ],
   "autoplayMs": 6500,
-  "source": "disk-snapshot"
+  "source": "strapi-catalog-hero-feed"
 }

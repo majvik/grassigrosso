@@ -16,6 +16,28 @@ assert.deepEqual(applyDomainGuardrails({ heightRange: ['high'] }, 'высоки�
   firmness: ['hard', 'medium'],
 })
 assert.deepEqual(applyDomainGuardrails({ heightRange: ['high'] }, 'нужен высокий матрас'), { heightRange: ['high'] })
+assert.deepEqual(applyDomainGuardrails({}, 'молодая девушка спит с ребенком'), {
+  size: ['160x190', '160x200', '180x190', '180x200'],
+  firmness: ['medium'],
+})
+assert.deepEqual(applyDomainGuardrails({}, 'мужчина 105 кг, сплю на боку'), {
+  firmness: ['medium'],
+  loadRange: ['upTo160'],
+})
+assert.deepEqual(applyDomainGuardrails({}, 'женщина 55 кг, сплю на животе'), {
+  firmness: ['hard'],
+  loadRange: ['upTo120'],
+})
+assert.deepEqual(applyDomainGuardrails({}, 'пара, вес 60 и 110 кг, один спит на боку, другой на спине'), {
+  size: ['160x190', '160x200', '180x190', '180x200'],
+  firmness: ['dualFirmness', 'medium'],
+  loadRange: ['upTo160'],
+})
+assert.deepEqual(applyDomainGuardrails({}, 'высокий мужчина рост 195 см вес 90 кг спит на спине'), {
+  size: ['140x200', '160x200', '180x200'],
+  firmness: ['hard', 'medium'],
+  loadRange: ['upTo120'],
+})
 
 let capturedRequest
 const fakeAxios = {

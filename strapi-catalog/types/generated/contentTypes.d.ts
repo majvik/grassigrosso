@@ -1312,6 +1312,22 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::firmness-option.firmness-option'
     >;
+    firmness_side1: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 1;
+        },
+        number
+      >;
+    firmness_side2: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 1;
+        },
+        number
+      >;
     gallery: Schema.Attribute.Component<'catalog.product-gallery-item', true>;
     height_cm: Schema.Attribute.Decimal & Schema.Attribute.Required;
     height_range: Schema.Attribute.Enumeration<

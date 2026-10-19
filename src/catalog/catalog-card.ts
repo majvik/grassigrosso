@@ -42,6 +42,8 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
   const collectionSlug = item.collectionSlug || item.slug || ''
   const productSlug = String(item.slug || collectionSlug || '').trim() || 'product'
   const firmness = item.firmness || 'medium'
+  const firmnessSide1 = Number(item.firmnessSide1)
+  const firmnessSide2 = Number(item.firmnessSide2)
   const mattressType = item.mattressType || 'nospring'
   const gallery = Array.isArray(item.gallery) ? item.gallery : []
   const mediaHtml = buildCatalogProductMediaHtml(gallery, { productSlug }, {
@@ -87,6 +89,8 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
         data-product-slug="${escapeHtml(productSlug)}"
         data-collection="${escapeHtml(collectionSlug)}"
         data-firmness="${escapeHtml(firmness)}"
+        data-firmness-side1="${Number.isInteger(firmnessSide1) ? firmnessSide1 : ''}"
+        data-firmness-side2="${Number.isInteger(firmnessSide2) ? firmnessSide2 : ''}"
         data-type="${escapeHtml(mattressType)}"
         data-height="${heightCm}"
         data-load="${maxLoadKg}"

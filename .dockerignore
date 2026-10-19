@@ -11,6 +11,7 @@ strapi-catalog/.env.*
 node_modules
 strapi-catalog/node_modules
 dist
+strapi-catalog/dist
 strapi-catalog/build
 strapi-catalog/.cache
 
