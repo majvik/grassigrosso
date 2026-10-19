@@ -63,7 +63,8 @@ try {
     const soft = document.querySelector('.catalogue-new-chip[data-filter-group="firmness"][data-value="soft"]')
     const resultCount = Number(document.querySelector('.catalogue-new-results strong')?.textContent || 0)
     const emptyState = document.querySelector('.catalogue-new-empty-state')
-    return Boolean(dialogClosed && medium?.classList.contains('is-active') && !soft?.classList.contains('is-active') && resultCount > 0 && emptyState?.hidden)
+    const firstCard = document.querySelector('.catalogue-new-card')
+    return Boolean(dialogClosed && medium?.classList.contains('is-active') && !soft?.classList.contains('is-active') && resultCount > 6 && emptyState?.hidden && firstCard?.dataset.firmness === 'medium')
   })()`)
 } catch (error) {
   failures.push(error.message)

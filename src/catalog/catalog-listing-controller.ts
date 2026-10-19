@@ -189,6 +189,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   let cards = queryElements<HTMLElement>(catalogueNewCardsRoot, '.catalogue-new-card')
   let cardMeta: CatalogCardMeta<HTMLElement>[] = []
   let productCatalog: CatalogProductListingEntry[] | null = null
+  let smartPreferenceState: CatalogFilterState | null = null
   let visibleCardsLimit = CATALOGUE_PAGE_SIZE
   let matchedCards: HTMLElement[] = []
   let matchedResultsCount = 0
@@ -383,6 +384,23 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       if (matchesCatalogCardMeta(meta, candidateState, favSet, priceBounds)) count += 1
     })
     return count
+  }
+
+  function scoreSmartMatch(meta: CatalogCardMeta<HTMLElement>, preferences: CatalogFilterState): number {
+    let score = 0
+    if (!preferences.size.size || [...preferences.size].some((value) => meta.sizes.has(value))) score += 100
+    if (!preferences.loadRange.size || preferences.loadRange.has(meta.loadRange)) score += 80
+    if (!preferences.firmness.size || preferences.firmness.has(meta.firmness)) {
+      score += 60
+    } else if (preferences.firmness.has('soft') && meta.firmness === 'medium') {
+      score += 45
+    }
+    if (!preferences.type.size || preferences.type.has(meta.type)) score += 35
+    if (!preferences.collection.size || preferences.collection.has(meta.collection)) score += 25
+    if (!preferences.heightRange.size || preferences.heightRange.has(meta.heightRange)) score += 15
+    preferences.fillings.forEach((value) => { if (meta.fillings.has(value)) score += 10 })
+    preferences.features.forEach((value) => { if (meta.features.has(value)) score += 10 })
+    return score
   }
 
   function resolveNearestSmartFilterState(): void {
@@ -660,6 +678,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   function applyFilters() {
     const favSet = readCatalogFavourites()
+    const useSmartRanking = Boolean(smartPreferenceState && state.sort === 'default' && !isSharedFavouritesView && !isSharedProductView)
     matchedCards = []
 
     if (productCatalog) {
@@ -667,12 +686,19 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         if (isSharedFavouritesView) {
           return Boolean(entry.meta.slug && sharedSlugs.has(entry.meta.slug))
         }
+        if (useSmartRanking) return true
         return matchesCatalogCardMeta(entry.meta, state, favSet, priceBounds)
       })
       matchedResultsCount = matchedEntries.length
-      matchedEntries.sort((a, b) => compareCatalogCardMeta(a.meta, b.meta, state.sort))
+      matchedEntries.sort((a, b) => {
+        if (useSmartRanking && smartPreferenceState) {
+          const scoreDifference = scoreSmartMatch(b.meta, smartPreferenceState) - scoreSmartMatch(a.meta, smartPreferenceState)
+          if (scoreDifference !== 0) return scoreDifference
+        }
+        return compareCatalogCardMeta(a.meta, b.meta, state.sort)
+      })
 
-      const useSections = !isSharedFavouritesView && !isSharedProductView
+      const useSections = !isSharedFavouritesView && !isSharedProductView && !useSmartRanking
       destroyCatalogProductGalleries(cardsRootEl)
 
       if (useSections) {
@@ -734,7 +760,9 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const zeroResultsResetGroup = isEmptyNormalCatalogue ? getBestZeroResultsResetGroup(favSet) : null
     syncCatalogZeroResultsHint(sidebarEl, zeroResultsResetGroup)
     syncEmptyStateResetButton(favSet)
-    const restMatchedCount = productCatalog
+    const restMatchedCount = useSmartRanking
+      ? matchedResultsCount
+      : productCatalog
       ? productCatalog.filter((entry) => {
           if (isSharedFavouritesView || isSharedProductView) return false
           if (!matchesCatalogCardMeta(entry.meta, state, favSet, priceBounds)) return false
@@ -982,11 +1010,13 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const filters = (event as CatalogSmartFiltersEvent).detail?.filters
     if (!filters) return
     resetCatalogFilterState(state, priceBounds)
+    smartPreferenceState = null
     const groups: CatalogSmartFilterGroup[] = ['collection', 'size', 'firmness', 'type', 'loadRange', 'heightRange', 'fillings', 'features']
     groups.forEach((group) => {
       const values = Array.isArray(filters[group]) ? filters[group] : []
       values.filter((value) => typeof value === 'string' && value && value !== 'all').forEach((value) => state[group].add(value))
     })
+    smartPreferenceState = cloneFilterState(state)
     resolveNearestSmartFilterState()
     syncUiFromState()
     syncFilterDependencies()
