@@ -1065,6 +1065,14 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     applySorting()
   }
 
+  function leaveSmartSelectionForManualFilter(): void {
+    if (!smartPreferenceState) return
+    smartQueryText = ''
+    smartQuizAnswers = {}
+    smartPreferenceState = null
+    setCatalogSort(state, 'default')
+  }
+
   function showCatalogueFavouritesOnlyView() {
     const fav = readCatalogFavourites()
     if (fav.size === 0) return
@@ -1078,6 +1086,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   const runCatalogSizeReset = () => {
+    leaveSmartSelectionForManualFilter()
     applyCatalogSizeFilter(state, 'all')
     syncUiFromState()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
@@ -1086,6 +1095,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   const runCatalogLoadRangeReset = () => {
+    leaveSmartSelectionForManualFilter()
     applyCatalogLoadRangeSelect(state, 'all')
     syncUiFromState()
     visibleCardsLimit = CATALOGUE_PAGE_SIZE
@@ -1096,6 +1106,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   const runCatalogFilterGroupReset = (groupName: string) => {
     const wasEmptyCatalogue =
       !isSharedFavouritesView && !isSharedProductView && matchedResultsCount === 0
+    leaveSmartSelectionForManualFilter()
     if (groupName === 'price') {
       resetCatalogPriceFilter(state, priceBounds)
     } else {
@@ -1128,6 +1139,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   const sizeSelectController = initCatalogSizeSelect(sidebarEl, {
     onOptionSelected: (group, value) => {
       if (group === 'size') {
+        leaveSmartSelectionForManualFilter()
         const shouldCloseAfterSelect = applyCatalogSizeFilter(state, value)
         syncUiFromState()
         visibleCardsLimit = CATALOGUE_PAGE_SIZE
@@ -1135,6 +1147,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         return shouldCloseAfterSelect
       }
       if (group === 'loadRange') {
+        leaveSmartSelectionForManualFilter()
         applyCatalogLoadRangeSelect(state, value)
         syncUiFromState()
         visibleCardsLimit = CATALOGUE_PAGE_SIZE
@@ -1153,6 +1166,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     () => priceBounds,
     {
       onChange: () => {
+        leaveSmartSelectionForManualFilter()
         visibleCardsLimit = CATALOGUE_PAGE_SIZE
         applyFilters()
       },
@@ -1414,6 +1428,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         const groupName = chip.dataset.filterGroup
         const value = chip.dataset.value
         if (groupName && value) {
+          leaveSmartSelectionForManualFilter()
           if (applyCatalogChipFilter(state, groupName, value)) {
             syncUiFromState()
           }
@@ -1476,6 +1491,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   if (catalogueNewFavouritesOnlySwitch) {
     catalogueNewFavouritesOnlySwitch.addEventListener('click', () => {
+      leaveSmartSelectionForManualFilter()
       toggleCatalogFavouritesOnly(state)
       setCatalogFavouritesSwitchState(catalogueNewFavouritesOnlySwitch, state.favouritesOnly)
       visibleCardsLimit = CATALOGUE_PAGE_SIZE

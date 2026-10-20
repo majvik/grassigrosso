@@ -477,6 +477,23 @@ try {
       && prices.every((price, index) => index === 0 || prices[index - 1] <= price)
       && remainingPrices.every((price, index) => index === 0 || remainingPrices[index - 1] <= price)
   })()`)
+  await evaluate(`document.querySelector('.catalogue-new-chip[data-filter-group="collection"][data-value="trend"]')?.click()`)
+  await waitFor(evaluate, 'manual filter change leaves smart selection mode', `(() => {
+    const defaultResult = document.querySelector('[data-catalog-results-default]')
+    const smartResult = document.querySelector('[data-catalog-results-smart]')
+    const defaultSort = document.querySelector('.catalogue-new-sort-option[data-value="default"]')
+    const trigger = document.querySelector('.catalogue-new-sort-trigger')
+    const changedFilter = document.querySelector('.catalogue-new-chip[data-filter-group="collection"][data-value="trend"]')
+    return Boolean(
+      !defaultResult?.hidden
+      && smartResult?.hidden
+      && defaultResult?.textContent.includes('Найдено:')
+      && defaultSort?.textContent.trim() === 'Сортировка по умолчанию'
+      && trigger?.textContent.trim() === 'Сортировка по умолчанию'
+      && changedFilter?.classList.contains('is-active')
+      && !document.querySelector('[data-listing-section="recommended"] .catalogue-new-section-title')?.textContent.includes('Результаты подбора')
+    )
+  })()`)
   await evaluate(`document.querySelector('.catalogue-new-reset')?.click()`)
   await waitFor(evaluate, 'reset restores regular count and default sort copy', `(() => {
     const defaultResult = document.querySelector('[data-catalog-results-default]')
