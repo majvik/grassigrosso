@@ -94,6 +94,11 @@ try {
   })()`)
 
   await waitFor(evaluate, 'clear all control appears inside the field', `Boolean(document.querySelector('[data-smart-selector-tags] [data-smart-selector-clear-all][aria-label="Очистить всё"]'))`)
+  await waitFor(evaluate, 'desktop clear control reserves its expanded width without layout changes', `(() => {
+    const button = document.querySelector('[data-smart-selector-clear-all]')
+    const shell = button?.parentElement
+    return Boolean(button && shell && button.getBoundingClientRect().width <= 32 && shell.getBoundingClientRect().width >= 120)
+  })()`)
   await evaluate(`document.querySelector('[data-smart-selector-clear-all]')?.click()`)
   await waitFor(evaluate, 'clear all resets the complete profile', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
