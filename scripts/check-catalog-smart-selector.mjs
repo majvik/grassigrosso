@@ -319,12 +319,12 @@ try {
     {
       label: 'unsafe load never enters the first page',
       queryText: 'вес 180 кг, нужен матрас с Memory Foam и усиленным краем',
-      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].every((card) => Number(card.dataset.load) >= 180))()`,
+      expression: `(() => [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')].every((card) => Number(card.dataset.load) >= 180))()`,
     },
     {
       label: 'hard support excludes numerically soft products from the first page',
       queryText: 'нужна плотная опора жесткостью 7 из 10',
-      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].every((card) => {
+      expression: `(() => [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')].every((card) => {
         const sides = [Number(card.dataset.firmnessSide1), Number(card.dataset.firmnessSide2)].filter(Number.isFinite)
         return sides.length > 0 && Math.max(...sides) >= 6
       }))()`,
@@ -332,12 +332,12 @@ try {
     {
       label: 'topper remains a hard construction constraint during relaxation',
       queryText: 'строго тонкий матрас на диван, выровнять стыки',
-      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].every((card) => card.dataset.type === 'topper' || card.dataset.collection === 'topper'))()`,
+      expression: `(() => [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')].every((card) => card.dataset.type === 'topper' || card.dataset.collection === 'topper'))()`,
     },
     {
       label: 'explicit dual firmness remains a hard constraint during relaxation',
       queryText: 'строго две стороны разной жесткости 5 и 7',
-      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].every((card) => {
+      expression: `(() => [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')].every((card) => {
         const sides = [Number(card.dataset.firmnessSide1), Number(card.dataset.firmnessSide2)]
         return sides.every(Number.isFinite) && sides[0] !== sides[1]
       }))()`,
@@ -353,7 +353,7 @@ try {
   const recommendedFilters = applyDomainGuardrails({}, recommendedQueryText)
   await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters: recommendedFilters, queryText: recommendedQueryText })} }))`)
   await waitFor(evaluate, 'recommended products receive a small suitability-aware bonus', `(() => {
-    const cards = [...document.querySelectorAll('.catalogue-new-card')]
+    const cards = [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')]
     const topThreeAreSuitable = cards.slice(0, 3).every((card) => {
       const sides = [Number(card.dataset.firmnessSide1), Number(card.dataset.firmnessSide2)].filter(Number.isFinite)
       return Number(card.dataset.load) >= 80 && sides.some((value) => value >= 4 && value <= 6)
@@ -366,7 +366,16 @@ try {
   await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters: childFreeFilters, queryText: childFreeText })} }))`)
   await waitFor(evaluate, 'free child profile returns a focused shortlist', `(() => {
     const count = Number(document.querySelector('.catalogue-new-results strong')?.textContent)
-    return count > 0 && count <= 10 && [...document.querySelectorAll('.catalogue-new-card')].every((card) => ['low', 'mid'].includes(card.dataset.heightRange))
+    const selected = [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')]
+    const rest = [...document.querySelectorAll('[data-listing-section="all"] .catalogue-new-card')]
+    const slugs = [...selected, ...rest].map((card) => card.dataset.productSlug)
+    return count === 9
+      && selected.length === 9
+      && rest.length > 0
+      && new Set(slugs).size === slugs.length
+      && document.querySelector('[data-listing-section="recommended"] .catalogue-new-section-title')?.textContent.trim() === 'Результаты подбора'
+      && document.querySelector('[data-listing-section="all"] .catalogue-new-section-title')?.textContent.trim() === 'Все позиции'
+      && selected.every((card) => ['low', 'mid'].includes(card.dataset.heightRange))
   })()`)
 
   const childQuizText = 'матрас для ребёнка или подростка; ширина 140 см; беспружинный матрас из orthoFoam или forplit; умеренно-мягкая без проваливания'
@@ -374,7 +383,8 @@ try {
   await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters: childQuizFilters, queryText: childQuizText })} }))`)
   await waitFor(evaluate, 'explicit child construction and width stay mandatory', `(() => {
     const count = Number(document.querySelector('.catalogue-new-results strong')?.textContent)
-    return count > 0 && count <= 10 && [...document.querySelectorAll('.catalogue-new-card')].every((card) => {
+    const selected = [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')]
+    return count === 9 && selected.length === 9 && selected.every((card) => {
       const sizes = String(card.dataset.sizes || '').split(',')
       return card.dataset.type === 'nospring' && sizes.some((size) => size.startsWith('140x'))
     })

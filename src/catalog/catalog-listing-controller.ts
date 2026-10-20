@@ -141,7 +141,7 @@ const SMART_UNSAFE_LOAD_PENALTY = 1200
 const SMART_EXPLICIT_SIZE_MISS_PENALTY = 700
 const SMART_FIRMNESS_DISTANCE_PENALTY = 70
 const SMART_RECOMMENDED_BONUS = 12
-const SMART_RESULTS_LIMIT = 10
+const SMART_RESULTS_LIMIT = 9
 
 const DIRECT_SEARCH_STOP_WORDS = new Set([
   'матрас', 'матраса', 'матрасе', 'нужен', 'нужна', 'хочу', 'ищу', 'модель', 'пеной', 'пена', 'слой', 'слоя', 'состав', 'есть', 'мне', 'для',
@@ -933,7 +933,16 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       const useSections = !isSharedFavouritesView && !isSharedProductView && !useSmartRanking
       destroyCatalogProductGalleries(cardsRootEl)
 
-      if (useSections) {
+      if (useSmartRanking) {
+        const selectedProducts = new Set(matchedEntries.map((entry) => entry.product))
+        const remainingEntries = productCatalog.filter((entry) => !selectedProducts.has(entry.product))
+        cardsRootEl.classList.add('has-listing-sections')
+        cardsRootEl.innerHTML = buildCatalogListingSectionsHtml(
+          matchedEntries.map((entry) => entry.product),
+          remainingEntries.map((entry) => entry.product),
+          { recommendedTitle: 'Результаты подбора', allProductsTitle: 'Все позиции' },
+        )
+      } else if (useSections) {
         const recommendedEntries = matchedEntries.filter((entry) => entry.meta.recommended)
         const restEntries = matchedEntries.filter((entry) => !entry.meta.recommended)
         const visibleRest = restEntries.slice(0, visibleCardsLimit)
