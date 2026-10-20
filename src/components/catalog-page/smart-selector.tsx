@@ -242,8 +242,18 @@ export function SmartSelector() {
         body: JSON.stringify({ text: profileText }),
         signal: controller.signal,
       })
-      const payload = await response.json() as { filters?: Record<string, string[]>; error?: string }
-      if (!response.ok || !payload.filters) throw new Error(payload.error || 'Не удалось подобрать фильтры.')
+      const responseText = await response.text()
+      let payload: { filters?: Record<string, string[]>; error?: string } = {}
+      if (responseText) {
+        try {
+          payload = JSON.parse(responseText) as typeof payload
+        } catch {
+          // An upstream proxy can return an empty or non-JSON error page.
+        }
+      }
+      if (!response.ok || !payload.filters) {
+        throw new Error(payload.error || 'Сервис подбора временно недоступен. Попробуйте ещё раз.')
+      }
       setTags(profileTags)
       setInput('')
       window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', {

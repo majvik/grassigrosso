@@ -217,14 +217,32 @@ try {
 
   await evaluate(`(() => {
     const originalFetch = window.fetch.bind(window)
+    window.__smartSelectorFetchAttempt = 0
     window.addEventListener('catalogue:apply-smart-filters', (event) => { window.__smartSelectorEventDetail = event.detail }, { once: true })
     window.fetch = (input, init) => String(input).includes('/api/catalog/smart-select')
       ? (() => {
           window.__smartSelectorRequest = JSON.parse(init.body)
+          window.__smartSelectorFetchAttempt += 1
+          if (window.__smartSelectorFetchAttempt === 1) {
+            return Promise.resolve(new Response('', { status: 502 }))
+          }
           return Promise.resolve(new Response(JSON.stringify({ filters: { firmness: ['soft'], heightRange: ['low'], fillings: ['coir'] } }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
         })()
       : originalFetch(input, init)
     return true
+  })()`)
+  await evaluate(`document.querySelector('[data-smart-selector-quick-submit]')?.click()`)
+  await waitFor(evaluate, 'empty upstream response shows a friendly error', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const error = dialog?.querySelector('[data-smart-selector-error]')
+    const submit = dialog?.querySelector('[data-smart-selector-quick-submit]')
+    return Boolean(
+      dialog
+      && error?.textContent.includes('Сервис подбора временно недоступен')
+      && !error?.textContent.includes('Unexpected end of JSON input')
+      && submit
+      && !submit.disabled
+    )
   })()`)
   await evaluate(`document.querySelector('[data-smart-selector-quick-submit]')?.click()`)
   await waitFor(evaluate, 'conflicting smart filters relax to nearest matching products', `(() => {

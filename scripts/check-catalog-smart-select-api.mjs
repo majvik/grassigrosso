@@ -50,6 +50,14 @@ assertIncludes(applyDomainGuardrails({}, 'пара, вес 60 и 110 кг, од�
 assertIncludes(applyDomainGuardrails({}, 'высокий мужчина рост 195 см вес 90 кг спит на спине'), {
   size: ['140x200', '160x200', '180x200'], firmness: ['hard', 'medium'], loadRange: ['upTo120'], fillings: ['orthoFoam', 'latex'],
 })
+const heavyTallBackProfile = applyDomainGuardrails(
+  {},
+  'один взрослый; сплю на спине, нужна сбалансированная поддержка жесткостью 5–6; вес 135 кг, нагрузка от 160 кг, средний или высокий матрас с усиленным краем; высокий рост от 180 см, строго длина 200 см; нужна средняя жесткость, упругий баланс',
+)
+assertIncludes(heavyTallBackProfile, {
+  size: ['140x200', '160x200', '180x200'], firmness: ['medium'], loadRange: ['upTo180'], heightRange: ['high', 'mid'], features: ['edgeSupport'],
+})
+assert.deepEqual(heavyTallBackProfile.loadRange, ['upTo180'])
 
 assertIncludes(applyDomainGuardrails({}, 'болит поясница после сна'), {
   collection: ['relax'], firmness: ['medium', 'dualFirmness'], heightRange: ['mid', 'high'], fillings: ['memoryEffect', 'latex', 'orthoFoam'], features: ['edgeSupport'],
