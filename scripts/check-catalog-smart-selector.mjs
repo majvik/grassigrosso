@@ -34,8 +34,15 @@ try {
   })()`)
   await waitFor(evaluate, 'AI disclaimer links to the manager form', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const disclaimer = dialog?.querySelector('[data-smart-selector-ai-disclaimer]')
+    const submit = dialog?.querySelector('[data-smart-selector-quick-submit]')
     const link = dialog?.querySelector('[data-smart-selector-manager-link]')
-    return Boolean(dialog?.textContent.includes('Система работает через ИИ и может ошибаться.') && link?.textContent.trim() === 'Свяжитесь с менеджером' && link?.getAttribute('href') === '/contacts#contact-form')
+    return Boolean(
+      disclaimer?.textContent.includes('Система работает через ИИ и может ошибаться.')
+      && link?.textContent.trim() === 'Свяжитесь с менеджером'
+      && link?.getAttribute('href') === '/contacts#contact-form'
+      && submit?.compareDocumentPosition(disclaimer) & Node.DOCUMENT_POSITION_FOLLOWING
+    )
   })()`)
   await evaluate(`(() => {
     window.__managerResetCount = 0

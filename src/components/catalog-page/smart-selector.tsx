@@ -223,11 +223,7 @@ export function SmartSelector() {
           <p className={styles.eyebrow}>Умный подбор</p>
           <Dialog.Title className={styles.title}>Расскажите, какой матрас вам нужен</Dialog.Title>
           <Dialog.Description className={styles.description}>
-            Пишите своими словами или выберите быстрые ответы ниже. Система работает через ИИ и может ошибаться.{' '}
-            <a href="/contacts#contact-form" onClick={contactManager} data-smart-selector-manager-link>
-              Свяжитесь с менеджером
-            </a>{' '}
-            если нужна помощь.
+            Пишите своими словами или выберите быстрые ответы ниже.
           </Dialog.Description>
 
           <div className={`${styles.tagField} ${inputMultiline ? styles.tagFieldMultiline : ''}`} data-smart-selector-tags>
@@ -308,6 +304,13 @@ export function SmartSelector() {
             <button type="button" className={styles.quickSubmit} onClick={() => void showPreliminaryResults()} disabled={!hasProfileInput || isSubmitting} data-smart-selector-quick-submit>
               {isSubmitting ? 'Подбираем…' : 'Подобрать матрас'}
             </button>
+            <p className={styles.aiDisclaimer} data-smart-selector-ai-disclaimer>
+              Система работает через ИИ и может ошибаться.{' '}
+              <a href="/contacts#contact-form" onClick={contactManager} data-smart-selector-manager-link>
+                Свяжитесь с менеджером
+              </a>{' '}
+              если нужна помощь.
+            </p>
           </div>
         </Dialog.Popup>
       </Dialog.Portal>
