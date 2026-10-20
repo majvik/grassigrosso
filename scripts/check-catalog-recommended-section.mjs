@@ -24,10 +24,12 @@ const { buildCatalogListingSectionsHtml, normalizeCatalogListingSections } = awa
 )
 
 const sections = normalizeCatalogListingSections({
-  recommendedTitle: '  Мы рекомендуем ',
+  recommendedTitle: '  Наш выбор для вашего сна ',
+  recommendedSubtitle: ' Оптимальные системы поддержки, комфорта и восстановления. ',
   allProductsTitle: '',
 })
-assert.equal(sections.recommendedTitle, 'Мы рекомендуем')
+assert.equal(sections.recommendedTitle, 'Наш выбор для вашего сна')
+assert.equal(sections.recommendedSubtitle, 'Оптимальные системы поддержки, комфорта и восстановления.')
 assert.equal(sections.allProductsTitle, 'Все товары')
 
 const html = buildCatalogListingSectionsHtml(
@@ -37,7 +39,11 @@ const html = buildCatalogListingSectionsHtml(
 )
 assert.match(html, /data-listing-section="recommended"/)
 assert.match(html, /data-listing-section="all"/)
-assert.match(html, /catalogue-new-section-title">Мы рекомендуем</)
+assert.match(html, /catalogue-new-section-title">Наш выбор для вашего сна</)
+assert.match(
+  html,
+  /catalogue-new-section-subtitle">Оптимальные системы поддержки, комфорта и восстановления\.</,
+)
 assert.match(html, /catalogue-new-section-title">Все товары</)
 assert.match(html, /Ориент/)
 assert.match(html, /Classic/)
@@ -59,6 +65,7 @@ const listingSchema = JSON.parse(
 )
 assert.equal(listingSchema.kind, 'singleType')
 assert.ok(listingSchema.attributes.recommended_section_title)
+assert.ok(listingSchema.attributes.recommended_section_subtitle)
 assert.ok(listingSchema.attributes.all_products_section_title)
 
 const feed = fs.readFileSync(
@@ -67,5 +74,6 @@ const feed = fs.readFileSync(
 )
 assert.match(feed, /isRecommended/)
 assert.match(feed, /recommendedTitle/)
+assert.match(feed, /recommendedSubtitle/)
 
 console.log('check-catalog-recommended-section: ok')

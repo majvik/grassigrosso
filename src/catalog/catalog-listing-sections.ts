@@ -3,11 +3,13 @@ import { buildCatalogueCardHtml } from './catalog-card'
 
 export type CatalogListingSections = {
   recommendedTitle: string
+  recommendedSubtitle: string
   allProductsTitle: string
 }
 
 export const DEFAULT_CATALOG_LISTING_SECTIONS: CatalogListingSections = {
-  recommendedTitle: 'Мы рекомендуем',
+  recommendedTitle: 'Наш выбор для вашего сна',
+  recommendedSubtitle: 'Оптимальные системы поддержки, комфорта и восстановления.',
   allProductsTitle: 'Все товары',
 }
 
@@ -21,12 +23,21 @@ function escapeHtml(value: unknown): string {
 }
 
 export function normalizeCatalogListingSections(
-  value: { recommendedTitle?: string | null; allProductsTitle?: string | null } | null | undefined,
+  value: {
+    recommendedTitle?: string | null
+    recommendedSubtitle?: string | null
+    allProductsTitle?: string | null
+  } | null | undefined,
 ): CatalogListingSections {
   const recommendedTitle = String(value?.recommendedTitle || '').trim()
+  const recommendedSubtitle = String(value?.recommendedSubtitle || '').trim()
   const allProductsTitle = String(value?.allProductsTitle || '').trim()
   return {
     recommendedTitle: recommendedTitle || DEFAULT_CATALOG_LISTING_SECTIONS.recommendedTitle,
+    recommendedSubtitle:
+      value?.recommendedSubtitle === ''
+        ? ''
+        : recommendedSubtitle || DEFAULT_CATALOG_LISTING_SECTIONS.recommendedSubtitle,
     allProductsTitle: allProductsTitle || DEFAULT_CATALOG_LISTING_SECTIONS.allProductsTitle,
   }
 }
@@ -43,6 +54,9 @@ export function buildCatalogListingSectionsHtml(
     blocks.push(
       `<section class="catalogue-new-listing-section" data-listing-section="recommended">` +
         `<h2 class="catalogue-new-section-title">${escapeHtml(titles.recommendedTitle)}</h2>` +
+        (titles.recommendedSubtitle
+          ? `<p class="catalogue-new-section-subtitle">${escapeHtml(titles.recommendedSubtitle)}</p>`
+          : '') +
         `<div class="catalogue-new-cards-grid">${recommended.map((item) => buildCatalogueCardHtml(item)).join('')}</div>` +
         `</section>`,
     )

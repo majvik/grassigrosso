@@ -227,9 +227,11 @@ module.exports = {
       const listing = await strapi.db.query('api::catalog-listing.catalog-listing').findOne({});
       if (listing) {
         const recommendedTitle = String(listing.recommended_section_title || '').trim();
+        const recommendedSubtitle = String(listing.recommended_section_subtitle || '').trim();
         const allProductsTitle = String(listing.all_products_section_title || '').trim();
         sections = {
           recommendedTitle: recommendedTitle || DEFAULT_CATALOG_LISTING_SECTIONS.recommendedTitle,
+          recommendedSubtitle: recommendedSubtitle || DEFAULT_CATALOG_LISTING_SECTIONS.recommendedSubtitle,
           allProductsTitle: allProductsTitle || DEFAULT_CATALOG_LISTING_SECTIONS.allProductsTitle,
         };
       }

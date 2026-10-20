@@ -131,6 +131,7 @@ export type CatalogFeedSource = 'api' | 'session-storage' | 'disk-snapshot'
 
 export type CatalogListingSectionsPayload = {
   recommendedTitle?: string | null
+  recommendedSubtitle?: string | null
   allProductsTitle?: string | null
 }
 

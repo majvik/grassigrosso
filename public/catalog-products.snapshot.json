@@ -3140,7 +3140,8 @@
     }
   ],
   "sections": {
-    "recommendedTitle": "Мы рекомендуем",
+    "recommendedTitle": "Наш выбор для вашего сна",
+    "recommendedSubtitle": "Оптимальные системы поддержки, комфорта и восстановления.",
     "allProductsTitle": "Все товары"
   },
   "source": "strapi-catalog-feed",

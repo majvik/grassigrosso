@@ -11,10 +11,16 @@
   },
   "attributes": {
     "recommended_section_title": {
-      "displayName": "Заголовок «Мы рекомендуем»",
+      "displayName": "Заголовок экспертного выбора",
       "type": "string",
       "required": true,
-      "default": "Мы рекомендуем"
+      "default": "Наш выбор для вашего сна"
+    },
+    "recommended_section_subtitle": {
+      "displayName": "Подзаголовок экспертного выбора",
+      "type": "string",
+      "required": true,
+      "default": "Оптимальные системы поддержки, комфорта и восстановления."
     },
     "all_products_section_title": {
       "displayName": "Заголовок «Все товары»",

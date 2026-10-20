@@ -949,7 +949,11 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         cardsRootEl.innerHTML = buildCatalogListingSectionsHtml(
           matchedEntries.map((entry) => entry.product),
           remainingEntries.map((entry) => entry.product),
-          { recommendedTitle: 'Результаты подбора', allProductsTitle: 'Все позиции' },
+          {
+            recommendedTitle: 'Результаты подбора',
+            recommendedSubtitle: '',
+            allProductsTitle: 'Все позиции',
+          },
         )
       } else if (useSections) {
         const recommendedEntries = matchedEntries.filter((entry) => entry.meta.recommended)
