@@ -5,6 +5,7 @@ export type CatalogListingSections = {
   recommendedTitle: string
   recommendedSubtitle: string
   allProductsTitle: string
+  hideRecommendedTitle?: boolean
 }
 
 export const DEFAULT_CATALOG_LISTING_SECTIONS: CatalogListingSections = {
@@ -27,6 +28,7 @@ export function normalizeCatalogListingSections(
     recommendedTitle?: string | null
     recommendedSubtitle?: string | null
     allProductsTitle?: string | null
+    hideRecommendedTitle?: boolean
   } | null | undefined,
 ): CatalogListingSections {
   const recommendedTitle = String(value?.recommendedTitle || '').trim()
@@ -39,6 +41,7 @@ export function normalizeCatalogListingSections(
         ? ''
         : recommendedSubtitle || DEFAULT_CATALOG_LISTING_SECTIONS.recommendedSubtitle,
     allProductsTitle: allProductsTitle || DEFAULT_CATALOG_LISTING_SECTIONS.allProductsTitle,
+    hideRecommendedTitle: value?.hideRecommendedTitle === true,
   }
 }
 
@@ -53,7 +56,9 @@ export function buildCatalogListingSectionsHtml(
   if (recommended.length > 0) {
     blocks.push(
       `<section class="catalogue-new-listing-section" data-listing-section="recommended">` +
-        `<h2 class="catalogue-new-section-title">${escapeHtml(titles.recommendedTitle)}</h2>` +
+        (titles.hideRecommendedTitle
+          ? ''
+          : `<h2 class="catalogue-new-section-title">${escapeHtml(titles.recommendedTitle)}</h2>`) +
         (titles.recommendedSubtitle
           ? `<p class="catalogue-new-section-subtitle">${escapeHtml(titles.recommendedSubtitle)}</p>`
           : '') +

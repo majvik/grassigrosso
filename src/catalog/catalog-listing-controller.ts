@@ -985,9 +985,10 @@ export function initCatalogListingController(documentRef: Document, scrollOption
           matchedEntries.map((entry) => entry.product),
           remainingEntries.map((entry) => entry.product),
           {
-            recommendedTitle: 'Результаты подбора',
+            recommendedTitle: '',
             recommendedSubtitle: '',
             allProductsTitle: 'Все позиции',
+            hideRecommendedTitle: true,
           },
         )
       } else if (useSections) {

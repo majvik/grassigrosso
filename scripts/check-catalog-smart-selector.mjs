@@ -450,7 +450,7 @@ try {
     return selected.length === 9
       && rest.length > 0
       && new Set(slugs).size === slugs.length
-      && document.querySelector('[data-listing-section="recommended"] .catalogue-new-section-title')?.textContent.trim() === 'Результаты подбора'
+      && !document.querySelector('[data-listing-section="recommended"] .catalogue-new-section-title')
       && !document.querySelector('[data-listing-section="recommended"] .catalogue-new-section-subtitle')
       && document.querySelector('[data-listing-section="all"] .catalogue-new-section-title')?.textContent.trim() === 'Все позиции'
       && selected.every((card) => ['low', 'mid'].includes(card.dataset.heightRange))
