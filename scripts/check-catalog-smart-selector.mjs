@@ -32,6 +32,7 @@ try {
     const status = dialog?.querySelector('[data-smart-selector-profile-status]')
     return Boolean(dialog && dialog.textContent.includes('Шаг 1 из 5') && dialog.querySelectorAll('[data-smart-selector-question]').length === 1 && submit?.disabled && submit.textContent.includes('Подобрать матрас') && status?.textContent.includes('Профиль пока не заполнен'))
   })()`)
+  await evaluate(`window.__smartSelectorHints = [document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim()]`)
 
   await waitFor(evaluate, 'input example is typed into the placeholder', `(() => {
     const input = document.querySelector('[data-smart-selector-animated-placeholder]')
@@ -60,10 +61,29 @@ try {
     return Boolean(dialog?.textContent.includes('Шаг 2 из 5') && dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes('Один'))
   })()`)
 
+  for (let targetStep = 3; targetStep <= 5; targetStep += 1) {
+    await evaluate(`(() => {
+      window.__smartSelectorHints.push(document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim())
+      document.querySelector('[data-smart-selector-option]')?.click()
+    })()`)
+    await waitFor(evaluate, `quiz advances to step ${targetStep}`, `document.querySelector('[data-smart-selector-dialog]')?.textContent.includes('Шаг ${targetStep} из 5')`)
+  }
+  await evaluate(`window.__smartSelectorHints.push(document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim())`)
+  await waitFor(evaluate, 'all five how-to-choose hints are distinct and visible', `(() => {
+    const hints = window.__smartSelectorHints.filter(Boolean)
+    return hints.length === 5 && new Set(hints).size === 5 && hints.every((hint) => hint.includes('Как выбрать:'))
+  })()`)
+  await evaluate(`document.querySelector('[data-smart-selector-option]')?.click()`)
+  await waitFor(evaluate, 'completed quiz profile is recognized', `document.querySelector('[data-smart-selector-profile-status]')?.textContent.includes('Профиль заполнен')`)
+
   await evaluate(`(() => {
     const originalFetch = window.fetch.bind(window)
+    window.addEventListener('catalogue:apply-smart-filters', (event) => { window.__smartSelectorEventDetail = event.detail }, { once: true })
     window.fetch = (input, init) => String(input).includes('/api/catalog/smart-select')
-      ? Promise.resolve(new Response(JSON.stringify({ filters: { firmness: ['soft'], heightRange: ['low'], fillings: ['coir'] } }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      ? (() => {
+          window.__smartSelectorRequest = JSON.parse(init.body)
+          return Promise.resolve(new Response(JSON.stringify({ filters: { firmness: ['soft'], heightRange: ['low'], fillings: ['coir'] } }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+        })()
       : originalFetch(input, init)
     return true
   })()`)
@@ -78,6 +98,23 @@ try {
     const fillings = String(firstCard?.dataset.fillings || '').split(',')
     return Boolean(dialogClosed && medium?.classList.contains('is-active') && !soft?.classList.contains('is-active') && resultCount > 6 && emptyState?.hidden && firstCard?.dataset.type !== 'topper' && fillings.some((value) => ['memoryEffect', 'latex', 'nanoFoam', 'orthoFoam'].includes(value)))
   })()`)
+  await waitFor(evaluate, 'quiz and free text merge into one structured scoring profile', `(() => {
+    const text = String(window.__smartSelectorRequest?.text || '')
+    const answers = window.__smartSelectorEventDetail?.quizAnswers || {}
+    return text.includes('сплю на боку') && text.includes('один человек') && text.includes('пол мужской') && text.includes('рост 165 см') && text.includes('вес 55 кг') && text.includes('хочу помягче') && Object.keys(answers).length === 5
+  })()`)
+
+  const directSearchScenarios = [
+    { label: 'direct model search evolution', queryText: 'матрас эволюшен', topSlug: 'evolution' },
+    { label: 'direct model search relax plus', queryText: 'релакс плюс', topSlug: 'relax-plus' },
+    { label: 'layer search bicotton and elax', queryText: 'матрас с бикоттоном и элаксом', topSlug: 'evolution' },
+  ]
+  for (const scenario of directSearchScenarios) {
+    await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters: {}, queryText: scenario.queryText })} }))`)
+    await waitFor(evaluate, scenario.label, `document.querySelector('.catalogue-new-card')?.dataset.productSlug === ${JSON.stringify(scenario.topSlug)}`)
+  }
+  await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: { filters: {}, queryText: '1000 пружин' } }))`)
+  await waitFor(evaluate, '1000 springs layer search', `(() => [...document.querySelectorAll('.catalogue-new-card')].slice(0, 3).every((card) => /1000\\s+пружин/i.test(card.dataset.layersCatalog || '')))()`)
 
   const scenarios = [
     {
@@ -116,6 +153,36 @@ try {
   for (const scenario of scenarios) {
     const filters = applyDomainGuardrails({}, scenario.queryText)
     await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters, queryText: scenario.queryText })} }))`)
+    await waitFor(evaluate, scenario.label, scenario.expression)
+  }
+
+  const quizScenarios = [
+    {
+      label: 'couple tall heavy unknown firmness quiz profile',
+      queryText: 'двое взрослых; рост выше 190 см; вес 110 кг; не знаю жесткость',
+      quizAnswers: { sleepers: 'Двое', height: 'Выше 190 см', weight: '90–120 кг', firmness: 'Не знаю' },
+      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].slice(0, 4).every((card) => {
+        const sizes = String(card.dataset.sizes || '').split(',')
+        const features = String(card.dataset.features || '').split(',')
+        const sides = [Number(card.dataset.firmnessSide1), Number(card.dataset.firmnessSide2)]
+        return sizes.some((size) => /^(160|180)x200$/.test(size)) && Number(card.dataset.load) >= 135 && card.dataset.type === 'spring' && features.includes('edgeSupport') && features.includes('dualFirmness') && sides[0] !== sides[1]
+      }))()`,
+    },
+    {
+      label: 'single light soft quiz profile',
+      queryText: 'один человек; вес 55 кг; хочу помягче',
+      quizAnswers: { sleepers: 'Один', weight: 'До 60 кг', firmness: 'Помягче' },
+      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].slice(0, 3).every((card) => {
+        const fillings = String(card.dataset.fillings || '').split(',')
+        const sides = [Number(card.dataset.firmnessSide1), Number(card.dataset.firmnessSide2)]
+        const hasNakedCoir = fillings.includes('coir') && !fillings.some((value) => ['memoryEffect', 'latex', 'nanoFoam', 'orthoFoam'].includes(value))
+        return Math.min(...sides) <= 5 && !hasNakedCoir && fillings.some((value) => ['memoryEffect', 'latex', 'nanoFoam', 'orthoFoam'].includes(value))
+      }))()`,
+    },
+  ]
+  for (const scenario of quizScenarios) {
+    const filters = applyDomainGuardrails({}, scenario.queryText)
+    await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters, queryText: scenario.queryText, quizAnswers: scenario.quizAnswers })} }))`)
     await waitFor(evaluate, scenario.label, scenario.expression)
   }
 } catch (error) {

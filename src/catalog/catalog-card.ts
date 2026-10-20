@@ -87,6 +87,7 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
   return `
       <article class="catalogue-new-card"
         data-product-slug="${escapeHtml(productSlug)}"
+        data-product-name="${escapeHtml(name)}"
         data-collection="${escapeHtml(collectionSlug)}"
         data-firmness="${escapeHtml(firmness)}"
         data-firmness-side1="${Number.isInteger(firmnessSide1) ? firmnessSide1 : ''}"

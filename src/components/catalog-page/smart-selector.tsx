@@ -7,17 +7,32 @@ type Question = {
   id: string
   title: string
   options: string[]
+  hint: string
 }
 
 const QUESTIONS: Question[] = [
-  { id: 'sleepers', title: 'Кто будет спать на матрасе?', options: ['Один', 'Двое', 'Взрослый с ребёнком'] },
-  { id: 'gender', title: 'Укажите пол', options: ['Мужской', 'Женский', 'Не имеет значения'] },
-  { id: 'height', title: 'Какой рост?', options: ['До 170 см', '170–190 см', 'Выше 190 см'] },
-  { id: 'weight', title: 'Какой вес?', options: ['До 60 кг', '60–90 кг', '90–120 кг', 'Больше 120 кг'] },
-  { id: 'firmness', title: 'Какая жёсткость кажется комфортной?', options: ['Помягче', 'Средняя', 'Пожёстче', 'Не знаю'] },
+  { id: 'sleepers', title: 'Кто будет спать на матрасе?', options: ['Один', 'Двое', 'Взрослый с ребёнком'], hint: 'Для двоих или сна с ребёнком комфортная ширина начинается от 160 см, а независимые пружины уменьшают колебания, когда партнёр переворачивается.' },
+  { id: 'gender', title: 'Укажите пол', options: ['Мужской', 'Женский', 'Не имеет значения'], hint: 'Пол сам по себе не определяет жёсткость матраса — это только дополнительный ориентир, который не заменяет данные о росте и весе.' },
+  { id: 'height', title: 'Какой рост?', options: ['До 170 см', '170–190 см', 'Выше 190 см'], hint: 'Длина матраса должна быть минимум на 15–20 см больше роста. При росте от 175 см обычно комфортнее длина 200 см.' },
+  { id: 'weight', title: 'Какой вес?', options: ['До 60 кг', '60–90 кг', '90–120 кг', 'Больше 120 кг'], hint: 'Для двоих укажите вес более крупного партнёра: нагрузка считается на одно спальное место, складывать веса не нужно. Мы заложим запас прочности.' },
+  { id: 'firmness', title: 'Какая жёсткость кажется комфортной?', options: ['Помягче', 'Средняя', 'Пожёстче', 'Не знаю'], hint: 'Слишком жёсткий матрас не полезнее для спины. Если сомневаетесь, выберите «Не знаю» — предложим универсальную середину и модели с двумя разными сторонами.' },
 ]
 
 type Tag = { id: string; label: string }
+
+const QUIZ_QUERY_LABELS: Record<string, Record<string, string>> = {
+  sleepers: { Один: 'один человек', Двое: 'двое взрослых', 'Взрослый с ребёнком': 'взрослый с ребёнком' },
+  gender: { Мужской: 'пол мужской', Женский: 'пол женский', 'Не имеет значения': 'пол не имеет значения' },
+  height: { 'До 170 см': 'рост 165 см', '170–190 см': 'рост 180 см', 'Выше 190 см': 'рост выше 190 см' },
+  weight: { 'До 60 кг': 'вес 55 кг', '60–90 кг': 'вес 80 кг', '90–120 кг': 'вес 110 кг', 'Больше 120 кг': 'вес 135 кг' },
+  firmness: { Помягче: 'хочу помягче', Средняя: 'средняя жёсткость', Пожёстче: 'хочу пожёстче', 'Не знаю': 'не знаю жёсткость' },
+}
+
+function buildProfileText(tags: Tag[]): string {
+  return tags
+    .map((tag) => QUIZ_QUERY_LABELS[tag.id]?.[tag.label] || tag.label)
+    .join('; ')
+}
 
 export function SmartSelector() {
   const [open, setOpen] = useState(false)
@@ -98,6 +113,10 @@ export function SmartSelector() {
       ? [...tags.filter((tag) => tag.label.toLowerCase() !== label.toLowerCase()), { id: `free-${label}`, label }]
       : tags
     if (!profileTags.length || isSubmitting) return
+    const profileText = buildProfileText(profileTags)
+    const quizAnswers = Object.fromEntries(
+      profileTags.filter((tag) => QUESTIONS.some((item) => item.id === tag.id)).map((tag) => [tag.id, tag.label]),
+    )
     setIsSubmitting(true)
     setError('')
     const controller = new AbortController()
@@ -106,7 +125,7 @@ export function SmartSelector() {
       const response = await fetch('/api/catalog/smart-select', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ text: profileTags.map((tag) => tag.label).join('; ') }),
+        body: JSON.stringify({ text: profileText }),
         signal: controller.signal,
       })
       const payload = await response.json() as { filters?: Record<string, string[]>; error?: string }
@@ -114,7 +133,7 @@ export function SmartSelector() {
       setTags(profileTags)
       setInput('')
       window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', {
-        detail: { filters: payload.filters, queryText: profileTags.map((tag) => tag.label).join('; ') },
+        detail: { filters: payload.filters, queryText: profileText, quizAnswers },
       }))
       setOpen(false)
     } catch (submitError) {
@@ -178,6 +197,9 @@ export function SmartSelector() {
 
           <div data-smart-selector-question>
             <h3 className={styles.question}>{question.title}</h3>
+            <p className={styles.howToChooseHint} data-smart-selector-how-to-choose>
+              <span aria-hidden="true">💡</span> <strong>Как выбрать:</strong> {question.hint}
+            </p>
             <div className={styles.options}>
               {question.options.map((option) => (
                 <button key={option} type="button" className={styles.option} onClick={() => chooseOption(option)} data-smart-selector-option>{option}</button>

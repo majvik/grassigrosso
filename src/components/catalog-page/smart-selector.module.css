@@ -23,6 +23,8 @@
 .dot, .dotActive { display: block; width: 30px; height: 4px; border-radius: 99px; background: var(--color-border); }
 .dotActive { background: var(--color-primary); }
 .question { margin: 0 0 15px; color: var(--color-text); font-size: 20px; font-weight: 500; }
+.howToChooseHint { margin: -3px 0 16px; border-radius: 14px; background: var(--color-surface-muted); padding: 11px 13px; color: var(--color-text-muted-warm); font-size: 13px; line-height: 1.45; }
+.howToChooseHint strong { color: var(--color-primary); font-weight: 600; }
 .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .option { min-height: 52px; border: 1px solid var(--color-border); border-radius: 14px; background: var(--color-bg-white); padding: 11px 15px; color: var(--color-text); cursor: pointer; font: inherit; text-align: left; transition: border-color .18s, background .18s, transform .18s; }
 .option::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 10px; border-radius: 50%; background: var(--color-accent-soft); vertical-align: 1px; }

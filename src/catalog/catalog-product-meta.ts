@@ -24,6 +24,13 @@ function parseFirmnessScore(value: unknown): number | null {
   return Number.isInteger(score) && score >= 1 && score <= 10 ? score : null
 }
 
+function parseProductLayers(value: unknown): string[] {
+  return String(value ?? '')
+    .split(/\n+|(?=\d+\.\s)/)
+    .map((item) => item.replace(/^\s*\d+\.\s*/, '').trim())
+    .filter(Boolean)
+}
+
 export function buildCatalogCardMetaFromProduct(
   product: CatalogProduct,
   index: number,
@@ -43,6 +50,9 @@ export function buildCatalogCardMetaFromProduct(
     card: card as HTMLElement,
     initialOrder: index,
     slug: String(product.slug || '').trim(),
+    name: String(product.name || '').trim(),
+    description: String(product.coverDescription || '').trim(),
+    layers: parseProductLayers(product.layersCatalog),
     collection: String(product.collectionSlug || product.slug || '').trim(),
     firmness: String(product.firmness || '').trim(),
     firmnessSide1: parseFirmnessScore(product.firmnessSide1),

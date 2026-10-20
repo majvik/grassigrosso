@@ -20,12 +20,22 @@ function parseSizesToSet(value: unknown): Set<string> {
   )
 }
 
+function parseProductLayers(value: unknown): string[] {
+  return String(value ?? '')
+    .split(/\n+|(?=\d+\.\s)/)
+    .map((item) => item.replace(/^\s*\d+\.\s*/, '').trim())
+    .filter(Boolean)
+}
+
 export function readCatalogueCardMeta(card: HTMLElement, index: number): CatalogCardMeta<HTMLElement> {
   const dataset = card.dataset || {}
   return {
     card,
     initialOrder: index,
     slug: String(dataset.productSlug || ''),
+    name: String(dataset.productName || card.querySelector('h3')?.textContent || '').trim(),
+    description: String(dataset.coverDescription || '').trim(),
+    layers: parseProductLayers(dataset.layersCatalog),
     collection: String(dataset.collection || ''),
     firmness: String(dataset.firmness || ''),
     firmnessSide1: dataset.firmnessSide1 && Number.isInteger(Number(dataset.firmnessSide1)) ? Number(dataset.firmnessSide1) : null,

@@ -117,9 +117,11 @@ interface ScrollOptions {
 }
 
 type CatalogSmartFilterGroup = 'collection' | 'size' | 'firmness' | 'type' | 'loadRange' | 'heightRange' | 'fillings' | 'features'
+type CatalogQuizAnswers = Partial<Record<'sleepers' | 'gender' | 'height' | 'weight' | 'firmness', string>>
 type CatalogSmartFiltersEvent = CustomEvent<{
   filters?: Partial<Record<CatalogSmartFilterGroup, string[]>>
   queryText?: string
+  quizAnswers?: CatalogQuizAnswers
 }>
 
 // Earlier groups are relaxed first. Physical fit and safe load are deliberately
@@ -134,6 +136,78 @@ const SMART_FILTER_RELAXATION_ORDER: CatalogSmartFilterGroup[] = [
   'loadRange',
   'size',
 ]
+
+const DIRECT_SEARCH_STOP_WORDS = new Set([
+  'матрас', 'матраса', 'матрасе', 'нужен', 'нужна', 'хочу', 'ищу', 'модель', 'пеной', 'пена', 'слой', 'слоя', 'состав', 'есть', 'мне', 'для',
+])
+
+function normalizeSearchLexicon(value: unknown): string {
+  return String(value ?? '')
+    .toLowerCase()
+    .replace(/ё/g, 'е')
+    .replace(/эволюшен/g, 'evolution')
+    .replace(/релакс/g, 'relax')
+    .replace(/элакс(?:ом|а|е)?/g, 'elax')
+    .replace(/флекси/g, 'flexi')
+    .replace(/мемори/g, 'memory')
+    .replace(/эвер\s+фоам/g, 'ever foam')
+    .replace(/[^a-zа-я0-9]+/g, ' ')
+    .trim()
+}
+
+function stemSearchToken(token: string): string {
+  if (/^[a-z0-9]+$/.test(token)) return token
+  return token.length > 6 ? token.replace(/(?:иями|ями|ами|ого|ему|ому|ыми|ими|ой|ый|ий|ая|яя|ое|ее|ом|ем|ах|ях|ов|ев|а|я|ы|и)$/u, '') : token
+}
+
+function tokenizeSearchLexicon(value: unknown): Set<string> {
+  return new Set(
+    normalizeSearchLexicon(value)
+      .split(/\s+/)
+      .map(stemSearchToken)
+      .filter((token) => token.length >= 4 && !DIRECT_SEARCH_STOP_WORDS.has(token)),
+  )
+}
+
+function scoreDirectProductMatch(meta: CatalogCardMeta<HTMLElement>, queryText: string): number {
+  const query = normalizeSearchLexicon(queryText)
+  if (!query) return 0
+  const name = normalizeSearchLexicon(meta.name)
+  const slug = normalizeSearchLexicon(meta.slug.replace(/-/g, ' '))
+  let score = 0
+  const fullNameMatch = (name.length >= 4 && query.includes(name)) || (slug.length >= 4 && query.includes(slug))
+  if (fullNameMatch) score += 500
+  else {
+    const queryTokens = tokenizeSearchLexicon(query)
+    const productTokens = new Set([...tokenizeSearchLexicon(name), ...tokenizeSearchLexicon(slug)])
+    if ([...queryTokens].some((token) => productTokens.has(token))) score += 250
+  }
+
+  const layerText = normalizeSearchLexicon(meta.layers.join(' '))
+  const componentMatches = new Set<string>()
+  const addComponent = (key: string, queryPattern: RegExp, layerPattern: RegExp) => {
+    if (queryPattern.test(query) && layerPattern.test(layerText)) componentMatches.add(key)
+  }
+  addComponent('1000-springs', /1000\s+пруж|мультипокет|много\s+пруж/, /1000\s+пруж/)
+  addComponent('bicotton', /бикоттон/, /бикоттон/)
+  addComponent('elax', /\belax\b/, /\belax\b/)
+  addComponent('flexi', /\bflexi\b/, /\bflexi\b/)
+  addComponent('felt', /войлок/, /войлок/)
+  addComponent('euroframe', /еврокаркас/, /еврокаркас/)
+  addComponent('memory', /memory|эффект\s+памят/, /memory|эффект\s+памят/)
+  addComponent('coir-20', /20\s*мм\s+кокос|кокос[^0-9]{0,12}20\s*мм/, /кокос[^0-9]{0,12}20\s*мм/)
+
+  const queryTokens = tokenizeSearchLexicon(query)
+  const layerTokens = tokenizeSearchLexicon(layerText)
+  for (const token of queryTokens) {
+    if (layerTokens.has(token)) componentMatches.add(`token:${token}`)
+  }
+  score += componentMatches.size * 75
+
+  const descriptionTokens = tokenizeSearchLexicon(meta.description)
+  if ([...queryTokens].some((token) => descriptionTokens.has(token))) score += 25
+  return score
+}
 
 function queryElement<T extends Element>(root: ParentNode, selector: string): T | null {
   return root.querySelector(selector) as T | null
@@ -194,6 +268,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   let productCatalog: CatalogProductListingEntry[] | null = null
   let smartPreferenceState: CatalogFilterState | null = null
   let smartQueryText = ''
+  let smartQuizAnswers: CatalogQuizAnswers = {}
   let visibleCardsLimit = CATALOGUE_PAGE_SIZE
   let matchedCards: HTMLElement[] = []
   let matchedResultsCount = 0
@@ -391,7 +466,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   function scoreSmartMatch(meta: CatalogCardMeta<HTMLElement>, preferences: CatalogFilterState): number {
-    let score = 0
+    let score = scoreDirectProductMatch(meta, smartQueryText)
     const query = smartQueryText.toLowerCase().replace(/ё/g, 'е')
     const wantsTopper = /на\s+диван|тонк[^.;,]{0,12}матрас|выровн[^.;,]{0,20}стык|топп?ер/.test(query)
     const isTopper = meta.type === 'topper' || meta.collection === 'topper'
@@ -401,10 +476,18 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       score += [...preferences.size].some((value) => meta.sizes.has(value)) ? 100 : 0
       if (/рост\s*(?:выше|более|от)?\s*19\d|высок/.test(query) && ![...meta.sizes].some((value) => value.endsWith('x200'))) score -= 60
     }
+    const hasLength200 = [...meta.sizes].some((value) => value.endsWith('x200'))
+    if (smartQuizAnswers.height === '170–190 см' && hasLength200) score += 40
+    if (smartQuizAnswers.height === '170–190 см' && smartQuizAnswers.gender === 'Мужской' && hasLength200) score += 15
+    if (smartQuizAnswers.height === 'Выше 190 см') score += hasLength200 ? 100 : -60
 
     const requestedWeights = [...query.matchAll(/(\d{2,3})\s*кг/g)].map((match) => Number(match[1])).filter((value) => value >= 30 && value <= 250)
-    if (requestedWeights.length) {
-      score += meta.load >= Math.max(...requestedWeights) ? 85 : -100
+    const quizRequiredLoad = smartQuizAnswers.weight === '90–120 кг'
+      ? 135
+      : smartQuizAnswers.weight === 'Больше 120 кг' ? 160 : 0
+    if (requestedWeights.length || quizRequiredLoad) {
+      const requiredLoad = Math.max(quizRequiredLoad, ...requestedWeights, 0)
+      score += meta.load >= requiredLoad ? 85 : -100
     } else if (preferences.loadRange.size) {
       score += preferences.loadRange.has(meta.loadRange) ? 85 : 0
     }
@@ -413,7 +496,25 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       const sides = [meta.firmnessSide1, meta.firmnessSide2]
         .filter((value): value is number => Number.isInteger(value))
       const preferredFirmness = [...preferences.firmness]
-      if (sides.length && preferences.firmness.has('dualFirmness') && sides.length === 2) {
+      const quizFirmnessRange: [number, number] | null = smartQuizAnswers.firmness === 'Помягче'
+        ? [3.5, 5]
+        : smartQuizAnswers.firmness === 'Средняя'
+          ? [5, 6]
+          : smartQuizAnswers.firmness === 'Пожёстче'
+            ? [6, 7.5]
+            : smartQuizAnswers.firmness === 'Не знаю' ? [5, 6.5] : null
+      if (sides.length && quizFirmnessRange) {
+        const distanceToRange = (value: number) => value < quizFirmnessRange[0]
+          ? quizFirmnessRange[0] - value
+          : value > quizFirmnessRange[1] ? value - quizFirmnessRange[1] : 0
+        const weightOffset = smartQuizAnswers.weight === 'До 60 кг' ? -0.5 : smartQuizAnswers.weight === '90–120 кг' || smartQuizAnswers.weight === 'Больше 120 кг' ? 0.5 : 0
+        const sideDistances = sides.map((value) => distanceToRange(value - weightOffset))
+        const distance = smartQuizAnswers.firmness === 'Не знаю'
+          ? sideDistances.reduce((sum, value) => sum + value, 0) / sideDistances.length
+          : Math.min(...sideDistances)
+        score += Math.max(0, 80 - distance * 16)
+        if (smartQuizAnswers.firmness === 'Не знаю' && sides.length === 2 && sides[0] !== sides[1]) score += 50
+      } else if (sides.length && preferences.firmness.has('dualFirmness') && sides.length === 2) {
         const low = Math.min(...sides)
         const high = Math.max(...sides)
         score += Math.max(0, 80 - (Math.abs(low - 5) + Math.abs(high - 7)) * 8)
@@ -464,6 +565,11 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const childBed = /детск(?:ая|ую|ой)\s+кроват|подростк|для\s+ребенк/.test(query)
     if ((needsEasyRise || heavySleeper) && meta.heightRange === 'low') score -= 30
     if (childBed && meta.heightRange === 'high') score -= 30
+    if (smartQuizAnswers.sleepers === 'Взрослый с ребёнком') {
+      const scores = [meta.firmnessSide1, meta.firmnessSide2].filter((value): value is number => Number.isInteger(value))
+      if (scores.length && Math.max(...scores) < 5) score -= 60
+    }
+    if (smartQuizAnswers.weight === 'До 60 кг' && meta.fillings.has('coir') && !hasComfortLayer) score -= 50
     return score
   }
 
@@ -1074,6 +1180,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const filters = (event as CatalogSmartFiltersEvent).detail?.filters
     if (!filters) return
     smartQueryText = String((event as CatalogSmartFiltersEvent).detail?.queryText || '')
+    smartQuizAnswers = (event as CatalogSmartFiltersEvent).detail?.quizAnswers || {}
     resetCatalogFilterState(state, priceBounds)
     smartPreferenceState = null
     const groups: CatalogSmartFilterGroup[] = ['collection', 'size', 'firmness', 'type', 'loadRange', 'heightRange', 'fillings', 'features']

@@ -31,6 +31,9 @@ export type CatalogCardMeta<TCard = unknown> = {
   card: TCard
   initialOrder: number
   slug: string
+  name: string
+  description: string
+  layers: string[]
   collection: string
   firmness: string
   firmnessSide1?: number | null
