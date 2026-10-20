@@ -44,7 +44,23 @@ try {
   await evaluate(`(() => {
     const input = document.querySelector('[data-smart-selector-input]')
     if (!input) return false
-    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'сплю на боку')
+    Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set.call(input, 'Нужен удобный матрас для высокого человека, который часто спит на боку и иногда просыпается с напряжением в плечах')
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    return true
+  })()`)
+  await waitFor(evaluate, 'long free text wraps like a message composer', `document.querySelector('[data-smart-selector-input]')?.clientHeight > 30`)
+  await evaluate(`(() => {
+    const input = document.querySelector('[data-smart-selector-input]')
+    if (!input) return false
+    Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set.call(input, '')
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    return true
+  })()`)
+
+  await evaluate(`(() => {
+    const input = document.querySelector('[data-smart-selector-input]')
+    if (!input) return false
+    Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set.call(input, 'сплю на боку')
     input.dispatchEvent(new Event('input', { bubbles: true }))
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
     return true
@@ -65,7 +81,7 @@ try {
   await evaluate(`(() => {
     const input = document.querySelector('[data-smart-selector-input]')
     if (!input) return false
-    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'сплю на боку')
+    Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set.call(input, 'сплю на боку')
     input.dispatchEvent(new Event('input', { bubbles: true }))
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
     return true

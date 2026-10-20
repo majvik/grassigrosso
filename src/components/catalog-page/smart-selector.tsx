@@ -1,4 +1,4 @@
-import { useEffect, useState, type KeyboardEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { Dialog } from '@/components/ui/Dialog'
 import styles from './smart-selector.module.css'
 import INPUT_EXAMPLES from './smart-selector-examples.json'
@@ -43,6 +43,7 @@ export function SmartSelector() {
   const [animatedPlaceholder, setAnimatedPlaceholder] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const question = QUESTIONS[step]
   const hasProfileInput = tags.length > 0 || Boolean(input.trim())
   const answeredQuestionIds = new Set(tags.filter((tag) => QUESTIONS.some((item) => item.id === tag.id)).map((tag) => tag.id))
@@ -87,6 +88,13 @@ export function SmartSelector() {
     return () => window.clearTimeout(timeoutId)
   }, [input, inputFocused, tags.length])
 
+  useLayoutEffect(() => {
+    const element = inputRef.current
+    if (!element) return
+    element.style.height = 'auto'
+    element.style.height = `${Math.min(element.scrollHeight, 96)}px`
+  }, [input])
+
   const addFreeTag = () => {
     const label = input.trim().replace(/,+$/, '').trim()
     if (!label) return
@@ -112,7 +120,7 @@ export function SmartSelector() {
     setError('')
   }
 
-  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' || event.key === ',') {
       event.preventDefault()
       addFreeTag()
@@ -182,33 +190,39 @@ export function SmartSelector() {
                 {tag.label}<span aria-hidden="true">×</span>
               </button>
             ))}
-            <input
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              onKeyDown={handleInputKeyDown}
-              onFocus={() => setInputFocused(true)}
-              onBlur={() => {
-                setInputFocused(false)
-                addFreeTag()
-              }}
-              placeholder={inputFocused ? '' : tags.length ? 'Добавить ещё…' : animatedPlaceholder}
-              aria-label="Свои пожелания"
-              data-smart-selector-input
-              data-smart-selector-animated-placeholder
-              data-placeholder-example-count={INPUT_EXAMPLES.length}
-            />
+            <span className={styles.inputShell}>
+              <textarea
+                ref={inputRef}
+                rows={1}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={handleInputKeyDown}
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => {
+                  setInputFocused(false)
+                  addFreeTag()
+                }}
+                placeholder={inputFocused ? '' : tags.length ? 'Добавить ещё…' : animatedPlaceholder}
+                aria-label="Свои пожелания"
+                data-smart-selector-input
+                data-smart-selector-animated-placeholder
+                data-placeholder-example-count={INPUT_EXAMPLES.length}
+              />
+            </span>
             {hasProfileInput ? (
-              <button
-                type="button"
-                className={styles.clearAll}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={clearProfile}
-                aria-label="Очистить всё"
-                data-smart-selector-clear-all
-              >
-                <span className={styles.clearIcon} aria-hidden="true">×</span>
-                <span className={styles.clearLabel}>Очистить всё</span>
-              </button>
+              <span className={styles.clearAllShell}>
+                <button
+                  type="button"
+                  className={styles.clearAll}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={clearProfile}
+                  aria-label="Очистить всё"
+                  data-smart-selector-clear-all
+                >
+                  <span className={styles.clearIcon} aria-hidden="true">×</span>
+                  <span className={styles.clearLabel}>Очистить всё</span>
+                </button>
+              </span>
             ) : null}
           </div>
           {error ? <p className={styles.error} role="alert" data-smart-selector-error>{error}</p> : null}

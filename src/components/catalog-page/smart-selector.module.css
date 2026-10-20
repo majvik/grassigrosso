@@ -7,9 +7,12 @@
 .description { max-width: 550px; margin: 14px 0 24px; color: var(--color-text-muted-warm); font-size: 15px; line-height: 1.45; }
 .tagField { display: flex; min-height: 58px; align-items: center; flex-wrap: wrap; gap: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-white); padding: 9px 12px; }
 .tagField:focus-within { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), .12); }
-.tagField input { flex: 1 1 210px; min-width: 150px; border: 0; outline: 0; background: transparent; color: var(--color-text); font: inherit; }
-.clearAll { display: inline-flex; width: 30px; height: 30px; flex: 0 0 auto; align-items: center; justify-content: flex-start; overflow: hidden; border: 0; border-radius: 999px; background: var(--color-form-error); padding: 0 8px; color: var(--color-bg-white); cursor: pointer; font: inherit; white-space: nowrap; transition: width .24s ease, background-color .2s ease, box-shadow .2s ease; }
-.clearAll:focus-visible { width: 122px; background: var(--color-form-error-text); box-shadow: 0 4px 12px rgba(198, 40, 40, .22); }
+.inputShell { display: flex; flex: 1 1 180px; min-width: 88px; align-items: center; }
+.inputShell textarea { width: 100%; min-height: 22px; max-height: 96px; overflow-y: auto; border: 0; outline: 0; resize: none; background: transparent; color: var(--color-text); font: inherit; line-height: 1.4; }
+.clearAllShell { display: flex; width: 30px; height: 30px; flex: 0 0 30px; overflow: visible; transition: width .24s ease, flex-basis .24s ease; }
+.clearAll { display: inline-flex; width: 100%; height: 30px; align-items: center; justify-content: flex-start; overflow: hidden; border: 0; border-radius: 999px; background: var(--color-form-error); padding: 0 8px; color: var(--color-bg-white); cursor: pointer; font: inherit; white-space: nowrap; transition: background-color .2s ease, box-shadow .2s ease; }
+.clearAllShell:focus-within { width: 122px; flex-basis: 122px; }
+.clearAll:focus-visible { background: var(--color-form-error-text); box-shadow: 0 4px 12px rgba(198, 40, 40, .22); }
 .clearIcon { position: relative; width: 14px; height: 14px; flex: 0 0 14px; overflow: hidden; color: inherit; font-size: 0; }
 .clearIcon::before, .clearIcon::after, .tag span::before, .tag span::after { content: ''; position: absolute; top: 50%; left: 50%; width: 10px; height: 1.5px; border-radius: 99px; background: currentColor; transform-origin: center; }
 .clearIcon::before, .tag span::before { transform: translate(-50%, -50%) rotate(45deg); }
@@ -17,7 +20,8 @@
 .clearLabel { max-width: 0; overflow: hidden; opacity: 0; padding-left: 0; font-size: 12px; font-weight: 600; transition: max-width .24s ease, opacity .16s ease, padding-left .24s ease; }
 .clearAll:focus-visible .clearLabel { max-width: 84px; opacity: 1; padding-left: 7px; }
 @media (hover: hover) and (pointer: fine) {
-  .clearAll:hover { width: 122px; background: var(--color-form-error-text); box-shadow: 0 4px 12px rgba(198, 40, 40, .22); }
+  .clearAllShell:hover { width: 122px; flex-basis: 122px; }
+  .clearAll:hover { background: var(--color-form-error-text); box-shadow: 0 4px 12px rgba(198, 40, 40, .22); }
   .clearAll:hover .clearLabel { max-width: 84px; opacity: 1; padding-left: 7px; }
 }
 .quickSubmit { width: 100%; min-height: 58px; border: 0; border-radius: var(--radius-md); background: var(--color-primary); padding: 14px 24px; color: var(--color-bg-white); cursor: pointer; font: inherit; font-size: 17px; font-weight: 600; line-height: 1.15; }
@@ -46,5 +50,5 @@
 .navigationDivider { color: var(--color-primary); font-size: 15px; font-weight: 500; opacity: .55; }
 .stepButton { border: 0; background: transparent; padding: 8px 0; color: var(--color-primary); cursor: pointer; font: inherit; text-decoration: underline; text-underline-offset: 4px; }
 .stepButton:disabled { cursor: default; opacity: .32; text-decoration: none; }
-@media (prefers-reduced-motion: reduce) { .clearAll, .clearLabel { transition: none; } }
-@media (max-width: 600px) { .popup { padding: 28px 20px 22px; border-radius: 22px; } .tagField input { flex-basis: 100%; } .options { grid-template-columns: 1fr; } .dot, .dotActive { width: 22px; } .footer span { display: none; } }
+@media (prefers-reduced-motion: reduce) { .clearAllShell, .clearAll, .clearLabel { transition: none; } }
+@media (max-width: 600px) { .popup { padding: 28px 20px 22px; border-radius: 22px; } .inputShell { flex-basis: 100%; } .options { grid-template-columns: 1fr; } .dot, .dotActive { width: 22px; } .footer > span { display: none; } }
