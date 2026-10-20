@@ -55,18 +55,37 @@ try {
     return Boolean(dialog?.querySelector('[data-smart-selector-tags]')?.textContent.includes('сплю на боку') && submit && !submit.disabled)
   })()`)
 
+  await waitFor(evaluate, 'clear all control appears inside the field', `Boolean(document.querySelector('[data-smart-selector-tags] [data-smart-selector-clear-all][aria-label="Очистить всё"]'))`)
+  await evaluate(`document.querySelector('[data-smart-selector-clear-all]')?.click()`)
+  await waitFor(evaluate, 'clear all resets the complete profile', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const field = dialog?.querySelector('[data-smart-selector-tags]')
+    return Boolean(dialog?.textContent.includes('Шаг 1 из 5') && !field?.textContent.includes('сплю на боку') && !dialog.querySelector('[data-smart-selector-clear-all]') && dialog.querySelector('[data-smart-selector-quick-submit]')?.disabled)
+  })()`)
+  await evaluate(`(() => {
+    const input = document.querySelector('[data-smart-selector-input]')
+    if (!input) return false
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'сплю на боку')
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    return true
+  })()`)
+
   await evaluate(`document.querySelector('[data-smart-selector-option]')?.click()`)
   await waitFor(evaluate, 'option becomes a tag and advances', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
     return Boolean(dialog?.textContent.includes('Шаг 2 из 5') && dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes('Один'))
   })()`)
-  await evaluate(`document.querySelector('[data-smart-selector-dialog] button') && [...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Назад')?.click()`)
-  await waitFor(evaluate, 'back removes the answer tag from the step being undone', `(() => {
+  await evaluate(`[...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Назад')?.click()`)
+  await waitFor(evaluate, 'back preserves answers while navigating', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
-    return Boolean(dialog?.textContent.includes('Шаг 1 из 5') && !dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes('Один'))
+    return Boolean(dialog?.textContent.includes('Шаг 1 из 5') && dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes('Один'))
   })()`)
-  await evaluate(`document.querySelector('[data-smart-selector-option]')?.click()`)
-  await waitFor(evaluate, 'quiz can answer the cleared step again', `document.querySelector('[data-smart-selector-dialog]')?.textContent.includes('Шаг 2 из 5')`)
+  await evaluate(`[...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Вперёд')?.click()`)
+  await waitFor(evaluate, 'forward preserves answers while navigating', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    return Boolean(dialog?.textContent.includes('Шаг 2 из 5') && dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes('Один'))
+  })()`)
 
   for (let targetStep = 3; targetStep <= 5; targetStep += 1) {
     await evaluate(`(() => {

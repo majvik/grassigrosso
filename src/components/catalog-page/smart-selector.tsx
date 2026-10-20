@@ -100,17 +100,15 @@ export function SmartSelector() {
     setError('')
   }
 
-  const goBack = () => {
-    if (step === 0) return
-    setTags((current) => {
-      const currentQuestionId = QUESTIONS[step]?.id
-      const previousQuestionId = QUESTIONS[step - 1]?.id
-      const answerIdToRemove = current.some((tag) => tag.id === currentQuestionId)
-        ? currentQuestionId
-        : previousQuestionId
-      return current.filter((tag) => tag.id !== answerIdToRemove)
-    })
-    setStep((current) => Math.max(0, current - 1))
+  const moveStep = (direction: -1 | 1) => {
+    setStep((current) => Math.max(0, Math.min(QUESTIONS.length - 1, current + direction)))
+    setError('')
+  }
+
+  const clearProfile = () => {
+    setTags([])
+    setInput('')
+    setStep(0)
     setError('')
   }
 
@@ -199,6 +197,19 @@ export function SmartSelector() {
               data-smart-selector-animated-placeholder
               data-placeholder-example-count={INPUT_EXAMPLES.length}
             />
+            {hasProfileInput ? (
+              <button
+                type="button"
+                className={styles.clearAll}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={clearProfile}
+                aria-label="Очистить всё"
+                data-smart-selector-clear-all
+              >
+                <span className={styles.clearIcon} aria-hidden="true">×</span>
+                <span className={styles.clearLabel}>Очистить всё</span>
+              </button>
+            ) : null}
           </div>
           {error ? <p className={styles.error} role="alert" data-smart-selector-error>{error}</p> : null}
 
@@ -222,7 +233,11 @@ export function SmartSelector() {
           </div>
 
           <div className={styles.footer}>
-            <button type="button" className={styles.back} onClick={goBack} disabled={step === 0}>Назад</button>
+            <div className={styles.navigation} aria-label="Навигация по вопросам">
+              <button type="button" className={styles.stepButton} onClick={() => moveStep(-1)} disabled={step === 0}>Назад</button>
+              <span className={styles.navigationDivider} aria-hidden="true">|</span>
+              <button type="button" className={styles.stepButton} onClick={() => moveStep(1)} disabled={step === QUESTIONS.length - 1}>Вперёд</button>
+            </div>
             <span>Ответ можно изменить</span>
           </div>
           <div className={styles.submitArea}>
