@@ -8,11 +8,11 @@
 .tagField { display: flex; min-height: 58px; align-items: center; flex-wrap: wrap; gap: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-white); padding: 9px 12px; }
 .tagField:focus-within { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), .12); }
 .tagField input { flex: 1 1 210px; min-width: 150px; border: 0; outline: 0; background: transparent; color: var(--color-text); font: inherit; }
-.clearAll { display: inline-flex; width: 32px; height: 32px; flex: 0 0 auto; align-items: center; justify-content: flex-start; overflow: hidden; border: 0; border-radius: 999px; background: var(--color-form-error); padding: 0 9px; color: var(--color-bg-white); cursor: pointer; font: inherit; white-space: nowrap; transition: width .24s ease, background-color .2s ease, box-shadow .2s ease; }
-.clearAll:hover, .clearAll:focus-visible { width: 116px; background: var(--color-form-error-text); box-shadow: 0 4px 12px rgba(198, 40, 40, .22); }
-.clearIcon { flex: 0 0 14px; font-size: 20px; line-height: 1; text-align: center; transform: translateY(-1px); }
+.clearAll { display: inline-flex; width: 30px; height: 30px; flex: 0 0 auto; align-items: center; justify-content: flex-start; overflow: hidden; border: 0; border-radius: 999px; background: var(--color-form-error); padding: 0 8px; color: var(--color-bg-white); cursor: pointer; font: inherit; white-space: nowrap; transition: width .24s ease, background-color .2s ease, box-shadow .2s ease; }
+.clearAll:hover, .clearAll:focus-visible { width: 122px; background: var(--color-form-error-text); box-shadow: 0 4px 12px rgba(198, 40, 40, .22); }
+.clearIcon { flex: 0 0 14px; font-size: 17px; line-height: 1; text-align: center; }
 .clearLabel { max-width: 0; overflow: hidden; opacity: 0; padding-left: 0; font-size: 12px; font-weight: 600; transition: max-width .24s ease, opacity .16s ease, padding-left .24s ease; }
-.clearAll:hover .clearLabel, .clearAll:focus-visible .clearLabel { max-width: 76px; opacity: 1; padding-left: 7px; }
+.clearAll:hover .clearLabel, .clearAll:focus-visible .clearLabel { max-width: 84px; opacity: 1; padding-left: 7px; }
 .quickSubmit { width: 100%; min-height: 58px; border: 0; border-radius: var(--radius-md); background: var(--color-primary); padding: 14px 24px; color: var(--color-bg-white); cursor: pointer; font: inherit; font-size: 17px; font-weight: 600; line-height: 1.15; }
 .quickSubmit:hover { background: var(--color-primary-hover); }
 .quickSubmit:disabled { cursor: not-allowed; opacity: .45; }
