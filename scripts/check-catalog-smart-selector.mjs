@@ -49,6 +49,20 @@ try {
     return true
   })()`)
   await waitFor(evaluate, 'long free text wraps like a message composer', `document.querySelector('[data-smart-selector-input]')?.clientHeight > 30`)
+  await waitFor(evaluate, 'growing composer keeps tags and clear control pinned to the top', `(() => {
+    const field = document.querySelector('[data-smart-selector-tags]')
+    const clear = document.querySelector('[data-smart-selector-clear-all]')
+    if (!field || !clear) return false
+    return Math.abs(clear.getBoundingClientRect().top - field.getBoundingClientRect().top - 9) <= 2
+  })()`)
+  await evaluate(`document.querySelector('[data-smart-selector-input]')?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))`)
+  await waitFor(evaluate, 'multiline tag uses left alignment and keeps its close icon at the first line', `(() => {
+    const tag = [...document.querySelectorAll('[data-smart-selector-tags] button[aria-label^="Удалить:"]')].find((item) => item.textContent.includes('Нужен удобный матрас'))
+    const close = tag?.querySelector('span')
+    if (!tag || !close || getComputedStyle(tag).textAlign !== 'left' || tag.getBoundingClientRect().height < 40) return false
+    return close.getBoundingClientRect().top - tag.getBoundingClientRect().top < 14
+  })()`)
+  await evaluate(`[...document.querySelectorAll('[data-smart-selector-tags] button[aria-label^="Удалить:"]')].find((item) => item.textContent.includes('Нужен удобный матрас'))?.click()`)
   await evaluate(`(() => {
     const input = document.querySelector('[data-smart-selector-input]')
     if (!input) return false
