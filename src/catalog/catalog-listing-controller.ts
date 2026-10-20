@@ -955,6 +955,9 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   function resetCatalogueNewFilterChipsAndSort() {
+    smartQueryText = ''
+    smartQuizAnswers = {}
+    smartPreferenceState = null
     resetCatalogFilterState(state, priceBounds)
     syncUiFromState()
     setCatalogActiveSortOption(sortMenuElements, 'default')

@@ -123,6 +123,12 @@ export function SmartSelector() {
     setError('')
   }
 
+  const contactManager = () => {
+    clearProfile()
+    setOpen(false)
+    document.querySelector<HTMLButtonElement>('.catalogue-new-reset')?.click()
+  }
+
   const handleInputKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' || event.key === ',') {
       event.preventDefault()
@@ -184,7 +190,11 @@ export function SmartSelector() {
           <p className={styles.eyebrow}>Умный подбор</p>
           <Dialog.Title className={styles.title}>Расскажите, какой матрас вам нужен</Dialog.Title>
           <Dialog.Description className={styles.description}>
-            Пишите своими словами или выберите быстрые ответы ниже.
+            Пишите своими словами или выберите быстрые ответы ниже. Система работает через ИИ и может ошибаться.{' '}
+            <a href="/contacts#contact-form" onClick={contactManager} data-smart-selector-manager-link>
+              Свяжитесь с менеджером
+            </a>{' '}
+            если нужна помощь.
           </Dialog.Description>
 
           <div className={`${styles.tagField} ${inputMultiline ? styles.tagFieldMultiline : ''}`} data-smart-selector-tags>
@@ -223,7 +233,6 @@ export function SmartSelector() {
                   data-smart-selector-clear-all
                 >
                   <span className={styles.clearIcon} aria-hidden="true">×</span>
-                  <span className={styles.clearLabel}>Очистить всё</span>
                 </button>
               </span>
             ) : null}

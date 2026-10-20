@@ -32,6 +32,22 @@ try {
     const status = dialog?.querySelector('[data-smart-selector-profile-status]')
     return Boolean(dialog && dialog.textContent.includes('Шаг 1 из 5') && dialog.querySelectorAll('[data-smart-selector-question]').length === 1 && submit?.disabled && submit.textContent.includes('Подобрать матрас') && status?.textContent.includes('Профиль пока не заполнен'))
   })()`)
+  await waitFor(evaluate, 'AI disclaimer links to the manager form', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const link = dialog?.querySelector('[data-smart-selector-manager-link]')
+    return Boolean(dialog?.textContent.includes('Система работает через ИИ и может ошибаться.') && link?.textContent.trim() === 'Свяжитесь с менеджером' && link?.getAttribute('href') === '/contacts#contact-form')
+  })()`)
+  await evaluate(`(() => {
+    window.__managerResetCount = 0
+    document.querySelector('.catalogue-new-reset')?.addEventListener('click', () => { window.__managerResetCount += 1 }, { once: true })
+    document.addEventListener('click', (event) => {
+      if (event.target?.closest?.('[data-smart-selector-manager-link]')) event.preventDefault()
+    }, { capture: true, once: true })
+    document.querySelector('[data-smart-selector-manager-link]')?.click()
+  })()`)
+  await waitFor(evaluate, 'manager link closes selector and resets catalogue', `!document.querySelector('[data-smart-selector-dialog]') && window.__managerResetCount === 1`)
+  await evaluate(`document.querySelector('[data-smart-selector-trigger]')?.click()`)
+  await waitFor(evaluate, 'selector reopens after manager-link check', `Boolean(document.querySelector('[data-smart-selector-dialog]'))`)
   await evaluate(`window.__smartSelectorHints = [document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim()]`)
 
   await waitFor(evaluate, 'input example is typed into the placeholder', `(() => {
@@ -49,11 +65,11 @@ try {
     return true
   })()`)
   await waitFor(evaluate, 'long free text wraps like a message composer', `document.querySelector('[data-smart-selector-input]')?.clientHeight > 30`)
-  await waitFor(evaluate, 'growing composer keeps tags and clear control pinned to the top', `(() => {
+  await waitFor(evaluate, 'growing composer keeps the clear control fixed', `(() => {
     const field = document.querySelector('[data-smart-selector-tags]')
     const clear = document.querySelector('[data-smart-selector-clear-all]')
     if (!field || !clear) return false
-    return Math.abs(clear.getBoundingClientRect().top - field.getBoundingClientRect().top - 9) <= 2
+    return Math.abs(clear.getBoundingClientRect().top - field.getBoundingClientRect().top - 13) <= 2
   })()`)
   await evaluate(`document.querySelector('[data-smart-selector-input]')?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))`)
   await waitFor(evaluate, 'multiline tag uses left alignment and keeps its close icon at the first line', `(() => {
@@ -94,10 +110,14 @@ try {
   })()`)
 
   await waitFor(evaluate, 'clear all control appears inside the field', `Boolean(document.querySelector('[data-smart-selector-tags] [data-smart-selector-clear-all][aria-label="Очистить всё"]'))`)
-  await waitFor(evaluate, 'desktop clear control reserves its expanded width without layout changes', `(() => {
+  await waitFor(evaluate, 'clear control stays fixed at the field top-right', `(() => {
     const button = document.querySelector('[data-smart-selector-clear-all]')
     const shell = button?.parentElement
-    return Boolean(button && shell && button.getBoundingClientRect().width <= 32 && shell.getBoundingClientRect().width >= 120)
+    const field = button?.closest('[data-smart-selector-tags]')
+    if (!button || !shell || !field) return false
+    const buttonRect = button.getBoundingClientRect()
+    const fieldRect = field.getBoundingClientRect()
+    return buttonRect.width <= 32 && Math.abs(fieldRect.right - buttonRect.right - 11) <= 2 && Math.abs(buttonRect.top - fieldRect.top - 13) <= 2
   })()`)
   await evaluate(`document.querySelector('[data-smart-selector-clear-all]')?.click()`)
   await waitFor(evaluate, 'clear all resets the complete profile', `(() => {
