@@ -909,7 +909,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   function applyFilters() {
     const favSet = readCatalogFavourites()
-    const useSmartRanking = Boolean(smartPreferenceState && state.sort === 'default' && !isSharedFavouritesView && !isSharedProductView)
+    const hasSmartSelection = Boolean(smartPreferenceState && !isSharedFavouritesView && !isSharedProductView)
     matchedCards = []
 
     if (productCatalog) {
@@ -917,25 +917,34 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         if (isSharedFavouritesView) {
           return Boolean(entry.meta.slug && sharedSlugs.has(entry.meta.slug))
         }
-        if (useSmartRanking) return matchesSmartHardConstraints(entry.meta)
+        if (hasSmartSelection) return matchesSmartHardConstraints(entry.meta)
         return matchesCatalogCardMeta(entry.meta, state, favSet, priceBounds)
       })
-      matchedEntries.sort((a, b) => {
-        if (useSmartRanking && smartPreferenceState) {
-          const scoreDifference = scoreSmartMatch(b.meta, smartPreferenceState) - scoreSmartMatch(a.meta, smartPreferenceState)
+      if (hasSmartSelection && smartPreferenceState) {
+        const smartPreferences = smartPreferenceState
+        matchedEntries.sort((a, b) => {
+          const scoreDifference = scoreSmartMatch(b.meta, smartPreferences) - scoreSmartMatch(a.meta, smartPreferences)
           if (scoreDifference !== 0) return scoreDifference
+          return compareCatalogCardMeta(a.meta, b.meta, 'default')
+        })
+        matchedEntries = matchedEntries.slice(0, SMART_RESULTS_LIMIT)
+        if (state.sort !== 'default') {
+          matchedEntries.sort((a, b) => compareCatalogCardMeta(a.meta, b.meta, state.sort))
         }
-        return compareCatalogCardMeta(a.meta, b.meta, state.sort)
-      })
-      if (useSmartRanking) matchedEntries = matchedEntries.slice(0, SMART_RESULTS_LIMIT)
+      } else {
+        matchedEntries.sort((a, b) => compareCatalogCardMeta(a.meta, b.meta, state.sort))
+      }
       matchedResultsCount = matchedEntries.length
 
-      const useSections = !isSharedFavouritesView && !isSharedProductView && !useSmartRanking
+      const useSections = !isSharedFavouritesView && !isSharedProductView && !hasSmartSelection
       destroyCatalogProductGalleries(cardsRootEl)
 
-      if (useSmartRanking) {
+      if (hasSmartSelection) {
         const selectedProducts = new Set(matchedEntries.map((entry) => entry.product))
         const remainingEntries = productCatalog.filter((entry) => !selectedProducts.has(entry.product))
+        if (state.sort !== 'default') {
+          remainingEntries.sort((a, b) => compareCatalogCardMeta(a.meta, b.meta, state.sort))
+        }
         cardsRootEl.classList.add('has-listing-sections')
         cardsRootEl.innerHTML = buildCatalogListingSectionsHtml(
           matchedEntries.map((entry) => entry.product),
@@ -1001,7 +1010,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const zeroResultsResetGroup = isEmptyNormalCatalogue ? getBestZeroResultsResetGroup(favSet) : null
     syncCatalogZeroResultsHint(sidebarEl, zeroResultsResetGroup)
     syncEmptyStateResetButton(favSet)
-    const restMatchedCount = useSmartRanking
+    const restMatchedCount = hasSmartSelection
       ? matchedResultsCount
       : productCatalog
       ? productCatalog.filter((entry) => {
@@ -1015,7 +1024,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         ? restMatchedCount
         : matchedResultsCount
     infiniteSentinel.hidden =
-      isSharedFavouritesView || isSharedProductView || infiniteLimitBase <= visibleCardsLimit
+      hasSmartSelection || isSharedFavouritesView || isSharedProductView || infiniteLimitBase <= visibleCardsLimit
     updateResultsCount()
     renderSharedProductView()
     syncVisibleCatalogCardMediaLoading(cardsRootEl)

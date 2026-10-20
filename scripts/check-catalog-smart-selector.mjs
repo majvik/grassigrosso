@@ -389,6 +389,21 @@ try {
       return card.dataset.type === 'nospring' && sizes.some((size) => size.startsWith('140x'))
     })
   })()`)
+  await evaluate(`window.__smartShortlistBeforeSort = [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')].map((card) => card.dataset.productSlug).sort()`)
+  await evaluate(`document.querySelector('.catalogue-new-sort-option[data-value="price-asc"]')?.click()`)
+  await waitFor(evaluate, 'changing sort preserves the nine smart results', `(() => {
+    const count = Number(document.querySelector('.catalogue-new-results strong')?.textContent)
+    const selected = [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')]
+    const remaining = [...document.querySelectorAll('[data-listing-section="all"] .catalogue-new-card')]
+    const slugs = selected.map((card) => card.dataset.productSlug).sort()
+    const prices = selected.map((card) => Number(card.dataset.price))
+    const remainingPrices = remaining.map((card) => Number(card.dataset.price))
+    return count === 9
+      && selected.length === 9
+      && JSON.stringify(slugs) === JSON.stringify(window.__smartShortlistBeforeSort)
+      && prices.every((price, index) => index === 0 || prices[index - 1] <= price)
+      && remainingPrices.every((price, index) => index === 0 || remainingPrices[index - 1] <= price)
+  })()`)
 } catch (error) {
   failures.push(error.message)
 } finally {
