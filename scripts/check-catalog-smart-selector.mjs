@@ -134,35 +134,39 @@ try {
     return true
   })()`)
 
-  await evaluate(`document.querySelector('[data-smart-selector-option]')?.click()`)
-  await waitFor(evaluate, 'option becomes a tag and advances', `(() => {
-    const dialog = document.querySelector('[data-smart-selector-dialog]')
-    return Boolean(dialog?.textContent.includes('Шаг 2 из 5') && dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes('Один'))
-  })()`)
-  await evaluate(`[...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Назад')?.click()`)
-  await waitFor(evaluate, 'back preserves answers while navigating', `(() => {
-    const dialog = document.querySelector('[data-smart-selector-dialog]')
-    return Boolean(dialog?.textContent.includes('Шаг 1 из 5') && dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes('Один'))
-  })()`)
-  await evaluate(`[...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Вперёд')?.click()`)
-  await waitFor(evaluate, 'forward preserves answers while navigating', `(() => {
-    const dialog = document.querySelector('[data-smart-selector-dialog]')
-    return Boolean(dialog?.textContent.includes('Шаг 2 из 5') && dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes('Один'))
-  })()`)
-
-  for (let targetStep = 3; targetStep <= 5; targetStep += 1) {
-    await evaluate(`(() => {
-      window.__smartSelectorHints.push(document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim())
-      document.querySelector('[data-smart-selector-option]')?.click()
+  const branchChecks = [
+    { value: 'couple', total: 5, title: 'Какой вес у более крупного партнёра?' },
+    { value: 'parentWithChild', total: 4, title: 'Как организован совместный сон?' },
+    { value: 'childOnly', total: 4, title: 'Для какого возраста и в какую кровать?' },
+    { value: 'topper', total: 3, title: 'Какую задачу должен решить тонкий матрас?' },
+  ]
+  for (const branch of branchChecks) {
+    await evaluate(`document.querySelector('[data-option-value="${branch.value}"]')?.click()`)
+    await waitFor(evaluate, `${branch.value} branch uses its dynamic total`, `(() => {
+      const dialog = document.querySelector('[data-smart-selector-dialog]')
+      return Boolean(dialog?.textContent.includes('Шаг 2 из ${branch.total}') && dialog?.textContent.includes(${JSON.stringify(branch.title)}))
     })()`)
-    await waitFor(evaluate, `quiz advances to step ${targetStep}`, `document.querySelector('[data-smart-selector-dialog]')?.textContent.includes('Шаг ${targetStep} из 5')`)
+    await evaluate(`[...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Назад')?.click()`)
+    await waitFor(evaluate, `${branch.value} back returns to root and removes branch chip`, `(() => {
+      const dialog = document.querySelector('[data-smart-selector-dialog]')
+      return Boolean(dialog?.textContent.includes('Шаг 1 из 5') && dialog?.textContent.includes('Для кого или куда подбираем матрас?') && !dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes(${JSON.stringify(branch.title)}))
+    })()`)
   }
+
+  await evaluate(`document.querySelector('[data-option-value="single"]')?.click()`)
+  await waitFor(evaluate, 'single branch starts at step 2 of 5', `document.querySelector('[data-smart-selector-dialog]')?.textContent.includes('Шаг 2 из 5')`)
+  await evaluate(`window.__smartSelectorHints.push(document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim()); document.querySelector('[data-option-value="side"]')?.click()`)
+  await waitFor(evaluate, 'single weight step', `document.querySelector('[data-smart-selector-dialog]')?.textContent.includes('Укажите ваш вес')`)
+  await evaluate(`window.__smartSelectorHints.push(document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim()); document.querySelector('[data-option-value="under65"]')?.click()`)
+  await waitFor(evaluate, 'single health step', `document.querySelector('[data-smart-selector-dialog]')?.textContent.includes('Что особенно важно учесть?')`)
+  await evaluate(`window.__smartSelectorHints.push(document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim()); document.querySelector('[data-option-value="backPain"]')?.click()`)
+  await waitFor(evaluate, 'single firmness step', `document.querySelector('[data-smart-selector-dialog]')?.textContent.includes('Шаг 5 из 5')`)
   await evaluate(`window.__smartSelectorHints.push(document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim())`)
-  await waitFor(evaluate, 'all five how-to-choose hints are distinct and visible', `(() => {
+  await waitFor(evaluate, 'all single-branch hints are distinct and visible', `(() => {
     const hints = window.__smartSelectorHints.filter(Boolean)
     return hints.length === 5 && new Set(hints).size === 5 && hints.every((hint) => hint.includes('Как выбрать:') && !hint.includes('💡'))
   })()`)
-  await evaluate(`document.querySelector('[data-smart-selector-option]')?.click()`)
+  await evaluate(`document.querySelector('[data-option-value="soft"]')?.click()`)
   await waitFor(evaluate, 'completed quiz profile is recognized', `document.querySelector('[data-smart-selector-profile-status]')?.textContent.includes('Профиль заполнен')`)
 
   await evaluate(`(() => {
@@ -190,8 +194,37 @@ try {
   await waitFor(evaluate, 'quiz and free text merge into one structured scoring profile', `(() => {
     const text = String(window.__smartSelectorRequest?.text || '')
     const answers = window.__smartSelectorEventDetail?.quizAnswers || {}
-    return text.includes('сплю на боку') && text.includes('один человек') && text.includes('пол мужской') && text.includes('рост 165 см') && text.includes('вес 55 кг') && text.includes('хочу помягче') && Object.keys(answers).length === 5
+    return text.includes('сплю на боку') && text.includes('один взрослый') && text.includes('вес 55 кг') && text.includes('устаёт поясница') && text.includes('мягче') && answers.step_target === 'single' && answers.single_position === 'side' && answers.single_weight === 'under65' && answers.single_health === 'backPain' && answers.final_firmness === 'soft'
   })()`)
+
+  await evaluate(`document.querySelector('[data-smart-selector-trigger]')?.click()`)
+  await waitFor(evaluate, 'selector reopens for adaptive branch smoke', `Boolean(document.querySelector('[data-smart-selector-dialog]'))`)
+  await evaluate(`document.querySelector('[data-smart-selector-clear-all]')?.click(); window.__adaptiveHints = []`)
+  const adaptiveFlows = [
+    ['single', 'side', 'under65', 'standard', 'medium'],
+    ['couple', 'under75', 'weightGap', 'mixed', 'dual'],
+    ['parentWithChild', 'two', 'under85', 'medium'],
+    ['childOnly', 'bunk', 'dual', 'hard'],
+    ['topper', 'soften', '140'],
+  ]
+  for (const [flowIndex, flow] of adaptiveFlows.entries()) {
+    for (const value of flow) {
+      await waitFor(evaluate, `adaptive flow ${flowIndex + 1} exposes ${value}`, `Boolean(document.querySelector('[data-option-value="${value}"]'))`)
+      await evaluate(`(() => {
+        window.__adaptiveHints.push(document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim())
+        document.querySelector('[data-option-value="${value}"]')?.click()
+      })()`)
+    }
+    await waitFor(evaluate, `adaptive flow ${flowIndex + 1} completes`, `document.querySelector('[data-smart-selector-profile-status]')?.textContent.includes('Профиль заполнен')`)
+    await evaluate(`document.querySelector('[data-smart-selector-clear-all]')?.click()`)
+    await waitFor(evaluate, `adaptive flow ${flowIndex + 1} resets to root`, `document.querySelector('[data-smart-selector-dialog]')?.textContent.includes('Шаг 1 из 5')`)
+  }
+  await waitFor(evaluate, 'all adaptive nodes expose their own how-to-choose hint', `(() => {
+    const hints = window.__adaptiveHints.filter(Boolean)
+    return new Set(hints).size === 14 && hints.every((hint) => hint.includes('Как выбрать:') && hint.length <= 140)
+  })()`)
+  await evaluate(`document.querySelector('[data-smart-selector-dialog] button[aria-label="Закрыть умный подбор"]')?.click()`)
+  await waitFor(evaluate, 'adaptive smoke dialog closes', `!document.querySelector('[data-smart-selector-dialog]')`)
 
   const directSearchScenarios = [
     { label: 'direct model search evolution', queryText: 'матрас эволюшен', topSlug: 'evolution' },

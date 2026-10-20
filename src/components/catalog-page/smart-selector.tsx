@@ -2,41 +2,22 @@ import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from
 import { Dialog } from '@/components/ui/Dialog'
 import styles from './smart-selector.module.css'
 import INPUT_EXAMPLES from './smart-selector-examples.json'
+import { getBranchTotal, getNextStepId, getStepNode, QUIZ_STEP_IDS, type QuizAnswers, type QuizStepId } from './smart-selector-tree'
 
-type Question = {
-  id: string
-  title: string
-  options: string[]
-  hint: string
-}
-
-const QUESTIONS: Question[] = [
-  { id: 'sleepers', title: 'Кто будет спать на матрасе?', options: ['Один', 'Двое', 'Взрослый с ребёнком'], hint: 'Для двоих или сна с ребёнком комфортная ширина начинается от 160 см, а независимые пружины уменьшают колебания, когда партнёр переворачивается.' },
-  { id: 'gender', title: 'Укажите пол', options: ['Мужской', 'Женский', 'Не имеет значения'], hint: 'Пол сам по себе не определяет жёсткость матраса — это только дополнительный ориентир, который не заменяет данные о росте и весе.' },
-  { id: 'height', title: 'Какой рост?', options: ['До 170 см', '170–190 см', 'Выше 190 см'], hint: 'Длина матраса должна быть минимум на 15–20 см больше роста. При росте от 175 см обычно комфортнее длина 200 см.' },
-  { id: 'weight', title: 'Какой вес?', options: ['До 60 кг', '60–90 кг', '90–120 кг', 'Больше 120 кг'], hint: 'Для двоих укажите вес более крупного партнёра: нагрузка считается на одно спальное место, складывать веса не нужно. Мы заложим запас прочности.' },
-  { id: 'firmness', title: 'Какая жёсткость кажется комфортной?', options: ['Помягче', 'Средняя', 'Пожёстче', 'Не знаю'], hint: 'Слишком жёсткий матрас не полезнее для спины. Если сомневаетесь, выберите «Не знаю» — предложим универсальную середину и модели с двумя разными сторонами.' },
-]
-
-type Tag = { id: string; label: string }
-
-const QUIZ_QUERY_LABELS: Record<string, Record<string, string>> = {
-  sleepers: { Один: 'один человек', Двое: 'двое взрослых', 'Взрослый с ребёнком': 'взрослый с ребёнком' },
-  gender: { Мужской: 'пол мужской', Женский: 'пол женский', 'Не имеет значения': 'пол не имеет значения' },
-  height: { 'До 170 см': 'рост 165 см', '170–190 см': 'рост 180 см', 'Выше 190 см': 'рост выше 190 см' },
-  weight: { 'До 60 кг': 'вес 55 кг', '60–90 кг': 'вес 80 кг', '90–120 кг': 'вес 110 кг', 'Больше 120 кг': 'вес 135 кг' },
-  firmness: { Помягче: 'хочу помягче', Средняя: 'средняя жёсткость', Пожёстче: 'хочу пожёстче', 'Не знаю': 'не знаю жёсткость' },
-}
+type Tag = { id: string; label: string; query?: string; value?: string }
 
 function buildProfileText(tags: Tag[]): string {
   return tags
-    .map((tag) => QUIZ_QUERY_LABELS[tag.id]?.[tag.label] || tag.label)
+    .map((tag) => tag.query || tag.label)
     .join('; ')
 }
 
 export function SmartSelector() {
   const [open, setOpen] = useState(false)
-  const [step, setStep] = useState(0)
+  const [currentStepId, setCurrentStepId] = useState<QuizStepId>('step_target')
+  const [stepHistory, setStepHistory] = useState<QuizStepId[]>([])
+  const [answers, setAnswers] = useState<QuizAnswers>({})
+  const [quizComplete, setQuizComplete] = useState(false)
   const [tags, setTags] = useState<Tag[]>([])
   const [input, setInput] = useState('')
   const [inputFocused, setInputFocused] = useState(false)
@@ -45,10 +26,11 @@ export function SmartSelector() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const question = QUESTIONS[step]
+  const question = getStepNode(currentStepId, answers)
+  const totalSteps = getBranchTotal(answers)
+  const stepNumber = Math.min(totalSteps, stepHistory.length + 1)
   const hasProfileInput = tags.length > 0 || Boolean(input.trim())
-  const answeredQuestionIds = new Set(tags.filter((tag) => QUESTIONS.some((item) => item.id === tag.id)).map((tag) => tag.id))
-  const isProfileComplete = answeredQuestionIds.size === QUESTIONS.length
+  const isProfileComplete = quizComplete
 
   useEffect(() => {
     if (inputFocused || tags.length || input) {
@@ -105,21 +87,72 @@ export function SmartSelector() {
     setInput('')
   }
 
-  const chooseOption = (label: string) => {
-    setTags((current) => [...current.filter((tag) => tag.id !== question.id), { id: question.id, label }])
-    setStep((current) => Math.min(QUESTIONS.length - 1, current + 1))
+  const chooseOption = (value: string, label: string, query: string) => {
+    const isRoot = currentStepId === 'step_target'
+    const nextAnswers = isRoot
+      ? { step_target: value }
+      : { ...answers, [currentStepId]: value }
+    setAnswers(nextAnswers)
+    setTags((current) => {
+      const freeTags = current.filter((tag) => tag.id.startsWith('free-'))
+      const branchTags = isRoot ? [] : current.filter((tag) => !tag.id.startsWith('free-') && tag.id !== currentStepId)
+      return [...freeTags, ...branchTags, { id: currentStepId, label, query, value }]
+    })
+    const nextStepId = getNextStepId(currentStepId, nextAnswers)
+    if (nextStepId) {
+      setStepHistory((current) => isRoot ? ['step_target'] : [...current, currentStepId])
+      setCurrentStepId(nextStepId)
+      setQuizComplete(false)
+    } else {
+      setQuizComplete(true)
+    }
     setError('')
   }
 
-  const moveStep = (direction: -1 | 1) => {
-    setStep((current) => Math.max(0, Math.min(QUESTIONS.length - 1, current + direction)))
+  const goBack = () => {
+    if (!stepHistory.length) return
+    const previousStepId = stepHistory[stepHistory.length - 1]
+    const answerIdToRemove = quizComplete ? currentStepId : previousStepId
+    setAnswers((current) => {
+      const next = { ...current }
+      delete next[answerIdToRemove]
+      return next
+    })
+    setTags((current) => current.filter((tag) => tag.id !== answerIdToRemove))
+    setCurrentStepId(previousStepId)
+    setStepHistory((current) => current.slice(0, -1))
+    setQuizComplete(false)
     setError('')
   }
 
   const clearProfile = () => {
     setTags([])
     setInput('')
-    setStep(0)
+    setCurrentStepId('step_target')
+    setStepHistory([])
+    setAnswers({})
+    setQuizComplete(false)
+    setError('')
+  }
+
+  const removeTag = (tag: Tag) => {
+    if (tag.id.startsWith('free-')) {
+      setTags((current) => current.filter((item) => item.id !== tag.id))
+      return
+    }
+    const stepId = tag.id as QuizStepId
+    const path = [...stepHistory, currentStepId]
+    const targetIndex = Math.max(0, path.indexOf(stepId))
+    const removedStepIds = new Set(path.slice(targetIndex))
+    setTags((current) => current.filter((item) => !removedStepIds.has(item.id as QuizStepId)))
+    setAnswers((current) => {
+      const next = { ...current }
+      removedStepIds.forEach((id) => delete next[id])
+      return next
+    })
+    setCurrentStepId(stepId)
+    setStepHistory(path.slice(0, targetIndex))
+    setQuizComplete(false)
     setError('')
   }
 
@@ -144,7 +177,7 @@ export function SmartSelector() {
     if (!profileTags.length || isSubmitting) return
     const profileText = buildProfileText(profileTags)
     const quizAnswers = Object.fromEntries(
-      profileTags.filter((tag) => QUESTIONS.some((item) => item.id === tag.id)).map((tag) => [tag.id, tag.label]),
+      profileTags.filter((tag) => QUIZ_STEP_IDS.includes(tag.id as QuizStepId)).map((tag) => [tag.id, tag.value || tag.label]),
     )
     setIsSubmitting(true)
     setError('')
@@ -199,7 +232,7 @@ export function SmartSelector() {
 
           <div className={`${styles.tagField} ${inputMultiline ? styles.tagFieldMultiline : ''}`} data-smart-selector-tags>
             {tags.map((tag) => (
-              <button key={tag.id} type="button" className={styles.tag} onClick={() => setTags((current) => current.filter((item) => item.id !== tag.id))} aria-label={`Удалить: ${tag.label}`}>
+              <button key={tag.id} type="button" className={styles.tag} onClick={() => removeTag(tag)} aria-label={`Удалить: ${tag.label}`}>
                 {tag.label}<span aria-hidden="true">×</span>
               </button>
             ))}
@@ -240,29 +273,29 @@ export function SmartSelector() {
           {error ? <p className={styles.error} role="alert" data-smart-selector-error>{error}</p> : null}
 
           <div className={styles.progressHeader}>
-            <span>{`Шаг ${step + 1} из ${QUESTIONS.length}`}</span>
-            <div className={styles.dots} aria-label={`Прогресс: ${step + 1} из ${QUESTIONS.length}`}>
-              {QUESTIONS.map((item, index) => <span key={item.id} className={index <= step ? styles.dotActive : styles.dot} />)}
+            <span>{`Шаг ${stepNumber} из ${totalSteps}`}</span>
+            <div className={styles.dots} aria-label={`Прогресс: ${stepNumber} из ${totalSteps}`}>
+              {Array.from({ length: totalSteps }, (_, index) => <span key={index} className={index < stepNumber ? styles.dotActive : styles.dot} />)}
             </div>
           </div>
 
           <div data-smart-selector-question>
             <h3 className={styles.question}>{question.title}</h3>
             <p className={styles.howToChooseHint} data-smart-selector-how-to-choose>
-              <strong>Как выбрать:</strong> {question.hint}
+              <strong>Как выбрать:</strong> {question.howToChoose}
             </p>
             <div className={styles.options}>
               {question.options.map((option) => (
-                <button key={option} type="button" className={styles.option} onClick={() => chooseOption(option)} data-smart-selector-option>{option}</button>
+                <button key={option.value} type="button" className={styles.option} onClick={() => chooseOption(option.value, option.label, option.query)} data-smart-selector-option data-option-value={option.value}>{option.label}</button>
               ))}
             </div>
           </div>
 
           <div className={styles.footer}>
             <div className={styles.navigation} aria-label="Навигация по вопросам">
-              <button type="button" className={styles.stepButton} onClick={() => moveStep(-1)} disabled={step === 0}>Назад</button>
+              <button type="button" className={styles.stepButton} onClick={goBack} disabled={stepHistory.length === 0}>Назад</button>
               <span className={styles.navigationDivider} aria-hidden="true">|</span>
-              <button type="button" className={styles.stepButton} onClick={() => moveStep(1)} disabled={step === QUESTIONS.length - 1}>Вперёд</button>
+              <button type="button" className={styles.stepButton} disabled>Вперёд</button>
             </div>
             <span>Ответ можно изменить</span>
           </div>

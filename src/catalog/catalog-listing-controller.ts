@@ -117,7 +117,7 @@ interface ScrollOptions {
 }
 
 type CatalogSmartFilterGroup = 'collection' | 'size' | 'firmness' | 'type' | 'loadRange' | 'heightRange' | 'fillings' | 'features'
-type CatalogQuizAnswers = Partial<Record<'sleepers' | 'gender' | 'height' | 'weight' | 'firmness', string>>
+type CatalogQuizAnswers = Partial<Record<string, string>>
 type CatalogSmartFiltersEvent = CustomEvent<{
   filters?: Partial<Record<CatalogSmartFilterGroup, string[]>>
   queryText?: string
@@ -480,6 +480,11 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     if (smartQuizAnswers.height === '170–190 см' && hasLength200) score += 40
     if (smartQuizAnswers.height === '170–190 см' && smartQuizAnswers.gender === 'Мужской' && hasLength200) score += 15
     if (smartQuizAnswers.height === 'Выше 190 см') score += hasLength200 ? 100 : -60
+    const needsLength200 = ['tall', 'tallBackPain', 'athletic'].includes(smartQuizAnswers.single_health || '')
+      || smartQuizAnswers.couple_comfort === 'tall'
+      || smartQuizAnswers.parent_child_weight === 'heavyOrTall'
+      || smartQuizAnswers.child_age_bed === 'tallTeen'
+    if (needsLength200) score += hasLength200 ? 100 : -80
 
     const requestedWeights = [...query.matchAll(/(\d{2,3})\s*кг/g)].map((match) => Number(match[1])).filter((value) => value >= 30 && value <= 250)
     const quizRequiredLoad = smartQuizAnswers.weight === '90–120 кг'
@@ -496,24 +501,26 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       const sides = [meta.firmnessSide1, meta.firmnessSide2]
         .filter((value): value is number => Number.isInteger(value))
       const preferredFirmness = [...preferences.firmness]
-      const quizFirmnessRange: [number, number] | null = smartQuizAnswers.firmness === 'Помягче'
+      const finalFirmness = smartQuizAnswers.final_firmness
+      const quizFirmnessRange: [number, number] | null = smartQuizAnswers.firmness === 'Помягче' || finalFirmness === 'soft'
         ? [3.5, 5]
-        : smartQuizAnswers.firmness === 'Средняя'
+        : smartQuizAnswers.firmness === 'Средняя' || finalFirmness === 'medium'
           ? [5, 6]
-          : smartQuizAnswers.firmness === 'Пожёстче'
+          : smartQuizAnswers.firmness === 'Пожёстче' || finalFirmness === 'hard'
             ? [6, 7.5]
-            : smartQuizAnswers.firmness === 'Не знаю' ? [5, 6.5] : null
+            : smartQuizAnswers.firmness === 'Не знаю' || finalFirmness === 'dual' ? [5, 6.5] : null
       if (sides.length && quizFirmnessRange) {
         const distanceToRange = (value: number) => value < quizFirmnessRange[0]
           ? quizFirmnessRange[0] - value
           : value > quizFirmnessRange[1] ? value - quizFirmnessRange[1] : 0
-        const weightOffset = smartQuizAnswers.weight === 'До 60 кг' ? -0.5 : smartQuizAnswers.weight === '90–120 кг' || smartQuizAnswers.weight === 'Больше 120 кг' ? 0.5 : 0
+        const adaptiveWeight = smartQuizAnswers.single_weight || smartQuizAnswers.couple_weight || smartQuizAnswers.parent_child_weight || ''
+        const weightOffset = smartQuizAnswers.weight === 'До 60 кг' || adaptiveWeight === 'under65' ? -0.5 : smartQuizAnswers.weight === '90–120 кг' || smartQuizAnswers.weight === 'Больше 120 кг' || ['90to120', '95to120', 'over120', 'heavyOrTall'].includes(adaptiveWeight) ? 0.5 : 0
         const sideDistances = sides.map((value) => distanceToRange(value - weightOffset))
-        const distance = smartQuizAnswers.firmness === 'Не знаю'
+        const distance = smartQuizAnswers.firmness === 'Не знаю' || finalFirmness === 'dual'
           ? sideDistances.reduce((sum, value) => sum + value, 0) / sideDistances.length
           : Math.min(...sideDistances)
         score += Math.max(0, 80 - distance * 16)
-        if (smartQuizAnswers.firmness === 'Не знаю' && sides.length === 2 && sides[0] !== sides[1]) score += 50
+        if ((smartQuizAnswers.firmness === 'Не знаю' || finalFirmness === 'dual') && sides.length === 2 && sides[0] !== sides[1]) score += 50
       } else if (sides.length && preferences.firmness.has('dualFirmness') && sides.length === 2) {
         const low = Math.min(...sides)
         const high = Math.max(...sides)
@@ -565,11 +572,11 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const childBed = /детск(?:ая|ую|ой)\s+кроват|подростк|для\s+ребенк/.test(query)
     if ((needsEasyRise || heavySleeper) && meta.heightRange === 'low') score -= 30
     if (childBed && meta.heightRange === 'high') score -= 30
-    if (smartQuizAnswers.sleepers === 'Взрослый с ребёнком') {
+    if (smartQuizAnswers.sleepers === 'Взрослый с ребёнком' || smartQuizAnswers.step_target === 'parentWithChild' || smartQuizAnswers.step_target === 'childOnly') {
       const scores = [meta.firmnessSide1, meta.firmnessSide2].filter((value): value is number => Number.isInteger(value))
       if (scores.length && Math.max(...scores) < 5) score -= 60
     }
-    if (smartQuizAnswers.weight === 'До 60 кг' && meta.fillings.has('coir') && !hasComfortLayer) score -= 50
+    if ((smartQuizAnswers.weight === 'До 60 кг' || smartQuizAnswers.single_weight === 'under65') && meta.fillings.has('coir') && !hasComfortLayer) score -= 50
     return score
   }
 
