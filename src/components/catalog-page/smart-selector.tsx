@@ -85,8 +85,10 @@ export function SmartSelector() {
 
   useEffect(() => {
     if (!editingTagId) return
-    tagEditRef.current?.focus()
-    tagEditRef.current?.select()
+    const input = tagEditRef.current
+    if (!input) return
+    input.focus()
+    input.setSelectionRange(input.value.length, input.value.length)
   }, [editingTagId])
 
   const addFreeTag = () => {

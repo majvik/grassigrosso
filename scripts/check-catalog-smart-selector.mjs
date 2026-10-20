@@ -92,7 +92,15 @@ try {
     return close.getBoundingClientRect().top - tag.getBoundingClientRect().top < 14
   })()`)
   await evaluate(`[...document.querySelectorAll('[data-smart-selector-tag]')].find((item) => item.textContent.includes('Нужен удобный матрас'))?.querySelector('button[aria-label^="Редактировать:"]')?.click()`)
-  await waitFor(evaluate, 'tag becomes an editable field on click', `Boolean(document.querySelector('[data-smart-selector-tag-edit]'))`)
+  await waitFor(evaluate, 'tag editing starts with the caret at the end', `(() => {
+    const input = document.querySelector('[data-smart-selector-tag-edit]')
+    return Boolean(
+      input
+      && document.activeElement === input
+      && input.selectionStart === input.value.length
+      && input.selectionEnd === input.value.length
+    )
+  })()`)
   await evaluate(`(() => {
     const input = document.querySelector('[data-smart-selector-tag-edit]')
     if (!input) return false
