@@ -78,13 +78,13 @@ try {
     input.dispatchEvent(new Event('input', { bubbles: true }))
     return true
   })()`)
-  await waitFor(evaluate, 'single-line composer is vertically centered with chips', `(() => {
+  await waitFor(evaluate, 'single-line composer is vertically centered inside the field', `(() => {
     const input = document.querySelector('[data-smart-selector-input]')
-    const clear = document.querySelector('[data-smart-selector-clear-all]')
-    if (!input || !clear || input.clientHeight > 32) return false
+    const field = document.querySelector('[data-smart-selector-tags]')
+    if (!input || !field || input.clientHeight > 32) return false
     const inputRect = input.getBoundingClientRect()
-    const clearRect = clear.getBoundingClientRect()
-    return Math.abs((inputRect.top + inputRect.height / 2) - (clearRect.top + clearRect.height / 2)) <= 2
+    const fieldRect = field.getBoundingClientRect()
+    return Math.abs((inputRect.top + inputRect.height / 2) - (fieldRect.top + fieldRect.height / 2)) <= 2
   })()`)
   await evaluate(`document.querySelector('[data-smart-selector-input]')?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))`)
   await waitFor(evaluate, 'free text becomes a tag and enables submit', `(() => {

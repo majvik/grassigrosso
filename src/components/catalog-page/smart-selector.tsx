@@ -40,6 +40,7 @@ export function SmartSelector() {
   const [tags, setTags] = useState<Tag[]>([])
   const [input, setInput] = useState('')
   const [inputFocused, setInputFocused] = useState(false)
+  const [inputMultiline, setInputMultiline] = useState(false)
   const [animatedPlaceholder, setAnimatedPlaceholder] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -92,8 +93,10 @@ export function SmartSelector() {
     const element = inputRef.current
     if (!element) return
     element.style.height = 'auto'
-    element.style.height = `${Math.min(element.scrollHeight, 96)}px`
-  }, [input])
+    const contentHeight = element.scrollHeight
+    element.style.height = `${Math.min(contentHeight, 96)}px`
+    setInputMultiline(contentHeight > 34)
+  }, [animatedPlaceholder, input, tags.length])
 
   const addFreeTag = () => {
     const label = input.trim().replace(/,+$/, '').trim()
@@ -184,7 +187,7 @@ export function SmartSelector() {
             Пишите своими словами или выберите быстрые ответы ниже.
           </Dialog.Description>
 
-          <div className={styles.tagField} data-smart-selector-tags>
+          <div className={`${styles.tagField} ${inputMultiline ? styles.tagFieldMultiline : ''}`} data-smart-selector-tags>
             {tags.map((tag) => (
               <button key={tag.id} type="button" className={styles.tag} onClick={() => setTags((current) => current.filter((item) => item.id !== tag.id))} aria-label={`Удалить: ${tag.label}`}>
                 {tag.label}<span aria-hidden="true">×</span>
