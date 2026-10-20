@@ -28,6 +28,16 @@ assertIncludes(applyDomainGuardrails({ heightRange: ['high'] }, 'нужен вы
 assertIncludes(applyDomainGuardrails({}, 'молодая девушка спит с ребенком'), {
   size: ['160x200'], firmness: ['medium'], fillings: ['orthoFoam', 'coir'], features: ['removableCover', 'edgeSupport'],
 })
+const childSoftProfile = applyDomainGuardrails({}, 'я ребенок, мне 10 лет, нравятся матрасы помягче')
+assertIncludes(childSoftProfile, {
+  firmness: ['medium'], type: ['spring', 'nospring'], heightRange: ['low', 'mid'], fillings: ['coir', 'orthoFoam', 'forplit'], features: ['removableCover'],
+})
+assert.ok(!childSoftProfile.firmness.includes('soft'), `child profile must not retain soft firmness: ${JSON.stringify(childSoftProfile)}`)
+const childQuizProfile = applyDomainGuardrails({}, 'матрас для ребёнка или подростка; ширина 140 см; беспружинный матрас из orthoFoam или forplit; умеренно-мягкая без проваливания')
+assertIncludes(childQuizProfile, {
+  size: ['140x190', '140x200'], firmness: ['medium'], type: ['nospring'], heightRange: ['low', 'mid'],
+})
+assert.deepEqual(childQuizProfile.type, ['nospring'])
 assertIncludes(applyDomainGuardrails({}, 'мужчина 105 кг, сплю на боку'), {
   firmness: ['medium'], loadRange: ['upTo160'], fillings: ['memoryEffect', 'latex'], features: ['edgeSupport'], heightRange: ['high', 'mid'], type: ['doubleSided'],
 })
@@ -113,5 +123,21 @@ assertIncludes((await fallbackSelector.select('средняя жёсткость
 })
 assert.equal(attemptedModels.length, 2)
 assert.ok(attemptedModels[1].includes('gemini-3.5-flash-lite'))
+
+const degradedSelector = createCatalogSmartSelect({
+  axios: {
+    async post() {
+      const error = new Error('upstream timeout')
+      error.code = 'ETIMEDOUT'
+      throw error
+    },
+  },
+  apiKey: 'server-only-key',
+})
+const degradedResult = await degradedSelector.select('я ребенок, мне 10 лет, нравятся матрасы помягче')
+assert.equal(degradedResult.degraded, true)
+assertIncludes(degradedResult.filters, {
+  firmness: ['medium'], heightRange: ['low', 'mid'], features: ['removableCover'],
+})
 
 console.log('Catalog smart select API contract ok')
