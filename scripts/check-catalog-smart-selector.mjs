@@ -32,6 +32,12 @@ try {
     const status = dialog?.querySelector('[data-smart-selector-profile-status]')
     return Boolean(dialog && dialog.textContent.includes('Шаг 1 из 5') && dialog.querySelectorAll('[data-smart-selector-question]').length === 1 && submit?.disabled && submit.textContent.includes('Подобрать матрас') && status?.textContent.includes('Профиль пока не заполнен'))
   })()`)
+  await waitFor(evaluate, 'intro copy has readable contrast', `(() => {
+    const description = document.querySelector('[data-smart-selector-dialog] [class*="description"]')
+    if (!description) return false
+    const styles = getComputedStyle(description)
+    return styles.color === 'rgb(40, 62, 55)' && parseFloat(styles.fontSize) >= 16
+  })()`)
   await waitFor(evaluate, 'AI disclaimer links to the manager form', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
     const disclaimer = dialog?.querySelector('[data-smart-selector-ai-disclaimer]')

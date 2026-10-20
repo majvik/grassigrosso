@@ -4,7 +4,7 @@
 .close { position: absolute; top: 18px; right: 20px; width: 42px; height: 42px; border: 0; border-radius: 50%; background: var(--color-surface-muted); color: var(--color-primary); cursor: pointer; font-size: 28px; line-height: 1; }
 .eyebrow { margin: 0 0 10px; color: var(--color-primary); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; }
 .title { max-width: 560px; margin: 0; color: var(--color-primary); font-family: var(--font-bounded); font-size: clamp(28px, 4vw, 42px); font-weight: 400; line-height: 1.05; }
-.description { max-width: 550px; margin: 14px 0 24px; color: var(--color-text-muted-warm); font-size: 15px; line-height: 1.45; }
+.description { max-width: 550px; margin: 14px 0 24px; color: var(--color-primary); font-size: 16px; line-height: 1.45; }
 .tagField { position: relative; display: flex; min-height: 58px; align-items: center; align-content: center; flex-wrap: wrap; gap: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-white); padding: 9px 52px 9px 12px; }
 .tagFieldMultiline { align-items: flex-start; align-content: flex-start; }
 .tagField:focus-within { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), .12); }
