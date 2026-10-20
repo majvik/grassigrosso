@@ -282,13 +282,14 @@ export function SmartSelector() {
         <Dialog.Backdrop className={styles.backdrop} />
         <Dialog.Popup className={styles.popup} data-smart-selector-dialog>
           <Dialog.Close className={styles.close} aria-label="Закрыть умный подбор">×</Dialog.Close>
-          <p className={styles.eyebrow}>Умный подбор</p>
-          <Dialog.Title className={styles.title}>Расскажите, какой матрас вам нужен</Dialog.Title>
-          <Dialog.Description className={styles.description}>
-            Действуйте как вам комфортно, пишите своими словами и/или выбирайте быстрые ответы.
-          </Dialog.Description>
+          <div className={styles.scrollContent} data-smart-selector-scroll-content>
+            <p className={styles.eyebrow}>Умный подбор</p>
+            <Dialog.Title className={styles.title}>Расскажите, какой матрас вам нужен</Dialog.Title>
+            <Dialog.Description className={styles.description}>
+              Действуйте как вам комфортно, пишите своими словами и/или выбирайте быстрые ответы.
+            </Dialog.Description>
 
-          <div className={`${styles.tagField} ${inputMultiline ? styles.tagFieldMultiline : ''}`} data-smart-selector-tags>
+            <div className={`${styles.tagField} ${inputMultiline ? styles.tagFieldMultiline : ''}`} data-smart-selector-tags>
             {tags.map((tag) => (
               <span key={tag.id} className={styles.tag} data-smart-selector-tag>
                 {editingTagId === tag.id ? (
@@ -361,37 +362,38 @@ export function SmartSelector() {
                 </button>
               </span>
             ) : null}
-          </div>
-          {error ? <p className={styles.error} role="alert" data-smart-selector-error>{error}</p> : null}
+            </div>
+            {error ? <p className={styles.error} role="alert" data-smart-selector-error>{error}</p> : null}
 
-          <div className={styles.progressHeader}>
-            <span>{`Шаг ${stepNumber} из ${totalSteps}`}</span>
-            <div className={styles.dots} aria-label={`Прогресс: ${stepNumber} из ${totalSteps}`}>
-              {Array.from({ length: totalSteps }, (_, index) => <span key={index} className={index < stepNumber ? styles.dotActive : styles.dot} />)}
+            <div className={styles.progressHeader}>
+              <span>{`Шаг ${stepNumber} из ${totalSteps}`}</span>
+              <div className={styles.dots} aria-label={`Прогресс: ${stepNumber} из ${totalSteps}`}>
+                {Array.from({ length: totalSteps }, (_, index) => <span key={index} className={index < stepNumber ? styles.dotActive : styles.dot} />)}
+              </div>
+            </div>
+
+            <div data-smart-selector-question>
+              <h3 className={styles.question}>{question.title}</h3>
+              <p className={styles.howToChooseHint} data-smart-selector-how-to-choose>
+                <strong>Как выбрать:</strong> {question.howToChoose}
+              </p>
+              <div className={styles.options}>
+                {question.options.map((option) => (
+                  <button key={option.value} type="button" className={styles.option} onClick={() => chooseOption(option.value, option.label, option.query)} data-smart-selector-option data-option-value={option.value}>{option.label}</button>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.footer}>
+              <div className={styles.navigation} aria-label="Навигация по вопросам">
+                <button type="button" className={styles.stepButton} onClick={goBack} disabled={stepHistory.length === 0}>Назад</button>
+                <span className={styles.navigationDivider} aria-hidden="true">|</span>
+                <button type="button" className={styles.stepButton} disabled>Вперёд</button>
+              </div>
+              <span>Ответ можно изменить</span>
             </div>
           </div>
-
-          <div data-smart-selector-question>
-            <h3 className={styles.question}>{question.title}</h3>
-            <p className={styles.howToChooseHint} data-smart-selector-how-to-choose>
-              <strong>Как выбрать:</strong> {question.howToChoose}
-            </p>
-            <div className={styles.options}>
-              {question.options.map((option) => (
-                <button key={option.value} type="button" className={styles.option} onClick={() => chooseOption(option.value, option.label, option.query)} data-smart-selector-option data-option-value={option.value}>{option.label}</button>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.footer}>
-            <div className={styles.navigation} aria-label="Навигация по вопросам">
-              <button type="button" className={styles.stepButton} onClick={goBack} disabled={stepHistory.length === 0}>Назад</button>
-              <span className={styles.navigationDivider} aria-hidden="true">|</span>
-              <button type="button" className={styles.stepButton} disabled>Вперёд</button>
-            </div>
-            <span>Ответ можно изменить</span>
-          </div>
-          <div className={styles.submitArea}>
+          <div className={styles.submitArea} data-smart-selector-fixed-footer>
             <p className={isProfileComplete ? styles.profileComplete : styles.profileHint} data-smart-selector-profile-status>
               {isProfileComplete
                 ? 'Профиль заполнен — покажем наиболее точные варианты.'

@@ -32,6 +32,18 @@ try {
     const status = dialog?.querySelector('[data-smart-selector-profile-status]')
     return Boolean(dialog && dialog.textContent.includes('Шаг 1 из 5') && dialog.querySelectorAll('[data-smart-selector-question]').length === 1 && submit?.disabled && submit.textContent.includes('Подобрать матрас') && status?.textContent.includes('Профиль пока не заполнен'))
   })()`)
+  await waitFor(evaluate, 'desktop dialog respects viewport margins and keeps actions visible', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const footer = dialog?.querySelector('[data-smart-selector-fixed-footer]')
+    if (!dialog || !footer || window.innerWidth <= 600) return false
+    const dialogRect = dialog.getBoundingClientRect()
+    const footerRect = footer.getBoundingClientRect()
+    return dialogRect.top >= 47
+      && window.innerHeight - dialogRect.bottom >= 47
+      && footerRect.top >= dialogRect.top
+      && footerRect.bottom <= dialogRect.bottom
+      && getComputedStyle(dialog).overflow === 'hidden'
+  })()`)
   await waitFor(evaluate, 'intro copy has readable contrast', `(() => {
     const description = document.querySelector('[data-smart-selector-dialog] [class*="description"]')
     if (!description) return false
@@ -80,6 +92,18 @@ try {
     return true
   })()`)
   await waitFor(evaluate, 'long free text wraps like a message composer', `document.querySelector('[data-smart-selector-input]')?.clientHeight > 30`)
+  await waitFor(evaluate, 'question content scrolls without moving the fixed action area', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const content = dialog?.querySelector('[data-smart-selector-scroll-content]')
+    const footer = dialog?.querySelector('[data-smart-selector-fixed-footer]')
+    if (!dialog || !content || !footer) return false
+    const footerTop = footer.getBoundingClientRect().top
+    content.scrollTop = content.scrollHeight
+    const footerStayedFixed = Math.abs(footer.getBoundingClientRect().top - footerTop) <= 1
+      && footer.getBoundingClientRect().bottom <= dialog.getBoundingClientRect().bottom
+    content.scrollTop = 0
+    return footerStayedFixed
+  })()`)
   await waitFor(evaluate, 'growing composer keeps the clear control fixed', `(() => {
     const field = document.querySelector('[data-smart-selector-tags]')
     const clear = document.querySelector('[data-smart-selector-clear-all]')
