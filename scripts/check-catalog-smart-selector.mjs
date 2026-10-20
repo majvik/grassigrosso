@@ -463,7 +463,7 @@ try {
     return Boolean(
       defaultResult?.hidden
       && !smartResult?.hidden
-      && smartResult?.textContent.trim() === 'Результаты подборки'
+      && smartResult?.textContent.trim() === 'Результаты подбора'
       && defaultSort?.textContent.trim() === 'Сортировка по соответствию'
       && trigger?.textContent.trim() === 'Сортировка по соответствию'
     )

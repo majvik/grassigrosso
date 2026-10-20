@@ -8,7 +8,7 @@ export function CatalogToolbar() {
         <span data-catalog-results-default>
           Найдено: <strong>6</strong> моделей
         </span>
-        <span data-catalog-results-smart hidden>Результаты подборки</span>
+        <span data-catalog-results-smart hidden>Результаты подбора</span>
       </span>
       <button type="button" className="catalogue-new-mobile-filters-open" id="catalogue-new-mobile-filters-open">
         Фильтры
