@@ -141,6 +141,7 @@ const SMART_UNSAFE_LOAD_PENALTY = 1200
 const SMART_EXPLICIT_SIZE_MISS_PENALTY = 700
 const SMART_FIRMNESS_DISTANCE_PENALTY = 70
 const SMART_RECOMMENDED_BONUS = 12
+const SMART_RESULTS_LIMIT = 10
 
 const DIRECT_SEARCH_STOP_WORDS = new Set([
   'матрас', 'матраса', 'матрасе', 'нужен', 'нужна', 'хочу', 'ищу', 'модель', 'пеной', 'пена', 'слой', 'слоя', 'состав', 'есть', 'мне', 'для',
@@ -615,6 +616,10 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const query = smartQueryText.toLowerCase().replace(/ё/g, 'е')
     const wantsTopper = /на\s+диван|тонк[^.;,]{0,12}матрас|выровн[^.;,]{0,20}стык|топп?ер/.test(query)
     if (wantsTopper && meta.type !== 'topper' && meta.collection !== 'topper') return false
+    if (/беспружин/.test(query) && meta.type !== 'nospring') return false
+
+    const explicitWidth = query.match(/ширин[^.;,]{0,12}(140|160|180)\s*см/)
+    if (explicitWidth && ![...meta.sizes].some((size) => size.startsWith(`${explicitWidth[1]}x`))) return false
 
     const requiredLoad = getSmartRequiredLoad(query)
     if (requiredLoad && meta.load < requiredLoad) return false
@@ -915,7 +920,6 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         if (useSmartRanking) return matchesSmartHardConstraints(entry.meta)
         return matchesCatalogCardMeta(entry.meta, state, favSet, priceBounds)
       })
-      matchedResultsCount = matchedEntries.length
       matchedEntries.sort((a, b) => {
         if (useSmartRanking && smartPreferenceState) {
           const scoreDifference = scoreSmartMatch(b.meta, smartPreferenceState) - scoreSmartMatch(a.meta, smartPreferenceState)
@@ -923,6 +927,8 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         }
         return compareCatalogCardMeta(a.meta, b.meta, state.sort)
       })
+      if (useSmartRanking) matchedEntries = matchedEntries.slice(0, SMART_RESULTS_LIMIT)
+      matchedResultsCount = matchedEntries.length
 
       const useSections = !isSharedFavouritesView && !isSharedProductView && !useSmartRanking
       destroyCatalogProductGalleries(cardsRootEl)

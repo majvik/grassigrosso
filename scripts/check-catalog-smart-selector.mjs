@@ -360,6 +360,25 @@ try {
     })
     return topThreeAreSuitable && cards.some((card) => card.dataset.recommended === 'true')
   })()`)
+
+  const childFreeText = 'я ребенок; мне 10 лет; нравятся матрасы помягче'
+  const childFreeFilters = applyDomainGuardrails({}, childFreeText)
+  await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters: childFreeFilters, queryText: childFreeText })} }))`)
+  await waitFor(evaluate, 'free child profile returns a focused shortlist', `(() => {
+    const count = Number(document.querySelector('.catalogue-new-results strong')?.textContent)
+    return count > 0 && count <= 10 && [...document.querySelectorAll('.catalogue-new-card')].every((card) => ['low', 'mid'].includes(card.dataset.heightRange))
+  })()`)
+
+  const childQuizText = 'матрас для ребёнка или подростка; ширина 140 см; беспружинный матрас из orthoFoam или forplit; умеренно-мягкая без проваливания'
+  const childQuizFilters = applyDomainGuardrails({}, childQuizText)
+  await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters: childQuizFilters, queryText: childQuizText })} }))`)
+  await waitFor(evaluate, 'explicit child construction and width stay mandatory', `(() => {
+    const count = Number(document.querySelector('.catalogue-new-results strong')?.textContent)
+    return count > 0 && count <= 10 && [...document.querySelectorAll('.catalogue-new-card')].every((card) => {
+      const sizes = String(card.dataset.sizes || '').split(',')
+      return card.dataset.type === 'nospring' && sizes.some((size) => size.startsWith('140x'))
+    })
+  })()`)
 } catch (error) {
   failures.push(error.message)
 } finally {
