@@ -36,7 +36,9 @@ try {
     const description = document.querySelector('[data-smart-selector-dialog] [class*="description"]')
     if (!description) return false
     const styles = getComputedStyle(description)
-    return styles.color === 'rgb(40, 62, 55)' && parseFloat(styles.fontSize) >= 16
+    return description.textContent.trim() === 'Действуйте как вам комфортно, пишите своими словами и/или выбирайте быстрые ответы.'
+      && styles.color === 'rgb(40, 62, 55)'
+      && parseFloat(styles.fontSize) >= 16
   })()`)
   await waitFor(evaluate, 'AI disclaimer links to the manager form', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')

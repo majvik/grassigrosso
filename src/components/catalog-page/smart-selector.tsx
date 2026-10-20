@@ -275,7 +275,7 @@ export function SmartSelector() {
           <p className={styles.eyebrow}>Умный подбор</p>
           <Dialog.Title className={styles.title}>Расскажите, какой матрас вам нужен</Dialog.Title>
           <Dialog.Description className={styles.description}>
-            Пишите своими словами или выберите быстрые ответы ниже.
+            Действуйте как вам комфортно, пишите своими словами и/или выбирайте быстрые ответы.
           </Dialog.Description>
 
           <div className={`${styles.tagField} ${inputMultiline ? styles.tagFieldMultiline : ''}`} data-smart-selector-tags>
