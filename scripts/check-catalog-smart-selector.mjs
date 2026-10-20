@@ -60,6 +60,13 @@ try {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
     return Boolean(dialog?.textContent.includes('Шаг 2 из 5') && dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes('Один'))
   })()`)
+  await evaluate(`document.querySelector('[data-smart-selector-dialog] button') && [...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Назад')?.click()`)
+  await waitFor(evaluate, 'back removes the answer tag from the step being undone', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    return Boolean(dialog?.textContent.includes('Шаг 1 из 5') && !dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes('Один'))
+  })()`)
+  await evaluate(`document.querySelector('[data-smart-selector-option]')?.click()`)
+  await waitFor(evaluate, 'quiz can answer the cleared step again', `document.querySelector('[data-smart-selector-dialog]')?.textContent.includes('Шаг 2 из 5')`)
 
   for (let targetStep = 3; targetStep <= 5; targetStep += 1) {
     await evaluate(`(() => {
@@ -71,7 +78,7 @@ try {
   await evaluate(`window.__smartSelectorHints.push(document.querySelector('[data-smart-selector-how-to-choose]')?.textContent.trim())`)
   await waitFor(evaluate, 'all five how-to-choose hints are distinct and visible', `(() => {
     const hints = window.__smartSelectorHints.filter(Boolean)
-    return hints.length === 5 && new Set(hints).size === 5 && hints.every((hint) => hint.includes('Как выбрать:'))
+    return hints.length === 5 && new Set(hints).size === 5 && hints.every((hint) => hint.includes('Как выбрать:') && !hint.includes('💡'))
   })()`)
   await evaluate(`document.querySelector('[data-smart-selector-option]')?.click()`)
   await waitFor(evaluate, 'completed quiz profile is recognized', `document.querySelector('[data-smart-selector-profile-status]')?.textContent.includes('Профиль заполнен')`)

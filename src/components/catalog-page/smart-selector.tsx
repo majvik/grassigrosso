@@ -100,6 +100,20 @@ export function SmartSelector() {
     setError('')
   }
 
+  const goBack = () => {
+    if (step === 0) return
+    setTags((current) => {
+      const currentQuestionId = QUESTIONS[step]?.id
+      const previousQuestionId = QUESTIONS[step - 1]?.id
+      const answerIdToRemove = current.some((tag) => tag.id === currentQuestionId)
+        ? currentQuestionId
+        : previousQuestionId
+      return current.filter((tag) => tag.id !== answerIdToRemove)
+    })
+    setStep((current) => Math.max(0, current - 1))
+    setError('')
+  }
+
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.key === ',') {
       event.preventDefault()
@@ -198,7 +212,7 @@ export function SmartSelector() {
           <div data-smart-selector-question>
             <h3 className={styles.question}>{question.title}</h3>
             <p className={styles.howToChooseHint} data-smart-selector-how-to-choose>
-              <span aria-hidden="true">💡</span> <strong>Как выбрать:</strong> {question.hint}
+              <strong>Как выбрать:</strong> {question.hint}
             </p>
             <div className={styles.options}>
               {question.options.map((option) => (
@@ -208,7 +222,7 @@ export function SmartSelector() {
           </div>
 
           <div className={styles.footer}>
-            <button type="button" className={styles.back} onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0}>Назад</button>
+            <button type="button" className={styles.back} onClick={goBack} disabled={step === 0}>Назад</button>
             <span>Ответ можно изменить</span>
           </div>
           <div className={styles.submitArea}>
