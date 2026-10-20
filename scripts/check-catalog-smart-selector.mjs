@@ -76,9 +76,17 @@ try {
     if (!input) return false
     Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set.call(input, 'сплю на боку')
     input.dispatchEvent(new Event('input', { bubbles: true }))
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
     return true
   })()`)
+  await waitFor(evaluate, 'single-line composer is vertically centered with chips', `(() => {
+    const input = document.querySelector('[data-smart-selector-input]')
+    const clear = document.querySelector('[data-smart-selector-clear-all]')
+    if (!input || !clear || input.clientHeight > 32) return false
+    const inputRect = input.getBoundingClientRect()
+    const clearRect = clear.getBoundingClientRect()
+    return Math.abs((inputRect.top + inputRect.height / 2) - (clearRect.top + clearRect.height / 2)) <= 2
+  })()`)
+  await evaluate(`document.querySelector('[data-smart-selector-input]')?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))`)
   await waitFor(evaluate, 'free text becomes a tag and enables submit', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
     const submit = dialog?.querySelector('[data-smart-selector-quick-submit]')
