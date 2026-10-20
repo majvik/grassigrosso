@@ -19,6 +19,8 @@ export function SmartSelector() {
   const [answers, setAnswers] = useState<QuizAnswers>({})
   const [quizComplete, setQuizComplete] = useState(false)
   const [tags, setTags] = useState<Tag[]>([])
+  const [editingTagId, setEditingTagId] = useState<string | null>(null)
+  const [editingTagLabel, setEditingTagLabel] = useState('')
   const [input, setInput] = useState('')
   const [inputFocused, setInputFocused] = useState(false)
   const [inputMultiline, setInputMultiline] = useState(false)
@@ -26,6 +28,7 @@ export function SmartSelector() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const tagEditRef = useRef<HTMLInputElement>(null)
   const question = getStepNode(currentStepId, answers)
   const totalSteps = getBranchTotal(answers)
   const stepNumber = Math.min(totalSteps, stepHistory.length + 1)
@@ -80,6 +83,12 @@ export function SmartSelector() {
     setInputMultiline(contentHeight > 34)
   }, [animatedPlaceholder, input, tags.length])
 
+  useEffect(() => {
+    if (!editingTagId) return
+    tagEditRef.current?.focus()
+    tagEditRef.current?.select()
+  }, [editingTagId])
+
   const addFreeTag = () => {
     const label = input.trim().replace(/,+$/, '').trim()
     if (!label) return
@@ -127,6 +136,8 @@ export function SmartSelector() {
 
   const clearProfile = () => {
     setTags([])
+    setEditingTagId(null)
+    setEditingTagLabel('')
     setInput('')
     setCurrentStepId('step_target')
     setStepHistory([])
@@ -136,6 +147,10 @@ export function SmartSelector() {
   }
 
   const removeTag = (tag: Tag) => {
+    if (editingTagId === tag.id) {
+      setEditingTagId(null)
+      setEditingTagLabel('')
+    }
     if (tag.id.startsWith('free-')) {
       setTags((current) => current.filter((item) => item.id !== tag.id))
       return
@@ -154,6 +169,29 @@ export function SmartSelector() {
     setStepHistory(path.slice(0, targetIndex))
     setQuizComplete(false)
     setError('')
+  }
+
+  const startEditingTag = (tag: Tag) => {
+    setEditingTagId(tag.id)
+    setEditingTagLabel(tag.label)
+  }
+
+  const saveEditedTag = () => {
+    if (!editingTagId) return
+    const label = editingTagLabel.trim().replace(/,+$/, '').trim()
+    if (label) {
+      setTags((current) => current.map((tag) => (
+        tag.id === editingTagId ? { ...tag, label, query: label } : tag
+      )))
+    }
+    setEditingTagId(null)
+    setEditingTagLabel('')
+    setError('')
+  }
+
+  const cancelEditingTag = () => {
+    setEditingTagId(null)
+    setEditingTagLabel('')
   }
 
   const contactManager = () => {
@@ -228,9 +266,42 @@ export function SmartSelector() {
 
           <div className={`${styles.tagField} ${inputMultiline ? styles.tagFieldMultiline : ''}`} data-smart-selector-tags>
             {tags.map((tag) => (
-              <button key={tag.id} type="button" className={styles.tag} onClick={() => removeTag(tag)} aria-label={`Удалить: ${tag.label}`}>
-                {tag.label}<span aria-hidden="true">×</span>
-              </button>
+              <span key={tag.id} className={styles.tag} data-smart-selector-tag>
+                {editingTagId === tag.id ? (
+                  <input
+                    ref={tagEditRef}
+                    className={styles.tagEdit}
+                    value={editingTagLabel}
+                    size={Math.max(3, Math.min(editingTagLabel.length, 36))}
+                    aria-label={`Редактировать: ${tag.label}`}
+                    data-smart-selector-tag-edit
+                    onChange={(event) => setEditingTagLabel(event.target.value)}
+                    onBlur={saveEditedTag}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        event.preventDefault()
+                        saveEditedTag()
+                      } else if (event.key === 'Escape') {
+                        event.preventDefault()
+                        cancelEditingTag()
+                      }
+                    }}
+                  />
+                ) : (
+                  <button type="button" className={styles.tagLabel} onClick={() => startEditingTag(tag)} aria-label={`Редактировать: ${tag.label}`}>
+                    {tag.label}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className={styles.tagRemove}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => removeTag(tag)}
+                  aria-label={`Удалить: ${tag.label}`}
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </span>
             ))}
             <span className={styles.inputShell}>
               <textarea

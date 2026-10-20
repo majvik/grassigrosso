@@ -14,9 +14,9 @@
 .clearAll { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: var(--color-form-error); padding: 0; color: var(--color-bg-white); cursor: pointer; font: inherit; }
 .clearAll:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 .clearIcon { position: relative; width: 14px; height: 14px; flex: 0 0 14px; overflow: hidden; color: inherit; font-size: 0; }
-.clearIcon::before, .clearIcon::after, .tag span::before, .tag span::after { content: ''; position: absolute; top: 50%; left: 50%; width: 10px; height: 1.5px; border-radius: 99px; background: currentColor; transform-origin: center; }
-.clearIcon::before, .tag span::before { transform: translate(-50%, -50%) rotate(45deg); }
-.clearIcon::after, .tag span::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.clearIcon::before, .clearIcon::after, .tagRemove span::before, .tagRemove span::after { content: ''; position: absolute; top: 50%; left: 50%; width: 10px; height: 1.5px; border-radius: 99px; background: currentColor; transform-origin: center; }
+.clearIcon::before, .tagRemove span::before { transform: translate(-50%, -50%) rotate(45deg); }
+.clearIcon::after, .tagRemove span::after { transform: translate(-50%, -50%) rotate(-45deg); }
 .quickSubmit { width: 100%; min-height: 58px; border: 0; border-radius: var(--radius-md); background: var(--color-primary); padding: 14px 24px; color: var(--color-bg-white); cursor: pointer; font: inherit; font-size: 17px; font-weight: 600; line-height: 1.15; }
 .quickSubmit:hover { background: var(--color-primary-hover); }
 .quickSubmit:disabled { cursor: not-allowed; opacity: .45; }
@@ -27,8 +27,11 @@
 .profileHint, .profileComplete { margin: 0 4px 10px; font-size: 12px; line-height: 1.35; }
 .profileHint { color: var(--color-text-muted-warm); }
 .profileComplete { color: var(--color-primary); }
-.tag { display: inline-flex; max-width: 100%; align-items: flex-start; justify-content: flex-start; gap: 7px; overflow-wrap: anywhere; border: 0; border-radius: 999px; background: var(--color-tag-bg); padding: 7px 11px; color: var(--color-primary); cursor: pointer; font: inherit; font-size: 13px; line-height: 1.4; text-align: left; }
-.tag span { position: relative; width: 12px; height: 12px; flex: 0 0 12px; margin-top: 3px; color: currentColor; font-size: 0; line-height: 0; }
+.tag { display: inline-flex; max-width: 100%; align-items: flex-start; justify-content: flex-start; gap: 7px; overflow-wrap: anywhere; border-radius: 999px; background: var(--color-tag-bg); padding: 7px 11px; color: var(--color-primary); font: inherit; font-size: 13px; line-height: 1.4; text-align: left; }
+.tagLabel { min-width: 0; overflow-wrap: anywhere; border: 0; background: transparent; padding: 0; color: inherit; cursor: text; font: inherit; line-height: inherit; text-align: left; }
+.tagEdit { box-sizing: content-box; min-width: 3ch; max-width: min(36ch, 55vw); border: 0; border-bottom: 1px solid currentColor; outline: 0; background: transparent; padding: 0; color: inherit; font: inherit; line-height: inherit; }
+.tagRemove { position: relative; width: 12px; height: 18px; flex: 0 0 12px; border: 0; background: transparent; padding: 0; color: currentColor; cursor: pointer; font-size: 0; line-height: 0; }
+.tagRemove span { position: absolute; inset: 3px 0; }
 .progressHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 26px 0 18px; color: var(--color-text-muted-warm); font-size: 14px; }
 .dots { display: flex; gap: 7px; }
 .dot, .dotActive { display: block; width: 30px; height: 4px; border-radius: 99px; background: var(--color-border); }

@@ -80,12 +80,26 @@ try {
   })()`)
   await evaluate(`document.querySelector('[data-smart-selector-input]')?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))`)
   await waitFor(evaluate, 'multiline tag uses left alignment and keeps its close icon at the first line', `(() => {
-    const tag = [...document.querySelectorAll('[data-smart-selector-tags] button[aria-label^="Удалить:"]')].find((item) => item.textContent.includes('Нужен удобный матрас'))
-    const close = tag?.querySelector('span')
+    const tag = [...document.querySelectorAll('[data-smart-selector-tag]')].find((item) => item.textContent.includes('Нужен удобный матрас'))
+    const close = tag?.querySelector('button[aria-label^="Удалить:"]')
     if (!tag || !close || getComputedStyle(tag).textAlign !== 'left' || tag.getBoundingClientRect().height < 40) return false
     return close.getBoundingClientRect().top - tag.getBoundingClientRect().top < 14
   })()`)
-  await evaluate(`[...document.querySelectorAll('[data-smart-selector-tags] button[aria-label^="Удалить:"]')].find((item) => item.textContent.includes('Нужен удобный матрас'))?.click()`)
+  await evaluate(`[...document.querySelectorAll('[data-smart-selector-tag]')].find((item) => item.textContent.includes('Нужен удобный матрас'))?.querySelector('button[aria-label^="Редактировать:"]')?.click()`)
+  await waitFor(evaluate, 'tag becomes an editable field on click', `Boolean(document.querySelector('[data-smart-selector-tag-edit]'))`)
+  await evaluate(`(() => {
+    const input = document.querySelector('[data-smart-selector-tag-edit]')
+    if (!input) return false
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'Нужен высокий матрас')
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    return true
+  })()`)
+  await waitFor(evaluate, 'edited tag is saved by Enter', `(() => {
+    const tag = [...document.querySelectorAll('[data-smart-selector-tag]')].find((item) => item.textContent.includes('Нужен высокий матрас'))
+    return Boolean(tag && !tag.querySelector('[data-smart-selector-tag-edit]'))
+  })()`)
+  await evaluate(`[...document.querySelectorAll('[data-smart-selector-tag]')].find((item) => item.textContent.includes('Нужен высокий матрас'))?.querySelector('button[aria-label^="Удалить:"]')?.click()`)
   await evaluate(`(() => {
     const input = document.querySelector('[data-smart-selector-input]')
     if (!input) return false
