@@ -372,6 +372,21 @@ try {
         return Math.min(...sides) <= 5 && !hasNakedCoir && fillings.some((value) => ['memoryEffect', 'latex', 'nanoFoam', 'orthoFoam'].includes(value))
       }))()`,
     },
+    {
+      label: 'heavy couple gets safe results when no load-safe dual model exists',
+      queryText: 'двое взрослых; вес крупного партнера 135 кг, нагрузка от 160 кг; пара схожей комплекции, ширина 160 или 180 см, независимые пружины; спим в разных позах, Memory Foam или латекс поверх независимых пружин; не знаю жесткость, нужны две стороны разной жесткости 5 и 7',
+      quizAnswers: {
+        step_target: 'couple',
+        couple_weight: 'over120',
+        couple_discrepancy: 'similar',
+        couple_comfort: 'mixed',
+        final_firmness: 'dual',
+      },
+      expression: `(() => {
+        const cards = [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')]
+        return cards.length > 0 && cards.every((card) => Number(card.dataset.load) >= 160)
+      })()`,
+    },
   ]
   for (const scenario of quizScenarios) {
     const filters = applyDomainGuardrails({}, scenario.queryText)

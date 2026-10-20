@@ -614,6 +614,26 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     return score
   }
 
+  function queryRequestsDualFirmness(query: string): boolean {
+    return smartQuizAnswers.final_firmness === 'dual'
+      || /две\s+(?:разн(?:ые|ой)\s+)?сторон|две\s+сторон[^.;,]{0,24}разн[^.;,]{0,12}жестк|разн[^.;,]{0,16}жестк[^.;,]{0,16}сторон/.test(query)
+  }
+
+  function hasSafeDualFirmnessCandidate(query: string): boolean {
+    const requiredLoad = getSmartRequiredLoad(query)
+    const wantsTopper = /на\s+диван|тонк[^.;,]{0,12}матрас|выровн[^.;,]{0,20}стык|топп?ер/.test(query)
+    const wantsNoSpring = /беспружин/.test(query)
+    const explicitWidth = query.match(/ширин[^.;,]{0,12}(140|160|180)\s*см/)
+    return getFilterMeta().some((meta) => {
+      if (requiredLoad && meta.load < requiredLoad) return false
+      if (wantsTopper && meta.type !== 'topper' && meta.collection !== 'topper') return false
+      if (wantsNoSpring && meta.type !== 'nospring') return false
+      if (explicitWidth && ![...meta.sizes].some((size) => size.startsWith(`${explicitWidth[1]}x`))) return false
+      const sides = [meta.firmnessSide1, meta.firmnessSide2].filter((value): value is number => Number.isInteger(value))
+      return sides.length === 2 && sides[0] !== sides[1]
+    })
+  }
+
   function getProtectedSmartFilterGroups(): Set<CatalogSmartFilterGroup> {
     const query = smartQueryText.toLowerCase().replace(/ё/g, 'е')
     const protectedGroups = new Set<CatalogSmartFilterGroup>()
@@ -621,7 +641,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       protectedGroups.add('type')
       protectedGroups.add('collection')
     }
-    if (smartQuizAnswers.final_firmness === 'dual' || /две\s+(?:разн(?:ые|ой)\s+)?сторон|две\s+сторон[^.;,]{0,24}разн[^.;,]{0,12}жестк|разн[^.;,]{0,16}жестк[^.;,]{0,16}сторон/.test(query)) {
+    if (queryRequestsDualFirmness(query) && hasSafeDualFirmnessCandidate(query)) {
       protectedGroups.add('firmness')
       protectedGroups.add('features')
     }
@@ -640,9 +660,8 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const requiredLoad = getSmartRequiredLoad(query)
     if (requiredLoad && meta.load < requiredLoad) return false
 
-    const wantsDual = smartQuizAnswers.final_firmness === 'dual'
-      || /две\s+(?:разн(?:ые|ой)\s+)?сторон|две\s+сторон[^.;,]{0,24}разн[^.;,]{0,12}жестк|разн[^.;,]{0,16}жестк[^.;,]{0,16}сторон/.test(query)
-    if (wantsDual) {
+    const wantsDual = queryRequestsDualFirmness(query)
+    if (wantsDual && hasSafeDualFirmnessCandidate(query)) {
       const sides = [meta.firmnessSide1, meta.firmnessSide2].filter((value): value is number => Number.isInteger(value))
       if (sides.length !== 2 || sides[0] === sides[1]) return false
     }
