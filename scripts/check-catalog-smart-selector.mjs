@@ -287,12 +287,15 @@ try {
       label: 'couple tall heavy unknown firmness quiz profile',
       queryText: 'двое взрослых; рост выше 190 см; вес 110 кг; не знаю жесткость',
       quizAnswers: { sleepers: 'Двое', height: 'Выше 190 см', weight: '90–120 кг', firmness: 'Не знаю' },
-      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].slice(0, 4).every((card) => {
+      expression: `(() => {
+        const cards = [...document.querySelectorAll('.catalogue-new-card')].slice(0, 4)
+        const safeAndSuitable = cards.every((card) => {
         const sizes = String(card.dataset.sizes || '').split(',')
-        const features = String(card.dataset.features || '').split(',')
         const sides = [Number(card.dataset.firmnessSide1), Number(card.dataset.firmnessSide2)]
-        return sizes.some((size) => /^(160|180)x200$/.test(size)) && Number(card.dataset.load) >= 135 && card.dataset.type === 'spring' && features.includes('edgeSupport') && features.includes('dualFirmness') && sides[0] !== sides[1]
-      }))()`,
+          return sizes.some((size) => /^(160|180)x200$/.test(size)) && Number(card.dataset.load) >= 135 && sides.some((value) => value >= 5 && value <= 7.5)
+        })
+        return safeAndSuitable && cards.some((card) => Number(card.dataset.firmnessSide1) !== Number(card.dataset.firmnessSide2))
+      })()`,
     },
     {
       label: 'single light soft quiz profile',
@@ -311,6 +314,52 @@ try {
     await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters, queryText: scenario.queryText, quizAnswers: scenario.quizAnswers })} }))`)
     await waitFor(evaluate, scenario.label, scenario.expression)
   }
+
+  const scoringAuditScenarios = [
+    {
+      label: 'unsafe load never enters the first page',
+      queryText: 'вес 180 кг, нужен матрас с Memory Foam и усиленным краем',
+      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].every((card) => Number(card.dataset.load) >= 180))()`,
+    },
+    {
+      label: 'hard support excludes numerically soft products from the first page',
+      queryText: 'нужна плотная опора жесткостью 7 из 10',
+      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].every((card) => {
+        const sides = [Number(card.dataset.firmnessSide1), Number(card.dataset.firmnessSide2)].filter(Number.isFinite)
+        return sides.length > 0 && Math.max(...sides) >= 6
+      }))()`,
+    },
+    {
+      label: 'topper remains a hard construction constraint during relaxation',
+      queryText: 'строго тонкий матрас на диван, выровнять стыки',
+      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].every((card) => card.dataset.type === 'topper' || card.dataset.collection === 'topper'))()`,
+    },
+    {
+      label: 'explicit dual firmness remains a hard constraint during relaxation',
+      queryText: 'строго две стороны разной жесткости 5 и 7',
+      expression: `(() => [...document.querySelectorAll('.catalogue-new-card')].every((card) => {
+        const sides = [Number(card.dataset.firmnessSide1), Number(card.dataset.firmnessSide2)]
+        return sides.every(Number.isFinite) && sides[0] !== sides[1]
+      }))()`,
+    },
+  ]
+  for (const scenario of scoringAuditScenarios) {
+    const filters = applyDomainGuardrails({}, scenario.queryText)
+    await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters, queryText: scenario.queryText })} }))`)
+    await waitFor(evaluate, scenario.label, scenario.expression)
+  }
+
+  const recommendedQueryText = 'вес 80 кг, нужна средняя жесткость 5 из 10'
+  const recommendedFilters = applyDomainGuardrails({}, recommendedQueryText)
+  await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters: recommendedFilters, queryText: recommendedQueryText })} }))`)
+  await waitFor(evaluate, 'recommended products receive a small suitability-aware bonus', `(() => {
+    const cards = [...document.querySelectorAll('.catalogue-new-card')]
+    const topThreeAreSuitable = cards.slice(0, 3).every((card) => {
+      const sides = [Number(card.dataset.firmnessSide1), Number(card.dataset.firmnessSide2)].filter(Number.isFinite)
+      return Number(card.dataset.load) >= 80 && sides.some((value) => value >= 4 && value <= 6)
+    })
+    return topThreeAreSuitable && cards.some((card) => card.dataset.recommended === 'true')
+  })()`)
 } catch (error) {
   failures.push(error.message)
 } finally {

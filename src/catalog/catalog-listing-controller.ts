@@ -137,6 +137,11 @@ const SMART_FILTER_RELAXATION_ORDER: CatalogSmartFilterGroup[] = [
   'size',
 ]
 
+const SMART_UNSAFE_LOAD_PENALTY = 1200
+const SMART_EXPLICIT_SIZE_MISS_PENALTY = 700
+const SMART_FIRMNESS_DISTANCE_PENALTY = 70
+const SMART_RECOMMENDED_BONUS = 12
+
 const DIRECT_SEARCH_STOP_WORDS = new Set([
   'матрас', 'матраса', 'матрасе', 'нужен', 'нужна', 'хочу', 'ищу', 'модель', 'пеной', 'пена', 'слой', 'слоя', 'состав', 'есть', 'мне', 'для',
 ])
@@ -465,6 +470,17 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     return count
   }
 
+  function getSmartRequiredLoad(query: string): number {
+    const requestedWeights = [...query.matchAll(/(\d{2,3})\s*кг/g)]
+      .map((match) => Number(match[1]))
+      .filter((value) => value >= 30 && value <= 250)
+    const adaptiveWeight = smartQuizAnswers.single_weight || smartQuizAnswers.couple_weight || smartQuizAnswers.parent_child_weight || ''
+    const quizRequiredLoad = smartQuizAnswers.weight === '90–120 кг' || ['90to120', '95to120'].includes(adaptiveWeight)
+      ? 135
+      : smartQuizAnswers.weight === 'Больше 120 кг' || ['over120', 'heavyOrTall'].includes(adaptiveWeight) ? 160 : 0
+    return Math.max(quizRequiredLoad, ...requestedWeights, 0)
+  }
+
   function scoreSmartMatch(meta: CatalogCardMeta<HTMLElement>, preferences: CatalogFilterState): number {
     let score = scoreDirectProductMatch(meta, smartQueryText)
     const query = smartQueryText.toLowerCase().replace(/ё/g, 'е')
@@ -473,8 +489,11 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     score += wantsTopper ? (isTopper ? 200 : -200) : (isTopper ? -200 : 200)
 
     if (preferences.size.size) {
-      score += [...preferences.size].some((value) => meta.sizes.has(value)) ? 100 : 0
-      if (/рост\s*(?:выше|более|от)?\s*19\d|высок/.test(query) && ![...meta.sizes].some((value) => value.endsWith('x200'))) score -= 60
+      const sizeMatches = [...preferences.size].some((value) => meta.sizes.has(value))
+      score += sizeMatches ? 100 : 0
+      const explicitSizes = [...query.matchAll(/\b(\d{2,3})\s*[xх×]\s*(190|200)\b/g)].map((match) => `${match[1]}x${match[2]}`)
+      if (explicitSizes.length && !explicitSizes.some((value) => meta.sizes.has(value))) score -= SMART_EXPLICIT_SIZE_MISS_PENALTY
+      if (/рост\s*(?:выше|более|от)?\s*19\d|высок/.test(query) && ![...meta.sizes].some((value) => value.endsWith('x200'))) score -= 300
     }
     const hasLength200 = [...meta.sizes].some((value) => value.endsWith('x200'))
     if (smartQuizAnswers.height === '170–190 см' && hasLength200) score += 40
@@ -487,12 +506,9 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     if (needsLength200) score += hasLength200 ? 100 : -80
 
     const requestedWeights = [...query.matchAll(/(\d{2,3})\s*кг/g)].map((match) => Number(match[1])).filter((value) => value >= 30 && value <= 250)
-    const quizRequiredLoad = smartQuizAnswers.weight === '90–120 кг'
-      ? 135
-      : smartQuizAnswers.weight === 'Больше 120 кг' ? 160 : 0
-    if (requestedWeights.length || quizRequiredLoad) {
-      const requiredLoad = Math.max(quizRequiredLoad, ...requestedWeights, 0)
-      score += meta.load >= requiredLoad ? 85 : -100
+    const requiredLoad = getSmartRequiredLoad(query)
+    if (requiredLoad) {
+      score += meta.load >= requiredLoad ? 100 : -SMART_UNSAFE_LOAD_PENALTY
     } else if (preferences.loadRange.size) {
       score += preferences.loadRange.has(meta.loadRange) ? 85 : 0
     }
@@ -519,7 +535,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         const distance = smartQuizAnswers.firmness === 'Не знаю' || finalFirmness === 'dual'
           ? sideDistances.reduce((sum, value) => sum + value, 0) / sideDistances.length
           : Math.min(...sideDistances)
-        score += Math.max(0, 80 - distance * 16)
+        score += 100 - distance * distance * SMART_FIRMNESS_DISTANCE_PENALTY
         if ((smartQuizAnswers.firmness === 'Не знаю' || finalFirmness === 'dual') && sides.length === 2 && sides[0] !== sides[1]) score += 50
       } else if (sides.length && preferences.firmness.has('dualFirmness') && sides.length === 2) {
         const low = Math.min(...sides)
@@ -531,7 +547,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         const distance = targets.length
           ? Math.min(...sides.flatMap((side) => targets.map((target) => Math.abs(side - target))))
           : Number.POSITIVE_INFINITY
-        score += Number.isFinite(distance) ? Math.max(0, 80 - distance * 12) : 0
+        score += Number.isFinite(distance) ? 100 - distance * distance * SMART_FIRMNESS_DISTANCE_PENALTY : 0
       } else if (preferences.firmness.has(meta.firmness)) {
         score += preferredFirmness.indexOf(meta.firmness) === 0 ? 80 : 65
       } else if (preferences.firmness.has('soft') && meta.firmness === 'medium') {
@@ -577,12 +593,45 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       if (scores.length && Math.max(...scores) < 5) score -= 60
     }
     if ((smartQuizAnswers.weight === 'До 60 кг' || smartQuizAnswers.single_weight === 'under65') && meta.fillings.has('coir') && !hasComfortLayer) score -= 50
+    if (meta.recommended) score += SMART_RECOMMENDED_BONUS
     return score
+  }
+
+  function getProtectedSmartFilterGroups(): Set<CatalogSmartFilterGroup> {
+    const query = smartQueryText.toLowerCase().replace(/ё/g, 'е')
+    const protectedGroups = new Set<CatalogSmartFilterGroup>()
+    if (/на\s+диван|тонк[^.;,]{0,12}матрас|выровн[^.;,]{0,20}стык|топп?ер/.test(query)) {
+      protectedGroups.add('type')
+      protectedGroups.add('collection')
+    }
+    if (smartQuizAnswers.final_firmness === 'dual' || /две\s+(?:разн(?:ые|ой)\s+)?сторон|две\s+сторон[^.;,]{0,24}разн[^.;,]{0,12}жестк|разн[^.;,]{0,16}жестк[^.;,]{0,16}сторон/.test(query)) {
+      protectedGroups.add('firmness')
+      protectedGroups.add('features')
+    }
+    return protectedGroups
+  }
+
+  function matchesSmartHardConstraints(meta: CatalogCardMeta<HTMLElement>): boolean {
+    const query = smartQueryText.toLowerCase().replace(/ё/g, 'е')
+    const wantsTopper = /на\s+диван|тонк[^.;,]{0,12}матрас|выровн[^.;,]{0,20}стык|топп?ер/.test(query)
+    if (wantsTopper && meta.type !== 'topper' && meta.collection !== 'topper') return false
+
+    const requiredLoad = getSmartRequiredLoad(query)
+    if (requiredLoad && meta.load < requiredLoad) return false
+
+    const wantsDual = smartQuizAnswers.final_firmness === 'dual'
+      || /две\s+(?:разн(?:ые|ой)\s+)?сторон|две\s+сторон[^.;,]{0,24}разн[^.;,]{0,12}жестк|разн[^.;,]{0,16}жестк[^.;,]{0,16}сторон/.test(query)
+    if (wantsDual) {
+      const sides = [meta.firmnessSide1, meta.firmnessSide2].filter((value): value is number => Number.isInteger(value))
+      if (sides.length !== 2 || sides[0] === sides[1]) return false
+    }
+    return true
   }
 
   function resolveNearestSmartFilterState(): void {
     const favSet = readCatalogFavourites()
     const meta = getFilterMeta()
+    const protectedGroups = getProtectedSmartFilterGroups()
 
     // `soft` is a valid user preference, but the current CMS catalogue has no
     // literal soft products. Medium is the closest ordered firmness value.
@@ -597,7 +646,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     }
 
     while (countMatchesWithState(state, favSet) === 0) {
-      const activeGroups = SMART_FILTER_RELAXATION_ORDER.filter((group) => state[group].size > 0)
+      const activeGroups = SMART_FILTER_RELAXATION_ORDER.filter((group) => state[group].size > 0 && !protectedGroups.has(group))
       if (activeGroups.length === 0) break
 
       let selectedGroup: CatalogSmartFilterGroup | null = null
@@ -863,7 +912,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         if (isSharedFavouritesView) {
           return Boolean(entry.meta.slug && sharedSlugs.has(entry.meta.slug))
         }
-        if (useSmartRanking) return true
+        if (useSmartRanking) return matchesSmartHardConstraints(entry.meta)
         return matchesCatalogCardMeta(entry.meta, state, favSet, priceBounds)
       })
       matchedResultsCount = matchedEntries.length
