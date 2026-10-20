@@ -175,7 +175,7 @@ export function SmartSelector() {
 
   const startEditingTag = (tag: Tag) => {
     setEditingTagId(tag.id)
-    setEditingTagLabel(tag.label)
+    setEditingTagLabel(`${tag.label} `)
   }
 
   const saveEditedTag = () => {
@@ -194,6 +194,18 @@ export function SmartSelector() {
   const cancelEditingTag = () => {
     setEditingTagId(null)
     setEditingTagLabel('')
+  }
+
+  const handleOpenChange = (
+    nextOpen: boolean,
+    details: { reason: string; cancel: () => void },
+  ) => {
+    if (!nextOpen && details.reason === 'escape-key' && editingTagId) {
+      details.cancel()
+      cancelEditingTag()
+      return
+    }
+    setOpen(nextOpen)
   }
 
   const contactManager = () => {
@@ -251,7 +263,7 @@ export function SmartSelector() {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Trigger type="button" className={`catalog-link catalog-hero-download-link ${styles.trigger}`} data-smart-selector-trigger>
         <span>Умный подбор</span>
         <img src="/arrow-hero-catalog.svg" alt="" className="catalog-arrow" />
@@ -285,6 +297,7 @@ export function SmartSelector() {
                         saveEditedTag()
                       } else if (event.key === 'Escape') {
                         event.preventDefault()
+                        event.stopPropagation()
                         cancelEditingTag()
                       }
                     }}

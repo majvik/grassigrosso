@@ -246,6 +246,8 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   const catalogueNewLayout = queryElement<HTMLElement>(documentRef, '.catalogue-new-layout')
   const catalogueHero = queryElement<HTMLElement>(documentRef, '.catalog-hero')
   const catalogueNewResultsValue = queryElement<HTMLElement>(documentRef, '.catalogue-new-results strong')
+  const catalogueNewResultsDefault = queryElement<HTMLElement>(documentRef, '[data-catalog-results-default]')
+  const catalogueNewResultsSmart = queryElement<HTMLElement>(documentRef, '[data-catalog-results-smart]')
   const catalogueNewSort = queryElement<HTMLElement>(documentRef, '.catalogue-new-sort')
   const catalogueNewSortTrigger = queryElement<HTMLButtonElement>(documentRef, '.catalogue-new-sort-trigger')
   const catalogueNewSortOptions = queryElements<HTMLButtonElement>(documentRef, '.catalogue-new-sort-option')
@@ -434,8 +436,22 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   }
 
   function updateResultsCount() {
-    if (!catalogueNewResultsValue) return
-    catalogueNewResultsValue.textContent = String(matchedResultsCount)
+    const hasSmartSelection = Boolean(smartPreferenceState && !isSharedFavouritesView && !isSharedProductView)
+    if (catalogueNewResultsDefault) catalogueNewResultsDefault.hidden = hasSmartSelection
+    if (catalogueNewResultsSmart) catalogueNewResultsSmart.hidden = !hasSmartSelection
+    if (!hasSmartSelection && catalogueNewResultsValue) {
+      catalogueNewResultsValue.textContent = String(matchedResultsCount)
+    }
+
+    const defaultSortOption = catalogueNewSortOptions.find((option) => option.dataset.value === 'default')
+    if (defaultSortOption) {
+      defaultSortOption.textContent = hasSmartSelection
+        ? 'Сортировка по соответствию'
+        : 'Сортировка по умолчанию'
+    }
+    if (state.sort === 'default') {
+      setCatalogActiveSortOption(sortMenuElements, 'default')
+    }
   }
 
   function cloneFilterState(source: CatalogFilterState): CatalogFilterState {

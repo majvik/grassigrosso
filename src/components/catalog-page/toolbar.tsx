@@ -5,7 +5,10 @@ export function CatalogToolbar() {
   return (
     <div className="catalogue-new-toolbar">
       <span className="catalogue-new-results">
-        Найдено: <strong>6</strong> моделей
+        <span data-catalog-results-default>
+          Найдено: <strong>6</strong> моделей
+        </span>
+        <span data-catalog-results-smart hidden>Результаты подборки</span>
       </span>
       <button type="button" className="catalogue-new-mobile-filters-open" id="catalogue-new-mobile-filters-open">
         Фильтры
@@ -17,6 +20,7 @@ export function CatalogToolbar() {
               {option.label}
             </span>
           ))}
+          <span className="catalogue-new-sort-sizer-line">Сортировка по соответствию</span>
         </span>
         <button type="button" className="catalogue-new-sort-trigger" aria-haspopup="listbox" aria-expanded="false">
           {CATALOG_SORT_OPTIONS[0].label}

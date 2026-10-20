@@ -97,10 +97,19 @@ try {
     return Boolean(
       input
       && document.activeElement === input
+      && input.value.endsWith(' ')
       && input.selectionStart === input.value.length
       && input.selectionEnd === input.value.length
     )
   })()`)
+  await evaluate(`document.querySelector('[data-smart-selector-tag-edit]')?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`)
+  await waitFor(evaluate, 'Escape cancels tag editing without closing the selector', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const tag = [...document.querySelectorAll('[data-smart-selector-tag]')].find((item) => item.textContent.includes('Нужен удобный матрас'))
+    return Boolean(dialog && tag && !tag.querySelector('[data-smart-selector-tag-edit]'))
+  })()`)
+  await evaluate(`[...document.querySelectorAll('[data-smart-selector-tag]')].find((item) => item.textContent.includes('Нужен удобный матрас'))?.querySelector('button[aria-label^="Редактировать:"]')?.click()`)
+  await waitFor(evaluate, 'tag can be reopened after cancelling an edit', `Boolean(document.querySelector('[data-smart-selector-tag-edit]'))`)
   await evaluate(`(() => {
     const input = document.querySelector('[data-smart-selector-tag-edit]')
     if (!input) return false
@@ -400,12 +409,10 @@ try {
   const childFreeFilters = applyDomainGuardrails({}, childFreeText)
   await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters: childFreeFilters, queryText: childFreeText })} }))`)
   await waitFor(evaluate, 'free child profile returns a focused shortlist', `(() => {
-    const count = Number(document.querySelector('.catalogue-new-results strong')?.textContent)
     const selected = [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')]
     const rest = [...document.querySelectorAll('[data-listing-section="all"] .catalogue-new-card')]
     const slugs = [...selected, ...rest].map((card) => card.dataset.productSlug)
-    return count === 9
-      && selected.length === 9
+    return selected.length === 9
       && rest.length > 0
       && new Set(slugs).size === slugs.length
       && document.querySelector('[data-listing-section="recommended"] .catalogue-new-section-title')?.textContent.trim() === 'Результаты подбора'
@@ -413,14 +420,26 @@ try {
       && document.querySelector('[data-listing-section="all"] .catalogue-new-section-title')?.textContent.trim() === 'Все позиции'
       && selected.every((card) => ['low', 'mid'].includes(card.dataset.heightRange))
   })()`)
+  await waitFor(evaluate, 'smart selection replaces count and default sort copy', `(() => {
+    const defaultResult = document.querySelector('[data-catalog-results-default]')
+    const smartResult = document.querySelector('[data-catalog-results-smart]')
+    const defaultSort = document.querySelector('.catalogue-new-sort-option[data-value="default"]')
+    const trigger = document.querySelector('.catalogue-new-sort-trigger')
+    return Boolean(
+      defaultResult?.hidden
+      && !smartResult?.hidden
+      && smartResult?.textContent.trim() === 'Результаты подборки'
+      && defaultSort?.textContent.trim() === 'Сортировка по соответствию'
+      && trigger?.textContent.trim() === 'Сортировка по соответствию'
+    )
+  })()`)
 
   const childQuizText = 'матрас для ребёнка или подростка; ширина 140 см; беспружинный матрас из orthoFoam или forplit; умеренно-мягкая без проваливания'
   const childQuizFilters = applyDomainGuardrails({}, childQuizText)
   await evaluate(`window.dispatchEvent(new CustomEvent('catalogue:apply-smart-filters', { detail: ${JSON.stringify({ filters: childQuizFilters, queryText: childQuizText })} }))`)
   await waitFor(evaluate, 'explicit child construction and width stay mandatory', `(() => {
-    const count = Number(document.querySelector('.catalogue-new-results strong')?.textContent)
     const selected = [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')]
-    return count === 9 && selected.length === 9 && selected.every((card) => {
+    return selected.length === 9 && selected.every((card) => {
       const sizes = String(card.dataset.sizes || '').split(',')
       return card.dataset.type === 'nospring' && sizes.some((size) => size.startsWith('140x'))
     })
@@ -428,17 +447,29 @@ try {
   await evaluate(`window.__smartShortlistBeforeSort = [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')].map((card) => card.dataset.productSlug).sort()`)
   await evaluate(`document.querySelector('.catalogue-new-sort-option[data-value="price-asc"]')?.click()`)
   await waitFor(evaluate, 'changing sort preserves the nine smart results', `(() => {
-    const count = Number(document.querySelector('.catalogue-new-results strong')?.textContent)
     const selected = [...document.querySelectorAll('[data-listing-section="recommended"] .catalogue-new-card')]
     const remaining = [...document.querySelectorAll('[data-listing-section="all"] .catalogue-new-card')]
     const slugs = selected.map((card) => card.dataset.productSlug).sort()
     const prices = selected.map((card) => Number(card.dataset.price))
     const remainingPrices = remaining.map((card) => Number(card.dataset.price))
-    return count === 9
-      && selected.length === 9
+    return selected.length === 9
       && JSON.stringify(slugs) === JSON.stringify(window.__smartShortlistBeforeSort)
       && prices.every((price, index) => index === 0 || prices[index - 1] <= price)
       && remainingPrices.every((price, index) => index === 0 || remainingPrices[index - 1] <= price)
+  })()`)
+  await evaluate(`document.querySelector('.catalogue-new-reset')?.click()`)
+  await waitFor(evaluate, 'reset restores regular count and default sort copy', `(() => {
+    const defaultResult = document.querySelector('[data-catalog-results-default]')
+    const smartResult = document.querySelector('[data-catalog-results-smart]')
+    const defaultSort = document.querySelector('.catalogue-new-sort-option[data-value="default"]')
+    const trigger = document.querySelector('.catalogue-new-sort-trigger')
+    return Boolean(
+      !defaultResult?.hidden
+      && smartResult?.hidden
+      && defaultResult?.textContent.includes('Найдено:')
+      && defaultSort?.textContent.trim() === 'Сортировка по умолчанию'
+      && trigger?.textContent.trim() === 'Сортировка по умолчанию'
+    )
   })()`)
 } catch (error) {
   failures.push(error.message)
