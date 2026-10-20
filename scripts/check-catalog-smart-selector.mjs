@@ -221,7 +221,11 @@ try {
   }
   await waitFor(evaluate, 'all adaptive nodes expose their own how-to-choose hint', `(() => {
     const hints = window.__adaptiveHints.filter(Boolean)
-    return new Set(hints).size === 14 && hints.every((hint) => hint.includes('Как выбрать:') && hint.length <= 140)
+    const combined = hints.join(' ')
+    return new Set(hints).size === 14
+      && hints.every((hint) => hint.includes('Как выбрать:') && hint.length <= 140)
+      && ['90×200', '160×200', 'На боку', 'на животе', 'одно место', '10–16 см', 'стыки', 'две стороны']
+        .every((fragment) => combined.includes(fragment))
   })()`)
   await evaluate(`document.querySelector('[data-smart-selector-dialog] button[aria-label="Закрыть умный подбор"]')?.click()`)
   await waitFor(evaluate, 'adaptive smoke dialog closes', `!document.querySelector('[data-smart-selector-dialog]')`)
