@@ -47,30 +47,30 @@
 - Produces: `npm run check:modal-system`, a browser regression command used by Tasks 2 and 3.
 - Consumes: existing `.modal-overlay`, `.modal-content`, and `.modal-close` behavior hooks without renaming or replacing them.
 
-- [ ] **Step 1: Write the failing modal-system browser test**
+- [x] **Step 1: Write the failing modal-system browser test**
 
 Add real-browser assertions that supported legacy form/video modal elements expose the opt-in shell contract, use the shared backdrop/radius/shadow/white circular close button, preserve natural height, and respect 48 px desktop clearance. Assert that `.cookie-banner` and `.mobile-menu` do not carry shell classes and retain their existing close/menu selectors.
 
-- [ ] **Step 2: Run the new test and verify RED**
+- [x] **Step 2: Run the new test and verify RED**
 
 Run: `npm run check:modal-system`  
 Expected: FAIL because the semantic tokens/classes and migrated consumers do not exist.
 
-- [ ] **Step 3: Implement the shared tokens and opt-in shell**
+- [x] **Step 3: Implement the shared tokens and opt-in shell**
 
 Define the exact shared visual values in `tokens.css`; implement overlay, surface, media-surface, and close-control classes in `components.css`. Add these classes to supported legacy form/video modal markup in the four HTML entry files. Do not broaden legacy `.modal-close` rules in a way that reaches cookies.
 
-- [ ] **Step 4: Run the modal-system test and verify GREEN**
+- [x] **Step 4: Run the modal-system test and verify GREEN**
 
 Run: `npm run check:modal-system`  
 Expected: PASS for all migrated legacy consumers and exclusions.
 
-- [ ] **Step 5: Run page and type gates**
+- [x] **Step 5: Run page and type gates**
 
 Run: `npm run check:routes && npm run typecheck`  
 Expected: both commands PASS.
 
-- [ ] **Step 6: Commit Task 1**
+- [x] **Step 6: Commit Task 1**
 
 ```bash
 git add package.json scripts/check-modal-system.mjs src/styles/tokens.css src/styles/components.css index.html hotels.html documents.html dealers.html
@@ -173,4 +173,8 @@ git commit -m "feat(catalog): unify catalog modal styling"
 
 ## Execution Results
 
-To be filled during execution with exact commands, exit status, and visual-smoke viewport evidence for each task.
+### Task 1
+
+- RED: `npm run check:modal-system` exited 1 because every legacy consumer lacked the shared shell and the natural-height geometry probe had no shell styles.
+- GREEN: `npm run check:modal-system` exited 0 (`Modal system ok`).
+- Gate: `npm run check:routes && npm run typecheck` exited 0; 12 route contracts and 9 form labels passed, followed by a clean TypeScript check.

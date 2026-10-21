@@ -8091,3 +8091,94 @@ html[data-page="catalog"] .catalogue-new-share-label {
     margin-top: 24px;
   }
 }
+
+/* Opt-in modal shell. Never apply these classes to cookies or the mobile menu. */
+.site-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: var(--modal-viewport-gap);
+  background: var(--modal-backdrop);
+  backdrop-filter: blur(var(--modal-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--modal-backdrop-blur));
+  overflow: auto;
+}
+
+.site-modal-surface,
+.site-modal-media-surface {
+  position: relative;
+  box-sizing: border-box;
+  max-height: calc(100dvh - (2 * var(--modal-viewport-gap)));
+  border-radius: var(--modal-radius);
+  box-shadow: var(--modal-shadow);
+}
+
+.site-modal-surface {
+  background: var(--modal-surface-bg);
+}
+
+.site-modal-media-surface {
+  overflow: visible;
+}
+
+.site-modal-surface > .site-modal-close,
+.site-modal-media-surface > .site-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: var(--z-local-2);
+  display: inline-flex;
+  width: var(--modal-close-size);
+  height: var(--modal-close-size);
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: var(--modal-close-bg);
+  padding: 0;
+  box-shadow: 0 8px 24px rgba(14, 23, 20, 0.14);
+  color: var(--color-primary);
+  cursor: pointer;
+  line-height: 1;
+  opacity: 1;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.site-modal-surface > .site-modal-close:hover,
+.site-modal-media-surface > .site-modal-close:hover {
+  box-shadow: 0 10px 28px rgba(14, 23, 20, 0.2);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.site-modal-surface > .site-modal-close:focus-visible,
+.site-modal-media-surface > .site-modal-close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.site-modal-surface > .site-modal-close svg,
+.site-modal-media-surface > .site-modal-close svg {
+  width: 22px;
+  height: 22px;
+}
+
+.site-modal-surface > .site-modal-close svg path,
+.site-modal-media-surface > .site-modal-close svg path {
+  stroke: currentColor;
+}
+
+@media (max-width: 600px) {
+  .site-modal-overlay {
+    padding: var(--modal-viewport-gap-mobile);
+  }
+
+  .site-modal-surface,
+  .site-modal-media-surface {
+    max-height: calc(100dvh - (2 * var(--modal-viewport-gap-mobile)));
+  }
+}

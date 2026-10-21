@@ -87,6 +87,17 @@
   --radius-md: 16px;
   --radius-lg: 24px;
 
+  /* Shared public-site modal shell (cookie banner and mobile menu are excluded). */
+  --modal-backdrop: rgba(40, 62, 55, 0.58);
+  --modal-backdrop-blur: 5px;
+  --modal-surface-bg: var(--color-bg-beige);
+  --modal-radius: var(--radius-lg);
+  --modal-shadow: 0 24px 64px rgba(14, 23, 20, 0.24);
+  --modal-viewport-gap: 48px;
+  --modal-viewport-gap-mobile: 16px;
+  --modal-close-size: 44px;
+  --modal-close-bg: #fff;
+
   /* Type scale (reference; крупные заголовки героя — в components) */
   --font-size-caption: 14px;
   --font-size-subbody: 15px;
