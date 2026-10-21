@@ -12,7 +12,7 @@
     { id: 'main', center: [44.970737, 34.152577], zoom: 16, name: 'Главный офис', address: 'Симферополь, ул. Кубанская д. 25' },
     { id: 'voronezh', center: [51.681129, 39.297287], zoom: 16, name: 'Центральная Россия', address: 'Воронеж, ул. Остужева 43 И' },
     { id: 'lnr', center: [48.541403, 39.32438], zoom: 16, name: 'ЛНР', address: 'Луганск, ул. Фабричная д 1' },
-    { id: 'dnr', center: [48.035223, 38.147954], zoom: 16, name: 'ДНР', address: 'Харцизск, ул. Вокзальная, д. 52' }
+    { id: 'dnr', center: [48.035223, 38.147954], zoom: 16, name: 'ДНР', address: 'Харцызск, ул. Вокзальная, д. 52' }
   ];
 
   function createPlacemark(coord, address, options) {
