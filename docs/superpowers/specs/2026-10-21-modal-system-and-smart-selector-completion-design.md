@@ -98,8 +98,9 @@ When the final branch answer is selected:
 
 - all current tags change from the existing pale-yellow treatment to a pale brand-green treatment;
 - the words `Профиль заполнен` are bold while the explanatory continuation remains regular;
-- the primary button receives one short, soft outward green glow animation;
-- the animation does not loop;
+- the primary button receives one short, soft green glow that expands outward to attract attention;
+- after the single impulse finishes, the glow disappears completely and the button returns to its normal active appearance;
+- the animation never loops, pulses, or leaves the button permanently illuminated;
 - `prefers-reduced-motion: reduce` disables the animation while retaining the green tags and bold status.
 
 When the user goes back, removes an answer that reopens the questionnaire, or clears the profile:
