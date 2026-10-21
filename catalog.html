@@ -577,9 +577,9 @@
       </section>
     </main>
 
-    <div class="catalogue-new-image-modal" id="catalogueImageModal" hidden data-lenis-prevent>
-      <div class="catalogue-new-image-modal-dialog" id="catalogueImageModalDialog">
-        <button type="button" class="catalogue-new-image-modal-close" id="catalogueImageModalClose" aria-label="Закрыть">×</button>
+    <div class="catalogue-new-image-modal site-modal-overlay" id="catalogueImageModal" hidden data-lenis-prevent>
+      <div class="catalogue-new-image-modal-dialog site-modal-surface" id="catalogueImageModalDialog">
+        <button type="button" class="catalogue-new-image-modal-close site-modal-close" id="catalogueImageModalClose" aria-label="Закрыть">×</button>
 
         <div class="catalogue-new-image-modal-preview" id="catalogueImageModalPreview">
           <div class="catalogue-new-image-modal-media catalogue-new-card-media" id="catalogueImageModalMedia" data-catalog-card-media></div>
@@ -702,14 +702,15 @@
       </div>
     </div>
 
-    <div class="catalogue-new-favourites-clear-modal" id="catalogueFavouritesClearModal" hidden>
+    <div class="catalogue-new-favourites-clear-modal site-modal-overlay" id="catalogueFavouritesClearModal" hidden>
       <div class="catalogue-new-favourites-clear-modal-overlay" id="catalogueFavouritesClearModalOverlay" aria-hidden="true"></div>
       <div
-        class="catalogue-new-favourites-clear-modal-dialog"
+        class="catalogue-new-favourites-clear-modal-dialog site-modal-surface"
         role="dialog"
         aria-modal="true"
         aria-labelledby="catalogueFavouritesClearModalTitle"
       >
+        <button type="button" class="site-modal-close" id="catalogueFavouritesClearModalClose" aria-label="Закрыть окно очистки">×</button>
         <h2 class="catalogue-new-favourites-clear-modal-title" id="catalogueFavouritesClearModalTitle">Очистить избранное?</h2>
         <p class="catalogue-new-favourites-clear-modal-text">Все позиции будут удалены из списка. Это действие нельзя отменить.</p>
         <div class="catalogue-new-favourites-clear-modal-actions">
@@ -719,10 +720,10 @@
       </div>
     </div>
 
-    <div class="catalogue-new-filter-help-modal" id="catalogueFilterHelpModal" hidden>
+    <div class="catalogue-new-filter-help-modal site-modal-overlay" id="catalogueFilterHelpModal" hidden>
       <div class="catalogue-new-filter-help-modal-overlay" id="catalogueFilterHelpModalOverlay" aria-hidden="true"></div>
-      <div class="catalogue-new-filter-help-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="catalogueFilterHelpModalTitle">
-        <button type="button" class="catalogue-new-filter-help-modal-close" id="catalogueFilterHelpModalClose" aria-label="Закрыть подсказку">×</button>
+      <div class="catalogue-new-filter-help-modal-dialog site-modal-surface" role="dialog" aria-modal="true" aria-labelledby="catalogueFilterHelpModalTitle">
+        <button type="button" class="catalogue-new-filter-help-modal-close site-modal-close" id="catalogueFilterHelpModalClose" aria-label="Закрыть подсказку">×</button>
         <h2 class="catalogue-new-filter-help-modal-title" id="catalogueFilterHelpModalTitle"></h2>
         <div class="catalogue-new-filter-help-modal-body" id="catalogueFilterHelpModalBody"></div>
       </div>

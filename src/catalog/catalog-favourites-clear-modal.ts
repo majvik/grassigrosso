@@ -10,6 +10,7 @@ export type CatalogFavouritesClearModalElements = {
   overlay: HTMLElement
   openTrigger: HTMLElement | null
   cancelBtn: HTMLButtonElement | null
+  closeBtn?: HTMLButtonElement | null
   confirmBtn: HTMLButtonElement | null
   titleEl?: HTMLElement | null
   textEl?: HTMLElement | null
@@ -86,6 +87,7 @@ export function initCatalogFavouritesClearModal(
 
   overlay.addEventListener('click', close)
   cancelBtn?.addEventListener('click', close)
+  elements.closeBtn?.addEventListener('click', close)
 
   confirmBtn.addEventListener('click', () => {
     options.onConfirm(context)

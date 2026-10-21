@@ -115,6 +115,7 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
   const catalogueFavouritesClearModalTitle = queryElement<HTMLElement>(documentRef, 'catalogueFavouritesClearModalTitle')
   const catalogueFavouritesClearModalText = documentRef.querySelector<HTMLElement>('.catalogue-new-favourites-clear-modal-text')
   const catalogueFavouritesClearModalCancel = queryElement<HTMLButtonElement>(documentRef, 'catalogueFavouritesClearModalCancel')
+  const catalogueFavouritesClearModalClose = queryElement<HTMLButtonElement>(documentRef, 'catalogueFavouritesClearModalClose')
   const catalogueFavouritesClearModalConfirm = queryElement<HTMLButtonElement>(documentRef, 'catalogueFavouritesClearModalConfirm')
   const catalogueNewFavouritesClearAllBtn = queryElement<HTMLElement>(documentRef, 'catalogue-new-favourites-clear-all')
   if (
@@ -128,6 +129,7 @@ export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOp
         overlay: catalogueFavouritesClearModalOverlay,
         openTrigger: catalogueNewFavouritesClearAllBtn,
         cancelBtn: catalogueFavouritesClearModalCancel,
+        closeBtn: catalogueFavouritesClearModalClose,
         confirmBtn: catalogueFavouritesClearModalConfirm,
         titleEl: catalogueFavouritesClearModalTitle,
         textEl: catalogueFavouritesClearModalText,

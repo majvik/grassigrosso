@@ -92,6 +92,12 @@ await checkPage('/dealers', [
   { label: 'quality video shell', overlay: '#videoModal', surface: '.modal-content', close: '.modal-close', media: true },
 ])
 
+await checkPage('/catalog', [
+  { label: 'product shell', overlay: '#catalogueImageModal', surface: '.catalogue-new-image-modal-dialog', close: '#catalogueImageModalClose' },
+  { label: 'filter help shell', overlay: '#catalogueFilterHelpModal', surface: '.catalogue-new-filter-help-modal-dialog', close: '#catalogueFilterHelpModalClose' },
+  { label: 'favourites clear shell', overlay: '#catalogueFavouritesClearModal', surface: '.catalogue-new-favourites-clear-modal-dialog', close: '#catalogueFavouritesClearModalClose' },
+])
+
 if (failures.length) {
   console.error(failures.map((failure) => `- ${failure}`).join('\n'))
   process.exit(1)

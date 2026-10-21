@@ -305,7 +305,6 @@ export function SmartSelector() {
                     aria-label={`Редактировать: ${tag.label}`}
                     data-smart-selector-tag-edit
                     onChange={(event) => setEditingTagLabel(event.target.value)}
-                    onBlur={saveEditedTag}
                     onKeyDown={(event) => {
                       if (event.key === 'Enter') {
                         event.preventDefault()

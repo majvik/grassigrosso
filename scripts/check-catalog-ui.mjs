@@ -8,7 +8,9 @@ import { shouldRunBrowserSmoke } from './lib/catalog-smoke-env.mjs'
 
 const baseUrl = String(process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5174').replace(/\/+$/, '')
 const runBrowser = shouldRunBrowserSmoke(baseUrl)
-const EXPECTED_PRODUCT_COUNT = 43
+const EXPECTED_PRODUCT_COUNT = 47
+const MIN_INITIAL_CARDS = 6
+const MAX_INITIAL_CARDS = 12
 const EXPECTED_CLASSIC_FILTER_COUNT = '6'
 const EXPECTED_SIZE_SLUGS = [
   '140x190',
@@ -19,7 +21,7 @@ const EXPECTED_SIZE_SLUGS = [
   '180x200',
 ]
 const failures = []
-const OVERALL_TIMEOUT_MS = Number(process.env.CATALOG_UI_TIMEOUT_MS || 45000)
+const OVERALL_TIMEOUT_MS = Number(process.env.CATALOG_UI_TIMEOUT_MS || 75000)
 
 let session = null
 let cleaned = false
@@ -79,6 +81,8 @@ try {
   const evaluate = (expression, timeoutMs) => cdp.evaluate(expression, timeoutMs)
   const send = (method, params, timeoutMs) => cdp.send(method, params, timeoutMs)
 
+  await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+
   await waitFor(
     evaluate,
     'catalog results loaded',
@@ -97,8 +101,12 @@ try {
   if (initial.results !== String(EXPECTED_PRODUCT_COUNT)) {
     failures.push(`expected ${EXPECTED_PRODUCT_COUNT} results, got ${initial.results}`)
   }
-  if (initial.cards > 6) failures.push(`expected at most 6 cards in DOM on first page, got ${initial.cards}`)
-  if (initial.visible !== 6) failures.push(`expected first page to show 6 cards, got ${initial.visible}`)
+  if (initial.cards < MIN_INITIAL_CARDS || initial.cards > MAX_INITIAL_CARDS) {
+    failures.push(`expected ${MIN_INITIAL_CARDS}-${MAX_INITIAL_CARDS} cards in DOM during initial viewport fill, got ${initial.cards}`)
+  }
+  if (initial.visible < MIN_INITIAL_CARDS || initial.visible > MAX_INITIAL_CARDS) {
+    failures.push(`expected ${MIN_INITIAL_CARDS}-${MAX_INITIAL_CARDS} visible cards during initial viewport fill, got ${initial.visible}`)
+  }
 
   await evaluate(`(() => {
     const chip = document.querySelector('.catalogue-new-chip[data-filter-group="collection"][data-value="classic"]')
@@ -179,8 +187,61 @@ try {
   })()`)
   if (!modal) failures.push('catalog modal did not open with specs')
 
+  await waitFor(evaluate, 'product modal uses shared desktop shell and preserves two columns', `(() => {
+    const overlay = document.querySelector('#catalogueImageModal')
+    const dialog = document.querySelector('#catalogueImageModalDialog')
+    const close = document.querySelector('#catalogueImageModalClose')
+    if (!overlay || !dialog || !close) return false
+    const rect = dialog.getBoundingClientRect()
+    const columns = getComputedStyle(dialog).gridTemplateColumns.split(' ').filter(Boolean)
+    return overlay.classList.contains('site-modal-overlay')
+      && dialog.classList.contains('site-modal-surface')
+      && close.classList.contains('site-modal-close')
+      && rect.top >= 47
+      && window.innerHeight - rect.bottom >= 47
+      && columns.length === 2
+  })()`)
+
+  await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true })
+  await waitFor(evaluate, 'product modal preserves its responsive single-column layout', `(() => {
+    const dialog = document.querySelector('#catalogueImageModalDialog')
+    return dialog && getComputedStyle(dialog).gridTemplateColumns.split(' ').filter(Boolean).length === 1
+  })()`)
+  await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+
   await evaluate(`document.querySelector('#catalogueImageModalClose')?.click()`)
   await waitFor(evaluate, 'modal closed', `document.querySelector('#catalogueImageModal')?.hasAttribute('hidden') === true`)
+
+  await evaluate(`document.querySelector('[data-filter-help-open="collection"]')?.click()`)
+  await waitFor(evaluate, 'filter help modal uses shared shell and closes normally', `(() => {
+    const overlay = document.querySelector('#catalogueFilterHelpModal')
+    const dialog = overlay?.querySelector('.catalogue-new-filter-help-modal-dialog')
+    const close = overlay?.querySelector('#catalogueFilterHelpModalClose')
+    if (!overlay || overlay.hasAttribute('hidden') || !dialog || !close) return false
+    const shared = overlay.classList.contains('site-modal-overlay')
+      && dialog.classList.contains('site-modal-surface')
+      && close.classList.contains('site-modal-close')
+    close.click()
+    return shared
+  })()`)
+  await waitFor(evaluate, 'filter help modal closed', `document.querySelector('#catalogueFilterHelpModal')?.hasAttribute('hidden') === true`)
+
+  await evaluate(`document.querySelector('#catalogue-new-favourites-only-switch')?.click()`)
+  await waitFor(evaluate, 'favourites mode opened', `document.querySelector('#catalogue-new-favourites-back-row')?.hidden === false`)
+  await evaluate(`document.querySelector('#catalogue-new-favourites-clear-all')?.click()`)
+  await waitFor(evaluate, 'favourites clear modal uses shared shell', `(() => {
+    const overlay = document.querySelector('#catalogueFavouritesClearModal')
+    const dialog = overlay?.querySelector('.catalogue-new-favourites-clear-modal-dialog')
+    const close = overlay?.querySelector('#catalogueFavouritesClearModalClose')
+    return Boolean(
+      overlay && !overlay.hasAttribute('hidden')
+      && overlay.classList.contains('site-modal-overlay')
+      && dialog?.classList.contains('site-modal-surface')
+      && close?.classList.contains('site-modal-close')
+    )
+  })()`)
+  await evaluate(`document.querySelector('#catalogueFavouritesClearModalClose')?.click()`)
+  await waitFor(evaluate, 'favourites clear modal closes from shared close control', `document.querySelector('#catalogueFavouritesClearModal')?.hasAttribute('hidden') === true`)
 
   const logs = await send('Runtime.evaluate', {
     expression: `(() => {

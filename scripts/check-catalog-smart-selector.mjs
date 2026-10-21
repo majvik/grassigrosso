@@ -148,7 +148,6 @@ try {
     return Boolean(dialog && tag && !tag.querySelector('[data-smart-selector-tag-edit]'))
   })()`)
   await evaluate(`[...document.querySelectorAll('[data-smart-selector-tag]')].find((item) => item.textContent.includes('Нужен удобный матрас'))?.querySelector('button[aria-label^="Редактировать:"]')?.click()`)
-  await delay(100)
   await waitFor(evaluate, 'tag can be reopened after cancelling an edit', `Boolean(document.querySelector('[data-smart-selector-tag-edit]'))`)
   await evaluate(`(() => {
     const input = document.querySelector('[data-smart-selector-tag-edit]')
