@@ -44,6 +44,19 @@ try {
       && footerRect.bottom <= dialogRect.bottom
       && getComputedStyle(dialog).overflow === 'hidden'
   })()`)
+  await waitFor(evaluate, 'fixed action area spans the dialog and casts an upward fade', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const footer = dialog?.querySelector('[data-smart-selector-fixed-footer]')
+    if (!dialog || !footer) return false
+    const dialogRect = dialog.getBoundingClientRect()
+    const footerRect = footer.getBoundingClientRect()
+    const fade = getComputedStyle(footer, '::before')
+    return Math.abs(dialogRect.left - footerRect.left) <= 1
+      && Math.abs(dialogRect.right - footerRect.right) <= 1
+      && Math.abs(dialogRect.bottom - footerRect.bottom) <= 1
+      && fade.content !== 'none'
+      && fade.backgroundImage.includes('linear-gradient')
+  })()`)
   await waitFor(evaluate, 'intro copy has readable contrast', `(() => {
     const description = document.querySelector('[data-smart-selector-dialog] [class*="description"]')
     if (!description) return false
@@ -135,6 +148,7 @@ try {
     return Boolean(dialog && tag && !tag.querySelector('[data-smart-selector-tag-edit]'))
   })()`)
   await evaluate(`[...document.querySelectorAll('[data-smart-selector-tag]')].find((item) => item.textContent.includes('Нужен удобный матрас'))?.querySelector('button[aria-label^="Редактировать:"]')?.click()`)
+  await delay(100)
   await waitFor(evaluate, 'tag can be reopened after cancelling an edit', `Boolean(document.querySelector('[data-smart-selector-tag-edit]'))`)
   await evaluate(`(() => {
     const input = document.querySelector('[data-smart-selector-tag-edit]')
@@ -238,6 +252,56 @@ try {
   })()`)
   await evaluate(`document.querySelector('[data-option-value="soft"]')?.click()`)
   await waitFor(evaluate, 'completed quiz profile is recognized', `document.querySelector('[data-smart-selector-profile-status]')?.textContent.includes('Профиль заполнен')`)
+  await waitFor(evaluate, 'completed quiz receives persistent completion cues and one-shot glow', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const tags = [...(dialog?.querySelectorAll('[data-smart-selector-tag]') || [])]
+    const statusLead = dialog?.querySelector('[data-smart-selector-profile-status] strong')
+    const submit = dialog?.querySelector('[data-smart-selector-quick-submit]')
+    const submitStyles = submit ? getComputedStyle(submit) : null
+    return Boolean(
+      dialog?.dataset.smartSelectorComplete === 'true'
+      && tags.length >= 5
+      && tags.every((tag) => getComputedStyle(tag).backgroundColor === 'rgb(220, 235, 225)')
+      && statusLead?.textContent.trim() === 'Профиль заполнен'
+      && submitStyles?.animationName.includes('profileCompleteGlow')
+      && submitStyles.animationIterationCount === '1'
+    )
+  })()`)
+  await delay(1200)
+  await waitFor(evaluate, 'completion glow disappears after its single impulse', `getComputedStyle(document.querySelector('[data-smart-selector-quick-submit]')).boxShadow === 'none'`)
+  await evaluate(`(() => {
+    const finalTag = [...document.querySelectorAll('[data-smart-selector-tag]')].at(-1)
+    finalTag?.querySelector('button[aria-label^="Удалить:"]')?.click()
+  })()`)
+  await waitFor(evaluate, 'removing the final answer restores incomplete yellow tags', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const tags = [...(dialog?.querySelectorAll('[data-smart-selector-tag]') || [])]
+    return dialog?.dataset.smartSelectorComplete === 'false'
+      && tags.length >= 4
+      && tags.every((tag) => getComputedStyle(tag).backgroundColor === 'rgb(242, 230, 201)')
+  })()`)
+  await evaluate(`document.querySelector('[data-option-value="soft"]')?.click()`)
+  await waitFor(evaluate, 'quiz can return to completed presentation', `document.querySelector('[data-smart-selector-dialog]')?.dataset.smartSelectorComplete === 'true'`)
+  await evaluate(`[...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Назад')?.click()`)
+  await waitFor(evaluate, 'going back restores incomplete yellow tags', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const tags = [...(dialog?.querySelectorAll('[data-smart-selector-tag]') || [])]
+    return dialog?.dataset.smartSelectorComplete === 'false'
+      && tags.length >= 4
+      && tags.every((tag) => getComputedStyle(tag).backgroundColor === 'rgb(242, 230, 201)')
+  })()`)
+  await evaluate(`document.querySelector('[data-option-value="backPain"]')?.click()`)
+  await waitFor(evaluate, 'returning through the previous answer reaches the firmness step', `Boolean(document.querySelector('[data-option-value="soft"]'))`)
+  await session.cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] })
+  await evaluate(`document.querySelector('[data-option-value="soft"]')?.click()`)
+  await waitFor(evaluate, 'reduced motion keeps completion cues without glow animation', `(() => {
+    const dialog = document.querySelector('[data-smart-selector-dialog]')
+    const submit = dialog?.querySelector('[data-smart-selector-quick-submit]')
+    return dialog?.dataset.smartSelectorComplete === 'true'
+      && getComputedStyle(submit).animationName === 'none'
+      && Boolean(dialog.querySelector('[data-smart-selector-profile-status] strong'))
+  })()`)
+  await session.cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] })
 
   await evaluate(`(() => {
     const originalFetch = window.fetch.bind(window)
@@ -305,7 +369,10 @@ try {
     }
     await waitFor(evaluate, `adaptive flow ${flowIndex + 1} completes`, `document.querySelector('[data-smart-selector-profile-status]')?.textContent.includes('Профиль заполнен')`)
     await evaluate(`document.querySelector('[data-smart-selector-clear-all]')?.click()`)
-    await waitFor(evaluate, `adaptive flow ${flowIndex + 1} resets to root`, `document.querySelector('[data-smart-selector-dialog]')?.textContent.includes('Шаг 1 из 5')`)
+    await waitFor(evaluate, `adaptive flow ${flowIndex + 1} resets to root`, `(() => {
+      const dialog = document.querySelector('[data-smart-selector-dialog]')
+      return dialog?.textContent.includes('Шаг 1 из 5') && dialog.dataset.smartSelectorComplete === 'false'
+    })()`)
   }
   await waitFor(evaluate, 'all adaptive nodes expose their own how-to-choose hint', `(() => {
     const hints = window.__adaptiveHints.filter(Boolean)

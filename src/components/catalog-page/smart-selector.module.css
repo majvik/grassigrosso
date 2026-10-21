@@ -1,6 +1,6 @@
 .trigger { border: 0; background: transparent; padding: 0; color: inherit; cursor: pointer; font: inherit; }
 .backdrop { position: fixed; inset: 0; z-index: var(--z-overlay); background: rgba(var(--color-primary-rgb), .58); backdrop-filter: blur(5px); }
-.popup { position: fixed; z-index: var(--z-modal); top: 50%; left: 50%; display: flex; width: min(680px, calc(100vw - 32px)); max-height: calc(100dvh - 96px); flex-direction: column; overflow: hidden; box-sizing: border-box; transform: translate(-50%, -50%); border-radius: var(--radius-lg); background: var(--color-bg-beige); padding: 36px; box-shadow: var(--ui-shadow-popover); color: var(--color-text); }
+.popup { --smart-selector-padding-inline: 36px; --smart-selector-padding-bottom: 36px; position: fixed; z-index: var(--z-modal); top: 50%; left: 50%; display: flex; width: min(680px, calc(100vw - 32px)); max-height: calc(100dvh - (2 * var(--modal-viewport-gap))); flex-direction: column; overflow: hidden; box-sizing: border-box; transform: translate(-50%, -50%); border-radius: var(--modal-radius); background: var(--modal-surface-bg); padding: 36px var(--smart-selector-padding-inline) var(--smart-selector-padding-bottom); box-shadow: var(--modal-shadow); color: var(--color-text); }
 .scrollContent { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; padding-right: 4px; }
 .close { position: absolute; top: 18px; right: 20px; width: 42px; height: 42px; border: 0; border-radius: 50%; background: var(--color-surface-muted); color: var(--color-primary); cursor: pointer; font-size: 28px; line-height: 1; }
 .eyebrow { margin: 0 0 10px; color: var(--color-primary); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; }
@@ -8,6 +8,7 @@
 .description { max-width: 550px; margin: 14px 0 24px; color: var(--color-primary); font-size: 16px; line-height: 1.45; }
 .tagField { position: relative; display: flex; min-height: 58px; align-items: center; align-content: center; flex-wrap: wrap; gap: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-white); padding: 9px 52px 9px 12px; }
 .tagFieldMultiline { align-items: flex-start; align-content: flex-start; }
+.tagFieldComplete .tag { background: #dcebe1; }
 .tagField:focus-within { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), .12); }
 .inputShell { display: flex; min-height: 30px; flex: 1 1 180px; min-width: 88px; align-items: center; }
 .inputShell textarea { box-sizing: border-box; width: 100%; min-height: 30px; max-height: 96px; overflow-y: auto; border: 0; outline: 0; resize: none; background: transparent; padding: 4px 0; color: var(--color-text); font: inherit; line-height: 1.4; }
@@ -21,13 +22,16 @@
 .quickSubmit { width: 100%; min-height: 58px; border: 0; border-radius: var(--radius-md); background: var(--color-primary); padding: 14px 24px; color: var(--color-bg-white); cursor: pointer; font: inherit; font-size: 17px; font-weight: 600; line-height: 1.15; }
 .quickSubmit:hover { background: var(--color-primary-hover); }
 .quickSubmit:disabled { cursor: not-allowed; opacity: .45; }
+.quickSubmitComplete { animation: profileCompleteGlow 900ms ease-out 1; }
 .error { margin: 8px 4px 0; color: var(--color-form-error-text); font-size: 13px; }
-.submitArea { flex: 0 0 auto; margin-top: 16px; border-top: 1px solid var(--color-border); background: var(--color-bg-beige); padding-top: 16px; }
+.submitArea { position: relative; flex: 0 0 auto; margin: 16px calc(-1 * var(--smart-selector-padding-inline)) calc(-1 * var(--smart-selector-padding-bottom)); border-top: 1px solid var(--color-border); background: var(--modal-surface-bg); padding: 16px var(--smart-selector-padding-inline) var(--smart-selector-padding-bottom); }
+.submitArea::before { content: ''; position: absolute; right: 0; bottom: 100%; left: 0; height: 26px; background: linear-gradient(to top, rgba(241, 240, 234, .94), rgba(241, 240, 234, 0)); pointer-events: none; }
 .aiDisclaimer { margin: 10px 4px 0; color: var(--color-text-muted-warm); font-size: 12px; line-height: 1.4; }
 .aiDisclaimer a { color: var(--color-primary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .profileHint, .profileComplete { margin: 0 4px 10px; font-size: 12px; line-height: 1.35; }
 .profileHint { color: var(--color-text-muted-warm); }
 .profileComplete { color: var(--color-primary); }
+.profileComplete strong { font-weight: 700; }
 .tag { display: inline-flex; max-width: 100%; align-items: flex-start; justify-content: flex-start; gap: 7px; overflow-wrap: anywhere; border-radius: 999px; background: var(--color-tag-bg); padding: 7px 11px; color: var(--color-primary); font: inherit; font-size: 13px; line-height: 1.4; text-align: left; }
 .tagLabel { min-width: 0; overflow-wrap: anywhere; border: 0; background: transparent; padding: 0; color: inherit; cursor: text; font: inherit; line-height: inherit; text-align: left; }
 .tagEdit { box-sizing: content-box; min-width: 3ch; max-width: min(36ch, 55vw); border: 0; border-bottom: 1px solid currentColor; outline: 0; background: transparent; padding: 0; color: inherit; font: inherit; line-height: inherit; }
@@ -49,4 +53,6 @@
 .navigationDivider { color: var(--color-primary); font-size: 15px; font-weight: 500; opacity: .55; }
 .stepButton { border: 0; background: transparent; padding: 8px 0; color: var(--color-primary); cursor: pointer; font: inherit; text-decoration: underline; text-underline-offset: 4px; }
 .stepButton:disabled { cursor: default; opacity: .32; text-decoration: none; }
-@media (max-width: 600px) { .popup { max-height: calc(100dvh - 32px); padding: 28px 20px 22px; border-radius: 22px; } .inputShell { flex-basis: 100%; } .options { grid-template-columns: 1fr; } .dot, .dotActive { width: 22px; } .footer > span { display: none; } }
+@keyframes profileCompleteGlow { 0% { box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), .38); } 70% { box-shadow: 0 0 0 18px rgba(var(--color-primary-rgb), 0); } 100% { box-shadow: none; } }
+@media (prefers-reduced-motion: reduce) { .quickSubmitComplete { animation: none; } }
+@media (max-width: 600px) { .popup { --smart-selector-padding-inline: 20px; --smart-selector-padding-bottom: 22px; max-height: calc(100dvh - (2 * var(--modal-viewport-gap-mobile))); padding: 28px var(--smart-selector-padding-inline) var(--smart-selector-padding-bottom); border-radius: 22px; } .inputShell { flex-basis: 100%; } .options { grid-template-columns: 1fr; } .dot, .dotActive { width: 22px; } .footer > span { display: none; } }

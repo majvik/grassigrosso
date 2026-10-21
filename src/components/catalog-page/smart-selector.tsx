@@ -280,8 +280,12 @@ export function SmartSelector() {
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Backdrop className={styles.backdrop} />
-        <Dialog.Popup className={styles.popup} data-smart-selector-dialog>
-          <Dialog.Close className={styles.close} aria-label="Закрыть умный подбор">×</Dialog.Close>
+        <Dialog.Popup
+          className={`${styles.popup} site-modal-surface`}
+          data-smart-selector-dialog
+          data-smart-selector-complete={isProfileComplete ? 'true' : 'false'}
+        >
+          <Dialog.Close className={`${styles.close} site-modal-close`} aria-label="Закрыть умный подбор">×</Dialog.Close>
           <div className={styles.scrollContent} data-smart-selector-scroll-content>
             <p className={styles.eyebrow}>Умный подбор</p>
             <Dialog.Title className={styles.title}>Расскажите, какой матрас вам нужен</Dialog.Title>
@@ -289,7 +293,7 @@ export function SmartSelector() {
               Действуйте как вам комфортно, пишите своими словами и/или выбирайте быстрые ответы.
             </Dialog.Description>
 
-            <div className={`${styles.tagField} ${inputMultiline ? styles.tagFieldMultiline : ''}`} data-smart-selector-tags>
+            <div className={`${styles.tagField} ${inputMultiline ? styles.tagFieldMultiline : ''} ${isProfileComplete ? styles.tagFieldComplete : ''}`} data-smart-selector-tags>
             {tags.map((tag) => (
               <span key={tag.id} className={styles.tag} data-smart-selector-tag>
                 {editingTagId === tag.id ? (
@@ -396,10 +400,10 @@ export function SmartSelector() {
           <div className={styles.submitArea} data-smart-selector-fixed-footer>
             <p className={isProfileComplete ? styles.profileComplete : styles.profileHint} data-smart-selector-profile-status>
               {isProfileComplete
-                ? 'Профиль заполнен — покажем наиболее точные варианты.'
+                ? <><strong>Профиль заполнен</strong> — покажем наиболее точные варианты.</>
                 : 'Профиль пока не заполнен. Можем показать предварительные варианты, но для точного подбора ответьте на все вопросы.'}
             </p>
-            <button type="button" className={styles.quickSubmit} onClick={() => void showPreliminaryResults()} disabled={!hasProfileInput || isSubmitting} data-smart-selector-quick-submit>
+            <button type="button" className={`${styles.quickSubmit} ${isProfileComplete ? styles.quickSubmitComplete : ''}`} onClick={() => void showPreliminaryResults()} disabled={!hasProfileInput || isSubmitting} data-smart-selector-quick-submit>
               {isSubmitting ? 'Подбираем…' : 'Подобрать матрас'}
             </button>
             <p className={styles.aiDisclaimer} data-smart-selector-ai-disclaimer>

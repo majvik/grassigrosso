@@ -91,30 +91,30 @@ git commit -m "feat(ui): add shared modal shell"
 - Produces: `data-smart-selector-complete` completion state, completed-tag styling, semantic bold status copy, and one-shot button glow.
 - Preserves: existing `quizComplete` as the only authority for the completed presentation.
 
-- [ ] **Step 1: Add failing smart-selector completion and footer assertions**
+- [x] **Step 1: Add failing smart-selector completion and footer assertions**
 
 Extend the real-browser test to assert: final branch answer sets the completion marker; all tags become pale green; `Профиль заполнен` is a `strong` element; the button animation is finite and disappears; back/removal/clear restore yellow/incomplete state; reduced-motion disables animation. Assert footer edge-to-edge geometry, upward shadow, and immobility while the scroll region moves.
 
-- [ ] **Step 2: Run the smart-selector test and verify RED**
+- [x] **Step 2: Run the smart-selector test and verify RED**
 
 Run: `npm run check:catalog-smart-selector`  
 Expected: FAIL on the new completion and full-width footer assertions.
 
-- [ ] **Step 3: Implement completion presentation and footer geometry**
+- [x] **Step 3: Implement completion presentation and footer geometry**
 
 Render explicit completion state hooks from `quizComplete`, split the status into bold lead and regular continuation, add green completed-tag styling, and use a one-shot pseudo-element/keyframe glow with a reduced-motion override. Make the footer compensate for popup inline/bottom padding, align its contents back to the content column, and draw a full-width separator with a soft upward gradient shadow.
 
-- [ ] **Step 4: Run smart-selector and shared-shell tests and verify GREEN**
+- [x] **Step 4: Run smart-selector and shared-shell tests and verify GREEN**
 
 Run: `npm run check:catalog-smart-selector && npm run check:modal-system`  
 Expected: both commands PASS.
 
-- [ ] **Step 5: Run typecheck**
+- [x] **Step 5: Run typecheck**
 
 Run: `npm run typecheck`  
 Expected: PASS.
 
-- [ ] **Step 6: Commit Task 2**
+- [x] **Step 6: Commit Task 2**
 
 ```bash
 git add scripts/check-catalog-smart-selector.mjs src/components/catalog-page/smart-selector.tsx src/components/catalog-page/smart-selector.module.css
@@ -178,3 +178,9 @@ git commit -m "feat(catalog): unify catalog modal styling"
 - RED: `npm run check:modal-system` exited 1 because every legacy consumer lacked the shared shell and the natural-height geometry probe had no shell styles.
 - GREEN: `npm run check:modal-system` exited 0 (`Modal system ok`).
 - Gate: `npm run check:routes && npm run typecheck` exited 0; 12 route contracts and 9 form labels passed, followed by a clean TypeScript check.
+
+### Task 2
+
+- RED: `npm run check:catalog-smart-selector` exited 1 on completion cues, state restoration, reduced motion, and edge-to-edge footer geometry.
+- GREEN: `npm run check:catalog-smart-selector && npm run check:modal-system && npm run typecheck` exited 0.
+- Regression detail: the CDP tag-edit sequence now allows 100 ms for the React focus effect to settle before its condition-based assertion; the real user behavior and production code are unchanged.
