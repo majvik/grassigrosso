@@ -251,6 +251,11 @@ try {
   })()`)
   await evaluate(`document.querySelector('[data-option-value="soft"]')?.click()`)
   await waitFor(evaluate, 'completed quiz profile is recognized', `document.querySelector('[data-smart-selector-profile-status]')?.textContent.includes('Профиль заполнен')`)
+  await waitFor(evaluate, 'completion checkmark appears only for a completed profile', `(() => {
+    const status = document.querySelector('[data-smart-selector-profile-status]')
+    const check = status?.querySelector('[data-smart-selector-complete-check]')
+    return Boolean(check && check.textContent.trim() === '✓' && check.getAttribute('aria-hidden') === 'true')
+  })()`)
   await waitFor(evaluate, 'completed quiz receives persistent completion cues and one-shot glow', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
     const tags = [...(dialog?.querySelectorAll('[data-smart-selector-tag]') || [])]
@@ -279,6 +284,7 @@ try {
       && tags.length >= 4
       && tags.every((tag) => getComputedStyle(tag).backgroundColor === 'rgb(242, 230, 201)')
   })()`)
+  await waitFor(evaluate, 'completion checkmark is absent for an incomplete profile', `!document.querySelector('[data-smart-selector-complete-check]')`)
   await evaluate(`document.querySelector('[data-option-value="soft"]')?.click()`)
   await waitFor(evaluate, 'quiz can return to completed presentation', `document.querySelector('[data-smart-selector-dialog]')?.dataset.smartSelectorComplete === 'true'`)
   await evaluate(`[...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Назад')?.click()`)

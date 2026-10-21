@@ -32,6 +32,7 @@
 .profileHint { color: var(--color-text-muted-warm); }
 .profileComplete { color: var(--color-primary); }
 .profileComplete strong { font-weight: 700; }
+.profileCompleteCheck { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; margin-right: 5px; color: var(--color-primary); font-size: 12px; font-weight: 800; line-height: 1; vertical-align: -1px; }
 .tag { display: inline-flex; max-width: 100%; align-items: flex-start; justify-content: flex-start; gap: 7px; overflow-wrap: anywhere; border-radius: 999px; background: var(--color-tag-bg); padding: 7px 11px; color: var(--color-primary); font: inherit; font-size: 13px; line-height: 1.4; text-align: left; }
 .tagLabel { min-width: 0; overflow-wrap: anywhere; border: 0; background: transparent; padding: 0; color: inherit; cursor: text; font: inherit; line-height: inherit; text-align: left; }
 .tagEdit { box-sizing: content-box; min-width: 3ch; max-width: min(36ch, 55vw); border: 0; border-bottom: 1px solid currentColor; outline: 0; background: transparent; padding: 0; color: inherit; font: inherit; line-height: inherit; }
