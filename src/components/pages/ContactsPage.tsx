@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { ContactSection } from '@/components/marketing/shared-page-sections'
 import { OfficeMapSlot } from './contacts-map-slot'
 import { usePageCms } from '@/pages/use-page-cms'
@@ -116,7 +116,14 @@ export function ContactsPage() {
                 </div>
                 <div className="contacts-office-item">
                   <span className="contacts-office-label">Время работы:</span>
-                  <span className="contacts-office-value">{office.schedule}</span>
+                  <span className="contacts-office-value">
+                    {office.schedule.split('\n').map((line, index) => (
+                      <Fragment key={`${office.slug}-schedule-${index}`}>
+                        {index > 0 ? <br /> : null}
+                        {line}
+                      </Fragment>
+                    ))}
+                  </span>
                 </div>
               </div>
             </div>
