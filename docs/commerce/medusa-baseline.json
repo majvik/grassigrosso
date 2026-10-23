@@ -1,0 +1,77 @@
+{
+  "format": "grassigrosso-medusa-baseline-v1",
+  "source": {
+    "repository": "https://github.com/medusajs/medusa",
+    "tag": "v2.21.2",
+    "commit": "020565398e436a2bc65777a3b1ad347b4735d6df",
+    "releaseUrl": "https://github.com/medusajs/medusa/releases/tag/v2.21.2",
+    "reviewedAt": "2026-10-23"
+  },
+  "runtime": {
+    "node": "^20.19.0 || >=22.12.0",
+    "selectedNode": "24.x"
+  },
+  "policy": {
+    "mode": "official-packages-core-only",
+    "allowsPhysicalUpstreamEnterpriseFiles": true,
+    "allowsEnterpriseActivation": false,
+    "allowsProjectImportsOfEnterpriseMaterial": false,
+    "allowsProjectModificationOfEnterpriseMaterial": false,
+    "futureMode": "filtered-source-fork"
+  },
+  "licenseFiles": [
+    {
+      "upstreamPath": "LICENSE",
+      "localPath": "docs/commerce/licenses/medusa-v2.21.2-LICENSE",
+      "sha256": "cf67cc556c17e0b00dc0c74a3d71db8dec9aae98af747a2503803a640fba9bb5"
+    },
+    {
+      "upstreamPath": "ENTERPRISE-LICENSE.md",
+      "localPath": "docs/commerce/licenses/medusa-v2.21.2-ENTERPRISE-LICENSE.md",
+      "sha256": "2e0b6e1a06fc2fbc9d4f6bb57cf61ea707bb470711f8c068acc42b85fd30b5d4"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@medusajs/medusa",
+      "version": "2.21.2",
+      "resolvedLicense": "MIT (root license)",
+      "npmIntegrity": "sha512-kzotmmmdv8hou319iRiYuDDqqNzxPWf9d7HHidRhagmHDGU+b863ecLaeLyfAvyc2UniFxb/UpnwjvKDvZ0cuA==",
+      "tarballSha256": "7e8dafaadf833fb200044dc1b9f6ce2cb56f493c5a89391849e86b0022af749c",
+      "containsUpstreamEnterpriseMaterial": true
+    },
+    {
+      "name": "@medusajs/framework",
+      "version": "2.21.2",
+      "resolvedLicense": "MIT (root license)",
+      "npmIntegrity": "sha512-AwX3Plxm1t4wJ8dqhwDpa2/5EuKJHdwsBxDb26E6lc3HKIJAzUFLJiF37wp5pZWicb7ETJtUe36jy/dUZw5fkg==",
+      "tarballSha256": "af08af4ad958603880e01fcee462b1675403de6c30ace202773031fb6ebd164f",
+      "containsUpstreamEnterpriseMaterial": true
+    },
+    {
+      "name": "@medusajs/cli",
+      "version": "2.21.2",
+      "resolvedLicense": "MIT",
+      "npmIntegrity": "sha512-rMWPcj+35aPEfHFPvyn3CQ4qYeNsfnVhlYG2mZ8oScwVC9v0k2A3d3C5o9uDgchTo34SH/tIggOo+EhWTBRQYg==",
+      "tarballSha256": "05972079479b4f014ff2a8e1190e9b889de372c1235afdde65b3ecac94a52ac4",
+      "containsUpstreamEnterpriseMaterial": false
+    },
+    {
+      "name": "@medusajs/admin-sdk",
+      "version": "2.21.2",
+      "resolvedLicense": "MIT (root license)",
+      "npmIntegrity": "sha512-fx3cXsBj/tLQc5eLC2Xn+7sH/Yrn/pJOxP0Mye+Isr88cmHWeEceGpEY+agIQ5+ZqEIuAZYrCS57ciSf2LSabg==",
+      "tarballSha256": "f673615193f857a38df2193783d90653a91fcd34fee807e68b716b84383d4cc8",
+      "containsUpstreamEnterpriseMaterial": false
+    },
+    {
+      "name": "@medusajs/ui",
+      "version": "4.2.6",
+      "resolvedLicense": "MIT",
+      "npmIntegrity": "sha512-ypeOWMe/Z9w5ENUpS5rCC/Zh9zPaUi11ml3j7/5ZhrgGsCyT7mBerey1oH/QpgKK3bs6HKO+KjSVLHerh8Hkdg==",
+      "tarballSha256": "3dc8dd9df60a2128634bae4ea66cdf82650d0c7656013dc9824591319b82bff0",
+      "containsUpstreamEnterpriseMaterial": false
+    }
+  ],
+  "packagesSha256": "fc72ff6fd9e18135e9878f96ac327c5ad1b0ebb37b887d1d0b75b0d36d53dd59"
+}

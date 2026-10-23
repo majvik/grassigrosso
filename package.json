@@ -84,6 +84,7 @@
     "check:catalog-smart-select-api": "node scripts/check-catalog-smart-select-api.mjs",
     "check:catalog-firmness-scores": "node scripts/check-catalog-firmness-scores.mjs",
     "check:catalog-perf": "node scripts/check-catalog-perf.mjs",
+    "check:medusa-license": "node --test scripts/commerce/check-medusa-license.test.mjs && node scripts/commerce/check-medusa-license.mjs",
     "catalog-import:build": "python3 scripts/build-catalog-import.py",
     "catalog-import:validate": "node scripts/validate-catalog-import.mjs",
     "catalog-import:preview": "node scripts/build-catalog-import-preview.mjs",

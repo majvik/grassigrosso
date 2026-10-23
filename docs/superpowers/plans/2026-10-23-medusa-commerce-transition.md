@@ -15,7 +15,7 @@
 - Work locally only; do not push, deploy, create/update a pull request, or change Timeweb/dev/prod.
 - Do not begin a later phase while the previous phase has an open required test or verification item.
 - Every behavior change follows RED → GREEN and includes an automated regression test.
-- Use Medusa Core only; do not enable, copy, derive from, or depend on Enterprise RBAC/SSO materials.
+- Use Medusa Core only. Official packages may physically contain upstream Enterprise Materials, but project code must not enable, import, modify, copy, derive from, or depend on Enterprise RBAC/SSO/OIDC behavior; a later filtered-source fork must preserve all public contracts.
 - Pin the accepted Medusa tag, commit SHA, lockfile, licenses, SBOM, Node runtime, PostgreSQL, Redis, and Docker image digests before writing integration code.
 - Strapi owns content/media/SEO; Medusa owns variants/SKU/prices/inventory/carts/customers/orders/payments.
 - A field has exactly one writable owner. Cross-system data is an immutable-key projection, never competing two-way ownership.
@@ -89,9 +89,13 @@
 
 **Files:**
 - Create: `scripts/commerce/check-medusa-license.mjs`
+- Create: `scripts/commerce/check-medusa-license.test.mjs`
 - Create: `scripts/commerce/enterprise-paths.json`
 - Create: `docs/commerce/medusa-baseline.md`
+- Create: `docs/commerce/medusa-baseline.json`
 - Create: `docs/commerce/medusa-sbom.json`
+- Create: `docs/commerce/licenses/medusa-v2.21.2-LICENSE`
+- Create: `docs/commerce/licenses/medusa-v2.21.2-ENTERPRISE-LICENSE.md`
 - Modify: `package.json`
 
 **Interfaces:**
@@ -99,34 +103,43 @@
 - Produces: machine-readable allow/deny inputs consumed by every later dependency update.
 - Pins: Medusa `v2.21.2` only if the checked tag SHA, licenses, package contents, and Node compatibility match the baseline; otherwise stop and amend the spec/plan rather than silently choosing another version.
 
-- [ ] **Step 1: Write the failing license-baseline check**
+- [x] **Step 1: Write the failing license-baseline check**
 
-Assert that the pinned tag SHA, root `LICENSE`, `ENTERPRISE-LICENSE.md`, denied Enterprise paths, package versions, and generated SBOM hashes exactly match committed baseline data; assert failure for an injected unknown license or Enterprise path.
+Assert that the pinned tag SHA, root `LICENSE`, `ENTERPRISE-LICENSE.md`, denied Enterprise paths, package versions, and generated SBOM hashes exactly match committed baseline data; assert failure for an injected unknown license, project-owned Enterprise path, forbidden feature flag or forbidden package import.
 
-- [ ] **Step 2: Run the check and verify RED**
+- [x] **Step 2: Run the check and verify RED**
 
 Run: `npm run check:medusa-license`
 Expected: FAIL because no committed baseline or checker exists.
 
-- [ ] **Step 3: Implement `check-medusa-license.mjs`**
+- [x] **Step 3: Implement `check-medusa-license.mjs`**
 
 Expose `loadBaseline(path)`, `scanPackageTree(root)`, `assertNoEnterpriseMaterial(scan, denylist)`, and `writeSbom(scan, output)`; do not download or update packages during the check.
 
-- [ ] **Step 4: Generate and manually review the baseline**
+- [x] **Step 4: Generate and manually review the baseline**
 
 Record exact tag, commit SHA, license hashes, package versions, Node requirement, denied paths and SBOM. Document that future changes require an explicit diff review.
 
-- [ ] **Step 5: Run the license check and verify GREEN**
+- [x] **Step 5: Run the license check and verify GREEN**
 
 Run: `npm run check:medusa-license`
-Expected: PASS and report exact accepted tag/SHA with zero denied or unknown license findings.
+Expected: PASS and report exact accepted tag/SHA with zero project Enterprise usage/activation and zero unknown license findings. Physical Enterprise files declared inside unchanged official upstream packages are inventoried, not misreported as project usage.
 
-- [ ] **Step 6: Commit Task 1**
+- [x] **Step 6: Commit Task 1**
 
 ```bash
-git add package.json scripts/commerce/check-medusa-license.mjs scripts/commerce/enterprise-paths.json docs/commerce/medusa-baseline.md docs/commerce/medusa-sbom.json
+git add package.json scripts/commerce/check-medusa-license.mjs scripts/commerce/check-medusa-license.test.mjs scripts/commerce/enterprise-paths.json docs/commerce/medusa-baseline.md docs/commerce/medusa-baseline.json docs/commerce/medusa-sbom.json docs/commerce/licenses docs/superpowers/specs/2026-10-23-medusa-commerce-transition-design.md docs/superpowers/plans/2026-10-23-medusa-commerce-transition.md
 git commit -m "chore(commerce): pin Medusa license baseline"
 ```
+
+#### Execution Results — Task 1
+
+- Tests added: 4 Node test-runner checks covering committed baseline consistency, unknown-license/project Enterprise rejection, forbidden flag/package detection, and deterministic SBOM output.
+- RED: `npm run check:medusa-license` → exit 1; missing baseline/checker. A second RED run proved missing Enterprise activation detection.
+- GREEN: `npm run check:medusa-license` → 4/4 PASS; CLI reported tag `v2.21.2`, commit `020565398e436a2bc65777a3b1ad347b4735d6df`, 5 pinned packages, 0 project Enterprise usages, 0 unknown licenses.
+- Additional gate: `npm run typecheck` → exit 0; `git diff --check` → exit 0.
+- Ruling: official packages are temporarily permitted to physically contain declared upstream Enterprise files, but project activation/import/modification/copy/dependency is fail-closed; contracts preserve a later filtered-fork migration.
+- Remote actions: none. Only read-only retrieval of official GitHub/npm artifacts was used to generate and review committed evidence.
 
 ### Task 2: Scaffold the isolated Medusa runtime and local infrastructure
 
