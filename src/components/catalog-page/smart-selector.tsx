@@ -16,6 +16,7 @@ export function SmartSelector() {
   const [open, setOpen] = useState(false)
   const [currentStepId, setCurrentStepId] = useState<QuizStepId>('step_target')
   const [stepHistory, setStepHistory] = useState<QuizStepId[]>([])
+  const [futureSteps, setFutureSteps] = useState<QuizStepId[]>([])
   const [answers, setAnswers] = useState<QuizAnswers>({})
   const [quizComplete, setQuizComplete] = useState(false)
   const [tags, setTags] = useState<Tag[]>([])
@@ -100,15 +101,19 @@ export function SmartSelector() {
 
   const chooseOption = (value: string, label: string, query: string) => {
     const isRoot = currentStepId === 'step_target'
+    const retainedAnswers = { ...answers }
+    futureSteps.forEach((stepId) => delete retainedAnswers[stepId])
     const nextAnswers = isRoot
       ? { step_target: value }
-      : { ...answers, [currentStepId]: value }
+      : { ...retainedAnswers, [currentStepId]: value }
     setAnswers(nextAnswers)
     setTags((current) => {
       const freeTags = current.filter((tag) => tag.id.startsWith('free-'))
-      const branchTags = isRoot ? [] : current.filter((tag) => !tag.id.startsWith('free-') && tag.id !== currentStepId)
+      const futureStepIds = new Set(futureSteps)
+      const branchTags = isRoot ? [] : current.filter((tag) => !tag.id.startsWith('free-') && tag.id !== currentStepId && !futureStepIds.has(tag.id as QuizStepId))
       return [...freeTags, ...branchTags, { id: currentStepId, label, query, value }]
     })
+    setFutureSteps([])
     const nextStepId = getNextStepId(currentStepId, nextAnswers)
     if (nextStepId) {
       setStepHistory((current) => isRoot ? ['step_target'] : [...current, currentStepId])
@@ -123,16 +128,20 @@ export function SmartSelector() {
   const goBack = () => {
     if (!stepHistory.length) return
     const previousStepId = stepHistory[stepHistory.length - 1]
-    const answerIdToRemove = quizComplete ? currentStepId : previousStepId
-    setAnswers((current) => {
-      const next = { ...current }
-      delete next[answerIdToRemove]
-      return next
-    })
-    setTags((current) => current.filter((tag) => tag.id !== answerIdToRemove))
+    setFutureSteps((current) => [currentStepId, ...current])
     setCurrentStepId(previousStepId)
     setStepHistory((current) => current.slice(0, -1))
     setQuizComplete(false)
+    setError('')
+  }
+
+  const goForward = () => {
+    if (!futureSteps.length) return
+    const [nextStepId, ...remainingSteps] = futureSteps
+    setStepHistory((current) => [...current, currentStepId])
+    setCurrentStepId(nextStepId)
+    setFutureSteps(remainingSteps)
+    setQuizComplete(Boolean(answers[nextStepId]) && remainingSteps.length === 0 && !getNextStepId(nextStepId, answers))
     setError('')
   }
 
@@ -143,6 +152,7 @@ export function SmartSelector() {
     setInput('')
     setCurrentStepId('step_target')
     setStepHistory([])
+    setFutureSteps([])
     setAnswers({})
     setQuizComplete(false)
     setError('')
@@ -158,7 +168,7 @@ export function SmartSelector() {
       return
     }
     const stepId = tag.id as QuizStepId
-    const path = [...stepHistory, currentStepId]
+    const path = [...stepHistory, currentStepId, ...futureSteps]
     const targetIndex = Math.max(0, path.indexOf(stepId))
     const removedStepIds = new Set(path.slice(targetIndex))
     setTags((current) => current.filter((item) => !removedStepIds.has(item.id as QuizStepId)))
@@ -169,6 +179,7 @@ export function SmartSelector() {
     })
     setCurrentStepId(stepId)
     setStepHistory(path.slice(0, targetIndex))
+    setFutureSteps([])
     setQuizComplete(false)
     setError('')
   }
@@ -389,9 +400,9 @@ export function SmartSelector() {
 
             <div className={styles.footer}>
               <div className={styles.navigation} aria-label="Навигация по вопросам">
-                <button type="button" className={styles.stepButton} onClick={goBack} disabled={stepHistory.length === 0}>Назад</button>
+                <button type="button" className={styles.stepButton} onClick={goBack} disabled={stepHistory.length === 0} data-smart-selector-back>Назад</button>
                 <span className={styles.navigationDivider} aria-hidden="true">|</span>
-                <button type="button" className={styles.stepButton} disabled>Вперёд</button>
+                <button type="button" className={styles.stepButton} onClick={goForward} disabled={futureSteps.length === 0} data-smart-selector-forward>Вперёд</button>
               </div>
               <span>Ответ можно изменить</span>
             </div>

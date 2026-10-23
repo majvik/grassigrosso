@@ -218,10 +218,10 @@ try {
   })()`)
 
   const branchChecks = [
-    { value: 'couple', total: 5, title: 'Какой вес у более крупного партнёра?' },
-    { value: 'parentWithChild', total: 4, title: 'Как организован совместный сон?' },
-    { value: 'childOnly', total: 4, title: 'Для какого возраста и в какую кровать?' },
-    { value: 'topper', total: 3, title: 'Какую задачу должен решить тонкий матрас?' },
+    { value: 'couple', label: 'Пара', total: 5, title: 'Какой вес у более крупного партнёра?' },
+    { value: 'parentWithChild', label: 'Взрослый с ребёнком', total: 4, title: 'Как организован совместный сон?' },
+    { value: 'childOnly', label: 'Ребёнку или подростку', total: 4, title: 'Для какого возраста и в какую кровать?' },
+    { value: 'topper', label: 'Тонкий матрас на диван', total: 3, title: 'Какую задачу должен решить тонкий матрас?' },
   ]
   for (const branch of branchChecks) {
     await evaluate(`document.querySelector('[data-option-value="${branch.value}"]')?.click()`)
@@ -229,10 +229,15 @@ try {
       const dialog = document.querySelector('[data-smart-selector-dialog]')
       return Boolean(dialog?.textContent.includes('Шаг 2 из ${branch.total}') && dialog?.textContent.includes(${JSON.stringify(branch.title)}))
     })()`)
-    await evaluate(`[...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Назад')?.click()`)
-    await waitFor(evaluate, `${branch.value} back returns to root and removes branch chip`, `(() => {
+    await evaluate(`document.querySelector('[data-smart-selector-back]')?.click()`)
+    await waitFor(evaluate, `${branch.value} back returns to root without removing the branch chip`, `(() => {
       const dialog = document.querySelector('[data-smart-selector-dialog]')
-      return Boolean(dialog?.textContent.includes('Шаг 1 из 5') && dialog?.textContent.includes('Для кого или куда подбираем матрас?') && !dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes(${JSON.stringify(branch.title)}))
+      const forward = dialog?.querySelector('[data-smart-selector-forward]')
+      return Boolean(dialog?.textContent.includes('Шаг 1 из ${branch.total}')
+        && dialog?.textContent.includes('Для кого или куда подбираем матрас?')
+        && dialog.querySelector('[data-smart-selector-tags]')?.textContent.includes(${JSON.stringify(branch.label)})
+        && forward
+        && !forward.disabled)
     })()`)
   }
 
@@ -254,7 +259,13 @@ try {
   await waitFor(evaluate, 'completion checkmark appears only for a completed profile', `(() => {
     const status = document.querySelector('[data-smart-selector-profile-status]')
     const check = status?.querySelector('[data-smart-selector-complete-check]')
-    return Boolean(check && check.textContent.trim() === '✓' && check.getAttribute('aria-hidden') === 'true')
+    const styles = check ? getComputedStyle(check) : null
+    return Boolean(check
+      && check.textContent.trim() === '✓'
+      && check.getAttribute('aria-hidden') === 'true'
+      && styles?.backgroundColor === 'rgb(40, 62, 55)'
+      && styles.color === 'rgb(255, 255, 255)'
+      && styles.borderRadius === '50%')
   })()`)
   await waitFor(evaluate, 'completed quiz receives persistent completion cues and one-shot glow', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
@@ -273,6 +284,16 @@ try {
   })()`)
   await delay(1200)
   await waitFor(evaluate, 'completion glow disappears after its single impulse', `getComputedStyle(document.querySelector('[data-smart-selector-quick-submit]')).boxShadow === 'none'`)
+  await evaluate(`window.__completedTagCount = document.querySelectorAll('[data-smart-selector-tag]').length; document.querySelector('[data-smart-selector-back]')?.click()`)
+  await waitFor(evaluate, 'back navigation preserves answers and enables forward navigation', `(() => {
+    const forward = document.querySelector('[data-smart-selector-forward]')
+    return document.querySelectorAll('[data-smart-selector-tag]').length === window.__completedTagCount
+      && forward
+      && !forward.disabled
+      && document.querySelector('[data-smart-selector-dialog]')?.dataset.smartSelectorComplete === 'false'
+  })()`)
+  await evaluate(`document.querySelector('[data-smart-selector-forward]')?.click()`)
+  await waitFor(evaluate, 'forward navigation restores the completed profile without changing answers', `document.querySelectorAll('[data-smart-selector-tag]').length === window.__completedTagCount && document.querySelector('[data-smart-selector-dialog]')?.dataset.smartSelectorComplete === 'true'`)
   await evaluate(`(() => {
     const finalTag = [...document.querySelectorAll('[data-smart-selector-tag]')].at(-1)
     finalTag?.querySelector('button[aria-label^="Удалить:"]')?.click()
@@ -287,7 +308,7 @@ try {
   await waitFor(evaluate, 'completion checkmark is absent for an incomplete profile', `!document.querySelector('[data-smart-selector-complete-check]')`)
   await evaluate(`document.querySelector('[data-option-value="soft"]')?.click()`)
   await waitFor(evaluate, 'quiz can return to completed presentation', `document.querySelector('[data-smart-selector-dialog]')?.dataset.smartSelectorComplete === 'true'`)
-  await evaluate(`[...document.querySelectorAll('[data-smart-selector-dialog] button')].find((button) => button.textContent.trim() === 'Назад')?.click()`)
+  await evaluate(`document.querySelector('[data-smart-selector-back]')?.click()`)
   await waitFor(evaluate, 'going back restores incomplete yellow tags', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
     const tags = [...(dialog?.querySelectorAll('[data-smart-selector-tag]') || [])]
