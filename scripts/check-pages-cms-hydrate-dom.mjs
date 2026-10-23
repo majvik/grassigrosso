@@ -71,7 +71,15 @@ const LEGAL_CONTENT_TAGS = [
   'STRONG',
   'DIV',
 ]
-const LEGAL_DATE_LABEL = 'Дата последнего обновления: 01.03.2026'
+const LEGAL_DATE_LABELS = {
+  privacy: 'Дата последнего обновления: 14.09.2026',
+  terms: 'Дата последнего обновления: 01.03.2026',
+  cookies: 'Дата последнего обновления: 14.09.2026',
+}
+
+function legalDateLabel(slug) {
+  return LEGAL_DATE_LABELS[slug] || ''
+}
 
 const HOTELS_SECTIONS = [
   'page-hero',
@@ -543,6 +551,7 @@ function criticalHooksExpr(slug) {
         id: el.id,
         src: el.tagName === 'IFRAME' ? el.getAttribute('src') || '' : '',
         embed: el.getAttribute('data-map-embed') === '1',
+        placeholder: el.getAttribute('data-map-placeholder') || '',
       }))
       return {
         tabs: [...document.querySelectorAll('[data-map-tab]')].map((el) => el.getAttribute('data-office')),
@@ -829,18 +838,16 @@ function assertFirstPaintBaseline(slug, snap) {
       `${slug} baseline: section allowlist (${JSON.stringify(snap?.topLevelSections)})`,
     )
     assert(snap?.section && snap?.titleEl && snap?.dateEl && snap?.contentEl, `${slug} baseline: legal slots`)
-    assert(String(snap?.date || '') === LEGAL_DATE_LABEL, `${slug} baseline: date label (${snap?.date})`)
+    assert(String(snap?.date || '') === legalDateLabel(slug), `${slug} baseline: date label (${snap?.date})`)
     assert(String(snap?.title || '').length > 5, `${slug} baseline: title`)
     assert(snap?.h2 > 0, `${slug} baseline: headings`)
     assert(Array.isArray(snap?.badTags) && snap.badTags.length === 0, `${slug} baseline: bad tags ${JSON.stringify(snap?.badTags)}`)
     assert(snap?.dataLabelOk, `${slug} baseline: td data-label`)
     assert(!snap?.hasDangerousHtml, `${slug} baseline: dangerous HTML`)
-    if (slug === 'privacy' || slug === 'terms') {
+    if (slug === 'terms') {
       assert(snap?.operatorCount === 1, `${slug} baseline: operator once (${snap?.operatorCount})`)
-    } else {
-      assert(snap?.operatorCount === 0, `${slug} baseline: cookies has no operator`)
     }
-    if (slug === 'cookies' || slug === 'privacy') {
+    if (slug === 'cookies') {
       assert(snap?.tables >= 1 && snap?.tableWraps >= 1, `${slug} baseline: table wrap`)
     }
     assert(snap?.consoleErrors === 0, `${slug} baseline: console errors ${snap?.consoleErrors}`)
@@ -942,11 +949,8 @@ function assertFirstPaintBaseline(slug, snap) {
     assert(String(snap?.heroTitle || '') === 'Контакты', `${slug} baseline: hero`)
     assert(!snap?.hasDangerousMapHtml, `${slug} baseline: srcdoc iframe`)
     for (const frame of snap?.frames || []) {
-      assert(frame.tag === 'IFRAME' && frame.embed, `${slug} baseline: expected embed iframe for ${frame.slug}`)
-      assert(
-        String(frame.src).startsWith('https://yandex.ru/map-widget/'),
-        `${slug} baseline: iframe src allowlist (${frame.src})`,
-      )
+      assert(frame.tag === 'DIV' && !frame.embed && !frame.src, `${slug} baseline: consent-safe placeholder for ${frame.slug}`)
+      assert(String(frame.placeholder).length > 0, `${slug} baseline: placeholder key for ${frame.slug}`)
     }
   } else {
     assert(
@@ -1089,7 +1093,7 @@ async function runPageScenarios(slug) {
     assertFirstPaintBaseline(slug, failed)
     if (LEGAL_PAGE_SET.has(slug)) {
       assert(String(failed?.title || '') === fallbackTitle, `${slug} ${mode.id}: lost fallback title`)
-      assert(String(failed?.date || '') === LEGAL_DATE_LABEL, `${slug} ${mode.id}: lost fallback date`)
+      assert(String(failed?.date || '') === legalDateLabel(slug), `${slug} ${mode.id}: lost fallback date`)
       assert(failed?.consoleErrors === 0, `${slug} ${mode.id}: console errors`)
     } else if (slug === 'index') {
       assert(String(failed?.heroTitle || '').includes(fallbackTitle), `${slug} ${mode.id}: lost fallback title`)
@@ -1261,19 +1265,12 @@ async function runPageScenarios(slug) {
         `document.querySelector('.contacts-hero-title')?.textContent?.trim() === 'CMS Contacts Title Marker'`,
         15000,
       )
-      await waitFor(
-        evaluate,
-        `${slug} map embed marker`,
-        `(() => {
-          const main = document.querySelector('#map-main')
-          return (
-            main?.tagName === 'IFRAME' &&
-            (main.getAttribute('src') || '').includes('cms=contacts-map-marker') &&
-            !document.documentElement.innerHTML.includes('map_iframe_html')
-          )
-        })()`,
-        15000,
-      )
+      await waitFor(evaluate, `${slug} consent-safe map slots`, `(() => {
+        const frames = [...document.querySelectorAll('[data-map-frame]')]
+        return frames.length === 4
+          && frames.every((frame) => frame.tagName === 'DIV' && frame.hasAttribute('data-map-placeholder'))
+          && !document.documentElement.innerHTML.includes('map_iframe_html')
+      })()`, 15000)
     } else if (LEGAL_PAGE_SET.has(slug)) {
       await waitFor(
         evaluate,
@@ -1408,10 +1405,7 @@ async function runPageScenarios(slug) {
         `${slug} success: hero image (${ok?.heroImg})`,
       )
       const mainFrame = (ok?.frames || []).find((f) => f.slug === 'main')
-      assert(
-        mainFrame?.tag === 'IFRAME' && String(mainFrame.src).includes('cms=contacts-map-marker'),
-        `${slug} success: main map embed marker (${JSON.stringify(mainFrame)})`,
-      )
+      assert(mainFrame?.tag === 'DIV' && !mainFrame.embed && mainFrame.placeholder === 'simferopol', `${slug} success: consent-safe main map (${JSON.stringify(mainFrame)})`)
       assert(!ok?.rawHtml && !ok?.hasDangerousMapHtml, `${slug} success: map HTML leak`)
       assert(ok?.form && ok?.honeypot, `${slug} success: form hooks`)
       assertGeometryKeys(`${slug} success FE-05`, geoBaseline, geoAfter, {
@@ -1433,7 +1427,7 @@ async function runPageScenarios(slug) {
       assert(ok?.dataLabelOk, `${slug} success: td data-label`)
       assert(!ok?.hasDangerousHtml, `${slug} success: dangerous HTML`)
       assert(ok?.consoleErrors === 0, `${slug} success: console errors`)
-      if (slug === 'privacy' || slug === 'terms') {
+      if (slug === 'terms') {
         assert(ok?.operatorCount === 1, `${slug} success: operator once`)
       }
       assertGeometryKeys(`${slug} success FE-05`, geoBaseline, geoAfter, {
@@ -1529,7 +1523,7 @@ async function runPageScenarios(slug) {
         return (
           frames.length === 4 &&
           frames.every((el) => el.tagName === 'DIV' && el.getAttribute('data-map-embed') !== '1') &&
-          !!document.querySelector('#map-main.contacts-map-placeholder') &&
+          !!document.querySelector('#map-main[data-map-placeholder="simferopol"]') &&
           !document.documentElement.innerHTML.includes('map_iframe_html')
         )
       })()`,
