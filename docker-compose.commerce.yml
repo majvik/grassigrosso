@@ -1,0 +1,35 @@
+name: grassigrosso-commerce
+
+services:
+  postgres:
+    image: postgres:16.10-alpine3.22@sha256:029660641a0cfc575b14f336ba448fb8a75fd595d42e1fa316b9fb4378742297
+    environment:
+      POSTGRES_DB: grassigrosso_commerce
+      POSTGRES_USER: medusa
+      POSTGRES_PASSWORD: medusa_local_only
+    ports:
+      - "127.0.0.1:5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medusa -d grassigrosso_commerce"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    volumes:
+      - commerce_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.2.11-alpine3.21@sha256:1a34bdba051ecd8a58ec8a3cc460acef697a1605e918149cc53d920673c1a0a7
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    volumes:
+      - commerce_redis_data:/data
+
+volumes:
+  commerce_postgres_data:
+  commerce_redis_data:

@@ -26,7 +26,7 @@ async function walkFiles(root, current = root) {
   const entries = await readdir(current, { withFileTypes: true })
   const files = []
   for (const entry of entries) {
-    if (['.git', 'node_modules', 'dist', '.superpowers'].includes(entry.name)) continue
+    if (['.git', '.medusa', 'node_modules', 'dist', '.superpowers'].includes(entry.name)) continue
     const absolute = path.join(current, entry.name)
     if (entry.isDirectory()) files.push(...(await walkFiles(root, absolute)))
     else files.push(path.relative(root, absolute).split(path.sep).join('/'))
@@ -53,6 +53,17 @@ export async function scanPackageTree(root, options = {}) {
   const enterpriseActivations = []
   for (const file of projectFiles) {
     if (ignoredContentPrefixes.some((prefix) => file.startsWith(prefix))) continue
+    if (file.includes('.test.') || path.basename(file) === 'package-lock.json') continue
+    if (path.basename(file) === 'package.json') {
+      const manifest = JSON.parse(await readFile(path.join(root, file), 'utf8'))
+      const directDependencies = { ...manifest.dependencies, ...manifest.devDependencies, ...manifest.optionalDependencies }
+      for (const packageName of denylist.forbiddenPackages ?? []) {
+        if (packageName in directDependencies) {
+          enterpriseActivations.push(`${file}: forbidden direct dependency ${packageName}`)
+        }
+      }
+      continue
+    }
     if (!sourceExtensions.has(path.extname(file)) && !path.basename(file).startsWith('.env')) continue
     const content = await readFile(path.join(root, file), 'utf8')
     for (const flag of denylist.forbiddenFeatureFlags ?? []) {

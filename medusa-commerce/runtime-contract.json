@@ -1,0 +1,7 @@
+{
+  "defaultCurrency": "rub",
+  "countries": ["ru"],
+  "adminLocales": ["ru", "en"],
+  "paymentProviders": ["pp_system_default"],
+  "fulfillmentProviders": ["manual_manual"]
+}

@@ -68,6 +68,10 @@ test('source scan detects forbidden Enterprise flags and package imports', async
   const temp = await mkdtemp(path.join(os.tmpdir(), 'medusa-enterprise-usage-'))
   try {
     await writeFile(path.join(temp, 'app.js'), "import '@medusajs/rbac'\nconst flag = 'MEDUSA_FF_RBAC'\n")
+    await writeFile(
+      path.join(temp, 'package.json'),
+      JSON.stringify({ dependencies: { '@medusajs/auth-oidc': '2.21.2' } }),
+    )
     const packages = []
     const baseline = {
       source: { tag: 'v2.21.2', commit: 'abc' },
@@ -81,12 +85,13 @@ test('source scan detects forbidden Enterprise flags and package imports', async
       denylist: {
         paths: [],
         forbiddenFeatureFlags: ['MEDUSA_FF_RBAC'],
-        forbiddenPackages: ['@medusajs/rbac'],
+        forbiddenPackages: ['@medusajs/rbac', '@medusajs/auth-oidc'],
       },
     })
     assert.deepEqual(scan.enterpriseActivations, [
       'app.js: forbidden feature flag MEDUSA_FF_RBAC',
       'app.js: forbidden package @medusajs/rbac',
+      'package.json: forbidden direct dependency @medusajs/auth-oidc',
     ])
   } finally {
     await rm(temp, { recursive: true, force: true })

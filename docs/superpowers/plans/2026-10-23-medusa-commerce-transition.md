@@ -156,38 +156,49 @@ git commit -m "chore(commerce): pin Medusa license baseline"
 - Produces: `npm run dev:commerce`, `npm run build:commerce`, `npm run check:commerce-runtime`.
 - Preserves: existing Strapi/API/Vite ports and `npm run dev:all` until a later explicit orchestration task.
 
-- [ ] **Step 1: Write the failing runtime contract**
+- [x] **Step 1: Write the failing runtime contract**
 
 Assert pinned package versions, disabled Enterprise feature flags, RUB region fixture, Russian Admin locale availability, PostgreSQL connection, Redis connection, health endpoint, and absence of Cloud-only runtime dependencies.
 
-- [ ] **Step 2: Run the runtime check and verify RED**
+- [x] **Step 2: Run the runtime check and verify RED**
 
 Run: `npm run check:commerce-runtime`
 Expected: FAIL because the runtime is absent.
 
-- [ ] **Step 3: Scaffold Medusa from the accepted pinned source**
+- [x] **Step 3: Scaffold Medusa from the accepted pinned source**
 
 Create the application without a replacement storefront. Configure PostgreSQL, Redis, local file provider for development, email test provider, RUB and Russia defaults. Keep generated files inside `medusa-commerce/`.
 
-- [ ] **Step 4: Add local Docker and environment contracts**
+- [x] **Step 4: Add local Docker and environment contracts**
 
 Use named local volumes, explicit health checks and non-production credentials. Never copy real secrets into examples or tests.
 
-- [ ] **Step 5: Add baseline backup/restore smoke**
+- [x] **Step 5: Add baseline backup/restore smoke**
 
 Create `scripts/commerce/check-backup-restore.mjs`; insert a fixture, create a local backup, restore into a fresh test database, and assert the fixture survives.
 
-- [ ] **Step 6: Verify GREEN**
+- [x] **Step 6: Verify GREEN**
 
 Run: `npm run check:medusa-license && npm run check:commerce-runtime && npm run build:commerce`
 Expected: all PASS; Admin can select Russian; backup/restore smoke passes.
 
-- [ ] **Step 7: Record commands/results and commit Task 2**
+- [x] **Step 7: Record commands/results and commit Task 2**
 
 ```bash
 git add medusa-commerce docker-compose.commerce.yml .env.commerce.example package.json .gitignore scripts/check-commerce-runtime.mjs scripts/commerce/check-backup-restore.mjs docs/superpowers/plans/2026-10-23-medusa-commerce-transition.md
 git commit -m "feat(commerce): add self-hosted Medusa foundation"
 ```
+
+#### Execution Results — Task 2 / Phase 0
+
+- Tests added: 5 static runtime-contract tests plus executable PostgreSQL, Redis, migration, backup/restore, Russian Admin locale and HTTP health checks.
+- RED: `npm run check:commerce-runtime` → exit 1 with absent `medusa-commerce/`; additional RED runs caught incompatible React 19, missing `ts-node`, missing build-safe local secrets and a PostgreSQL restore command that attempted `DROP/CREATE DATABASE` in one transaction.
+- GREEN: `npm run check:medusa-license && npm run check:commerce-runtime && npm run build:commerce` → exit 0. Runtime result: PostgreSQL accepting connections, Redis `PONG`, restored fixture `survives`, Russian Admin translation present, `/health` returned 200; backend and Admin builds completed.
+- Regression: `npm run check:routes`, `npm run check:pages-cms-contract`, `npm run check:pages-cms-isolation`, and `npm run typecheck` → exit 0. Aggregate `npm run check` could not complete because the pre-existing catalog API on `127.0.0.1:3000` was not running; all checks before `check:catalog-api` passed.
+- Docker cleanup: `docker compose -f docker-compose.commerce.yml ps` returned no running commerce containers. Named local data volumes are intentionally retained for subsequent work.
+- Known limitation: `npm install --prefix medusa-commerce` reports 93 transitive advisories (63 moderate, 30 high) in the pinned Medusa dependency tree. They require dependency-path review in the later security gate; no blind `npm audit fix --force` was applied.
+- Runtime pins: PostgreSQL `16.10-alpine3.22@sha256:029660…2297`, Redis `7.2.11-alpine3.21@sha256:1a34bd…a0a7`, dedicated host ports 5433/6380/9000.
+- Remote actions: none; no push, deploy, PR or external environment change.
 
 ---
 

@@ -22,6 +22,7 @@ lerna-debug.log*
 *.local
 .env
 .env.local
+.env.commerce
 docker-compose.override.yml
 
 # Runtime queue
@@ -31,6 +32,9 @@ strapi-catalog/.tmp/
 strapi-catalog/build/
 strapi-catalog/.cache/
 strapi-catalog/tsconfig.tsbuildinfo
+medusa-commerce/.cache/
+medusa-commerce/.medusa/
+medusa-commerce/node_modules/
 
 # Source video and data files
 *.mov
