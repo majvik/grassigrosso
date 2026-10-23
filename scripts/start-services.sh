@@ -94,6 +94,13 @@ cleanup() {
 
 trap cleanup EXIT INT TERM
 
+# Expose the public health endpoint immediately. Strapi is allowed to warm up
+# in parallel; catalog/pages APIs already degrade to committed snapshots while
+# the CMS is unavailable.
+echo "[boot] Starting API/web server on :${PORT:-3000}"
+node server.cjs &
+APP_PID=$!
+
 start_strapi_once() {
   : > "$STRAPI_LOG_FILE"
   echo "[boot] Starting Strapi on ${STRAPI_HOST}:${STRAPI_PORT}"
@@ -146,10 +153,7 @@ for attempt in $(seq 1 "$STRAPI_START_MAX_ATTEMPTS"); do
 done
 
 if [ "$strapi_ready" != "true" ]; then
-  echo "[boot] WARNING: Strapi is unavailable after ${STRAPI_START_MAX_ATTEMPTS} attempts; starting API/web server anyway"
+  echo "[boot] WARNING: Strapi is unavailable after ${STRAPI_START_MAX_ATTEMPTS} attempts; API/web remains available in fallback mode"
 fi
 
-echo "[boot] Starting API/web server on :${PORT:-3000}"
-node server.cjs &
-APP_PID=$!
 wait "$APP_PID"
