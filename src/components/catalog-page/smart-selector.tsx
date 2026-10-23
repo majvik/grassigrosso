@@ -410,7 +410,14 @@ export function SmartSelector() {
           <div className={styles.submitArea} data-smart-selector-fixed-footer>
             <p className={isProfileComplete ? styles.profileComplete : styles.profileHint} data-smart-selector-profile-status>
               {isProfileComplete
-                ? <><span className={styles.profileCompleteCheck} aria-hidden="true" data-smart-selector-complete-check>✓</span><strong>Профиль заполнен</strong> — покажем наиболее точные варианты.</>
+                ? <>
+                    <span className={styles.profileCompleteCheck} aria-hidden="true" data-smart-selector-complete-check>
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M6 10.5L11 16L18 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                    <span className={styles.profileCompleteText}><strong>Профиль заполнен</strong> — покажем наиболее точные варианты.</span>
+                  </>
                 : 'Профиль пока не заполнен. Можем показать предварительные варианты, но для точного подбора ответьте на все вопросы.'}
             </p>
             <button type="button" className={`${styles.quickSubmit} ${isProfileComplete ? styles.quickSubmitComplete : ''}`} onClick={() => void showPreliminaryResults()} disabled={!hasProfileInput || isSubmitting} data-smart-selector-quick-submit>

@@ -259,13 +259,20 @@ try {
   await waitFor(evaluate, 'completion checkmark appears only for a completed profile', `(() => {
     const status = document.querySelector('[data-smart-selector-profile-status]')
     const check = status?.querySelector('[data-smart-selector-complete-check]')
+    const icon = check?.querySelector('svg path')
     const styles = check ? getComputedStyle(check) : null
+    const checkRect = check?.getBoundingClientRect()
+    const textRect = status?.querySelector('strong')?.getBoundingClientRect()
     return Boolean(check
-      && check.textContent.trim() === '✓'
+      && check.textContent.trim() === ''
+      && icon?.getAttribute('d') === 'M6 10.5L11 16L18 8'
       && check.getAttribute('aria-hidden') === 'true'
       && styles?.backgroundColor === 'rgb(40, 62, 55)'
       && styles.color === 'rgb(255, 255, 255)'
-      && styles.borderRadius === '50%')
+      && styles.borderRadius === '50%'
+      && checkRect
+      && textRect
+      && Math.abs((checkRect.top + checkRect.height / 2) - (textRect.top + textRect.height / 2)) <= 1)
   })()`)
   await waitFor(evaluate, 'completed quiz receives persistent completion cues and one-shot glow', `(() => {
     const dialog = document.querySelector('[data-smart-selector-dialog]')
