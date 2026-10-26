@@ -149,6 +149,8 @@ npm start
 ## 8. Деплой
 
 - Основной путь: `Dockerfile` (multi-stage) + `docker-compose.yml` для локального контейнерного запуска.
+- Timeweb App Platform требует `curl` в финальном runtime-образе для выполнения Docker healthcheck. Healthcheck обращается к `http://127.0.0.1:${PORT:-3000}/health` и ожидает HTTP 200; отсутствие `curl` приводит к отклонению уже запущенного контейнера как unhealthy.
+- Инвариант Timeweb/Docker проверяется командой `npm run check:docker-runtime-contract`. Перед деплоем финальный образ также нужно запустить локально и дождаться Docker status `healthy`.
 - Данные сохраняются в `/app/data` (volume).
 - Реверс-прокси и clean URL правила: `nginx.conf`.
 

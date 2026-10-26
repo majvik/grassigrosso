@@ -42,6 +42,8 @@
 > **Справочный раздел, не разрешение на действие.** В текущем режиме любые push/deploy запрещены правилом «Локальная разработка и обязательные тесты» выше.
 
 - Dev/prod на Timeweb: **push в git → CI/CD → Docker build (`Dockerfile`) → App Platform**. Ручной restart не нужен — `server.cjs`, `dist/` и uploads попадают в образ из последнего commit.
+- **`curl` обязателен в финальном runtime-образе.** Timeweb App Platform выполняет container healthcheck через `curl`; если пакет отсутствует, платформа отклонит деплой как unhealthy, даже когда Node и Strapi успешно запущены. Не удалять установку `curl` из финального stage `Dockerfile` и не заменять curl-команду `HEALTHCHECK` без подтверждённого эквивалента со стороны Timeweb. Контракт проверяется командой `npm run check:docker-runtime-contract`.
+- Healthcheck должен обращаться без авторизации к `http://127.0.0.1:${PORT:-3000}/health`, получать HTTP 200 и проверяться локально на **финальном** образе: после `docker build` контейнер обязан перейти в Docker status `healthy`.
 - После push на dev: `CATALOG_PERF_BASE_URL=https://majvik-grassigrosso-e3cd.twc1.net npm run check:catalog-perf` (API + HTML preload; DOM-метрики локально через Chrome headless).
 - Полный UI/DOM smoke на Timeweb — **Cursor browser MCP** (`browser_navigate` → `/catalog`, `browser_cdp` / `Runtime.evaluate` для cards/eager/uploads). Headless Chrome на удалённом HTTPS из CLI ненадёжен.
 - `check:catalog-ui` на remote URL намеренно skip'ается; локально: `CATALOG_UI_BASE_URL=http://127.0.0.1:5174 npm run check:catalog-ui`.
