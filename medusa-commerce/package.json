@@ -5,9 +5,11 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "medusa build",
+    "test:catalog-sync": "node --test -r ts-node/register integration-tests/catalog-sync.spec.ts",
     "db:migrate": "medusa db:migrate",
     "dev": "medusa develop",
     "seed": "medusa exec ./src/scripts/seed.ts",
+    "catalog:import": "medusa exec ./src/scripts/import-strapi-catalog.ts",
     "start": "medusa start"
   },
   "dependencies": {

@@ -280,34 +280,45 @@ git commit -m "feat(commerce): define product variant ownership contract"
 - Produces: `syncCatalog(input: CatalogImport): Promise<CatalogSyncReport>`.
 - Produces: report counts for created/updated/unchanged/rejected products and variants; never deletes without an explicit reviewed deletion mode.
 
-- [ ] **Step 1: Write failing Medusa integration tests**
+- [x] **Step 1: Write failing Medusa integration tests**
 
 Test first import, no-op rerun, changed price, changed inventory, added size, removed size becoming unpublished rather than deleted, duplicate key rejection and transaction rollback on a mid-batch error.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `npm run test:commerce -- catalog-sync.spec.ts`
 Expected: FAIL because workflow/service do not exist.
 
-- [ ] **Step 3: Implement the sync workflow**
+- [x] **Step 3: Implement the sync workflow**
 
 Use Medusa workflows and product/inventory/pricing modules. Keep descriptive content read-only and store only integration references needed by commerce.
 
-- [ ] **Step 4: Implement dry-run reconciliation**
+- [x] **Step 4: Implement dry-run reconciliation**
 
 Expose a root command that compares Strapi export with Medusa and exits non-zero for missing links, duplicate SKUs, price mismatches or unexpected published variants.
 
-- [ ] **Step 5: Run GREEN and record a zero-diff rerun**
+- [x] **Step 5: Run GREEN and record a zero-diff rerun**
 
 Run: `npm run test:commerce -- catalog-sync.spec.ts && npm run commerce:catalog:import && npm run commerce:catalog:reconcile`
 Expected: tests PASS; second import is a no-op; reconciliation reports zero unexpected differences.
 
-- [ ] **Step 6: Commit Task 4**
+- [x] **Step 6: Commit Task 4**
 
 ```bash
 git add medusa-commerce/src/workflows/catalog-sync medusa-commerce/src/scripts/import-strapi-catalog.ts medusa-commerce/integration-tests/catalog-sync.spec.ts scripts/commerce/reconcile-catalog.mjs package.json
 git commit -m "feat(commerce): sync Strapi products into Medusa variants"
 ```
+
+#### Execution Results — Task 4
+
+- Tests added: 5 Node/TypeScript integration scenarios for initial create, byte-stable no-op rerun, price/inventory updates with stable IDs, additive/removal lifecycle, duplicate rejection and whole-batch rollback.
+- RED: `npm run test:commerce -- catalog-sync.spec.ts` → exit 1 because `src/workflows/catalog-sync` did not exist.
+- GREEN: `npm run test:commerce -- catalog-sync.spec.ts` → 5/5 PASS.
+- Real Medusa smoke: a temporary `LOCAL-SMOKE` product was created through Product/Pricing/Inventory Core workflows; its second import reported one unchanged product/variant and reconciliation returned zero differences. It was then removed through `deleteProductsWorkflow`.
+- Reconciliation checks: missing/unexpected product links, duplicate/missing/unexpected SKUs, title/Strapi-link drift, RUB-price drift and stocked-inventory drift.
+- Final local gate: `npm run test:commerce -- catalog-sync.spec.ts && npm run commerce:catalog:import && npm run commerce:catalog:reconcile && npm run build:commerce && npm run typecheck` → exit 0; Medusa backend/Admin builds succeeded.
+- Safety: removed sizes are retained with zero stock and `grassigrosso_published=false`; only compensating rollback may delete entities created by the failed batch. Normal reconciliation never deletes catalog entities.
+- Remote actions: none; no push, deploy, PR or external environment change.
 
 ### Task 5: Add BFF composition and fail-closed readiness
 
