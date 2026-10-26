@@ -11,7 +11,14 @@ assert(!dockerfile.includes('RUN npm run build --prefix strapi-catalog'), 'dupli
 assert(/npm install --prefix strapi-catalog\b/.test(dockerfile), 'runtime Strapi lockfile-backed npm install is required')
 assert(dockerfile.includes('FROM node:22-bookworm AS build'), 'build stage must use the toolchain-ready Node image')
 assert(!/apt-get install[^\n]*(?:python3|make|g\+\+)/.test(dockerfile), 'network-installed compiler toolchain is forbidden')
-assert(dockerfile.includes("+'/health'"), 'Docker healthcheck must target the public /health endpoint')
+assert(
+  /apt-get install -y --no-install-recommends curl\b/.test(dockerfile),
+  'runtime image must install curl for Timeweb healthchecks',
+)
+assert(
+  /HEALTHCHECK[^\n]*\n\s*CMD curl\b[^\n]*\/health/.test(dockerfile),
+  'Docker healthcheck must probe the public /health endpoint with curl',
+)
 
 const publicServerStart = startServices.indexOf('node server.cjs &')
 const firstStrapiWait = startServices.indexOf('if wait_for_strapi_port; then')

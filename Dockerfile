@@ -34,6 +34,11 @@ RUN npm prune --omit=dev --no-audit --fund=false --no-update-notifier --loglevel
 FROM node:22-slim
 WORKDIR /app
 
+# Timeweb App Platform executes its container healthcheck through curl.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends curl \
+  && rm -rf /var/lib/apt/lists/*
+
 ARG GIT_SHA=dev
 ENV NODE_ENV=production
 ENV PORT=3000
@@ -80,6 +85,6 @@ RUN mkdir -p /app/data/documents /app/data/strapi \
 EXPOSE 3000
 
 HEALTHCHECK --interval=10s --timeout=3s --start-period=20s --retries=10 \
-  CMD node -e "require('http').get('http://127.0.0.1:'+(process.env.PORT||3000)+'/health', r=>process.exit(r.statusCode===200?0:1)).on('error', ()=>process.exit(1))"
+  CMD curl --fail --silent --show-error --max-time 3 "http://127.0.0.1:${PORT:-3000}/health"
 
 CMD ["/app/scripts/start-services.sh"]
