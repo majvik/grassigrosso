@@ -223,38 +223,48 @@ git commit -m "feat(commerce): add self-hosted Medusa foundation"
 - Produces: deterministic SKU format `GG-{PRODUCT_KEY}-{WIDTH}X{LENGTH}`.
 - Consumes: existing Strapi size relations and product slug only as migration input, never as the permanent identity.
 
-- [ ] **Step 1: Write failing contract/import tests**
+- [x] **Step 1: Write failing contract/import tests**
 
 Assert every active product gets one immutable integration key, every allowed size gets one unique variant/SKU, prices use integer kopecks, inventory is finite and non-negative, backorders are false, rerunning import yields byte-identical output, duplicate SKU/input keys fail closed, and frontend types/fixtures remain compatible with the versioned JSON schema.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `npm run check:commerce-catalog-contract`
 Expected: FAIL because the contract fields and importer do not exist.
 
-- [ ] **Step 3: Add the Strapi immutable integration field**
+- [x] **Step 3: Add the Strapi immutable integration field**
 
 Add `commerce_key` as required unique text for commerce-enabled records. Do not make slug the relation key and do not add prices/stock/orders to Strapi.
 
-- [ ] **Step 4: Implement deterministic import generation**
+- [x] **Step 4: Implement deterministic import generation**
 
 Expose `buildCommerceProduct(row)`, `buildCommerceVariants(row)`, `formatSku(productKey, size)`, and `validateImport(document)`; output a reviewable JSON artifact without writing Medusa.
 
-- [ ] **Step 5: Add controlled initial inventory fixture rules**
+- [x] **Step 5: Add controlled initial inventory fixture rules**
 
 Require explicit per-variant inventory input. Permit `1000` as a normal value; reject missing, negative, fractional or implicit infinite stock.
 
-- [ ] **Step 6: Run GREEN and existing catalog gates**
+- [x] **Step 6: Run GREEN and existing catalog gates**
 
 Run: `npm run check:commerce-catalog-contract && npm run check:catalog-api && npm run typecheck`
 Expected: all PASS.
 
-- [ ] **Step 7: Commit Task 3**
+- [x] **Step 7: Commit Task 3**
 
 ```bash
 git add commerce-contracts/catalog-v1.schema.json src/commerce/contracts.ts scripts/commerce/build-medusa-catalog-import.mjs scripts/check-commerce-catalog-contract.mjs strapi-catalog/src/api/product/content-types/product/schema.json strapi-catalog/src/api/catalog/controllers/catalog-feed.js src/catalog/catalog-api.ts package.json
 git commit -m "feat(commerce): define product variant ownership contract"
 ```
+
+#### Execution Results — Task 3
+
+- Tests added: executable contract/import gate covering immutable product keys, one explicit variant per allowed size, deterministic SKU/order/output, integer kopeck prices, finite non-negative managed inventory, disabled backorders, duplicate rejection and JSON-schema/TypeScript field parity.
+- RED: `npm run check:commerce-catalog-contract` → exit 1 with `ERR_MODULE_NOT_FOUND` for the not-yet-created importer.
+- GREEN: `npm run check:commerce-catalog-contract` → exit 0, `Commerce catalog contract: PASS`.
+- Regression: `npm run check:catalog-api` → exit 0 against the local Strapi/API stack; `npm run typecheck` → exit 0.
+- Runtime smoke: Strapi live-reloaded the required/unique `commerce_key` schema and returned `204 /_health`; API, Vite catalog and Medusa returned HTTP 200.
+- Ownership ruling: Strapi supplies only immutable identity, content and allowed sizes. Each variant's kopeck price and finite inventory are explicit commerce import inputs and are never inferred from Strapi `price_rub`.
+- Remote actions: none; no push, deploy, PR or external environment change.
 
 ### Task 4: Implement idempotent Medusa catalog reconciliation
 

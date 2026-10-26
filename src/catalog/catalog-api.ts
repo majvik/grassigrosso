@@ -76,6 +76,9 @@ export type CatalogProductMediaItem = {
 }
 
 export type CatalogProduct = {
+  /** Immutable Strapi↔Medusa integration identity; unlike slug, this must never change. */
+  strapiDocumentId?: string | null
+  commerceKey?: string | null
   name?: string | null
   slug?: string | null
   collectionName?: string | null

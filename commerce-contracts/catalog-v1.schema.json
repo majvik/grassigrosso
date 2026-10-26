@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://grassigrosso.local/contracts/catalog-v1.schema.json",
+  "title": "Grassigrosso Medusa catalog import v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "products"],
+  "properties": {
+    "schemaVersion": { "const": "catalog-v1" },
+    "products": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/importProduct" }
+    }
+  },
+  "$defs": {
+    "commerceProductRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strapiDocumentId", "medusaProductId", "integrationKey"],
+      "properties": {
+        "strapiDocumentId": { "type": "string", "minLength": 1 },
+        "medusaProductId": { "type": "string", "minLength": 1 },
+        "integrationKey": { "$ref": "#/$defs/integrationKey" }
+      }
+    },
+    "commerceVariantProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sku", "size", "priceKopecks", "inventoryQuantity", "available"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sku": { "$ref": "#/$defs/sku" },
+        "size": { "$ref": "#/$defs/size" },
+        "priceKopecks": { "type": "integer", "minimum": 1 },
+        "inventoryQuantity": { "type": "integer", "minimum": 0 },
+        "available": { "type": "boolean" }
+      }
+    },
+    "importProduct": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["integrationKey", "strapiDocumentId", "title", "variants"],
+      "properties": {
+        "integrationKey": { "$ref": "#/$defs/integrationKey" },
+        "strapiDocumentId": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "variants": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/importVariant" }
+        }
+      }
+    },
+    "importVariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "integrationKey",
+        "sku",
+        "size",
+        "priceKopecks",
+        "inventoryQuantity",
+        "manageInventory",
+        "allowBackorder",
+        "available"
+      ],
+      "properties": {
+        "integrationKey": { "type": "string", "pattern": "^[A-Z0-9][A-Z0-9-]*:[0-9]+X[0-9]+$" },
+        "sku": { "$ref": "#/$defs/sku" },
+        "size": { "$ref": "#/$defs/size" },
+        "priceKopecks": { "type": "integer", "minimum": 1 },
+        "inventoryQuantity": { "type": "integer", "minimum": 0 },
+        "manageInventory": { "const": true },
+        "allowBackorder": { "const": false },
+        "available": { "type": "boolean" }
+      }
+    },
+    "integrationKey": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9-]*$"
+    },
+    "sku": {
+      "type": "string",
+      "pattern": "^GG-[A-Z0-9][A-Z0-9-]*-[0-9]+X[0-9]+$"
+    },
+    "size": {
+      "type": "string",
+      "pattern": "^[0-9]+x[0-9]+$"
+    }
+  }
+}

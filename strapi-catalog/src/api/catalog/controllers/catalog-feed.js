@@ -173,6 +173,8 @@ module.exports = {
       const collectionSlug = collectionSlugFromRelation
         || (mattressType === 'topper' ? 'topper' : '');
       return {
+      strapiDocumentId: row.documentId || '',
+      commerceKey: row.commerce_key || '',
       name: row.name || '',
       slug: row.slug || '',
       collectionName: row.collection?.name || '',

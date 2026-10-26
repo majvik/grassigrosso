@@ -1279,6 +1279,9 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::collection.collection'
     >;
+    commerce_key: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
     cover_description: Schema.Attribute.Text;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
