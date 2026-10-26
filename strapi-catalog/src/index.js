@@ -245,11 +245,31 @@ module.exports = {
 
     const dualFirmnessFeature = featureOptionsBySlug.get('dualFirmness');
 
+    const assignedCommerceKeys = new Set(
+      products.map((product) => String(product.commerce_key || '').trim()).filter(Boolean)
+    );
+    const buildCommerceKey = (product) => {
+      const base = String(product.slug || '')
+        .trim()
+        .toUpperCase()
+        .replace(/[^A-Z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || `PRODUCT-${product.id}`;
+      let candidate = base;
+      if (assignedCommerceKeys.has(candidate)) candidate = `${base}-${product.id}`;
+      assignedCommerceKeys.add(candidate);
+      return candidate;
+    };
+
     let linkedProducts = 0;
+    let commerceKeysBackfilled = 0;
     let dualFirmnessFeatureLinked = 0;
     let fillingOptionsLinked = 0;
     for (const product of products) {
       const data = {};
+      if (!String(product.commerce_key || '').trim()) {
+        data.commerce_key = buildCommerceKey(product);
+        commerceKeysBackfilled += 1;
+      }
       const firmness = firmnessOptions.get(mapFirmness(product.firmness));
       if (!product.firmness_option && firmness) data.firmness_option = firmness.id;
 
@@ -476,6 +496,6 @@ module.exports = {
       strapi.log.warn(`Catalog bootstrap: pages CMS admin label sync skipped: ${e.message}`);
     }
 
-    strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products (${dualFirmnessFeatureLinked} dual-firmness feature links, ${fillingOptionsLinked} filling links from layers)`);
+    strapi.log.info(`Catalog bootstrap: ensured filter dictionaries and backfilled ${linkedProducts} products (${commerceKeysBackfilled} commerce keys, ${dualFirmnessFeatureLinked} dual-firmness feature links, ${fillingOptionsLinked} filling links from layers)`);
   },
 };

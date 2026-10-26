@@ -1,6 +1,8 @@
 {
   "items": [
     {
+      "strapiDocumentId": "idwi3r5dfmnh7b8druhzvzgy",
+      "commerceKey": "ORIENT",
       "name": "Ориент",
       "slug": "orient",
       "collectionName": "Classic",
@@ -44,6 +46,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "z8vbe3etuspz9hbev61r0muq",
+      "commerceKey": "ORIENT-PLUS",
       "name": "Ориент Плюс",
       "slug": "orient-plus",
       "collectionName": "Classic",
@@ -89,6 +93,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "bamjeohn3lfgj3gp6rz0v3mk",
+      "commerceKey": "ASPECT",
       "name": "Аспект",
       "slug": "aspect",
       "collectionName": "Classic",
@@ -133,6 +139,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "csjpjazal9z1kftlc2i41kuz",
+      "commerceKey": "EVER-FOAM-10",
       "name": "Эвер Фоам 10",
       "slug": "ever-foam-10",
       "collectionName": "Classic",
@@ -174,6 +182,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "a3zjaqvc7snuzb7jrjwhkugs",
+      "commerceKey": "EVER-FOAM-16",
       "name": "Эвер Фоам 16",
       "slug": "ever-foam-16",
       "collectionName": "Classic",
@@ -215,6 +225,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "b70vxspdxswuln0wesb9xsxd",
+      "commerceKey": "EVER-FOAM-20",
       "name": "Эвер Фоам 20",
       "slug": "ever-foam-20",
       "collectionName": "Classic",
@@ -256,6 +268,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "eccdrbwq43uwlx384oidf2bl",
+      "commerceKey": "ORTOFOAM-STANDARD",
       "name": "Ортофоам Стандарт",
       "slug": "ortofoam-standard",
       "collectionName": "Flexi",
@@ -297,6 +311,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "fni720x5u2s9393dwc2p6ok6",
+      "commerceKey": "ORTOFOAM-PLUS",
       "name": "Ортофоам Плюс",
       "slug": "ortofoam-plus",
       "collectionName": "Flexi",
@@ -338,6 +354,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "pgq7dru1vxa1og4tiejb08nj",
+      "commerceKey": "HARD-FORMAT",
       "name": "Хард Формат",
       "slug": "hard-format",
       "collectionName": "Flexi",
@@ -382,6 +400,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "gwp2ztuz21c0dmush31jkvjl",
+      "commerceKey": "SKY-FOAM",
       "name": "Скай Фоам",
       "slug": "sky-foam",
       "collectionName": "Flexi",
@@ -427,6 +447,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "n8bh382mzxw6n7trsk3xxzq8",
+      "commerceKey": "EVOLUTION",
       "name": "Эволюшен",
       "slug": "evolution",
       "collectionName": "Flexi",
@@ -469,6 +491,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "nr6dz83tzwo7seolygjacfap",
+      "commerceKey": "GRAND",
       "name": "Гранд",
       "slug": "grand",
       "collectionName": "Flexi",
@@ -511,6 +535,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "kbigzzreeegvtrfot8cztl50",
+      "commerceKey": "IMPERIO",
       "name": "Империо",
       "slug": "imperio",
       "collectionName": "Relax",
@@ -556,6 +582,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "kpw8k1rzc2q66hihdb3vmvv2",
+      "commerceKey": "LUXOR",
       "name": "Люксор",
       "slug": "luxor",
       "collectionName": "Relax",
@@ -600,6 +628,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "fl7z85pbvsd17087xrirunn5",
+      "commerceKey": "GALAKSI",
       "name": "Галакси",
       "slug": "galaksi",
       "collectionName": "Relax",
@@ -644,6 +674,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "z5ozppncye1hpojg8qf7hiva",
+      "commerceKey": "DISCOVERY",
       "name": "Дискавери",
       "slug": "discovery",
       "collectionName": "Relax",
@@ -689,6 +721,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "z1fhmenv18ji0s1dpsi8gvhd",
+      "commerceKey": "DAVOS",
       "name": "Давос",
       "slug": "davos",
       "collectionName": "Relax",
@@ -732,6 +766,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "zuw85g4mums0jt5htvhz5tp0",
+      "commerceKey": "DAVOS-2",
       "name": "Давос-2",
       "slug": "davos-2",
       "collectionName": "Relax",
@@ -775,6 +811,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "g3wjrsj200z6fkux17pkjwcn",
+      "commerceKey": "DAVOS-3",
       "name": "Давос-3",
       "slug": "davos-3",
       "collectionName": "Relax",
@@ -818,6 +856,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "fve1vg7x4g6rdrvzn7lm30ts",
+      "commerceKey": "DAVOS-4",
       "name": "Давос-4",
       "slug": "davos-4",
       "collectionName": "Relax",
@@ -861,6 +901,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "t82te3xhk0fa0k21dm8o93cw",
+      "commerceKey": "DAVOS-5",
       "name": "Давос-5",
       "slug": "davos-5",
       "collectionName": "Relax",
@@ -904,6 +946,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "s3k70cbxrlg1knj6cn6jujcw",
+      "commerceKey": "DAVOS-MIX",
       "name": "Давос Микс",
       "slug": "davos-mix",
       "collectionName": "Relax",
@@ -949,6 +993,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "i4tovqylpd1iun59mh0pkpzg",
+      "commerceKey": "ELIO",
       "name": "Элио",
       "slug": "elio",
       "collectionName": "Relax",
@@ -995,6 +1041,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "mjlthrwlgapzthywx8rfxzpi",
+      "commerceKey": "PREMIER",
       "name": "Премьер",
       "slug": "premier",
       "collectionName": "Relax",
@@ -1039,6 +1087,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "fqjpd0h6m714fu67uwio4l2t",
+      "commerceKey": "PREMIER-LUX",
       "name": "Премьер Люкс",
       "slug": "premier-lux",
       "collectionName": "Relax",
@@ -1083,6 +1133,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "crpfge1saaezmxwe32vwee2j",
+      "commerceKey": "IMPRINT",
       "name": "Импринт",
       "slug": "imprint",
       "collectionName": "Relax",
@@ -1127,6 +1179,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "rtwp1rpzc5tgauevifa7tqt1",
+      "commerceKey": "RELAX-PLUS",
       "name": "Релакс Плюс",
       "slug": "relax-plus",
       "collectionName": "Relax",
@@ -1172,6 +1226,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "r59671hosjoj6ujkqvp2k8o0",
+      "commerceKey": "LARGO",
       "name": "Ларго",
       "slug": "largo",
       "collectionName": "Relax",
@@ -1216,6 +1272,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "glqgd2uepshxn1u8ecxt953i",
+      "commerceKey": "TWIN",
       "name": "Твин",
       "slug": "twin",
       "collectionName": "Trend",
@@ -1261,6 +1319,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "uyn2njagifinkaknitc8hr61",
+      "commerceKey": "RELAX-TREND",
       "name": "Релакс",
       "slug": "relax-trend",
       "collectionName": "Trend",
@@ -1306,6 +1366,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "lnfb3x58fpn7hpff7b4edobn",
+      "commerceKey": "ORIGINAL",
       "name": "Оригинал",
       "slug": "original",
       "collectionName": "Trend",
@@ -1349,6 +1411,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "ivu2ryslozcd5nl54dm20t2b",
+      "commerceKey": "ADVANCE",
       "name": "Эдванс",
       "slug": "advance",
       "collectionName": "Trend",
@@ -1393,6 +1457,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "qrwmcwrbefwtg89amqcdzn73",
+      "commerceKey": "OPTIMA",
       "name": "Оптима",
       "slug": "optima",
       "collectionName": "Trend",
@@ -1438,6 +1504,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "oioyfeozac97w9rpqdsfy7o8",
+      "commerceKey": "DYNAMIC",
       "name": "Динамик",
       "slug": "dynamic",
       "collectionName": "Trend",
@@ -1481,6 +1549,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "lwqpr7p88d3a54eos9tqytgr",
+      "commerceKey": "SPACE",
       "name": "Спейс",
       "slug": "space",
       "collectionName": "Trend",
@@ -1527,6 +1597,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "gpmmd9kafrqzkyku0larwzui",
+      "commerceKey": "SENSO",
       "name": "Сенсо",
       "slug": "senso",
       "collectionName": "Trend",
@@ -1572,6 +1644,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "n8nm04li88sn5dvk1wkhpy68",
+      "commerceKey": "LIDER",
       "name": "Лидер",
       "slug": "lider",
       "collectionName": "Trend",
@@ -1616,6 +1690,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "c1kmuw2bg0maovtj4lt6u61k",
+      "commerceKey": "GRAVITY",
       "name": "Гравити",
       "slug": "gravity",
       "collectionName": "Trend",
@@ -1660,6 +1736,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "xgvlun41y84sh55pk53ov39h",
+      "commerceKey": "MAGIC",
       "name": "Мэджик",
       "slug": "magic",
       "collectionName": "Trend",
@@ -1705,6 +1783,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "hbw1oze5ewgql7g142g0t4i8",
+      "commerceKey": "FLIP-STANDARD",
       "name": "Флип Стандарт",
       "slug": "flip-standard",
       "collectionName": "",
@@ -1746,6 +1826,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "ginm27nklb11yt2ibu61i1n0",
+      "commerceKey": "FLIP-PLUS",
       "name": "Флип Плюс",
       "slug": "flip-plus",
       "collectionName": "",
@@ -1787,6 +1869,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "znt4lokzd8h64e07k60rnlwd",
+      "commerceKey": "EFFECT",
       "name": "Эффект",
       "slug": "effect",
       "collectionName": "",
@@ -1828,6 +1912,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "evqqabi5romlkvvecxvfaoek",
+      "commerceKey": "DUAL",
       "name": "Дуал",
       "slug": "dual",
       "collectionName": "",
@@ -1870,6 +1956,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "agzd9zz5tlzs68ezunjho5x1",
+      "commerceKey": "DELUXE-MEMORY",
       "name": "Делюкс Мемори",
       "slug": "deluxe-memory",
       "collectionName": "",
@@ -1912,6 +2000,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "ij6xuwick09rg49g4xna8jl9",
+      "commerceKey": "DELUXE-LATEX",
       "name": "Делюкс Латекс",
       "slug": "deluxe-latex",
       "collectionName": "",
@@ -1953,6 +2043,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "mlurebsgi52ncangnl1cjoqu",
+      "commerceKey": "SOFT-TOPPER",
       "name": "Софт",
       "slug": "soft-topper",
       "collectionName": "",
@@ -1994,6 +2086,8 @@
       "isActive": true
     },
     {
+      "strapiDocumentId": "ni4wgz8bkxxja8wsc8edg9fo",
+      "commerceKey": "SENSITIVE",
       "name": "Сенсетив",
       "slug": "sensitive",
       "collectionName": "",

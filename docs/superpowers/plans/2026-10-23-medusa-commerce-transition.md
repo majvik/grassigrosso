@@ -263,6 +263,7 @@ git commit -m "feat(commerce): define product variant ownership contract"
 - GREEN: `npm run check:commerce-catalog-contract` → exit 0, `Commerce catalog contract: PASS`.
 - Regression: `npm run check:catalog-api` → exit 0 against the local Strapi/API stack; `npm run typecheck` → exit 0.
 - Runtime smoke: Strapi live-reloaded the required/unique `commerce_key` schema and returned `204 /_health`; API, Vite catalog and Medusa returned HTTP 200.
+- Migration regression: live BFF composition exposed 47 legacy rows without keys. Added an idempotent slug-to-key bootstrap used only when `commerce_key` is empty plus a lifecycle guard that rejects later key changes; local bootstrap backfilled 47/47 products, then seed and catalog snapshots were refreshed.
 - Ownership ruling: Strapi supplies only immutable identity, content and allowed sizes. Each variant's kopeck price and finite inventory are explicit commerce import inputs and are never inferred from Strapi `price_rub`.
 - Remote actions: none; no push, deploy, PR or external environment change.
 
@@ -338,38 +339,49 @@ git commit -m "feat(commerce): sync Strapi products into Medusa variants"
 - `CommerceScope` is `catalog | product | favourites | smartSelector | cart | checkout | auth | profile | orders`.
 - `CommerceReadiness` includes `ready`, `status`, `failedDependencies`, and `requestId`; it never includes secrets or raw upstream errors.
 
-- [ ] **Step 1: Write failing readiness/route tests**
+- [x] **Step 1: Write failing readiness/route tests**
 
 Assert: both systems healthy returns composed data; Strapi failure returns `503` for catalog/product/favourites/smartSelector; Medusa failure returns `503` for every commerce scope; malformed upstream contract also returns `503`; marketing/legal routes remain `200`; no session/disk snapshot bypasses the gate; response includes `Retry-After`, `noindex` signal and request ID.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `npm run check:commerce-readiness`
 Expected: FAIL because routes and gate are absent.
 
-- [ ] **Step 3: Implement typed clients and readiness decisions**
+- [x] **Step 3: Implement typed clients and readiness decisions**
 
 Set bounded timeouts, normalize upstream failures, and avoid logging response bodies that may contain personal data.
 
-- [ ] **Step 4: Implement catalog projection**
+- [x] **Step 4: Implement catalog projection**
 
 Join exclusively by immutable integration key. Reject orphaned, duplicate or incomplete joins instead of choosing an arbitrary record.
 
-- [ ] **Step 5: Register focused routes in `server.cjs`**
+- [x] **Step 5: Register focused routes in `server.cjs`**
 
 Keep `server.cjs` as composition root; do not move commerce orchestration back into the monolith.
 
-- [ ] **Step 6: Run GREEN and existing server gates**
+- [x] **Step 6: Run GREEN and existing server gates**
 
 Run: `npm run check:commerce-readiness && npm run check:catalog-api && npm run check:routes && npm run typecheck`
 Expected: all PASS.
 
-- [ ] **Step 7: Commit Task 5**
+- [x] **Step 7: Commit Task 5**
 
 ```bash
 git add server/commerce server.cjs scripts/check-commerce-readiness.mjs package.json
 git commit -m "feat(api): add fail-closed commerce projection"
 ```
+
+#### Execution Results — Task 5 / Phase 1
+
+- Tests added: readiness and route contract covering healthy composition, every scope's Medusa dependency, Strapi-dependent scopes, malformed contracts, duplicate/orphan joins, 503 headers/body, snapshot exclusion and unaffected legal routes.
+- RED: `npm run check:commerce-readiness` → exit 1 because the isolated commerce router did not exist.
+- GREEN: `npm run check:commerce-readiness` → exit 0, `Commerce readiness: PASS`.
+- Regression gates: `npm run check:catalog-api`, `npm run check:routes`, `npm run typecheck`, and `npm run check:commerce-catalog-contract` → exit 0.
+- Builds: `npm run build:commerce && npm run build` → exit 0; Medusa backend/Admin, Vite storefront and Strapi Admin all built locally.
+- Live smoke: Medusa `/commerce/catalog` returned 200 without a browser publishable key; BFF readiness/catalog fail closed with `503`, `Retry-After`, `X-Robots-Tag` and request ID while the 47 Strapi products intentionally remain unmatched until reviewed per-size prices/inventory are imported into Medusa.
+- Persistence gate: stopped Strapi, ran `npm run strapi:sync-seed`, restarted the local stack, then `npm run catalog:export-snapshot` → 47 products exported with immutable commerce keys.
+- Remote actions: none; no push, deploy, PR or external environment change.
 
 ---
 

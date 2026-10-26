@@ -15,6 +15,8 @@ const { buildConfirmationEmail } = require('./lib/confirmation-email.cjs');
 const { createPagesCmsApi } = require('./lib/pages-cms-api.cjs');
 const { createSiteChromeApi } = require('./lib/site-chrome-api.cjs');
 const { createCatalogSmartSelect } = require('./lib/catalog-smart-select.cjs');
+const { createCommerceClients } = require('./server/commerce/commerce-client.cjs');
+const { createCommerceCatalogRouter } = require('./server/commerce/routes/catalog-routes.cjs');
 require('dotenv').config();
 
 const app = express();
@@ -23,6 +25,7 @@ const isProd = process.env.NODE_ENV === 'production';
 const PORT = Number(process.env.PORT || 3000);
 const STRAPI_URL = String(process.env.STRAPI_URL || '').trim().replace(/\/+$/, '');
 const STRAPI_TOKEN = String(process.env.STRAPI_TOKEN || '').trim();
+const MEDUSA_URL = String(process.env.MEDUSA_URL || 'http://127.0.0.1:9000').trim().replace(/\/+$/, '');
 const APP_VERSION = String(process.env.APP_VERSION || process.env.GIT_SHA || 'dev').trim();
 const GEMINI_API_KEY = String(process.env.GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite').trim();
@@ -33,6 +36,7 @@ const catalogSmartSelectRateLimit = new Map();
 const INTERNAL_API_PREFIXES = [
   '/api/submit',
   '/api/catalog',
+  '/api/commerce',
   '/api/pages',
   '/api/download',
   '/api/unsubscribe',
@@ -1040,6 +1044,12 @@ app.get('/health', (req, res) => {
     }
   });
 });
+
+const commerceClients = createCommerceClients({
+  strapi: { baseUrl: STRAPI_URL || 'http://127.0.0.1:1337', token: STRAPI_TOKEN, timeoutMs: 2500 },
+  medusa: { baseUrl: MEDUSA_URL, timeoutMs: 2500 },
+});
+app.use('/api/commerce', createCommerceCatalogRouter(commerceClients));
 
 app.post('/api/catalog/smart-select', async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');

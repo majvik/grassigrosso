@@ -139,4 +139,12 @@ for (const field of [
   assert.match(browserTypes, new RegExp(`\\b${field}\\b`), `browser contract must expose ${field}`)
 }
 
+const strapiBootstrap = await readFile(new URL('../strapi-catalog/src/index.js', import.meta.url), 'utf8')
+assert.match(strapiBootstrap, /commerce_key\s*=\s*buildCommerceKey|data\.commerce_key\s*=\s*buildCommerceKey/)
+const productLifecycles = await readFile(
+  new URL('../strapi-catalog/src/api/product/content-types/product/lifecycles.js', import.meta.url),
+  'utf8',
+)
+assert.match(productLifecycles, /commerce_key неизменяем/)
+
 console.log('Commerce catalog contract: PASS')

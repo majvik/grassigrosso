@@ -92,6 +92,7 @@
     "test:commerce": "npm run test:catalog-sync --prefix medusa-commerce",
     "commerce:catalog:import": "npm run catalog:import --prefix medusa-commerce -- ../commerce-contracts/catalog-v1.local.json",
     "commerce:catalog:reconcile": "node scripts/commerce/reconcile-catalog.mjs",
+    "check:commerce-readiness": "node scripts/check-commerce-readiness.mjs",
     "catalog-import:build": "python3 scripts/build-catalog-import.py",
     "catalog-import:validate": "node scripts/validate-catalog-import.mjs",
     "catalog-import:preview": "node scripts/build-catalog-import-preview.mjs",
