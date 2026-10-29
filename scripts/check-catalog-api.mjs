@@ -3,10 +3,12 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import Database from 'better-sqlite3'
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(scriptDir, '..')
 const publicDir = path.join(rootDir, 'public')
+const catalogSeedPath = path.join(rootDir, 'strapi-catalog', 'database', 'seed', 'data.db')
 
 const baseUrl = String(process.env.CATALOG_API_BASE_URL || 'http://127.0.0.1:3000').replace(/\/+$/, '')
 const failures = []
@@ -339,6 +341,30 @@ if (!fs.existsSync(snapshotManifestPath)) {
     }
   } catch (error) {
     failures.push(`catalog snapshot manifest: invalid JSON (${error.message})`)
+  }
+}
+
+if (fs.existsSync(catalogSeedPath)) {
+  const seedDb = new Database(catalogSeedPath, { readonly: true, fileMustExist: true })
+  try {
+    const sharedMediaComponents = seedDb.prepare(`
+      SELECT p.slug, a.cmp_id, a.field AS first_field, b.field AS second_field
+      FROM products_cmps a
+      JOIN products_cmps b
+        ON b.entity_id = a.entity_id
+       AND b.cmp_id = a.cmp_id
+       AND b.field > a.field
+      JOIN products p ON p.id = a.entity_id
+      WHERE a.field IN ('gallery', 'detail_gallery', 'bento_gallery')
+        AND b.field IN ('gallery', 'detail_gallery', 'bento_gallery')
+    `).all()
+    for (const row of sharedMediaComponents) {
+      failures.push(
+        `catalog seed: ${row.slug} reuses component ${row.cmp_id} in ${row.first_field} and ${row.second_field}`,
+      )
+    }
+  } finally {
+    seedDb.close()
   }
 }
 
