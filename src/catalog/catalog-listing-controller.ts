@@ -23,21 +23,20 @@ import {
 } from './catalog-product-meta'
 import { setCatalogProductStore } from './catalog-product-store'
 import {
-  buildCatalogProductMediaHtml,
+  buildCatalogEditorialMediaWallHtml,
+  buildCatalogProductHeroSliderHtml,
   destroyCatalogProductGalleries,
-  getActiveSlideSnapshot,
-  getCatalogGalleryActiveIndex,
   initCatalogProductGalleries,
-  readGalleryFromElement,
-  setCatalogGalleryActiveIndex,
   syncVisibleCatalogCardMediaLoading,
   wasCatalogGalleryInteracted,
 } from './catalog-product-gallery'
+import { initCatalogHeroSlider } from '../catalog-hero-slider.js'
 import { observeCatalogMediaHosts } from './catalog-media-load-queue'
 import { readCatalogueCardMeta } from './catalog-card-meta'
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
 import { buildCatalogModalSpecGroups } from './catalog-modal'
-import { buildSharedProductSpecSegmentsHtml, initCatalogSpecSegments } from './catalog-spec-segments'
+import { buildSharedProductSpecSegmentsHtml } from './catalog-spec-segments'
+import { buildCatalogFirmnessScaleHtml } from './catalog-firmness-scale'
 import {
   emitCatalogManagerContactIntent,
   setCatalogFavouritesSwitchState,
@@ -282,6 +281,8 @@ export function initCatalogListingController(documentRef: Document, scrollOption
   let matchedCards: HTMLElement[] = []
   let matchedResultsCount = 0
   const sharedState = readCatalogSharedState()
+  const similarProductSlug = new URLSearchParams(window.location.search).get('similar')?.trim() || ''
+  let similarProductApplied = false
   let sharedFavouritesSlugs = sharedState.mode === 'favourites' ? [...sharedState.slugs] : []
   let sharedSlugs = new Set(sharedFavouritesSlugs)
   const isSharedFavouritesView = sharedState.mode === 'favourites'
@@ -812,13 +813,6 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     applyFilters()
   }
 
-  function findCardBySlug(slug: string): HTMLElement | null {
-    const safe = typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
-      ? CSS.escape(slug)
-      : slug.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
-    return cardsRootEl.querySelector<HTMLElement>(`.catalogue-new-card[data-product-slug="${safe}"]`)
-  }
-
   function syncSharedProductFavouriteButton(button: HTMLButtonElement, slug: string): void {
     const isActive = readCatalogFavourites().has(slug)
     button.classList.toggle('is-active', isActive)
@@ -828,72 +822,80 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   function renderSharedProductView(): void {
     if (!isSharedProductView || sharedState.mode !== 'product' || !sharedProductSection) return
-    const card = findCardBySlug(sharedState.slug)
-    if (!card) {
+    const entry = productCatalog?.find((item) => item.meta.slug === sharedState.slug)
+    if (!entry) {
       sharedProductSection.hidden = true
       return
     }
-
-    const cardMedia = card.querySelector<HTMLElement>('[data-catalog-card-media]')
-    const snapshot = getActiveSlideSnapshot(cardMedia)
-    const gallery = readGalleryFromElement(cardMedia)
-    const title = card.querySelector('.catalogue-new-card-body h3')?.textContent?.trim() || snapshot?.alt || 'Матрас'
-    const specGroups = buildCatalogModalSpecGroups(card.dataset)
-    const tags = [...card.querySelectorAll('.catalogue-new-tags > .catalogue-new-tag')]
-      .map((tag) => tag.textContent?.trim())
-      .filter((tag): tag is string => Boolean(tag))
-    const slug = String(card.dataset.productSlug || sharedState.slug).trim()
-    const specsHtml = buildSharedProductSpecSegmentsHtml(specGroups.main, specGroups.details)
+    const { product, meta } = entry
+    const slug = meta.slug
+    const title = meta.name || 'Матрас'
+    const dataset = {
+      firmness: meta.firmness,
+      type: meta.type,
+      height: String(meta.height || ''),
+      load: String(meta.load || ''),
+      loadRange: meta.loadRange,
+      heightRange: meta.heightRange,
+      sizes: [...meta.sizes].join(','),
+      fillings: [...meta.fillings].join(','),
+      features: [...meta.features].join(','),
+      coverDescription: String(product.coverDescription || ''),
+      layersCatalog: String(product.layersCatalog || ''),
+    }
+    const specGroups = buildCatalogModalSpecGroups(dataset)
+    const firmnessHtml = buildCatalogFirmnessScaleHtml(product.firmnessSide1, product.firmnessSide2)
+    const specsHtml = buildSharedProductSpecSegmentsHtml(specGroups.main, specGroups.details, firmnessHtml)
+    const detailGallery = product.detailGallery?.length ? product.detailGallery : (product.gallery || [])
+    const mediaWallHtml = buildCatalogEditorialMediaWallHtml(product.bentoGallery)
+    const tags = Array.isArray(product.tags) ? product.tags.map((tag) => String(tag).trim()).filter(Boolean) : []
     const tagsHtml = tags.length
       ? `<div class="catalogue-new-shared-product-tags catalogue-new-tags">${tags.map((tag) => `<span class="catalogue-new-tag">${escapeHtml(tag)}</span>`).join('')}</div>`
       : ''
 
     sharedProductSection.hidden = false
+    sharedProductSection.setAttribute('data-product-editorial', '')
     sharedProductSection.innerHTML = `
       <a class="catalogue-new-shared-back" href="/catalog">Назад в каталог</a>
       <div class="catalogue-new-shared-product-shell">
-        ${buildCatalogProductMediaHtml(gallery, {
-          rootClass: 'catalogue-new-shared-product-media catalogue-new-card-media',
-          productSlug: slug,
-        })}
-        <div class="catalogue-new-shared-product-info">
-          <h1 class="catalogue-new-shared-product-title">${escapeHtml(title)}</h1>
-          ${specsHtml}
-          ${tagsHtml}
-          <div class="catalogue-new-shared-product-actions catalogue-new-image-modal-actions" data-product-primary-actions>
+        <div class="catalogue-new-shared-product-stage" data-product-media-stage>
+        ${buildCatalogProductHeroSliderHtml(detailGallery, slug)}
+        </div>
+        <header class="catalogue-new-shared-product-masthead" data-product-masthead>
+          <div class="catalogue-new-shared-product-heading">
+            <h1 class="catalogue-new-shared-product-title">${escapeHtml(title)}</h1>
+            ${tagsHtml}
+          </div>
+          <div class="catalogue-new-shared-product-title-actions" data-product-title-actions>
+            <button type="button" class="catalogue-new-image-modal-favourite catalogue-new-shared-product-icon-action" data-shared-product-favourite aria-pressed="false" aria-label="Добавить в избранное">
+              <img class="catalogue-new-image-modal-favourite-icon--empty" src="/icons/favourite-empty.svg" alt="" aria-hidden="true" />
+              <img class="catalogue-new-image-modal-favourite-icon--full" src="/icons/favourite-full.svg" alt="" aria-hidden="true" />
+            </button>
+            <button type="button" class="catalogue-new-favourites-share-link-btn catalogue-new-shared-product-icon-action" data-shared-product-share aria-label="Скопировать ссылку">
+              <span class="catalogue-new-favourites-share-link-label catalogue-new-shared-product-share-label">Скопировать ссылку</span>
+              <span class="catalogue-new-favourites-share-link-icon" aria-hidden="true">
+                <img class="catalogue-new-favourites-share-icon--default" src="/icons/share-default.svg" alt="" />
+                <img class="catalogue-new-favourites-share-icon--hover" src="/icons/share-hover.svg" alt="" />
+                <img class="catalogue-new-favourites-share-icon--copied" src="/icons/share-copied.svg" alt="" />
+              </span>
+            </button>
+          </div>
+        </header>
+        <div class="catalogue-new-shared-product-info" data-product-info-band>
+          <div class="catalogue-new-shared-product-details">
+            ${specsHtml}
+          </div>
+          <aside class="catalogue-new-shared-product-action-panel">
+            <div class="catalogue-new-shared-product-actions catalogue-new-image-modal-actions" data-product-primary-actions>
+              <div class="catalogue-new-shared-product-commerce-slot" data-product-commerce-action-slot></div>
             <div class="catalogue-new-image-modal-actions-row">
               <a href="/contacts?product=${encodeURIComponent(slug)}#contact-form" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" data-shared-product-contact>Связаться с менеджером по позиции</a>
-              <button type="button" class="catalogue-new-image-modal-favourite" data-shared-product-favourite aria-pressed="false" aria-label="Добавить в избранное">
-                <img class="catalogue-new-image-modal-favourite-icon--empty" src="/icons/favourite-empty.svg" alt="" aria-hidden="true" />
-                <img class="catalogue-new-image-modal-favourite-icon--full" src="/icons/favourite-full.svg" alt="" aria-hidden="true" />
-              </button>
-            </div>
-            <div class="catalogue-new-favourites-share-cluster catalogue-new-image-modal-share-row">
-              <button type="button" class="catalogue-new-favourites-share-link-btn" data-shared-product-share aria-label="Скопировать ссылку">
-                <span class="catalogue-new-favourites-share-link-label">Скопировать ссылку</span>
-                <span class="catalogue-new-favourites-share-link-icon" aria-hidden="true">
-                  <img class="catalogue-new-favourites-share-icon--default" src="/icons/share-default.svg" alt="" />
-                  <img class="catalogue-new-favourites-share-icon--hover" src="/icons/share-hover.svg" alt="" />
-                  <img class="catalogue-new-favourites-share-icon--copied" src="/icons/share-copied.svg" alt="" />
-                </span>
-              </button>
-              <button
-                type="button"
-                class="catalogue-new-favourites-share-help-trigger"
-                data-filter-help-open="productShare"
-                aria-haspopup="dialog"
-                aria-label="Подсказка про ссылку на позицию"
-              >
-                <span class="catalogue-new-filter-help-icon" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"></circle>
-                    <path d="M12 10v5M12 8v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                  </svg>
-                </span>
-              </button>
+              <a href="/catalog?similar=${encodeURIComponent(slug)}" class="catalogue-new-shared-product-similar" data-shared-product-similar>Найти похожие</a>
             </div>
           </div>
+          </aside>
         </div>
+        ${mediaWallHtml}
       </div>
     `
 
@@ -902,14 +904,23 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     if (sharedProductSection) {
       initCatalogProductGalleries(sharedProductSection, { lazyBind: false })
       observeCatalogMediaHosts(sharedProductSection)
-      const specSegments = sharedProductSection.querySelector<HTMLElement>('[data-catalog-spec-segments]')
-      if (specSegments) initCatalogSpecSegments(specSegments)
-      const sharedMedia = sharedProductSection.querySelector<HTMLElement>('[data-catalog-card-media]')
-      const cardMediaEl = card.querySelector<HTMLElement>('[data-catalog-card-media]')
-      if (sharedMedia && cardMediaEl) {
-        setCatalogGalleryActiveIndex(sharedMedia, getCatalogGalleryActiveIndex(cardMediaEl))
-      }
+      const productHeroSlider = sharedProductSection.querySelector<HTMLElement>('[data-product-detail-slider]')
+      if (productHeroSlider) initCatalogHeroSlider(productHeroSlider)
     }
+  }
+
+  function applySimilarProductFilters(): void {
+    if (!similarProductSlug || similarProductApplied || !productCatalog) return
+    const source = productCatalog.find((entry) => entry.meta.slug === similarProductSlug)?.meta
+    if (!source) return
+    resetCatalogFilterState(state, priceBounds)
+    if (source.type) state.type.add(source.type)
+    if (source.firmness) state.firmness.add(source.firmness)
+    if (source.heightRange) state.heightRange.add(source.heightRange)
+    ;[...source.fillings].slice(0, 2).forEach((value) => state.fillings.add(value))
+    similarProductApplied = true
+    visibleCardsLimit = CATALOGUE_PAGE_SIZE
+    syncUiFromState()
   }
 
   function applySorting() {
@@ -1267,6 +1278,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     setCatalogProductStore(items)
     productCatalog = buildCatalogProductListingEntries(items)
     refreshPriceBoundsFromCatalog({ resetSelection: true })
+    applySimilarProductFilters()
     await new Promise<void>((resolve) => {
       requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
     })

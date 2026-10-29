@@ -98,8 +98,32 @@ try {
       favourite: Boolean(document.querySelector('[data-shared-product-favourite]')),
       share: Boolean(document.querySelector('[data-shared-product-share]')),
       shareHelp: Boolean(document.querySelector('[data-filter-help-open="productShare"]')),
-      gallery: Boolean(document.querySelector('.catalogue-new-shared-product-media[data-catalog-card-media]')),
-      specs: Boolean(document.querySelector('.catalogue-new-shared-product [data-catalog-spec-segments]')),
+      titleActions: Boolean(document.querySelector('[data-product-title-actions]')),
+      titleFavourite: Boolean(document.querySelector('[data-product-title-actions] [data-shared-product-favourite]')),
+      titleShare: Boolean(document.querySelector('[data-product-title-actions] [data-shared-product-share].catalogue-new-shared-product-icon-action')),
+      gallery: Boolean(document.querySelector('[data-product-detail-slider][data-media-source="detail"]')),
+      galleryItems: (() => {
+        try {
+          return document.querySelectorAll('[data-product-detail-slider] .catalog-hero-slide').length
+        } catch {
+          return 0
+        }
+      })(),
+      specs: Boolean(document.querySelector('.catalogue-new-shared-product [data-product-spec-group]')),
+      editorialPage: Boolean(document.querySelector('.catalogue-new-shared-product[data-product-editorial]')),
+      editorialMasthead: Boolean(document.querySelector('[data-product-masthead]')),
+      editorialStage: Boolean(document.querySelector('[data-product-media-stage]')),
+      editorialInfo: Boolean(document.querySelector('[data-product-info-band]')),
+      editorialMediaWallItems: document.querySelectorAll('[data-product-media-wall-item]').length,
+      editorialBentoAreas: [...document.querySelectorAll('[data-bento-area]')].map((item) => item.getAttribute('data-bento-area')),
+      editorialSpecGroups: document.querySelectorAll('[data-product-spec-group]').length,
+      editorialSpecTabs: document.querySelectorAll('[data-spec-segment]').length,
+      fillerCopy: Boolean(document.querySelector('.catalogue-new-shared-product-action-copy')),
+      editorialEyebrow: Boolean(document.querySelector('.catalogue-new-shared-product-eyebrow')),
+      editorialSectionLabel: Boolean(document.querySelector('.catalogue-new-shared-product-section-label')),
+      commerceSlot: Boolean(document.querySelector('[data-product-commerce-action-slot]')),
+      firmnessScale: Boolean(document.querySelector('[data-product-firmness-scale]')),
+      similar: Boolean(document.querySelector('[data-shared-product-similar]')),
       quickViewModal: Boolean(document.querySelector('#catalogueImageModal')),
     }))()`)
     if (state.productPage) break
@@ -111,9 +135,28 @@ try {
   assert.match(state.contactHref, /^\/contacts\?product=[a-z0-9-]+#contact-form$/)
   assert.equal(state.favourite, true)
   assert.equal(state.share, true)
-  assert.equal(state.shareHelp, true)
+  assert.equal(state.shareHelp, false)
+  assert.equal(state.titleActions, true)
+  assert.equal(state.titleFavourite, true)
+  assert.equal(state.titleShare, true)
   assert.equal(state.gallery, true)
   assert.equal(state.specs, true)
+  assert.equal(state.editorialPage, true)
+  assert.equal(state.editorialMasthead, true)
+  assert.equal(state.editorialStage, true)
+  assert.equal(state.editorialInfo, true)
+  assert.ok(state.editorialMediaWallItems >= 0)
+  if (state.editorialMediaWallItems >= 3) {
+    assert.ok(['main', 'top', 'bottom'].every((area) => state.editorialBentoAreas.includes(area)))
+  }
+  assert.equal(state.editorialSpecGroups, 2)
+  assert.equal(state.editorialSpecTabs, 0)
+  assert.equal(state.fillerCopy, false)
+  assert.equal(state.editorialEyebrow, false)
+  assert.equal(state.editorialSectionLabel, false)
+  assert.equal(state.commerceSlot, true)
+  assert.equal(state.firmnessScale, true)
+  assert.equal(state.similar, true)
   assert.equal(state.quickViewModal, false)
 
   const favouriteBefore = await browser.cdp.evaluate(`document.querySelector('[data-shared-product-favourite]')?.getAttribute('aria-pressed')`)

@@ -102,7 +102,6 @@ export function buildCatalogModalSpecGroups(dataset: CatalogCardDataset): Catalo
   const loadLabel = mapValue(dataset.loadRange, modalLabelMaps.loadRange)
 
   const main: CatalogModalSpec[] = [
-    { label: 'Жесткость', value: mapValue(dataset.firmness, modalLabelMaps.firmness) },
     { label: 'Тип матраса', value: mapValue(dataset.type, modalLabelMaps.type) },
     { label: 'Нагрузка', value: loadLabel },
     { label: 'Размер', value: sizes.length ? formatCatalogSizeList(sizes) : '' },

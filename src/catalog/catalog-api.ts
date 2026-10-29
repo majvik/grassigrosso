@@ -61,6 +61,7 @@ export type CatalogFiltersPayload = {
 export type CatalogMediaSource = {
   type: string
   src: string
+  width?: number
 }
 
 export type CatalogProductMediaItem = {
@@ -102,6 +103,8 @@ export type CatalogProduct = {
   imageUrl?: string | null
   imageAlt?: string | null
   gallery?: CatalogProductMediaItem[]
+  detailGallery?: CatalogProductMediaItem[]
+  bentoGallery?: CatalogProductMediaItem[]
   tags?: unknown[]
   coverDescription?: string | null
   layersCatalog?: string | null

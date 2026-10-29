@@ -193,6 +193,21 @@ if (products) {
         }
       }
     }
+    if (!Array.isArray(product.detailGallery)) {
+      failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} detailGallery must be an array`)
+    }
+    if (!Array.isArray(product.bentoGallery)) {
+      failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} bentoGallery must be an array`)
+    }
+    for (const galleryName of ['gallery', 'detailGallery', 'bentoGallery']) {
+      for (const item of product[galleryName] || []) {
+        for (const source of item.sources || []) {
+          if (source.width !== undefined && (!Number.isInteger(source.width) || source.width <= 0)) {
+            failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} ${galleryName} source has invalid width`)
+          }
+        }
+      }
+    }
     if (catalogFilterSlugSets) {
       const collectionSlug = String(product.collectionSlug || '')
       const collectionOk =

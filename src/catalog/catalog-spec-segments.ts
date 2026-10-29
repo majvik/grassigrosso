@@ -154,13 +154,19 @@ export function buildCatalogSpecSegmentsShellHtml(
 export function buildSharedProductSpecSegmentsHtml(
   mainSpecs: CatalogModalSpec[],
   detailsSpecs: CatalogModalSpec[],
+  firmnessHtml = '',
 ): string {
-  return buildCatalogSpecSegmentsShellHtml(
-    buildSpecsHtml(mainSpecs, SHARED_PRODUCT_SPEC_CLASSES),
-    buildSpecsHtml(detailsSpecs, SHARED_PRODUCT_SPEC_CLASSES),
-    {
-      idPrefix: 'sharedProductSpec',
-      panelClass: 'catalogue-new-shared-product-specs catalogue-new-spec-segments-panel-inner',
-    },
+  return (
+    `<div class="catalogue-new-shared-product-spec-groups">` +
+    `<section class="catalogue-new-shared-product-spec-group" data-product-spec-group>` +
+    `<h2 class="catalogue-new-shared-product-spec-heading">Основные характеристики</h2>` +
+    `<div class="catalogue-new-shared-product-specs">${buildSpecsHtml(mainSpecs, SHARED_PRODUCT_SPEC_CLASSES)}</div>` +
+    firmnessHtml +
+    `</section>` +
+    `<section class="catalogue-new-shared-product-spec-group is-details" data-product-spec-group>` +
+    `<h2 class="catalogue-new-shared-product-spec-heading">Наполнение</h2>` +
+    `<div class="catalogue-new-shared-product-specs">${buildSpecsHtml(detailsSpecs, SHARED_PRODUCT_SPEC_CLASSES)}</div>` +
+    `</section>` +
+    `</div>`
   )
 }

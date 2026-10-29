@@ -36,10 +36,38 @@ function pushItem(items, seen, item) {
   items.push(item);
 }
 
-function applyImageFields(item, resolved) {
+function responsiveImageSources(media, resolved) {
+  const rows = [];
+  const seen = new Set();
+  const push = (type, src, width) => {
+    const safeSrc = String(src || '').trim();
+    const safeWidth = Number(width || 0);
+    if (!safeSrc || !Number.isInteger(safeWidth) || safeWidth <= 0) return;
+    const key = `${type}|${safeSrc}|${safeWidth}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    rows.push({ type: String(type || 'image/jpeg'), src: safeSrc, width: safeWidth });
+  };
+
+  const formats = media?.formats && typeof media.formats === 'object' ? Object.values(media.formats) : [];
+  for (const format of formats) {
+    push(format?.mime || media?.mime, format?.url, format?.width);
+  }
+  push(media?.mime, media?.url, media?.width);
+  for (const source of resolved.sources || []) {
+    const matchingWidth = rows.find((row) => row.src === resolved.fallbackSrc)?.width || Number(media?.width || 0);
+    push(source.type, source.src, matchingWidth);
+  }
+  return rows.sort((a, b) => a.width - b.width);
+}
+
+function applyImageFields(item, resolved, media) {
   item.src = resolved.src;
   item.fallbackSrc = resolved.fallbackSrc;
-  if (resolved.sources.length > 0) {
+  const sources = responsiveImageSources(media, resolved);
+  if (sources.length > 0) {
+    item.sources = sources;
+  } else if (resolved.sources.length > 0) {
     item.sources = resolved.sources;
   }
 }
@@ -79,7 +107,7 @@ function itemFromImageRow(row, fallbackName) {
     type: 'image',
     alt: alt || mediaAlt(row.slide_image, fallbackName || 'Изображение товара'),
   };
-  applyImageFields(item, resolved);
+  applyImageFields(item, resolved, row.slide_image);
   return item;
 }
 
@@ -108,7 +136,7 @@ function itemFromLegacyMedia(media, imageUrl, fallbackName) {
     type: 'image',
     alt: mediaAlt(media, fallbackName || 'Изображение товара'),
   };
-  applyImageFields(item, resolved);
+  applyImageFields(item, resolved, media);
   return item;
 }
 
@@ -150,7 +178,30 @@ function buildProductGallery(row) {
   return { gallery, imageUrl, imageAlt };
 }
 
+function buildGalleryFromComponentRows(rows, fallbackName) {
+  const items = [];
+  const seen = new Set();
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (items.length >= MAX_GALLERY_ITEMS) break;
+    pushItem(items, seen, itemFromGalleryComponentRow(row, fallbackName));
+  }
+  return items;
+}
+
+function buildProductDetailGallery(row) {
+  const fallbackName = row?.name ? `Коллекция ${row.name}` : 'Изображение товара';
+  const detail = buildGalleryFromComponentRows(row?.detail_gallery, fallbackName);
+  return detail.length ? detail : buildProductGallery(row).gallery;
+}
+
+function buildProductBentoGallery(row) {
+  const fallbackName = row?.name ? `Коллекция ${row.name}` : 'Изображение товара';
+  return buildGalleryFromComponentRows(row?.bento_gallery, fallbackName);
+}
+
 module.exports = {
   MAX_GALLERY_ITEMS,
   buildProductGallery,
+  buildProductDetailGallery,
+  buildProductBentoGallery,
 };

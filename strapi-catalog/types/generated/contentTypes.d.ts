@@ -1275,6 +1275,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    bento_gallery: Schema.Attribute.Component<
+      'catalog.product-gallery-item',
+      true
+    >;
     collection: Schema.Attribute.Relation<
       'manyToOne',
       'api::collection.collection'
@@ -1286,6 +1290,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    detail_gallery: Schema.Attribute.Component<
+      'catalog.product-gallery-item',
+      true
+    >;
     features: Schema.Attribute.Relation<
       'manyToMany',
       'api::feature-option.feature-option'

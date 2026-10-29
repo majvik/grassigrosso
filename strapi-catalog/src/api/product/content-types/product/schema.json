@@ -175,7 +175,19 @@
       ]
     },
     "gallery": {
-      "displayName": "Галерея",
+      "displayName": "Галерея карточки каталога",
+      "type": "component",
+      "repeatable": true,
+      "component": "catalog.product-gallery-item"
+    },
+    "detail_gallery": {
+      "displayName": "Слайдер страницы позиции",
+      "type": "component",
+      "repeatable": true,
+      "component": "catalog.product-gallery-item"
+    },
+    "bento_gallery": {
+      "displayName": "Bento-галерея страницы позиции",
       "type": "component",
       "repeatable": true,
       "component": "catalog.product-gallery-item"

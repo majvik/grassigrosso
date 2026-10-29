@@ -12,6 +12,7 @@ export type CatalogProductMediaHtmlOptions = {
   productSlug?: string
   carousel?: boolean
   eagerFirstSlide?: boolean
+  imageSizes?: string
 }
 
 const GALLERY_ROOT_SELECTOR = '[data-catalog-card-media]'
@@ -83,7 +84,7 @@ export function normalizeCatalogGalleryItems(
   return out.slice(0, 5)
 }
 
-function buildPictureHtml(item: CatalogProductMediaItem, eager: boolean): string {
+function buildPictureHtml(item: CatalogProductMediaItem, eager: boolean, sizes = '100vw'): string {
   const alt = escapeHtml(item.alt || '')
   const loading = eager ? 'eager' : 'lazy'
   const fetchPriority = eager ? ' fetchpriority="high"' : ''
@@ -93,13 +94,33 @@ function buildPictureHtml(item: CatalogProductMediaItem, eager: boolean): string
     return `<img src="${escapeHtml(item.src)}" alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} />`
   }
 
-  const sourcesHtml = item.sources
-    .map((source) => `<source type="${escapeHtml(source.type)}" srcset="${escapeHtml(source.src)}" />`)
+  const sourcesByType = new Map<string, typeof item.sources>()
+  item.sources.forEach((source) => {
+    const rows = sourcesByType.get(source.type) || []
+    rows.push(source)
+    sourcesByType.set(source.type, rows)
+  })
+  const sourcesHtml = [...sourcesByType.entries()]
+    .sort(([typeA], [typeB]) => {
+      const priority = (type: string) => /avif/i.test(type) ? 0 : /webp/i.test(type) ? 1 : 2
+      return priority(typeA) - priority(typeB)
+    })
+    .map(([type, sources]) => {
+      const srcset = sources
+        .map((source) => `${source.src}${source.width ? ` ${source.width}w` : ''}`)
+        .join(', ')
+      return `<source type="${escapeHtml(type)}" srcset="${escapeHtml(srcset)}" sizes="${escapeHtml(sizes)}" />`
+    })
     .join('')
-  return `<picture>${sourcesHtml}<img src="${fallbackSrc}" alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} /></picture>`
+  const fallbackCandidates = item.sources
+    .filter((source) => source.width && !/avif|webp/i.test(source.type))
+    .map((source) => `${source.src} ${source.width}w`)
+    .join(', ')
+  const fallbackSrcset = fallbackCandidates ? ` srcset="${escapeHtml(fallbackCandidates)}" sizes="${escapeHtml(sizes)}"` : ''
+  return `<picture>${sourcesHtml}<img src="${fallbackSrc}"${fallbackSrcset} alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} /></picture>`
 }
 
-function buildSlideHtml(item: CatalogProductMediaItem, index: number, eager: boolean): string {
+function buildSlideHtml(item: CatalogProductMediaItem, index: number, eager: boolean, sizes = '100vw'): string {
   const activeClass = index === 0 ? ' is-active' : ''
   const alt = escapeHtml(item.alt || '')
   if (item.type === 'video') {
@@ -134,7 +155,7 @@ function buildSlideHtml(item: CatalogProductMediaItem, index: number, eager: boo
 
   return (
     `<div class="catalogue-new-card-media-slide${activeClass}" data-catalog-gallery-slide="${index}">` +
-    buildPictureHtml(item, eager) +
+    buildPictureHtml(item, eager, sizes) +
     `</div>`
   )
 }
@@ -179,6 +200,7 @@ function hydrateDeferredSlide(slide: HTMLElement): void {
 function buildCatalogProductMediaInnerHtml(
   gallery: CatalogProductMediaItem[],
   eagerFirstSlide = false,
+  imageSizes = '100vw',
 ): {
   slidesHtml: string
   dotsBlock: string
@@ -186,7 +208,7 @@ function buildCatalogProductMediaInnerHtml(
 } {
   const carousel = gallery.length >= 2
   const slidesHtml = gallery
-    .map((item, index) => buildSlideHtml(item, index, eagerFirstSlide && index === 0))
+    .map((item, index) => buildSlideHtml(item, index, eagerFirstSlide && index === 0, imageSizes))
     .join('')
   const dotsHtml = carousel
     ? gallery
@@ -231,7 +253,7 @@ export function mountCatalogProductMedia(
 ): void {
   const gallery = normalizeCatalogGalleryItems(rawGallery, fallback)
   applyCatalogProductMediaHostAttributes(host, gallery, options)
-  const { slidesHtml, dotsBlock } = buildCatalogProductMediaInnerHtml(gallery, options.eagerFirstSlide === true)
+  const { slidesHtml, dotsBlock } = buildCatalogProductMediaInnerHtml(gallery, options.eagerFirstSlide === true, options.imageSizes)
   host.innerHTML =
     `<div class="catalogue-new-card-media-viewport" data-catalog-gallery-viewport tabindex="-1">` +
     slidesHtml +
@@ -251,6 +273,7 @@ export function buildCatalogProductMediaHtml(
   const { slidesHtml, dotsBlock, carousel } = buildCatalogProductMediaInnerHtml(
     gallery,
     options.eagerFirstSlide === true,
+    options.imageSizes,
   )
   const carouselAttr = carousel && options.carousel !== false ? ' data-catalog-gallery-enabled="true"' : ''
   const aria = carousel && options.carousel !== false ? ' role="region" aria-roledescription="carousel"' : ''
@@ -263,6 +286,58 @@ export function buildCatalogProductMediaHtml(
     dotsBlock +
     `</div>`
   )
+}
+
+export function buildCatalogEditorialMediaWallHtml(
+  rawGallery: CatalogProductMediaItem[] | null | undefined,
+): string {
+  const gallery = normalizeCatalogGalleryItems(rawGallery)
+  if (!gallery.length) return ''
+
+  const itemsHtml = gallery.map((item, index) => {
+    const bentoArea = index === 0 ? 'main' : index === 1 ? 'top' : index === 2 ? 'bottom' : 'wide'
+    const mediaHtml = item.type === 'video'
+      ? (
+          `<video muted playsinline loop autoplay preload="metadata"` +
+          (item.poster ? ` poster="${escapeHtml(item.posterFallbackSrc || item.poster)}"` : '') +
+          ` aria-label="${escapeHtml(item.alt || 'Видео модели')}">` +
+          `<source src="${escapeHtml(item.src)}" type="${escapeHtml(item.mime || 'video/mp4')}" />` +
+          `</video>`
+        )
+      : buildPictureHtml(item, false, '(max-width: 900px) 100vw, 75vw')
+
+    return (
+      `<figure class="catalogue-new-shared-product-media-wall-item is-${bentoArea}" data-product-media-wall-item data-bento-area="${bentoArea}">` +
+      mediaHtml +
+      `</figure>`
+    )
+  }).join('')
+
+  return `<div class="catalogue-new-shared-product-media-wall" data-product-media-wall data-media-source="bento">${itemsHtml}</div>`
+}
+
+export function buildCatalogProductHeroSliderHtml(
+  rawGallery: CatalogProductMediaItem[] | null | undefined,
+  productSlug: string,
+): string {
+  const gallery = normalizeCatalogGalleryItems(rawGallery)
+  if (!gallery.length) return ''
+  const safeSlug = productSlug.replace(/[^a-z0-9_-]+/gi, '-') || 'product'
+  const slides = gallery.map((item, index) => {
+    const id = `product-hero-slide-${safeSlug}-${index}`
+    const media = item.type === 'video'
+      ? `<video muted loop playsinline preload="${index === 0 ? 'metadata' : 'none'}"${item.poster ? ` poster="${escapeHtml(item.posterFallbackSrc || item.poster)}"` : ''}><source src="${escapeHtml(item.src)}" type="${escapeHtml(item.mime || 'video/mp4')}" /></video>`
+      : buildPictureHtml(item, index === 0, '(max-width: 900px) 100vw, 1200px')
+    return `<div class="catalog-hero-slide${index === 0 ? ' is-active' : ''}" id="${id}" data-slide="${index}" aria-hidden="${index === 0 ? 'false' : 'true'}">${media}</div>`
+  }).join('')
+  const dots = gallery.map((_, index) => {
+    const slideId = `product-hero-slide-${safeSlug}-${index}`
+    return `<button type="button" class="catalog-hero-dot${index === 0 ? ' is-active' : ''}" role="tab" aria-selected="${index === 0 ? 'true' : 'false'}" aria-controls="${slideId}" data-target="${index}" aria-label="Слайд ${index + 1}"><span class="catalog-hero-dot-shape" aria-hidden="true"><span class="catalog-hero-dot-fill"></span></span></button>`
+  }).join('')
+  const controls = gallery.length > 1
+    ? `<div class="catalog-hero-nav-side catalog-hero-nav-side--left"><button type="button" class="catalog-hero-nav-btn catalog-hero-nav-prev" aria-label="Предыдущий слайд"><svg width="11" height="18" viewBox="0 0 11 18" fill="none" aria-hidden="true"><path d="M8.5 2.5L2.5 9l6 6.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" /></svg></button></div><div class="catalog-hero-nav-side catalog-hero-nav-side--right"><button type="button" class="catalog-hero-nav-btn catalog-hero-nav-next" aria-label="Следующий слайд"><svg width="11" height="18" viewBox="0 0 11 18" fill="none" aria-hidden="true"><path d="M2.5 2.5l6 6.5-6 6.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" /></svg></button></div><div class="catalog-hero-dots" role="tablist" aria-label="Слайды позиции">${dots}</div>`
+    : ''
+  return `<div class="catalog-hero-slider catalogue-new-shared-product-slider" data-product-detail-slider data-media-source="detail" data-autoplay-ms="6500" aria-roledescription="carousel" aria-label="Галерея позиции"><div class="catalog-hero-slides">${slides}</div>${controls}</div>`
 }
 
 export function readGalleryFromElement(root: Element | null): CatalogProductMediaItem[] {

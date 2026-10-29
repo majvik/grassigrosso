@@ -1,6 +1,10 @@
 'use strict';
 
-const { buildProductGallery } = require('../utils/build-product-gallery');
+const {
+  buildProductGallery,
+  buildProductDetailGallery,
+  buildProductBentoGallery,
+} = require('../utils/build-product-gallery');
 const { DEFAULT_CATALOG_LISTING_SECTIONS } = require('../utils/seed-catalog-listing');
 
 module.exports = {
@@ -116,6 +120,12 @@ module.exports = {
           gallery: {
             populate: ['slide_image', 'slide_video', 'poster'],
           },
+          detail_gallery: {
+            populate: ['slide_image', 'slide_video', 'poster'],
+          },
+          bento_gallery: {
+            populate: ['slide_image', 'slide_video', 'poster'],
+          },
           features: true,
           sizes: true,
           firmness_option: true,
@@ -168,6 +178,8 @@ module.exports = {
 
     const items = rows.map((row) => {
       const { gallery, imageUrl, imageAlt } = buildProductGallery(row);
+      const detailGallery = buildProductDetailGallery(row);
+      const bentoGallery = buildProductBentoGallery(row);
       const mattressType = row.mattress_type_option?.slug || mapMattressType(row.mattress_type || '');
       const collectionSlugFromRelation = row.collection?.slug || '';
       const collectionSlug = collectionSlugFromRelation
@@ -214,6 +226,8 @@ module.exports = {
         : normalizeStringList(row.fillings).map(mapFilling),
       features: Array.isArray(row.features) ? normalizeFeatures(row.features) : normalizeStringList(row.features).map(mapFeature),
       gallery,
+      detailGallery,
+      bentoGallery,
       imageUrl,
       imageAlt,
       coverDescription: String(row.cover_description || '').trim(),
