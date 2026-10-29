@@ -31,6 +31,7 @@ import {
   readGalleryFromElement,
   setCatalogGalleryActiveIndex,
   syncVisibleCatalogCardMediaLoading,
+  wasCatalogGalleryInteracted,
 } from './catalog-product-gallery'
 import { observeCatalogMediaHosts } from './catalog-media-load-queue'
 import { readCatalogueCardMeta } from './catalog-card-meta'
@@ -859,9 +860,9 @@ export function initCatalogListingController(documentRef: Document, scrollOption
           <h1 class="catalogue-new-shared-product-title">${escapeHtml(title)}</h1>
           ${specsHtml}
           ${tagsHtml}
-          <div class="catalogue-new-shared-product-actions catalogue-new-image-modal-actions">
+          <div class="catalogue-new-shared-product-actions catalogue-new-image-modal-actions" data-product-primary-actions>
             <div class="catalogue-new-image-modal-actions-row">
-              <button type="button" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" data-shared-product-contact>Связаться с менеджером по позиции</button>
+              <a href="/contacts?product=${encodeURIComponent(slug)}#contact-form" class="catalogue-new-image-modal-action catalogue-new-manager-contact-btn" data-shared-product-contact>Связаться с менеджером по позиции</a>
               <button type="button" class="catalogue-new-image-modal-favourite" data-shared-product-favourite aria-pressed="false" aria-label="Добавить в избранное">
                 <img class="catalogue-new-image-modal-favourite-icon--empty" src="/icons/favourite-empty.svg" alt="" aria-hidden="true" />
                 <img class="catalogue-new-image-modal-favourite-icon--full" src="/icons/favourite-full.svg" alt="" aria-hidden="true" />
@@ -1383,14 +1384,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const target = event.target instanceof Element ? event.target : null
     if (!target) return
     const slug = sharedState.slug
-    if (target.closest('[data-shared-product-contact]')) {
-      emitCatalogManagerContactIntent({
-        source: 'product',
-        slugs: [slug],
-        title: 'Позиция',
-      })
-      return
-    }
+    if (target.closest('[data-shared-product-contact]')) return
     const sharedProductShareBtn = target.closest<HTMLButtonElement>('[data-shared-product-share]')
     if (sharedProductShareBtn) {
       copyTextWithToast(buildCatalogProductShareUrl(slug))
@@ -1406,6 +1400,19 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       window.dispatchEvent(new CustomEvent('catalogue:favourites-updated'))
       syncSharedProductFavouriteButton(favBtn, slug)
     }
+  })
+
+  cardsRootEl.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null
+    if (!target || isSharedProductView) return
+    if (target.closest('.catalogue-new-favourite, .catalogue-new-shared-remove')) return
+    if (target.closest('[data-catalog-gallery-dot]')) return
+    const cardMedia = target.closest<HTMLElement>('[data-catalog-card-media]')
+    if (cardMedia && wasCatalogGalleryInteracted(target)) return
+    const card = target.closest<HTMLElement>('.catalogue-new-card')
+    const slug = String(card?.dataset.productSlug || '').trim()
+    if (!slug) return
+    window.location.assign(buildCatalogProductShareUrl(slug))
   })
 
   catalogueNewSidebar.addEventListener(

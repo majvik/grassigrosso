@@ -84,6 +84,49 @@ try {
   assert.equal(state.priceSorts, 0)
   assert.equal(state.visiblePrices, 0)
   assert.equal(state.priceDatasets, 0)
+
+  await browser.cdp.evaluate(`document.querySelector('.catalogue-new-card .catalogue-new-favourite')?.click()`)
+  await delay(100)
+  assert.equal(await browser.cdp.evaluate('location.search'), '', 'favourite control must not open the product page')
+  await browser.cdp.evaluate(`document.querySelector('.catalogue-new-card')?.click()`)
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    state = await browser.cdp.evaluate(`(() => ({
+      search: location.search,
+      productPage: Boolean(document.querySelector('.catalogue-new-shared-product:not([hidden])')),
+      contact: Boolean(document.querySelector('[data-shared-product-contact]')),
+      contactHref: document.querySelector('[data-shared-product-contact]')?.getAttribute('href') || '',
+      favourite: Boolean(document.querySelector('[data-shared-product-favourite]')),
+      share: Boolean(document.querySelector('[data-shared-product-share]')),
+      shareHelp: Boolean(document.querySelector('[data-filter-help-open="productShare"]')),
+      gallery: Boolean(document.querySelector('.catalogue-new-shared-product-media[data-catalog-card-media]')),
+      specs: Boolean(document.querySelector('.catalogue-new-shared-product [data-catalog-spec-segments]')),
+      quickViewModal: Boolean(document.querySelector('#catalogueImageModal')),
+    }))()`)
+    if (state.productPage) break
+    await delay(100)
+  }
+  assert.match(state.search, /^\?product=[a-z0-9-]+$/)
+  assert.equal(state.productPage, true)
+  assert.equal(state.contact, true)
+  assert.match(state.contactHref, /^\/contacts\?product=[a-z0-9-]+#contact-form$/)
+  assert.equal(state.favourite, true)
+  assert.equal(state.share, true)
+  assert.equal(state.shareHelp, true)
+  assert.equal(state.gallery, true)
+  assert.equal(state.specs, true)
+  assert.equal(state.quickViewModal, false)
+
+  const favouriteBefore = await browser.cdp.evaluate(`document.querySelector('[data-shared-product-favourite]')?.getAttribute('aria-pressed')`)
+  await browser.cdp.evaluate(`document.querySelector('[data-shared-product-favourite]')?.click()`)
+  assert.notEqual(
+    await browser.cdp.evaluate(`document.querySelector('[data-shared-product-favourite]')?.getAttribute('aria-pressed')`),
+    favouriteBefore,
+  )
+  await browser.cdp.evaluate(`document.querySelector('[data-shared-product-share]')?.click()`)
+  assert.equal(
+    await browser.cdp.evaluate(`document.querySelector('[data-shared-product-share] .catalogue-new-favourites-share-link-label')?.textContent?.trim()`),
+    'Скопировано',
+  )
   console.log('✅ Showcase UI: download CTA present; smart selector and all price surfaces absent')
 } finally {
   if (browser) cleanupChromeSession(browser)

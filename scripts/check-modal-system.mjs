@@ -93,7 +93,6 @@ await checkPage('/dealers', [
 ])
 
 await checkPage('/catalog', [
-  { label: 'product shell', overlay: '#catalogueImageModal', surface: '.catalogue-new-image-modal-dialog', close: '#catalogueImageModalClose' },
   { label: 'filter help shell', overlay: '#catalogueFilterHelpModal', surface: '.catalogue-new-filter-help-modal-dialog', close: '#catalogueFilterHelpModalClose' },
   { label: 'favourites clear shell', overlay: '#catalogueFavouritesClearModal', surface: '.catalogue-new-favourites-clear-modal-dialog', close: '#catalogueFavouritesClearModalClose' },
 ])

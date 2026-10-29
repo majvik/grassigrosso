@@ -172,6 +172,6 @@ npm start
 
 - Основной page-level migration завершён: page HTML strings и runtime fallback уже убраны.
 - Остаток миграции теперь в двух слоях:
-  - `src/catalog/*` runtime cleanup, начиная с `catalog-image-modal.ts` и `catalog-filter-dom.ts`;
+  - `src/catalog/*` runtime cleanup, начиная с `catalog-filter-dom.ts`;
   - постепенный перенос visual layer migrated React pages с legacy global CSS на CSS Modules без потери полноширинного parity.
 - Подробный пошаговый остаток и инструкция для следующего ИИ поддерживаются в `docs/ui-migration.md`.

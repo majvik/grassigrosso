@@ -64,11 +64,6 @@ export function relocateOverlayRoots() {
     document.documentElement.appendChild(modal)
   })
 
-  const catalogueImageModalRoot = document.getElementById('catalogueImageModal')
-  if (catalogueImageModalRoot) {
-    document.documentElement.appendChild(catalogueImageModalRoot)
-  }
-
   const catalogueMobileFiltersOverlayRoot = document.getElementById('catalogue-new-mobile-filters-overlay')
   if (catalogueMobileFiltersOverlayRoot) {
     document.documentElement.appendChild(catalogueMobileFiltersOverlayRoot)

@@ -1,7 +1,6 @@
 import { readCatalogFavourites, writeCatalogFavourites } from './catalog-favourites'
 import { initCatalogFavouritesClearModal } from './catalog-favourites-clear-modal'
 import { initCatalogFilterHelpModal } from './catalog-filter-help-modal'
-import { initCatalogImageModal } from './catalog-image-modal'
 
 interface ScrollOptions {
   lockScroll?: () => void
@@ -13,79 +12,6 @@ function queryElement<T extends HTMLElement>(root: Document, id: string): T | nu
 }
 
 export function initCatalogModals(documentRef: Document, scrollOptions: ScrollOptions = {}) {
-  const catalogueImageModal = queryElement<HTMLElement>(documentRef, 'catalogueImageModal')
-  const catalogueImageModalDialog = queryElement<HTMLElement>(documentRef, 'catalogueImageModalDialog')
-  const catalogueImageModalPreview = queryElement<HTMLElement>(documentRef, 'catalogueImageModalPreview')
-  const catalogueImageModalContactView = queryElement<HTMLElement>(documentRef, 'catalogueImageModalContactView')
-  const catalogueImageModalContactForm = queryElement<HTMLFormElement>(documentRef, 'catalogueImageModalContactForm')
-  const catalogueImageModalContactHeading = queryElement<HTMLElement>(documentRef, 'catalogueImageModalContactHeading')
-  const catalogueImageModalContactBack = queryElement<HTMLButtonElement>(documentRef, 'catalogueImageModalContactBack')
-  const catalogueImageModalPositionsList = queryElement<HTMLElement>(documentRef, 'catalogueImageModalPositionsList')
-  const catalogueImageModalPositionsCount = queryElement<HTMLElement>(documentRef, 'catalogueImageModalPositionsCount')
-  const catalogueImageModalMedia = queryElement<HTMLElement>(documentRef, 'catalogueImageModalMedia')
-  const catalogueImageModalTitle = queryElement<HTMLElement>(documentRef, 'catalogueImageModalTitle')
-  const catalogueImageModalSpecSegments = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecSegments')
-  const catalogueImageModalSpecsMain = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecsMain')
-  const catalogueImageModalSpecsDetails = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecsDetails')
-  const catalogueImageModalSpecsEmpty = queryElement<HTMLElement>(documentRef, 'catalogueImageModalSpecsEmpty')
-  const catalogueImageModalTagsRow = queryElement<HTMLElement>(documentRef, 'catalogueImageModalTagsRow')
-  const catalogueImageModalTags = queryElement<HTMLElement>(documentRef, 'catalogueImageModalTags')
-  const catalogueImageModalContactBtn = queryElement<HTMLButtonElement>(documentRef, 'catalogueImageModalContactBtn')
-  const catalogueImageModalShareBtn = queryElement<HTMLButtonElement>(documentRef, 'catalogueImageModalShareBtn')
-  const catalogueImageModalFavouriteBtn = queryElement<HTMLButtonElement>(documentRef, 'catalogueImageModalFavouriteBtn')
-  const catalogueImageModalClose = queryElement<HTMLElement>(documentRef, 'catalogueImageModalClose')
-  const catalogueCardsRootForModal = documentRef.querySelector('.catalogue-new-cards')
-
-  if (
-    catalogueImageModal &&
-    catalogueImageModalDialog &&
-    catalogueImageModalPreview &&
-    catalogueImageModalContactView &&
-    catalogueImageModalContactForm &&
-    catalogueImageModalContactHeading &&
-    catalogueImageModalContactBack &&
-    catalogueImageModalPositionsList &&
-    catalogueImageModalPositionsCount &&
-    catalogueImageModalMedia &&
-    catalogueImageModalTitle &&
-    catalogueImageModalSpecSegments &&
-    catalogueImageModalSpecsMain &&
-    catalogueImageModalSpecsDetails &&
-    catalogueImageModalSpecsEmpty &&
-    catalogueImageModalContactBtn &&
-    catalogueImageModalShareBtn &&
-    catalogueImageModalFavouriteBtn &&
-    catalogueCardsRootForModal
-  ) {
-    initCatalogImageModal(
-      {
-        modal: catalogueImageModal,
-        dialog: catalogueImageModalDialog,
-        previewRoot: catalogueImageModalPreview,
-        contactRoot: catalogueImageModalContactView,
-        contactForm: catalogueImageModalContactForm,
-        contactHeading: catalogueImageModalContactHeading,
-        contactBackBtn: catalogueImageModalContactBack,
-        positionsList: catalogueImageModalPositionsList,
-        positionsCount: catalogueImageModalPositionsCount,
-        imageMedia: catalogueImageModalMedia,
-        title: catalogueImageModalTitle,
-        specSegmentsRoot: catalogueImageModalSpecSegments,
-        specsMain: catalogueImageModalSpecsMain,
-        specsDetails: catalogueImageModalSpecsDetails,
-        specsEmpty: catalogueImageModalSpecsEmpty,
-        tagsRow: catalogueImageModalTagsRow,
-        tagsRoot: catalogueImageModalTags,
-        contactBtn: catalogueImageModalContactBtn,
-        shareBtn: catalogueImageModalShareBtn,
-        favouriteBtn: catalogueImageModalFavouriteBtn,
-        closeBtn: catalogueImageModalClose,
-        cardsRoot: catalogueCardsRootForModal,
-      },
-      scrollOptions,
-    )
-  }
-
   const catalogueFilterHelpModal = queryElement<HTMLElement>(documentRef, 'catalogueFilterHelpModal')
   const catalogueFilterHelpModalOverlay = queryElement<HTMLElement>(documentRef, 'catalogueFilterHelpModalOverlay')
   const catalogueFilterHelpModalTitle = queryElement<HTMLElement>(documentRef, 'catalogueFilterHelpModalTitle')

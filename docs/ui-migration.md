@@ -124,7 +124,6 @@ React migration меняет слой рендера, но не даёт пра�
 ### 1. Catalog runtime cleanup
 
 - Разрезать самые тяжёлые legacy runtime-модули каталога:
-  - `src/catalog/catalog-image-modal.ts`
   - `src/catalog/catalog-filter-dom.ts`
   - затем оставшиеся связанные helper-модули вокруг selection/filter state.
 - Цель: сузить прямую DOM-оркестрацию и вынести логику в более локальные React-facing adapters, не ломая текущий `data-*` и class contract.
@@ -166,8 +165,7 @@ React migration меняет слой рендера, но не даёт пра�
 2. Не добавлять новые container/page-shell обёртки на migrated full-width pages.
 3. Для поведения использовать `data-*` hooks; не завязываться на hash-классы CSS Modules.
 4. Следующий крупный технический этап:
-   - сначала `src/catalog/catalog-image-modal.ts`,
-   - затем `src/catalog/catalog-filter-dom.ts`,
+   - сначала `src/catalog/catalog-filter-dom.ts`,
    - затем более мелкие catalog runtime leftovers.
 5. Следующий крупный визуальный этап:
    - переносить shared/full-width React sections на CSS Modules только там, где parity уже доказуем.

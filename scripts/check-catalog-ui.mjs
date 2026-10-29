@@ -179,38 +179,32 @@ try {
     card.click()
     return true
   })()`)
-  const modal = await waitFor(evaluate, 'modal opened', `(() => {
-    const modal = document.querySelector('#catalogueImageModal')
-    const title = document.querySelector('#catalogueImageModalTitle')?.textContent?.trim()
-    const specs = document.querySelectorAll('.catalogue-new-image-modal-spec').length
-    return modal && !modal.hasAttribute('hidden') && title && specs >= 4 ? { title, specs } : false
+  const productPage = await waitFor(evaluate, 'product page opened', `(() => {
+    const page = document.querySelector('.catalogue-new-shared-product:not([hidden])')
+    const title = page?.querySelector('.catalogue-new-shared-product-title')?.textContent?.trim()
+    const specs = page?.querySelectorAll('.catalogue-new-shared-product-spec').length || 0
+    const controls = page?.querySelectorAll('[data-shared-product-contact], [data-shared-product-favourite], [data-shared-product-share]').length || 0
+    return location.search.startsWith('?product=') && page && title && specs >= 4 && controls === 3
+      ? { title, specs, controls }
+      : false
   })()`)
-  if (!modal) failures.push('catalog modal did not open with specs')
+  if (!productPage) failures.push('product page did not open with specs and controls')
 
-  await waitFor(evaluate, 'product modal uses shared desktop shell and preserves two columns', `(() => {
-    const overlay = document.querySelector('#catalogueImageModal')
-    const dialog = document.querySelector('#catalogueImageModalDialog')
-    const close = document.querySelector('#catalogueImageModalClose')
-    if (!overlay || !dialog || !close) return false
-    const rect = dialog.getBoundingClientRect()
-    const columns = getComputedStyle(dialog).gridTemplateColumns.split(' ').filter(Boolean)
-    return overlay.classList.contains('site-modal-overlay')
-      && dialog.classList.contains('site-modal-surface')
-      && close.classList.contains('site-modal-close')
-      && rect.top >= 47
-      && window.innerHeight - rect.bottom >= 47
-      && columns.length === 2
+  await waitFor(evaluate, 'product page uses two-column desktop layout without quick view', `(() => {
+    const shell = document.querySelector('.catalogue-new-shared-product-shell')
+    if (!shell || document.querySelector('#catalogueImageModal')) return false
+    return getComputedStyle(shell).gridTemplateColumns.split(' ').filter(Boolean).length === 2
   })()`)
 
   await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true })
-  await waitFor(evaluate, 'product modal preserves its responsive single-column layout', `(() => {
-    const dialog = document.querySelector('#catalogueImageModalDialog')
-    return dialog && getComputedStyle(dialog).gridTemplateColumns.split(' ').filter(Boolean).length === 1
+  await waitFor(evaluate, 'product page preserves its responsive single-column layout', `(() => {
+    const shell = document.querySelector('.catalogue-new-shared-product-shell')
+    return shell && getComputedStyle(shell).gridTemplateColumns.split(' ').filter(Boolean).length === 1
   })()`)
   await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-  await evaluate(`document.querySelector('#catalogueImageModalClose')?.click()`)
-  await waitFor(evaluate, 'modal closed', `document.querySelector('#catalogueImageModal')?.hasAttribute('hidden') === true`)
+  await evaluate(`history.back()`)
+  await waitFor(evaluate, 'returned from product page to catalogue', `location.search === '' && Boolean(document.querySelector('.catalogue-new-card'))`)
 
   await evaluate(`document.querySelector('[data-filter-help-open="collection"]')?.click()`)
   await waitFor(evaluate, 'filter help modal uses shared shell and closes normally', `(() => {
