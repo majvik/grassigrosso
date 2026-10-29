@@ -60,6 +60,10 @@ try {
       cards: document.querySelectorAll('.catalogue-new-card').length,
       downloadHref: document.querySelector('.catalog-hero-download-link')?.getAttribute('href') || '',
       downloadText: document.querySelector('.catalog-hero-download-link')?.textContent?.trim() || '',
+      downloadArrow: document.querySelector('.catalog-hero-download-link .catalog-arrow')?.getAttribute('src') || '',
+      downloadTextColor: document.querySelector('.catalog-hero-download-link span')
+        ? getComputedStyle(document.querySelector('.catalog-hero-download-link span')).color
+        : '',
       smartSelector: Boolean(document.querySelector('[data-smart-selector], .smart-selector-trigger, .smart-selector-modal')),
       priceFilter: Boolean(document.querySelector('[data-filter-group="price"]')),
       priceSorts: document.querySelectorAll('.catalogue-new-sort-option[data-value^="price-"]').length,
@@ -72,7 +76,9 @@ try {
 
   assert.ok(state.cards > 0, 'catalogue cards did not load')
   assert.equal(state.downloadHref, '/download-catalog')
-  assert.equal(state.downloadText, 'СКАЧАТЬ КАТАЛОГ')
+  assert.equal(state.downloadText.toUpperCase(), 'СКАЧАТЬ КАТАЛОГ')
+  assert.equal(state.downloadArrow, '/arrow-hero-catalog.svg')
+  assert.notEqual(state.downloadTextColor, 'rgb(0, 0, 238)', 'download CTA must use project styles, not browser link blue')
   assert.equal(state.smartSelector, false)
   assert.equal(state.priceFilter, false)
   assert.equal(state.priceSorts, 0)

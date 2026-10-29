@@ -108,7 +108,8 @@ export function CatalogHeroSection() {
               <SmartSelector />
             ) : (
               <a href="/download-catalog" className="catalog-link catalog-hero-download-link">
-                СКАЧАТЬ КАТАЛОГ
+                <span>Скачать каталог</span>
+                <img src="/arrow-hero-catalog.svg" alt="" className="catalog-arrow" />
               </a>
             )}
           </div>
