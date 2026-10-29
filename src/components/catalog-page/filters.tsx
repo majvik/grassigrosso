@@ -1,5 +1,6 @@
 import { HelpIcon } from '@/components/catalog-page/icons'
 import { CATALOG_FILTER_GROUPS, type CatalogFilterGroupData } from '@/components/pages/catalog-page-data'
+import { SITE_CAPABILITIES } from '@/config/site-mode'
 
 function CatalogFilterGroup({ group }: { group: CatalogFilterGroupData }) {
   const triggerLabel = group.kind === 'select' ? group.defaultLabel : group.options[0]?.label ?? group.defaultLabel
@@ -152,7 +153,7 @@ export function CatalogSidebarFilters() {
         <CatalogFilterGroup key={group.filterGroup} group={group} />
       ))}
 
-      <div className="catalogue-new-filter-group" data-filter-group="price" hidden>
+      {SITE_CAPABILITIES.prices ? <div className="catalogue-new-filter-group" data-filter-group="price" hidden>
         <button type="button" className="catalogue-new-filter-accordion-trigger" aria-expanded="false">
           <h3>Цена</h3>
           <span className="catalogue-new-tag catalogue-new-filter-selection-count" hidden aria-hidden="true" />
@@ -196,7 +197,7 @@ export function CatalogSidebarFilters() {
             </div>
           </div>
         </div>
-      </div>
+      </div> : null}
     </aside>
   )
 }

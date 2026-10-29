@@ -1,5 +1,6 @@
 import type { CatalogProduct } from './catalog-api'
 import { formatCatalogPriceRub } from './catalog-price'
+import { SITE_CAPABILITIES } from '@/config/site-mode'
 import { buildCatalogProductMediaHtml } from './catalog-product-gallery'
 import {
   STANDARD_MATTRESS_SIZES,
@@ -78,8 +79,8 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
     coverDescription,
     layersCatalog,
   })
-  const priceRub = Number(item.priceRub || 0)
-  const priceLabel = formatCatalogPriceRub(priceRub)
+  const priceRub = SITE_CAPABILITIES.prices ? Number(item.priceRub || 0) : 0
+  const priceLabel = SITE_CAPABILITIES.prices ? formatCatalogPriceRub(priceRub) : ''
   const priceHtml = priceLabel
     ? `<div class="catalogue-new-card-price">${escapeHtml(priceLabel)}</div>`
     : ''
@@ -95,7 +96,7 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
         data-type="${escapeHtml(mattressType)}"
         data-height="${heightCm}"
         data-load="${maxLoadKg}"
-        data-price="${Number.isFinite(priceRub) && priceRub > 0 ? priceRub : ''}"
+        ${SITE_CAPABILITIES.prices ? `data-price="${Number.isFinite(priceRub) && priceRub > 0 ? priceRub : ''}"` : ''}
         data-recommended="${item.isRecommended === true ? 'true' : 'false'}"
         data-load-range="${escapeHtml(loadRange)}"
         data-height-range="${escapeHtml(heightRange)}"

@@ -1,10 +1,13 @@
 import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv } from 'vite'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const require = createRequire(import.meta.url)
+const { normalizeSiteMode } = require('./lib/site-mode.cjs')
 const cleanHtmlRoutes = {
   '/': 'index.html',
   '/hotels': 'hotels.html',
@@ -123,6 +126,7 @@ function siteOriginPlugin(origin) {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
+  const siteMode = normalizeSiteMode(env.SITE_MODE)
   const siteOrigin = (env.SITE_URL || 'https://grassigrosso.ru').replace(/\/+$/, '')
   // PORT в .env — порт Strapi (1337). Прокси /api всегда на Node server.cjs (dev:api → 3000).
   const devApiPort = env.DEV_API_PORT || '3000'
@@ -130,11 +134,23 @@ export default defineConfig(({ mode }) => {
   return {
     root: '.',
     base: './',
+    define: {
+      __GRASSIGROSSO_SITE_MODE__: JSON.stringify(siteMode),
+    },
     plugins: [react(), docxMimePlugin(), catalogImportPreviewPlugin(), cleanUrlDevPlugin(), criticalPreloaderPlugin(), siteOriginPlugin(siteOrigin)],
     resolve: {
-      alias: {
-        '@': path.resolve(__dirname, 'src'),
-      },
+      alias: [
+        {
+          find: '@/components/catalog-page/smart-selector-runtime',
+          replacement: path.resolve(
+            __dirname,
+            siteMode === 'commerce'
+              ? 'src/components/catalog-page/smart-selector.tsx'
+              : 'src/components/catalog-page/smart-selector-showcase.tsx',
+          ),
+        },
+        { find: '@', replacement: path.resolve(__dirname, 'src') },
+      ],
     },
     build: {
       outDir: 'dist',

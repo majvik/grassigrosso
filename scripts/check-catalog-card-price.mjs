@@ -27,6 +27,7 @@ esbuild.buildSync({
   bundle: true,
   format: 'esm',
   platform: 'node',
+  define: { __GRASSIGROSSO_SITE_MODE__: JSON.stringify('commerce') },
   outfile: cardBundle,
 })
 

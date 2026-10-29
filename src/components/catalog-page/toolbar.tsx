@@ -1,5 +1,10 @@
 import { GridViewIcon, HelpIcon, ListViewIcon } from '@/components/catalog-page/icons'
 import { CATALOG_SORT_OPTIONS } from '@/components/pages/catalog-page-data'
+import { SITE_CAPABILITIES } from '@/config/site-mode'
+
+const availableSortOptions = SITE_CAPABILITIES.prices
+  ? CATALOG_SORT_OPTIONS
+  : CATALOG_SORT_OPTIONS.filter((option) => !option.value.startsWith('price-'))
 
 export function CatalogToolbar() {
   return (
@@ -15,7 +20,7 @@ export function CatalogToolbar() {
       </button>
       <div className="catalogue-new-sort">
         <span className="catalogue-new-sort-sizer" aria-hidden="true">
-          {CATALOG_SORT_OPTIONS.map((option) => (
+          {availableSortOptions.map((option) => (
             <span className="catalogue-new-sort-sizer-line" key={option.value}>
               {option.label}
             </span>
@@ -23,10 +28,10 @@ export function CatalogToolbar() {
           <span className="catalogue-new-sort-sizer-line">Сортировка по соответствию</span>
         </span>
         <button type="button" className="catalogue-new-sort-trigger" aria-haspopup="listbox" aria-expanded="false">
-          {CATALOG_SORT_OPTIONS[0].label}
+          {availableSortOptions[0].label}
         </button>
         <ul className="catalogue-new-sort-menu" role="listbox" hidden>
-          {CATALOG_SORT_OPTIONS.map((option, index) => (
+          {availableSortOptions.map((option, index) => (
             <li key={option.value}>
               <button
                 type="button"

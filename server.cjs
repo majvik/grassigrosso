@@ -14,13 +14,13 @@ const consentRegistry = require('./lib/consent-registry.cjs');
 const { buildConfirmationEmail } = require('./lib/confirmation-email.cjs');
 const { createPagesCmsApi } = require('./lib/pages-cms-api.cjs');
 const { createSiteChromeApi } = require('./lib/site-chrome-api.cjs');
-const { createCatalogSmartSelect } = require('./lib/catalog-smart-select.cjs');
-const { createCommerceClients } = require('./server/commerce/commerce-client.cjs');
-const { createCommerceCatalogRouter } = require('./server/commerce/routes/catalog-routes.cjs');
+const { normalizeSiteMode, getSiteCapabilities, sanitizeCatalogPayload } = require('./lib/site-mode.cjs');
 require('dotenv').config();
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
+const SITE_MODE = normalizeSiteMode(process.env.SITE_MODE);
+const SITE_CAPABILITIES = getSiteCapabilities(SITE_MODE);
 
 const PORT = Number(process.env.PORT || 3000);
 const STRAPI_URL = String(process.env.STRAPI_URL || '').trim().replace(/\/+$/, '');
@@ -31,8 +31,6 @@ const GEMINI_API_KEY = String(process.env.GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite').trim();
 const GEMINI_API_BASE_URL = String(process.env.GEMINI_API_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta').trim();
 const GEMINI_TIMEOUT_MS = Math.max(1000, Number(process.env.GEMINI_TIMEOUT_MS || 20000));
-const catalogSmartSelect = createCatalogSmartSelect({ axios, apiKey: GEMINI_API_KEY, model: GEMINI_MODEL, baseUrl: GEMINI_API_BASE_URL, timeoutMs: GEMINI_TIMEOUT_MS });
-const catalogSmartSelectRateLimit = new Map();
 const INTERNAL_API_PREFIXES = [
   '/api/submit',
   '/api/catalog',
@@ -1018,6 +1016,7 @@ async function initializeDeliveryChannels() {
 console.log('\n🚀 Starting server...');
 console.log(`   PORT: ${PORT}`);
 console.log(`   APP_VERSION: ${APP_VERSION}`);
+console.log(`   SITE_MODE: ${SITE_MODE}`);
 console.log(`   BOT_TOKEN: ${BOT_TOKEN ? '✅ Set' : '❌ Not set'}`);
 console.log(`   CHAT_ID: ${CHAT_IDS.length > 0 ? '✅ Set' : '❌ Not set'}`);
 console.log(`   SMTP_HOST: ${SMTP_HOST ? '✅ Set' : '❌ Not set'}`);
@@ -1037,6 +1036,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     version: APP_VERSION,
+    siteMode: SITE_MODE,
     queueSize: db.getPendingCount(),
     channels: {
       email: channelEmailConfigured(),
@@ -1045,39 +1045,49 @@ app.get('/health', (req, res) => {
   });
 });
 
-const commerceClients = createCommerceClients({
-  strapi: { baseUrl: STRAPI_URL || 'http://127.0.0.1:1337', token: STRAPI_TOKEN, timeoutMs: 2500 },
-  medusa: { baseUrl: MEDUSA_URL, timeoutMs: 2500 },
-});
-app.use('/api/commerce', createCommerceCatalogRouter(commerceClients));
+if (SITE_CAPABILITIES.commerce) {
+  const { createCommerceClients } = require('./server/commerce/commerce-client.cjs');
+  const { createCommerceCatalogRouter } = require('./server/commerce/routes/catalog-routes.cjs');
+  const commerceClients = createCommerceClients({
+    strapi: { baseUrl: STRAPI_URL || 'http://127.0.0.1:1337', token: STRAPI_TOKEN, timeoutMs: 2500 },
+    medusa: { baseUrl: MEDUSA_URL, timeoutMs: 2500 },
+  });
+  app.use('/api/commerce', createCommerceCatalogRouter(commerceClients));
+}
 
-app.post('/api/catalog/smart-select', async (req, res) => {
-  res.setHeader('Cache-Control', 'no-store');
-  const now = Date.now();
-  const ip = getClientIp(req);
-  const current = catalogSmartSelectRateLimit.get(ip);
-  const windowMs = 60 * 1000;
-  const maxRequests = isProd ? 5 : 60;
-  const bucket = !current || now - current.startedAt >= windowMs ? { startedAt: now, count: 0 } : current;
-  bucket.count += 1;
-  catalogSmartSelectRateLimit.set(ip, bucket);
-  if (bucket.count > maxRequests) return res.status(429).json({ error: 'Слишком много запросов. Попробуйте через минуту.' });
+if (SITE_CAPABILITIES.smartSelector) {
+  const { createCatalogSmartSelect } = require('./lib/catalog-smart-select.cjs');
+  const catalogSmartSelect = createCatalogSmartSelect({ axios, apiKey: GEMINI_API_KEY, model: GEMINI_MODEL, baseUrl: GEMINI_API_BASE_URL, timeoutMs: GEMINI_TIMEOUT_MS });
+  const catalogSmartSelectRateLimit = new Map();
 
-  try {
-    const result = await catalogSmartSelect.select(req.body?.text);
-    return res.status(200).json(result);
-  } catch (error) {
-    if (error.code === 'INVALID_INPUT') return res.status(400).json({ error: 'Опишите, какой матрас вам нужен.' });
-    if (error.code === 'INPUT_TOO_LONG') return res.status(413).json({ error: 'Текст слишком длинный.' });
-    if (error.code === 'NOT_CONFIGURED') return res.status(503).json({ error: 'Умный подбор пока не настроен.' });
-    if (error.code === 'RATE_LIMIT') {
-      if (error.retryAfter) res.setHeader('Retry-After', String(error.retryAfter));
-      return res.status(429).json({ error: 'Сервис подбора занят. Попробуйте чуть позже.' });
+  app.post('/api/catalog/smart-select', async (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    const now = Date.now();
+    const ip = getClientIp(req);
+    const current = catalogSmartSelectRateLimit.get(ip);
+    const windowMs = 60 * 1000;
+    const maxRequests = isProd ? 5 : 60;
+    const bucket = !current || now - current.startedAt >= windowMs ? { startedAt: now, count: 0 } : current;
+    bucket.count += 1;
+    catalogSmartSelectRateLimit.set(ip, bucket);
+    if (bucket.count > maxRequests) return res.status(429).json({ error: 'Слишком много запросов. Попробуйте через минуту.' });
+
+    try {
+      const result = await catalogSmartSelect.select(req.body?.text);
+      return res.status(200).json(result);
+    } catch (error) {
+      if (error.code === 'INVALID_INPUT') return res.status(400).json({ error: 'Опишите, какой матрас вам нужен.' });
+      if (error.code === 'INPUT_TOO_LONG') return res.status(413).json({ error: 'Текст слишком длинный.' });
+      if (error.code === 'NOT_CONFIGURED') return res.status(503).json({ error: 'Умный подбор пока не настроен.' });
+      if (error.code === 'RATE_LIMIT') {
+        if (error.retryAfter) res.setHeader('Retry-After', String(error.retryAfter));
+        return res.status(429).json({ error: 'Сервис подбора занят. Попробуйте чуть позже.' });
+      }
+      if (error.code === 'TIMEOUT') return res.status(504).json({ error: 'Сервис подбора отвечает слишком долго.' });
+      return res.status(502).json({ error: 'Не удалось разобрать пожелания. Попробуйте ещё раз.' });
     }
-    if (error.code === 'TIMEOUT') return res.status(504).json({ error: 'Сервис подбора отвечает слишком долго.' });
-    return res.status(502).json({ error: 'Не удалось разобрать пожелания. Попробуйте ещё раз.' });
-  }
-});
+  });
+}
 
 app.get('/api/catalog/hero-slides', async (req, res) => {
   if (!STRAPI_URL) {
@@ -1188,6 +1198,7 @@ app.get('/api/catalog/products', async (req, res) => {
   const cacheKeyListing = 'catalog:products:listing';
 
   const respondWithView = (fullPayload, options = {}) => {
+    fullPayload = sanitizeCatalogPayload(fullPayload, SITE_MODE);
     const shouldCache = options.cache !== false;
     const responseSource = options.source || fullPayload.source;
     if (view === 'listing') {
@@ -1242,11 +1253,11 @@ app.get('/api/catalog/products', async (req, res) => {
       feedResponse.data?.sections && typeof feedResponse.data.sections === 'object'
         ? feedResponse.data.sections
         : undefined;
-    const payload = {
+    const payload = sanitizeCatalogPayload({
       items: normalizedFeedItems,
       ...(sections ? { sections } : {}),
       source: 'strapi-catalog-feed',
-    };
+    }, SITE_MODE);
     if (normalizedFeedItems.length > 0) {
       setCatalogStrapiCache(cacheKeyFull, payload, { skipEmpty: true });
     }
@@ -1272,7 +1283,7 @@ app.get('/api/catalog/products', async (req, res) => {
 
     const rows = normalizeStrapiListPayload(fallbackResponse.data);
     const products = rows.map(mapStrapiProduct).filter((item) => item && item.name);
-    const payload = { items: products, source: 'strapi-products' };
+    const payload = sanitizeCatalogPayload({ items: products, source: 'strapi-products' }, SITE_MODE);
     if (products.length > 0) {
       setCatalogStrapiCache(cacheKeyFull, payload, { skipEmpty: true });
     }
@@ -1655,6 +1666,15 @@ app.post('/api/submit', async (req, res) => {
     leadId
   });
 });
+
+// Disabled product capabilities fail closed before the development frontend proxy.
+// Their implementation modules and external clients are never loaded in showcase mode.
+if (!SITE_CAPABILITIES.smartSelector) {
+  app.all('/api/catalog/smart-select', (_req, res) => res.status(404).json({ error: 'Not found' }));
+}
+if (!SITE_CAPABILITIES.commerce) {
+  app.use('/api/commerce', (_req, res) => res.status(404).json({ error: 'Not found' }));
+}
 
 const isDev = !isProd;
 
