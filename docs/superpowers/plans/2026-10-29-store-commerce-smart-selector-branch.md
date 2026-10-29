@@ -36,15 +36,28 @@
 
 - [x] Add the existing commerce client report.
 - [x] Add this spec and plan.
-- [ ] Commit the branch assembly documentation locally.
+- [x] Commit the branch assembly documentation locally (`bcd9bdf`).
 
 ### Phase 3: Local verification
 
-- [ ] Run commerce license, runtime, catalog-contract, readiness, and Medusa integration tests.
-- [ ] Run smart-selector and price-related catalog checks.
-- [ ] Run TypeScript checks and production builds for the website, Strapi, and Medusa.
-- [ ] Record exact commands and results below.
+- [x] Run commerce license, runtime, catalog-contract, readiness, and Medusa integration tests.
+- [x] Run smart-selector and price-related catalog checks.
+- [x] Run TypeScript checks and production builds for the website, Strapi, and Medusa.
+- [x] Record exact commands and results below.
 
 ## Verification evidence
 
-Pending execution.
+- `npm run check:medusa-license` — PASS, 4 tests and Core-only baseline validation.
+- `npm run check:commerce-runtime` — PASS with Docker: PostgreSQL, Redis, backup/restore, Russian Admin locale, `/health` 200.
+- `npm run check:commerce-catalog-contract` — PASS.
+- `npm run check:commerce-readiness` — PASS.
+- `npm run test:commerce` — PASS, 5 catalog-sync integration tests.
+- `npm run check:catalog-smart-selector` — PASS against `http://127.0.0.1:5174/catalog` with the full local stack.
+- `npm run check:catalog-smart-select-api` — PASS.
+- `npm run check:catalog-firmness-scores` — PASS.
+- `npm run check:catalog-price-filter` — PASS.
+- `npm run check:catalog-card-price` — PASS.
+- `npm run check:catalog-recommended-section` — PASS.
+- `npm run typecheck` — PASS.
+- `npm run build` — PASS for Vite and Strapi production builds. Strapi emitted a sandbox-only preference-file warning but completed with exit code 0.
+- `npm run build:commerce` — PASS after allowing Medusa CLI access to its local `~/.config/medusa` configuration.
