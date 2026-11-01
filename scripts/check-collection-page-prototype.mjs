@@ -16,6 +16,7 @@ const requireText = (source, expected, label) => {
 
 requireText(html, 'data-react-page="collection-page-prototype"', 'React page route')
 requireText(component, 'data-collection-hero', 'collection hero')
+requireText(component, 'data-collection-hero-media', 'isolated parallax media layer')
 requireText(component, '<p>Коллекция Релакс</p>', 'Russian collection eyebrow inside hero')
 requireText(component, '<h1>Relax</h1>', 'collection title inside hero')
 requireText(component, 'data-collection-actions', 'collection share action')
@@ -25,7 +26,10 @@ requireText(component, "prefers-reduced-motion: reduce", 'reduced-motion paralla
 requireText(component, 'data-collection-products', 'collection product list')
 requireText(component, 'product.tags.map', 'product tags')
 requireText(css, 'aspect-ratio: 21 / 9', 'wide hero ratio')
+requireText(css, '.productImage {\n  display: block;\n  min-width: 0;\n  aspect-ratio: 1;', 'square product image contract')
 requireText(css, 'var(--collection-parallax-y)', 'hero image parallax transform')
+requireText(css, '.heroMedia img {', 'parallax scoped to hero media image')
+if (css.includes('.hero img {')) failures.push('Parallax must not target every hero image, including share icons')
 
 for (const forbidden of ['fetch(', '/api/', '/uploads/', 'usePageCms']) {
   if (component.includes(forbidden)) failures.push(`Collection prototype must stay CMS/API independent: ${forbidden}`)

@@ -83,7 +83,7 @@ function CollectionHero() {
       data-collection-hero
       style={{ '--collection-parallax-y': '0px' } as CSSProperties}
     >
-      <picture>
+      <picture className={styles.heroMedia} data-collection-hero-media>
         <source media="(max-width: 900px)" type="image/avif" srcSet={`${mobileRoot}.avif`} />
         <source media="(max-width: 900px)" type="image/webp" srcSet={`${mobileRoot}.webp`} />
         <source media="(max-width: 900px)" type="image/png" srcSet={`${mobileRoot}.png`} />
