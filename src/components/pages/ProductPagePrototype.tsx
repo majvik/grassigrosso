@@ -15,9 +15,18 @@ const DAVOS_MEDIA = [
   'davos_material_textile_top_01_8162c06b96',
 ] as const
 
+const DAVOS_EDITORIAL_MEDIA = [
+  'davos_gallery_knit_detail_01',
+  'davos_gallery_coir_detail_02',
+  'davos_gallery_dark_textile_03',
+  'davos_gallery_quilt_detail_04',
+  'davos_gallery_foam_detail_05',
+] as const
+
 // Static Figma export for now; this same slot can later receive the animated SVG.
 // Mobile remains a separate static source below.
 const PRODUCT_COVER_DESKTOP_SRC = '/product-page-prototype/davos-product-cover-desktop-full.svg?v=letter-cascade-2'
+const PRODUCT_COVER_MOBILE_SRC = '/product-page-prototype/davos-product-cover-mobile.svg'
 
 const DAVOS_LAYERS = [
   'кокосовая койра (20мм)',
@@ -52,7 +61,6 @@ function PrototypePicture({ basename, eager = false }: { basename: string; eager
 }
 
 function ProductCoverPicture() {
-  const mobileRoot = '/product-page-prototype/davos_product_studio_pilot_01_605d8327e4'
   const readyRef = useRef(false)
 
   function announceReady() {
@@ -63,9 +71,7 @@ function ProductCoverPicture() {
 
   return (
     <picture>
-      <source media="(max-width: 900px)" type="image/avif" srcSet={`${mobileRoot}.avif`} />
-      <source media="(max-width: 900px)" type="image/webp" srcSet={`${mobileRoot}.webp`} />
-      <source media="(max-width: 900px)" type="image/png" srcSet={`${mobileRoot}.png`} />
+      <source media="(max-width: 900px)" type="image/svg+xml" srcSet={PRODUCT_COVER_MOBILE_SRC} />
       <img
         data-product-cover-media
         src={PRODUCT_COVER_DESKTOP_SRC}
@@ -189,7 +195,7 @@ function EditorialGallery() {
       data-product-editorial-gallery
       onPointerLeave={clearActive}
     >
-      {DAVOS_MEDIA.map((basename, index) => (
+      {DAVOS_EDITORIAL_MEDIA.map((basename, index) => (
         <figure
           className={`${styles.editorialGalleryItem}${activeIndex === index ? ` ${styles.editorialGalleryItemActive}` : ''}`}
           key={`editorial-${basename}`}
@@ -198,7 +204,7 @@ function EditorialGallery() {
         </figure>
       ))}
       <div className={styles.editorialGalleryHitAreas} aria-hidden="true">
-        {DAVOS_MEDIA.map((basename, index) => (
+        {DAVOS_EDITORIAL_MEDIA.map((basename, index) => (
           <span
             className={activeIndex === index ? styles.editorialGalleryHitAreaActive : undefined}
             key={`hit-${basename}`}
@@ -304,7 +310,7 @@ export function ProductPagePrototype() {
                 </ol>
               </div>
               <figure className={styles.characteristicsMedia}>
-                <PrototypePicture basename="davos_material_textile_top_01_8162c06b96" />
+                <PrototypePicture basename="davos_material_layers_detail_01" />
               </figure>
             </section>
             <EditorialGallery />

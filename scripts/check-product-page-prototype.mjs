@@ -8,6 +8,7 @@ const read = (file) => fs.readFileSync(path.join(root, file), 'utf8')
 const failures = []
 const html = read('product-page-prototype.html')
 const component = read('src/components/pages/ProductPagePrototype.tsx')
+const css = read('src/components/pages/ProductPagePrototype.module.css')
 const pageBootstrap = read('src/page-bootstrap.js')
 const coverPreparationScript = read('scripts/prepare-cover-svg-animation.mjs')
 const vite = read('vite.config.mjs')
@@ -20,21 +21,31 @@ requireText(html, 'data-react-page="product-page-prototype"', 'prototype React r
 requireText(component, 'data-product-prototype', 'prototype marker')
 requireText(component, 'data-product-cover-image', 'standalone promotional cover slot')
 requireText(component, 'PRODUCT_COVER_DESKTOP_SRC', 'replaceable desktop animated cover source')
+requireText(component, 'PRODUCT_COVER_MOBILE_SRC', 'separate mobile SVG cover source')
 requireText(component, '/product-page-prototype/davos-product-cover-desktop-full.svg', 'complete desktop SVG cover')
+requireText(component, '/product-page-prototype/davos-product-cover-mobile.svg', 'complete mobile SVG cover')
 requireText(component, 'data-product-cover-media', 'cover media loading target')
 requireText(component, "window.dispatchEvent(new CustomEvent('product-cover-ready'))", 'cover readiness event')
-requireText(component, 'davos_interior_pilot_01_37e208e0c8', 'static promotional cover image')
-requireText(component, 'davos_product_studio_pilot_01_605d8327e4', 'separate square mobile promotional image')
+requireText(component, 'type="image/svg+xml" srcSet={PRODUCT_COVER_MOBILE_SRC}', 'mobile SVG picture source')
 requireText(component, 'media="(max-width: 900px)"', 'responsive mobile cover source')
 requireText(pageBootstrap, "document.body?.dataset.page === 'product-page-prototype'", 'prototype preload gate')
 requireText(pageBootstrap, "window.addEventListener('product-cover-ready', resolve, { once: true })", 'preloader waits for cover readiness')
 requireText(component, 'Коллекция Relax', 'product collection eyebrow')
 requireText(component, 'className={styles.primarySpecs}', 'two-column primary specifications')
+requireText(css, '.primarySpecs {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 20px 48px;\n  width: fit-content;\n  max-width: 100%;', 'content-sized wrapping primary specifications')
+requireText(css, '.primarySpecs div {\n  flex: 0 0 auto;\n  max-width: 100%;', 'natural-width primary specification columns')
 requireText(component, 'Жёсткий пружинный матрас', 'standalone product description')
 requireText(component, 'characteristicsTitle}>Характеристики', 'characteristics section heading')
-requireText(component, 'davos_material_textile_top_01_8162c06b96', 'characteristics media')
+requireText(component, '<PrototypePicture basename="davos_material_layers_detail_01" />', 'characteristics layers media')
 requireText(component, 'data-product-editorial-gallery', 'five-image editorial gallery')
-requireText(component, 'DAVOS_MEDIA.map', 'editorial gallery images')
+requireText(component, "const DAVOS_MEDIA = [\n  'davos_f60728f139',", 'original Davos slider media')
+requireText(component, 'const DAVOS_EDITORIAL_MEDIA = [', 'independent editorial gallery media')
+requireText(component, 'DAVOS_EDITORIAL_MEDIA.map', 'editorial gallery images')
+requireText(component, "'davos_gallery_knit_detail_01'", 'replacement gallery image 1')
+requireText(component, "'davos_gallery_coir_detail_02'", 'replacement gallery image 2')
+requireText(component, "'davos_gallery_dark_textile_03'", 'replacement gallery image 3')
+requireText(component, "'davos_gallery_quilt_detail_04'", 'replacement gallery image 4')
+requireText(component, "'davos_gallery_foam_detail_05'", 'replacement gallery image 5')
 requireText(component, 'editorialGalleryHitAreas', 'stable editorial gallery hover zones')
 requireText(component, 'editorialGalleryHitAreaActive', 'hover zone synchronized with expanded image')
 requireText(component, 'setTimeout(() => setActiveIndex(index), 100)', 'editorial gallery hover intent delay')
@@ -49,6 +60,7 @@ requireText(component, '9/10', 'Davos firmness')
 requireText(vite, "'/product-page-prototype': 'product-page-prototype.html'", 'clean Vite route')
 
 const desktopCoverSvg = path.join(root, 'public/product-page-prototype/davos-product-cover-desktop-full.svg')
+const mobileCoverSvg = path.join(root, 'public/product-page-prototype/davos-product-cover-mobile.svg')
 if (!fs.existsSync(desktopCoverSvg) || fs.statSync(desktopCoverSvg).size === 0) {
   failures.push('Missing non-empty Figma desktop SVG cover')
 } else {
@@ -61,6 +73,13 @@ if (!fs.existsSync(desktopCoverSvg) || fs.statSync(desktopCoverSvg).size === 0) 
 requireText(coverPreparationScript, 'letterCount - letterIndex - 1', 'stagger follows visual word order')
 requireText(coverPreparationScript, 'one path per letter', 'separate-letter SVG contract')
 
+if (!fs.existsSync(mobileCoverSvg) || fs.statSync(mobileCoverSvg).size === 0) {
+  failures.push('Missing non-empty mobile SVG cover')
+} else {
+  const mobileCoverSource = fs.readFileSync(mobileCoverSvg, 'utf8')
+  requireText(mobileCoverSource, 'viewBox="0 0 720 720"', 'square mobile SVG viewBox')
+}
+
 for (const forbidden of ['fetch(', '/api/', '/uploads/', 'usePageCms']) {
   if (component.includes(forbidden)) failures.push(`Prototype must stay CMS/API independent: ${forbidden}`)
 }
@@ -71,6 +90,12 @@ const basenames = [
   'davos_product_studio_pilot_01_605d8327e4',
   'davos_interior_pilot_01_37e208e0c8',
   'davos_material_textile_top_01_8162c06b96',
+  'davos_material_layers_detail_01',
+  'davos_gallery_knit_detail_01',
+  'davos_gallery_coir_detail_02',
+  'davos_gallery_dark_textile_03',
+  'davos_gallery_quilt_detail_04',
+  'davos_gallery_foam_detail_05',
   'imperio_8069a3faa1',
   'luxor_adb0d9305d',
   'galaksi_29d31b0292',
