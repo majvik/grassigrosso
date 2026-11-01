@@ -80,6 +80,12 @@ export function startInlineVideos() {
 
 export function waitForHeroMedia() {
   try {
+    if (document.body?.dataset.page === 'product-page-prototype') {
+      return new Promise((resolve) => {
+        window.addEventListener('product-cover-ready', resolve, { once: true })
+      })
+    }
+
     const container = document.querySelector(
       '.hero-image, .page-hero-image, .catalog-hero-image, .contacts-hero-image, .documents-hero-image',
     )

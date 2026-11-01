@@ -11,6 +11,8 @@ import {
   type LegalPageId,
 } from "@/components/pages/legal-content";
 import { NotFoundPage } from "@/components/pages/NotFoundPage";
+import { ProductPagePrototype } from "@/components/pages/ProductPagePrototype";
+import { CollectionPagePrototype } from "@/components/pages/CollectionPagePrototype";
 import { UnsubscribePage } from "@/components/pages/UnsubscribePage";
 
 interface ReactIslandRootProps {
@@ -26,6 +28,8 @@ export function ReactIslandRoot({ page }: ReactIslandRootProps) {
   if (page === "documents") return <DocumentsPage />;
   if (page === "unsubscribe") return <UnsubscribePage />;
   if (page === "download-catalog") return <DownloadCatalogPage />;
+  if (page === "product-page-prototype") return <ProductPagePrototype />;
+  if (page === "collection-page-prototype") return <CollectionPagePrototype />;
   if (page === "404") return <NotFoundPage />;
   if (page in LEGAL_PAGES) return <LegalPage pageId={page as LegalPageId} />;
 

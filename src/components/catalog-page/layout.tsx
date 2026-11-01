@@ -8,7 +8,7 @@ import {
 } from '@/components/catalog-page/toolbar'
 import { FaqSection } from '@/components/marketing/shared-page-sections'
 
-const CATALOG_FAQ_ITEMS = [
+export const CATALOG_FAQ_ITEMS = [
   {
     active: true,
     question: 'Как выбрать правильный размер матраса?',

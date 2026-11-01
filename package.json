@@ -30,6 +30,8 @@
     "typecheck": "tsc --noEmit",
     "check": "npm run check:routes && npm run check:pages-cms-contract && npm run check:pages-cms-isolation && npm run check:catalog-api && npm run typecheck",
     "check:routes": "node scripts/check-routing-contracts.mjs",
+    "check:product-page-prototype": "node scripts/check-product-page-prototype.mjs",
+    "check:collection-page-prototype": "node scripts/check-collection-page-prototype.mjs",
     "check:pages-cms-contract": "node scripts/check-pages-cms-contract.mjs",
     "check:pages-cms-components": "PAGES_CMS_SCHEMA_MODE=components node scripts/check-pages-cms-contract.mjs",
     "check:pages-cms-single-types": "PAGES_CMS_SCHEMA_MODE=single-types node scripts/check-pages-cms-contract.mjs",

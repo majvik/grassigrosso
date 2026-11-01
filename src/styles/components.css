@@ -5372,6 +5372,12 @@ a:hover .arrow-medium {
   gap: 80px;
 }
 
+.product-cards-section > div {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
 .product-card {
   display: flex;
   justify-content: space-between;
@@ -5710,6 +5716,10 @@ a:hover .arrow-medium {
     gap: 60px;
   }
 
+  .product-cards-section > div {
+    gap: 60px;
+  }
+
   .product-card-content {
     width: 520px;
   }
@@ -5758,6 +5768,10 @@ a:hover .arrow-medium {
 
   .product-cards-section {
     padding: 64px 32px;
+    gap: 48px;
+  }
+
+  .product-cards-section > div {
     gap: 48px;
   }
 
@@ -5939,6 +5953,10 @@ a:hover .arrow-medium {
 
   .product-cards-section {
     padding: 64px 16px;
+    gap: 40px;
+  }
+
+  .product-cards-section > div {
     gap: 40px;
   }
 

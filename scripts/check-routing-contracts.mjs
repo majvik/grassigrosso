@@ -19,6 +19,8 @@ const routes = [
   { path: '/personal-data-consent', htmlFile: 'personal-data-consent.html' },
   { path: '/404', htmlFile: '404.html' },
   { path: '/unsubscribe', htmlFile: 'unsubscribe.html' },
+  { path: '/product-page-prototype', htmlFile: 'product-page-prototype.html' },
+  { path: '/collection-page-prototype', htmlFile: 'collection-page-prototype.html' },
 ]
 
 const failures = []

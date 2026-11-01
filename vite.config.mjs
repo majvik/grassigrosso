@@ -22,6 +22,8 @@ const cleanHtmlRoutes = {
   '/404': '404.html',
   '/unsubscribe': 'unsubscribe.html',
   '/download-catalog': 'download-catalog.html',
+  '/product-page-prototype': 'product-page-prototype.html',
+  '/collection-page-prototype': 'collection-page-prototype.html',
 }
 
 function criticalPreloaderPlugin() {
@@ -169,6 +171,8 @@ export default defineConfig(({ mode }) => {
           'personal-data-consent': './personal-data-consent.html',
           '404': './404.html',
           unsubscribe: './unsubscribe.html',
+        'collection-page-prototype': './collection-page-prototype.html',
+        'product-page-prototype': './product-page-prototype.html',
           'download-catalog': './download-catalog.html',
         }
       }
