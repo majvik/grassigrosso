@@ -23,6 +23,14 @@ const DAVOS_EDITORIAL_MEDIA = [
   'davos_gallery_foam_detail_05',
 ] as const
 
+const DAVOS_EDITORIAL_CAPTIONS = [
+  'Дышащий трикотаж создаёт мягкую и приятную поверхность для комфортного сна.',
+  'Натуральная кокосовая койра усиливает поддержку и помогает матрасу сохранять форму.',
+  'Мягкая замша придаёт боковинам благородную фактуру и сохраняет аккуратный вид при ежедневном использовании.',
+  'Независимые пружины точечно реагируют на нагрузку и поддерживают тело по всей площади матраса.',
+  'Комбинированная пена поддерживает тело и сохраняет упругость при ежедневной нагрузке.',
+] as const
+
 // Static Figma export for now; this same slot can later receive the animated SVG.
 // Mobile remains a separate static source below.
 const PRODUCT_COVER_DESKTOP_SRC = '/product-page-prototype/davos-product-cover-desktop-full.svg?v=letter-cascade-2'
@@ -201,6 +209,9 @@ function EditorialGallery() {
           key={`editorial-${basename}`}
         >
           <PrototypePicture basename={basename} eager={index === 0} />
+          <figcaption className={styles.editorialGalleryCaption}>
+            {DAVOS_EDITORIAL_CAPTIONS[index]}
+          </figcaption>
         </figure>
       ))}
       <div className={styles.editorialGalleryHitAreas} aria-hidden="true">
