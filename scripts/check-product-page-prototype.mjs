@@ -75,6 +75,10 @@ requireText(component, 'Связаться по позиции', 'position CTA l
 requireText(component, 'data-related-collection', 'related collection section')
 requireText(component, 'Коллекция Relax', 'collection return link')
 requireText(component, 'RELATED_COLLECTION_PRODUCTS.map', 'three related product cards')
+requireText(component, "media: 'related-imperio-interior'", 'prototype-only Imperio interior image')
+requireText(component, "media: 'related-luxor-interior'", 'prototype-only Luxor interior image')
+requireText(component, "media: 'related-galaksi-interior'", 'prototype-only Galaksi interior image')
+requireText(component, 'fallbackExtension="jpg"', 'JPEG fallback for prototype-only related product images')
 requireText(component, '>Давос</h1>', 'Davos title')
 requireText(component, 'до 160 кг', 'Davos load')
 requireText(component, '9/10', 'Davos firmness')
@@ -129,9 +133,22 @@ for (const basename of basenames) {
   }
 }
 
+const relatedProductBasenames = [
+  'related-imperio-interior',
+  'related-luxor-interior',
+  'related-galaksi-interior',
+]
+
+for (const basename of relatedProductBasenames) {
+  for (const extension of ['avif', 'webp', 'jpg']) {
+    const file = path.join(root, 'public/product-page-prototype', `${basename}.${extension}`)
+    if (!fs.existsSync(file)) failures.push(`Missing prototype-only related product media: ${path.relative(root, file)}`)
+  }
+}
+
 if (failures.length) {
   console.error(failures.map((failure) => `- ${failure}`).join('\n'))
   process.exit(1)
 }
 
-console.log(`Product page prototype contract ok: static Davos content, ${basenames.length * 3} local media files, no CMS/API coupling.`)
+console.log(`Product page prototype contract ok: static Davos content, ${(basenames.length + relatedProductBasenames.length) * 3} local media files, no CMS/API coupling.`)

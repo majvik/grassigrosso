@@ -46,20 +46,20 @@ const DAVOS_LAYERS = [
 ] as const
 
 const RELATED_COLLECTION_PRODUCTS = [
-  { name: 'Империо', slug: 'imperio', media: 'imperio_8069a3faa1', height: 24, load: 140, tags: ['Пружинный', 'Разная жесткость сторон'] },
-  { name: 'Люксор', slug: 'luxor', media: 'luxor_adb0d9305d', height: 26, load: 160, tags: ['Пружинный', 'Средний'] },
-  { name: 'Галакси', slug: 'galaksi', media: 'galaksi_29d31b0292', height: 26, load: 160, tags: ['Пружинный', 'Средний'] },
+  { name: 'Империо', slug: 'imperio', media: 'related-imperio-interior', height: 24, load: 140, tags: ['Пружинный', 'Разная жесткость сторон'] },
+  { name: 'Люксор', slug: 'luxor', media: 'related-luxor-interior', height: 26, load: 160, tags: ['Пружинный', 'Средний'] },
+  { name: 'Галакси', slug: 'galaksi', media: 'related-galaksi-interior', height: 26, load: 160, tags: ['Пружинный', 'Средний'] },
 ] as const
 
-function PrototypePicture({ basename, eager = false }: { basename: string; eager?: boolean }) {
+function PrototypePicture({ basename, eager = false, fallbackExtension = 'png', alt = 'Матрас Давос' }: { basename: string; eager?: boolean; fallbackExtension?: 'jpg' | 'png'; alt?: string }) {
   const root = `/product-page-prototype/${basename}`
   return (
     <picture>
       <source type="image/avif" srcSet={`${root}.avif`} />
       <source type="image/webp" srcSet={`${root}.webp`} />
       <img
-        src={`${root}.png`}
-        alt="Матрас Давос"
+        src={`${root}.${fallbackExtension}`}
+        alt={alt}
         loading={eager ? 'eager' : 'lazy'}
         fetchPriority={eager ? 'high' : 'auto'}
         decoding="async"
@@ -344,7 +344,7 @@ export function ProductPagePrototype() {
                 {RELATED_COLLECTION_PRODUCTS.map((product) => (
                   <article className={styles.collectionCard} key={product.slug}>
                     <a className={styles.collectionCardMedia} href={`/catalog?product=${product.slug}`} aria-label={`Открыть ${product.name}`}>
-                      <PrototypePicture basename={product.media} />
+                      <PrototypePicture basename={product.media} fallbackExtension="jpg" alt={`Матрас ${product.name}`} />
                     </a>
                     <div className={styles.collectionCardBody}>
                       <h3><a href={`/catalog?product=${product.slug}`}>{product.name}</a></h3>
