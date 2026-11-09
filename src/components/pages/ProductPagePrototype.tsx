@@ -379,6 +379,7 @@ function SizeCardIcon({ width, height }: { width: number; height: number }) {
 function EditorialGallery({ materials, useDavosFallback }: { materials: NonNullable<CatalogProduct['pageMaterials']>; useDavosFallback: boolean }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const intentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const galleryItems = materials.length ? materials : useDavosFallback ? DAVOS_EDITORIAL_MEDIA : []
 
   function scheduleActive(index: number) {
     if (intentTimerRef.current) clearTimeout(intentTimerRef.current)
@@ -405,6 +406,8 @@ function EditorialGallery({ materials, useDavosFallback }: { materials: NonNulla
     if (intentTimerRef.current) clearTimeout(intentTimerRef.current)
   }, [])
 
+  if (galleryItems.length === 0) return null
+
   return (
     <section
       className={styles.editorialGallery}
@@ -413,7 +416,7 @@ function EditorialGallery({ materials, useDavosFallback }: { materials: NonNulla
       data-has-active={activeIndex === null ? 'false' : 'true'}
       onPointerLeave={clearActive}
     >
-      {(materials.length ? materials : useDavosFallback ? DAVOS_EDITORIAL_MEDIA : []).map((item, index) => {
+      {galleryItems.map((item, index) => {
         const basename = typeof item === 'string' ? item : item.image.fallbackSrc || item.image.src
         const title = typeof item === 'string' ? DAVOS_EDITORIAL_TITLES[index] : item.title
         const lead = typeof item === 'string' ? DAVOS_EDITORIAL_CAPTIONS[index] : item.lead
@@ -441,7 +444,7 @@ function EditorialGallery({ materials, useDavosFallback }: { materials: NonNulla
         )
       })}
       <div className={styles.editorialGalleryHitAreas} aria-hidden="true">
-        {(materials.length ? materials : useDavosFallback ? DAVOS_EDITORIAL_MEDIA : []).map((item, index) => (
+        {galleryItems.map((item, index) => (
           <span
             className={activeIndex === index ? styles.editorialGalleryHitAreaActive : undefined}
             key={`hit-${typeof item === 'string' ? item : item.image.fallbackSrc || item.image.src}`}
