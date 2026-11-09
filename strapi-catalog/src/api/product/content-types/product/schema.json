@@ -175,22 +175,55 @@
       ]
     },
     "gallery": {
-      "displayName": "Галерея карточки каталога",
+      "displayName": "Галерея товара — каталог и страница",
       "type": "component",
       "repeatable": true,
       "component": "catalog.product-gallery-item"
     },
-    "detail_gallery": {
-      "displayName": "Слайдер страницы позиции",
-      "type": "component",
-      "repeatable": true,
-      "component": "catalog.product-gallery-item"
+    "page_cover_desktop": {
+      "displayName": "Обложка страницы — SVG для компьютеров",
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
     },
-    "bento_gallery": {
-      "displayName": "Bento-галерея страницы позиции",
+    "page_cover_mobile": {
+      "displayName": "Обложка страницы — SVG для телефонов",
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "page_cover_location": {
+      "displayName": "Подпись места съёмки на обложке",
+      "type": "component",
+      "repeatable": false,
+      "component": "catalog.product-cover-location"
+    },
+    "page_description": {
+      "displayName": "Описание на странице товара",
+      "type": "text"
+    },
+    "page_characteristics_media": {
+      "displayName": "Изображения рядом с характеристиками (1, 4 или 6)",
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "page_materials": {
+      "displayName": "Слайдер материалов страницы товара",
       "type": "component",
       "repeatable": true,
-      "component": "catalog.product-gallery-item"
+      "component": "catalog.product-material-slide"
     },
     "is_recommended": {
       "displayName": "Мы рекомендуем",

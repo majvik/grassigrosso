@@ -2,8 +2,7 @@
 
 const {
   buildProductGallery,
-  buildProductDetailGallery,
-  buildProductBentoGallery,
+  itemFromLegacyMedia,
 } = require('../utils/build-product-gallery');
 const { DEFAULT_CATALOG_LISTING_SECTIONS } = require('../utils/seed-catalog-listing');
 
@@ -120,11 +119,12 @@ module.exports = {
           gallery: {
             populate: ['slide_image', 'slide_video', 'poster'],
           },
-          detail_gallery: {
-            populate: ['slide_image', 'slide_video', 'poster'],
-          },
-          bento_gallery: {
-            populate: ['slide_image', 'slide_video', 'poster'],
+          page_cover_desktop: true,
+          page_cover_mobile: true,
+          page_cover_location: true,
+          page_characteristics_media: true,
+          page_materials: {
+            populate: ['image'],
           },
           features: true,
           sizes: true,
@@ -178,8 +178,17 @@ module.exports = {
 
     const items = rows.map((row) => {
       const { gallery, imageUrl, imageAlt } = buildProductGallery(row);
-      const detailGallery = buildProductDetailGallery(row);
-      const bentoGallery = buildProductBentoGallery(row);
+      const pageCharacteristicsMedia = (Array.isArray(row.page_characteristics_media) ? row.page_characteristics_media : [])
+        .map((media) => itemFromLegacyMedia(media, '', `${row.name || 'Товар'} — характеристики`))
+        .filter(Boolean);
+      const pageMaterials = (Array.isArray(row.page_materials) ? row.page_materials : [])
+        .map((item) => ({
+          image: itemFromLegacyMedia(item?.image, '', item?.title || row.name || 'Материал'),
+          title: String(item?.title || '').trim(),
+          lead: String(item?.lead || '').trim(),
+          description: String(item?.description || '').trim(),
+        }))
+        .filter((item) => item.image);
       const mattressType = row.mattress_type_option?.slug || mapMattressType(row.mattress_type || '');
       const collectionSlugFromRelation = row.collection?.slug || '';
       const collectionSlug = collectionSlugFromRelation
@@ -226,10 +235,19 @@ module.exports = {
         : normalizeStringList(row.fillings).map(mapFilling),
       features: Array.isArray(row.features) ? normalizeFeatures(row.features) : normalizeStringList(row.features).map(mapFeature),
       gallery,
-      detailGallery,
-      bentoGallery,
       imageUrl,
       imageAlt,
+      pageCoverDesktop: itemFromLegacyMedia(row.page_cover_desktop, '', `${row.name || 'Товар'} — обложка`),
+      pageCoverMobile: itemFromLegacyMedia(row.page_cover_mobile, '', `${row.name || 'Товар'} — мобильная обложка`),
+      pageCoverLocation: row.page_cover_location ? {
+        place: String(row.page_cover_location.place || '').trim(),
+        coordinates: String(row.page_cover_location.coordinates || '').trim(),
+        dateTime: String(row.page_cover_location.date_time || '').trim(),
+        sunPosition: String(row.page_cover_location.sun_position || '').trim(),
+      } : null,
+      pageDescription: String(row.page_description || '').trim(),
+      pageCharacteristicsMedia,
+      pageMaterials,
       coverDescription: String(row.cover_description || '').trim(),
       layersCatalog: String(row.layers_catalog || '').trim(),
       tags: Array.isArray(row.tags) ? row.tags.map((tag) => tag.name).filter(Boolean) : [],

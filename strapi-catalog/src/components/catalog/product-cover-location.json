@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_catalog_product_cover_locations",
+  "info": {
+    "displayName": "Место съёмки обложки",
+    "icon": "pinMap"
+  },
+  "options": {},
+  "attributes": {
+    "place": {
+      "displayName": "Место",
+      "type": "string"
+    },
+    "coordinates": {
+      "displayName": "Координаты",
+      "type": "string"
+    },
+    "date_time": {
+      "displayName": "Дата, время и часовой пояс",
+      "type": "string"
+    },
+    "sun_position": {
+      "displayName": "Азимут и высота солнца",
+      "type": "string"
+    }
+  }
+}

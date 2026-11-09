@@ -50,6 +50,20 @@ export interface CatalogHeroSlide extends Struct.ComponentSchema {
   };
 }
 
+export interface CatalogProductCoverLocation extends Struct.ComponentSchema {
+  collectionName: 'components_catalog_product_cover_locations';
+  info: {
+    displayName: '\u041C\u0435\u0441\u0442\u043E \u0441\u044A\u0451\u043C\u043A\u0438 \u043E\u0431\u043B\u043E\u0436\u043A\u0438';
+    icon: 'pinMap';
+  };
+  attributes: {
+    coordinates: Schema.Attribute.String;
+    date_time: Schema.Attribute.String;
+    place: Schema.Attribute.String;
+    sun_position: Schema.Attribute.String;
+  };
+}
+
 export interface CatalogProductGalleryItem extends Struct.ComponentSchema {
   collectionName: 'components_catalog_product_gallery_items';
   info: {
@@ -61,6 +75,20 @@ export interface CatalogProductGalleryItem extends Struct.ComponentSchema {
     poster: Schema.Attribute.Media<'images'>;
     slide_image: Schema.Attribute.Media<'images'>;
     slide_video: Schema.Attribute.Media<'videos' | 'files'>;
+  };
+}
+
+export interface CatalogProductMaterialSlide extends Struct.ComponentSchema {
+  collectionName: 'components_catalog_product_material_slides';
+  info: {
+    displayName: '\u0421\u043B\u0430\u0439\u0434 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u0430 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B \u0442\u043E\u0432\u0430\u0440\u0430';
+    icon: 'picture';
+  };
+  attributes: {
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    lead: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -580,7 +608,9 @@ declare module '@strapi/strapi' {
       'catalog.filter-help-segment': CatalogFilterHelpSegment;
       'catalog.filter-help-summary-item': CatalogFilterHelpSummaryItem;
       'catalog.hero-slide': CatalogHeroSlide;
+      'catalog.product-cover-location': CatalogProductCoverLocation;
       'catalog.product-gallery-item': CatalogProductGalleryItem;
+      'catalog.product-material-slide': CatalogProductMaterialSlide;
       'chrome.footer': ChromeFooter;
       'chrome.header': ChromeHeader;
       'chrome.link': ChromeLink;

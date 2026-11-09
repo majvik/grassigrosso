@@ -103,8 +103,22 @@ export type CatalogProduct = {
   imageUrl?: string | null
   imageAlt?: string | null
   gallery?: CatalogProductMediaItem[]
-  detailGallery?: CatalogProductMediaItem[]
-  bentoGallery?: CatalogProductMediaItem[]
+  pageCoverDesktop?: CatalogProductMediaItem | null
+  pageCoverMobile?: CatalogProductMediaItem | null
+  pageCoverLocation?: {
+    place?: string | null
+    coordinates?: string | null
+    dateTime?: string | null
+    sunPosition?: string | null
+  } | null
+  pageDescription?: string | null
+  pageCharacteristicsMedia?: CatalogProductMediaItem[]
+  pageMaterials?: Array<{
+    image: CatalogProductMediaItem
+    title?: string | null
+    lead?: string | null
+    description?: string | null
+  }>
   tags?: unknown[]
   coverDescription?: string | null
   layersCatalog?: string | null

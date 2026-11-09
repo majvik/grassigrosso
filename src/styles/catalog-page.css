@@ -37,6 +37,14 @@
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-md);
   background: #fff;
+  cursor: pointer;
+}
+
+.catalogue-new-card button,
+.catalogue-new-card [role='button'],
+.catalogue-new-favourite,
+.catalogue-new-card-media-dot {
+  cursor: pointer;
 }
 
 .catalogue-new-content {
@@ -1747,52 +1755,6 @@ html.catalogue-shared-product-view .catalogue-new-content {
 .catalogue-new-shared-product-commerce-slot:empty {
   display: none;
 }
-.catalogue-new-shared-product-media-wall {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows: repeat(2, clamp(220px, 28vw, 460px)) auto;
-  align-items: stretch;
-  gap: clamp(12px, 1.5vw, 24px);
-  padding-top: clamp(8px, 1.5vw, 24px);
-}
-.catalogue-new-shared-product-media-wall-item {
-  margin: 0;
-  min-width: 0;
-  min-height: 0;
-  height: 100%;
-  overflow: hidden;
-  border-radius: clamp(18px, 1.8vw, 30px);
-  background: var(--color-surface-muted);
-}
-.catalogue-new-shared-product-media-wall-item.is-main {
-  grid-column: 1 / span 8;
-  grid-row: 1 / span 2;
-}
-.catalogue-new-shared-product-media-wall-item.is-top {
-  grid-column: 9 / -1;
-  grid-row: 1;
-}
-.catalogue-new-shared-product-media-wall-item.is-bottom {
-  grid-column: 9 / -1;
-  grid-row: 2;
-}
-.catalogue-new-shared-product-media-wall-item.is-wide {
-  grid-column: 1 / -1;
-  grid-row: 3;
-  aspect-ratio: 16 / 7;
-}
-.catalogue-new-shared-product-media-wall-item img,
-.catalogue-new-shared-product-media-wall-item picture,
-.catalogue-new-shared-product-media-wall-item video {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.catalogue-new-shared-product-media-wall-item img,
-.catalogue-new-shared-product-media-wall-item video {
-  transform: none;
-}
 @media (max-width: 1439px) {
   .catalogue-new-shared-favourites {
     --catalogue-shared-gap: 60px;
@@ -1911,27 +1873,6 @@ html.catalogue-shared-product-view .catalogue-new-content {
   }
 }
 @media (max-width: 540px) {
-  .catalogue-new-shared-product-media-wall {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto;
-    gap: var(--space-3);
-  }
-  .catalogue-new-shared-product-media-wall-item.is-main {
-    grid-column: 1 / -1;
-    grid-row: auto;
-    aspect-ratio: 4 / 3;
-  }
-  .catalogue-new-shared-product-media-wall-item.is-top,
-  .catalogue-new-shared-product-media-wall-item.is-bottom {
-    grid-column: auto;
-    grid-row: auto;
-    aspect-ratio: 1 / 1;
-  }
-  .catalogue-new-shared-product-media-wall-item.is-wide {
-    grid-column: 1 / -1;
-    grid-row: auto;
-    aspect-ratio: 4 / 3;
-  }
 }
 .catalogue-new-infinite-sentinel {
   width: 100%;

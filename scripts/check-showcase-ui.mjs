@@ -114,8 +114,7 @@ try {
       editorialMasthead: Boolean(document.querySelector('[data-product-masthead]')),
       editorialStage: Boolean(document.querySelector('[data-product-media-stage]')),
       editorialInfo: Boolean(document.querySelector('[data-product-info-band]')),
-      editorialMediaWallItems: document.querySelectorAll('[data-product-media-wall-item]').length,
-      editorialBentoAreas: [...document.querySelectorAll('[data-bento-area]')].map((item) => item.getAttribute('data-bento-area')),
+      legacyBentoItems: document.querySelectorAll('[data-product-media-wall-item], [data-bento-area]').length,
       editorialSpecGroups: document.querySelectorAll('[data-product-spec-group]').length,
       editorialSpecTabs: document.querySelectorAll('[data-spec-segment]').length,
       fillerCopy: Boolean(document.querySelector('.catalogue-new-shared-product-action-copy')),
@@ -145,10 +144,7 @@ try {
   assert.equal(state.editorialMasthead, true)
   assert.equal(state.editorialStage, true)
   assert.equal(state.editorialInfo, true)
-  assert.ok(state.editorialMediaWallItems >= 0)
-  if (state.editorialMediaWallItems >= 3) {
-    assert.ok(['main', 'top', 'bottom'].every((area) => state.editorialBentoAreas.includes(area)))
-  }
+  assert.equal(state.legacyBentoItems, 0)
   assert.equal(state.editorialSpecGroups, 2)
   assert.equal(state.editorialSpecTabs, 0)
   assert.equal(state.fillerCopy, false)

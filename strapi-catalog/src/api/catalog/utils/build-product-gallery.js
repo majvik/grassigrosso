@@ -178,30 +178,8 @@ function buildProductGallery(row) {
   return { gallery, imageUrl, imageAlt };
 }
 
-function buildGalleryFromComponentRows(rows, fallbackName) {
-  const items = [];
-  const seen = new Set();
-  for (const row of Array.isArray(rows) ? rows : []) {
-    if (items.length >= MAX_GALLERY_ITEMS) break;
-    pushItem(items, seen, itemFromGalleryComponentRow(row, fallbackName));
-  }
-  return items;
-}
-
-function buildProductDetailGallery(row) {
-  const fallbackName = row?.name ? `Коллекция ${row.name}` : 'Изображение товара';
-  const detail = buildGalleryFromComponentRows(row?.detail_gallery, fallbackName);
-  return detail.length ? detail : buildProductGallery(row).gallery;
-}
-
-function buildProductBentoGallery(row) {
-  const fallbackName = row?.name ? `Коллекция ${row.name}` : 'Изображение товара';
-  return buildGalleryFromComponentRows(row?.bento_gallery, fallbackName);
-}
-
 module.exports = {
   MAX_GALLERY_ITEMS,
   buildProductGallery,
-  buildProductDetailGallery,
-  buildProductBentoGallery,
+  itemFromLegacyMedia,
 };

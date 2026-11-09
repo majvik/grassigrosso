@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_catalog_product_material_slides",
+  "info": {
+    "displayName": "Слайд материала страницы товара",
+    "icon": "picture"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "displayName": "Изображение",
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "title": {
+      "displayName": "Название материала",
+      "type": "string",
+      "required": true
+    },
+    "lead": {
+      "displayName": "Короткое описание",
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "displayName": "Подробное описание",
+      "type": "text",
+      "required": true
+    }
+  }
+}

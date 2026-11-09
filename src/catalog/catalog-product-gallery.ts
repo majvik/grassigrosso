@@ -288,34 +288,6 @@ export function buildCatalogProductMediaHtml(
   )
 }
 
-export function buildCatalogEditorialMediaWallHtml(
-  rawGallery: CatalogProductMediaItem[] | null | undefined,
-): string {
-  const gallery = normalizeCatalogGalleryItems(rawGallery)
-  if (!gallery.length) return ''
-
-  const itemsHtml = gallery.map((item, index) => {
-    const bentoArea = index === 0 ? 'main' : index === 1 ? 'top' : index === 2 ? 'bottom' : 'wide'
-    const mediaHtml = item.type === 'video'
-      ? (
-          `<video muted playsinline loop autoplay preload="metadata"` +
-          (item.poster ? ` poster="${escapeHtml(item.posterFallbackSrc || item.poster)}"` : '') +
-          ` aria-label="${escapeHtml(item.alt || 'Видео модели')}">` +
-          `<source src="${escapeHtml(item.src)}" type="${escapeHtml(item.mime || 'video/mp4')}" />` +
-          `</video>`
-        )
-      : buildPictureHtml(item, false, '(max-width: 900px) 100vw, 75vw')
-
-    return (
-      `<figure class="catalogue-new-shared-product-media-wall-item is-${bentoArea}" data-product-media-wall-item data-bento-area="${bentoArea}">` +
-      mediaHtml +
-      `</figure>`
-    )
-  }).join('')
-
-  return `<div class="catalogue-new-shared-product-media-wall" data-product-media-wall data-media-source="bento">${itemsHtml}</div>`
-}
-
 export function buildCatalogProductHeroSliderHtml(
   rawGallery: CatalogProductMediaItem[] | null | undefined,
   productSlug: string,

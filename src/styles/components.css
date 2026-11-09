@@ -4417,6 +4417,7 @@ a:hover .arrow-medium {
 
 .faq-section .section-title {
   max-width: 639px;
+  font-size: 40px;
 }
 
 .faq-list {
@@ -4443,7 +4444,7 @@ a:hover .arrow-medium {
 
 .faq-question h3 {
   font-family: var(--font-bounded);
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 300;
   color: var(--color-primary);
   line-height: 1.2;
@@ -4775,11 +4776,15 @@ a:hover .arrow-medium {
   }
 
   .faq-question h3 {
-    font-size: 28px;
+    font-size: 20px;
   }
 }
 
 @media (max-width: 1024px) {
+  .faq-section .section-title {
+    font-size: 32px;
+  }
+
   .page-hero-content {
     flex-direction: column;
     gap: 32px;
@@ -5142,7 +5147,7 @@ a:hover .arrow-medium {
 
   .faq-section .section-title {
     max-width: 100%;
-    font-size: 32px;
+    font-size: 28px;
   }
 
   .faq-list {
@@ -5156,7 +5161,7 @@ a:hover .arrow-medium {
   }
 
   .faq-question h3 {
-    font-size: 24px;
+    font-size: 18px;
   }
 
   .faq-toggle {

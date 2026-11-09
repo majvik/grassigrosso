@@ -236,7 +236,19 @@ function slimCatalogGalleryItem(item) {
 function slimCatalogProductsForListing(items) {
   if (!Array.isArray(items)) return [];
   return items.map((item) => {
-    const { layersCatalog, coverDescription, imageUrl, imageAlt, ...rest } = item;
+    const {
+      layersCatalog,
+      coverDescription,
+      imageUrl,
+      imageAlt,
+      pageCoverDesktop,
+      pageCoverMobile,
+      pageCoverLocation,
+      pageDescription,
+      pageCharacteristicsMedia,
+      pageMaterials,
+      ...rest
+    } = item;
     const gallery = Array.isArray(rest.gallery)
       ? rest.gallery.slice(0, 1).map(slimCatalogGalleryItem).filter(Boolean)
       : [];

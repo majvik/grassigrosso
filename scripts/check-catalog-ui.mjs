@@ -179,17 +179,18 @@ try {
     card.click()
     return true
   })()`)
-  const productPage = await waitFor(evaluate, 'product page opened', `(() => {
-    const page = document.querySelector('.catalogue-new-shared-product:not([hidden])')
+  const productPage = await waitFor(evaluate, 'new product page opened', `(() => {
+    const page = document.querySelector('[data-product-prototype]')
     const title = page?.querySelector('.catalogue-new-shared-product-title')?.textContent?.trim()
-    const specs = page?.querySelectorAll('.catalogue-new-shared-product-spec').length || 0
-    const controls = page?.querySelectorAll('[data-shared-product-contact], [data-shared-product-similar], [data-shared-product-favourite], [data-shared-product-share]').length || 0
-    const firmnessScale = page?.querySelector('[data-product-firmness-scale]')
-    return location.search.startsWith('?product=') && page && title && specs >= 3 && controls === 4 && firmnessScale
-      ? { title, specs, controls }
+    const slug = new URLSearchParams(location.search).get('product')
+    return location.pathname === '/catalog' && slug && page && title
+      ? { title, slug }
       : false
   })()`)
-  if (!productPage) failures.push('product page did not open with specs and controls')
+  if (!productPage) failures.push('card did not open the new product page with the selected slug')
+
+  await send('Page.navigate', { url: `${baseUrl}/catalog?product=orient` })
+  await waitFor(evaluate, 'legacy compatibility product restored for remaining checks', `Boolean(document.querySelector('.catalogue-new-shared-product[data-product-editorial]:not([hidden])'))`, 30000)
 
   const editorialDesktop = await waitFor(evaluate, 'product page uses editorial desktop layout without quick view', `(() => {
     const page = document.querySelector('.catalogue-new-shared-product[data-product-editorial]:not([hidden])')
@@ -197,10 +198,7 @@ try {
     const stage = page?.querySelector('[data-product-media-stage]')
     const info = page?.querySelector('[data-product-info-band]')
     const futureAction = page?.querySelector('[data-product-commerce-action-slot]')
-    const mediaWall = page?.querySelector('[data-product-media-wall]')
-    const mediaWallItems = mediaWall?.querySelectorAll('[data-product-media-wall-item]').length || 0
-    const bentoAreas = [...(mediaWall?.querySelectorAll('[data-bento-area]') || [])]
-      .map((item) => item.getAttribute('data-bento-area'))
+    const legacyMediaWall = page?.querySelector('[data-product-media-wall], [data-bento-area]')
     const specGroups = page?.querySelectorAll('[data-product-spec-group]').length || 0
     const specTabs = page?.querySelectorAll('[data-spec-segment]').length || 0
     const fillerCopy = page?.querySelector('.catalogue-new-shared-product-action-copy')
@@ -215,14 +213,10 @@ try {
     const specGroupsRoot = page?.querySelector('.catalogue-new-shared-product-spec-groups')
     const contact = page?.querySelector('[data-shared-product-contact]')
     const actions = page?.querySelector('.catalogue-new-shared-product-actions')
-    const firstBentoImage = mediaWall?.querySelector('[data-product-media-wall-item] img')
-    const firstBentoItem = mediaWall?.querySelector('[data-product-media-wall-item]')
     const detailSlider = page?.querySelector('[data-product-detail-slider][data-media-source="detail"]')
-    const bentoSource = mediaWall?.getAttribute('data-media-source')
     if (!page || !masthead || !stage || !info || !futureAction || document.querySelector('#catalogueImageModal')) return false
     const ordered = Boolean(stage.compareDocumentPosition(masthead) & Node.DOCUMENT_POSITION_FOLLOWING)
       && Boolean(masthead.compareDocumentPosition(info) & Node.DOCUMENT_POSITION_FOLLOWING)
-      && (!mediaWall || Boolean(info.compareDocumentPosition(mediaWall) & Node.DOCUMENT_POSITION_FOLLOWING))
     const stageRect = stage.getBoundingClientRect()
     const ratio = stageRect.width / Math.max(1, stageRect.height)
     const infoColumns = getComputedStyle(info).gridTemplateColumns.split(' ').filter(Boolean).length
@@ -230,10 +224,6 @@ try {
     const specColumns = firstSpec ? getComputedStyle(firstSpec).gridTemplateColumns.split(' ').map((value) => parseFloat(value)) : []
     const specWidth = firstSpec?.getBoundingClientRect().width || 0
     const specGroupColumns = specGroupsRoot ? getComputedStyle(specGroupsRoot).gridTemplateColumns.split(' ').filter(Boolean).length : 0
-    const bentoColumnGap = mediaWall ? parseFloat(getComputedStyle(mediaWall).columnGap) : 0
-    const bentoRowGap = mediaWall ? parseFloat(getComputedStyle(mediaWall).rowGap) : 0
-    const bentoItemFillsRow = firstBentoItem ? firstBentoItem.getBoundingClientRect().height > 400 : false
-    const bentoImageTransform = firstBentoImage ? getComputedStyle(firstBentoImage).transform : 'none'
     const contactDecoration = contact ? getComputedStyle(contact).textDecorationLine : ''
     const actionsBorderTop = actions ? parseFloat(getComputedStyle(actions).borderTopWidth) : 0
     const titleSize = parseFloat(getComputedStyle(page.querySelector('.catalogue-new-shared-product-title')).fontSize)
@@ -250,16 +240,12 @@ try {
       && titleFavourite
       && titleShare
       && detailSlider
-      && (!mediaWall || bentoSource === 'bento')
+      && !legacyMediaWall
       && !shareHelp
       && specGroupColumns === 2
-      && (!mediaWall || (bentoColumnGap <= 24 && Math.abs(bentoColumnGap - bentoRowGap) < 0.5))
-      && (!mediaWall || bentoItemFillsRow)
-      && (!mediaWall || bentoImageTransform === 'none')
       && actionsBorderTop >= 1
       && titleSize <= 112
       && shareRect && Math.abs(shareRect.width - shareRect.height) < 1
-      && (!mediaWall || (mediaWallItems >= 3 && ['main', 'top', 'bottom'].every((area) => bentoAreas.includes(area))))
   })()`)
   if (!editorialDesktop) {
     const diagnostic = await evaluate(`(() => {

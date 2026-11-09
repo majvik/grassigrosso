@@ -253,180 +253,6 @@
           ]
         }
       ],
-      "bentoGallery": [
-        {
-          "type": "image",
-          "alt": "Ориент — коллекция Classic",
-          "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_28_95fe66495e.jpg",
-              "width": 168
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_28_95fe66495e.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_28_95fe66495e.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_28_95fe66495e.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.jpg",
-              "width": 1024
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.avif",
-              "width": 1024
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.webp",
-              "width": 1024
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-32.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_32_acab4d697c.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_32_acab4d697c.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_32_acab4d697c.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_32_acab4d697c.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.webp",
-              "width": 1280
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-27.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.webp",
-              "width": 1280
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-31.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_31_be25a2113d.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_31_be25a2113d.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_31_be25a2113d.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_31_be25a2113d.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.webp",
-              "width": 1280
-            }
-          ]
-        }
-      ],
       "tags": [
         "Пружинный",
         "Средний"
@@ -689,7 +515,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -779,7 +604,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Средний"
@@ -866,7 +690,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Беспружинный",
         "Средний"
@@ -953,7 +776,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Беспружинный",
         "Средний"
@@ -1040,7 +862,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Беспружинный",
         "Средний"
@@ -1127,7 +948,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Беспружинный",
         "Средний"
@@ -1214,7 +1034,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Беспружинный",
         "Средний"
@@ -1304,7 +1123,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Беспружинный",
         "Разная жесткость сторон"
@@ -1395,7 +1213,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Беспружинный",
         "Разная жесткость сторон"
@@ -1483,7 +1300,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Беспружинный",
         "Жесткий"
@@ -1571,7 +1387,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Беспружинный",
         "Жесткий"
@@ -1662,7 +1477,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -1752,7 +1566,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Средний"
@@ -1842,7 +1655,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Средний"
@@ -1933,7 +1745,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -2194,7 +2005,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -2455,7 +2265,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -2716,7 +2525,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -2977,7 +2785,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -3218,7 +3025,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -3309,7 +3115,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -3401,7 +3206,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -3491,7 +3295,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -3581,7 +3384,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -3671,7 +3473,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Средний"
@@ -3762,7 +3563,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -3852,7 +3652,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -3943,7 +3742,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -4034,7 +3832,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -4123,7 +3920,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Средний"
@@ -4213,7 +4009,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Средний"
@@ -4304,7 +4099,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -4393,7 +4187,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -4485,7 +4278,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -4576,7 +4368,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -4666,7 +4457,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -4756,7 +4546,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -4847,7 +4636,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -4934,7 +4722,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Топер",
         "Средний"
@@ -5021,7 +4808,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Топер",
         "Средний"
@@ -5108,7 +4894,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Топер",
         "Средний"
@@ -5196,7 +4981,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Топер",
         "Средний"
@@ -5284,7 +5068,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Топер",
         "Средний"
@@ -5371,7 +5154,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Топер",
         "Средний"
@@ -5458,7 +5240,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Топер",
         "Средний"
@@ -5543,7 +5324,6 @@
           ]
         }
       ],
-      "bentoGallery": [],
       "tags": [
         "Топер",
         "Средний"

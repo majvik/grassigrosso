@@ -23,7 +23,6 @@ import {
 } from './catalog-product-meta'
 import { setCatalogProductStore } from './catalog-product-store'
 import {
-  buildCatalogEditorialMediaWallHtml,
   buildCatalogProductHeroSliderHtml,
   destroyCatalogProductGalleries,
   initCatalogProductGalleries,
@@ -846,8 +845,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const specGroups = buildCatalogModalSpecGroups(dataset)
     const firmnessHtml = buildCatalogFirmnessScaleHtml(product.firmnessSide1, product.firmnessSide2)
     const specsHtml = buildSharedProductSpecSegmentsHtml(specGroups.main, specGroups.details, firmnessHtml)
-    const detailGallery = product.detailGallery?.length ? product.detailGallery : (product.gallery || [])
-    const mediaWallHtml = buildCatalogEditorialMediaWallHtml(product.bentoGallery)
+    const productGallery = product.gallery || []
     const tags = Array.isArray(product.tags) ? product.tags.map((tag) => String(tag).trim()).filter(Boolean) : []
     const tagsHtml = tags.length
       ? `<div class="catalogue-new-shared-product-tags catalogue-new-tags">${tags.map((tag) => `<span class="catalogue-new-tag">${escapeHtml(tag)}</span>`).join('')}</div>`
@@ -859,7 +857,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       <a class="catalogue-new-shared-back" href="/catalog">Назад в каталог</a>
       <div class="catalogue-new-shared-product-shell">
         <div class="catalogue-new-shared-product-stage" data-product-media-stage>
-        ${buildCatalogProductHeroSliderHtml(detailGallery, slug)}
+        ${buildCatalogProductHeroSliderHtml(productGallery, slug)}
         </div>
         <header class="catalogue-new-shared-product-masthead" data-product-masthead>
           <div class="catalogue-new-shared-product-heading">
@@ -895,7 +893,6 @@ export function initCatalogListingController(documentRef: Document, scrollOption
           </div>
           </aside>
         </div>
-        ${mediaWallHtml}
       </div>
     `
 

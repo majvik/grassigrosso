@@ -1275,10 +1275,6 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    bento_gallery: Schema.Attribute.Component<
-      'catalog.product-gallery-item',
-      true
-    >;
     collection: Schema.Attribute.Relation<
       'manyToOne',
       'api::collection.collection'
@@ -1290,10 +1286,6 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    detail_gallery: Schema.Attribute.Component<
-      'catalog.product-gallery-item',
-      true
-    >;
     features: Schema.Attribute.Relation<
       'manyToMany',
       'api::feature-option.feature-option'
@@ -1397,6 +1389,18 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     max_load_kg: Schema.Attribute.Integer & Schema.Attribute.Required;
     media: Schema.Attribute.Media<'images'>;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    page_characteristics_media: Schema.Attribute.Media<'images', true>;
+    page_cover_desktop: Schema.Attribute.Media<'images' | 'files'>;
+    page_cover_location: Schema.Attribute.Component<
+      'catalog.product-cover-location',
+      false
+    >;
+    page_cover_mobile: Schema.Attribute.Media<'images' | 'files'>;
+    page_description: Schema.Attribute.Text;
+    page_materials: Schema.Attribute.Component<
+      'catalog.product-material-slide',
+      true
+    >;
     price_rub: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
