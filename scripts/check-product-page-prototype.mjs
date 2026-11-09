@@ -38,6 +38,8 @@ requireText(css, 'font-size: 0.7143cqw;', 'proportionally scaled desktop cover l
 requireText(css, '.coverLocation {\n    right: 24px;\n    bottom: 24px;', 'mobile cover location spacing')
 requireText(component, '/product-page-prototype/davos-product-cover-desktop-full.svg', 'complete desktop SVG cover')
 requireText(component, '/product-page-prototype/davos-product-cover-mobile.svg', 'complete mobile SVG cover')
+requireText(component, 'davos-product-cover-desktop-full.svg?v=20261109-1', 'desktop SVG cover cache busting')
+requireText(component, 'davos-product-cover-mobile.svg?v=20261109-1', 'mobile SVG cover cache busting')
 requireText(component, 'data-product-cover-media', 'cover media loading target')
 requireText(component, "window.dispatchEvent(new CustomEvent('product-cover-ready'))", 'cover readiness event')
 requireText(component, 'mobile?.fallbackSrc || mobile?.src || PRODUCT_COVER_MOBILE_SRC', 'CMS-aware mobile SVG picture source')

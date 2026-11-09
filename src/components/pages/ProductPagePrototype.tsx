@@ -65,8 +65,8 @@ const DAVOS_CHARACTERISTICS_MEDIA = [
 
 // Static Figma export for now; this same slot can later receive the animated SVG.
 // Mobile remains a separate static source below.
-const PRODUCT_COVER_DESKTOP_SRC = '/product-page-prototype/davos-product-cover-desktop-full.svg?v=letter-cascade-2'
-const PRODUCT_COVER_MOBILE_SRC = '/product-page-prototype/davos-product-cover-mobile.svg'
+const PRODUCT_COVER_DESKTOP_SRC = '/product-page-prototype/davos-product-cover-desktop-full.svg?v=20261109-1'
+const PRODUCT_COVER_MOBILE_SRC = '/product-page-prototype/davos-product-cover-mobile.svg?v=20261109-1'
 const PRODUCT_COVER_LOCATION_LINE_SRC = '/product-page-prototype/cover-location-line.svg'
 const PRODUCT_MEDIA_PLACEHOLDER_SRC = '/product-page-prototype/davos_f60728f139.png'
 
