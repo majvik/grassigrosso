@@ -74,218 +74,44 @@
         },
         {
           "type": "image",
-          "alt": "photo_2026-06-01_18-03-32.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.jpg",
+          "alt": "Ориент — коллекция Classic",
+          "src": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.avif",
+          "fallbackSrc": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.png",
           "sources": [
             {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_32_acab4d697c.jpg",
-              "width": 208
+              "type": "image/png",
+              "src": "/uploads/thumbnail_davos_interior_variant_02_architectural_morning_e703495c7a.png",
+              "width": 234
             },
             {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_32_acab4d697c.jpg",
+              "type": "image/png",
+              "src": "/uploads/small_davos_interior_variant_02_architectural_morning_e703495c7a.png",
               "width": 500
             },
             {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_32_acab4d697c.jpg",
+              "type": "image/png",
+              "src": "/uploads/medium_davos_interior_variant_02_architectural_morning_e703495c7a.png",
               "width": 750
             },
             {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_32_acab4d697c.jpg",
+              "type": "image/png",
+              "src": "/uploads/large_davos_interior_variant_02_architectural_morning_e703495c7a.png",
               "width": 1000
             },
             {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.jpg",
-              "width": 1280
+              "type": "image/png",
+              "src": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.png",
+              "width": 1536
             },
             {
               "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.avif",
-              "width": 1280
+              "src": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.avif",
+              "width": 1536
             },
             {
               "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_32_acab4d697c.webp",
-              "width": 1280
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-27.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_27_5022a2de2a.webp",
-              "width": 1280
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-31.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_31_be25a2113d.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_31_be25a2113d.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_31_be25a2113d.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_31_be25a2113d.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.webp",
-              "width": 1280
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-29.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.webp",
-              "width": 1280
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-28.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_28_95fe66495e.jpg",
-              "width": 168
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_28_95fe66495e.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_28_95fe66495e.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_28_95fe66495e.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.jpg",
-              "width": 1024
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.avif",
-              "width": 1024
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_28_95fe66495e.webp",
-              "width": 1024
+              "src": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.webp",
+              "width": 1536
             }
           ]
         },
@@ -414,49 +240,6 @@
             {
               "type": "image/webp",
               "src": "/uploads/photo_2026_06_01_18_03_31_be25a2113d.webp",
-              "width": 1280
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-29.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_29_bb4022ae0a.webp",
               "width": 1280
             }
           ]
@@ -510,223 +293,6 @@
         "dualFirmness"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-34.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_34_5e60cf53fe.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_34_5e60cf53fe.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_34_5e60cf53fe.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_34_5e60cf53fe.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_34_5e60cf53fe.webp",
-              "width": 1280
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-35.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_35_3456da6880.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_35_3456da6880.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_35_3456da6880.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_35_3456da6880.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_35_3456da6880.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_35_3456da6880.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_35_3456da6880.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_35_3456da6880.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_35_3456da6880.webp",
-              "width": 1280
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-33.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_33_aa2cc52802.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_33_aa2cc52802.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_33_aa2cc52802.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_33_aa2cc52802.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_33_aa2cc52802.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_33_aa2cc52802.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_33_aa2cc52802.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_33_aa2cc52802.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_33_aa2cc52802.webp",
-              "width": 1280
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-34 (2).jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_34_2_5e62e1e8eb.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_34_2_5e62e1e8eb.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_34_2_5e62e1e8eb.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_34_2_5e62e1e8eb.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_34_2_5e62e1e8eb.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_34_2_5e62e1e8eb.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_34_2_5e62e1e8eb.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_34_2_5e62e1e8eb.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_34_2_5e62e1e8eb.webp",
-              "width": 1280
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "photo_2026-06-01_18-03-36.jpg",
-          "src": "/uploads/photo_2026_06_01_18_03_36_c0f622e586.avif",
-          "fallbackSrc": "/uploads/photo_2026_06_01_18_03_36_c0f622e586.jpg",
-          "sources": [
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/thumbnail_photo_2026_06_01_18_03_36_c0f622e586.jpg",
-              "width": 208
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/small_photo_2026_06_01_18_03_36_c0f622e586.jpg",
-              "width": 500
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/medium_photo_2026_06_01_18_03_36_c0f622e586.jpg",
-              "width": 750
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/large_photo_2026_06_01_18_03_36_c0f622e586.jpg",
-              "width": 1000
-            },
-            {
-              "type": "image/jpeg",
-              "src": "/uploads/photo_2026_06_01_18_03_36_c0f622e586.jpg",
-              "width": 1280
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/photo_2026_06_01_18_03_36_c0f622e586.avif",
-              "width": 1280
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/photo_2026_06_01_18_03_36_c0f622e586.webp",
-              "width": 1280
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "photo_2026-06-01_18-03-34.jpg",
@@ -1034,58 +600,191 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Аспект — коллекция Classic",
-          "src": "/uploads/aspect_0b78cde0d6.avif",
-          "fallbackSrc": "/uploads/aspect_0b78cde0d6.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_aspect_0b78cde0d6.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_aspect_0b78cde0d6.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_aspect_0b78cde0d6.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_aspect_0b78cde0d6.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/aspect_0b78cde0d6.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/aspect_0b78cde0d6.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/aspect_0b78cde0d6.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/aspect_0b78cde0d6.avif",
       "imageAlt": "Аспект — коллекция Classic",
       "pageCoverDesktop": null,
       "pageCoverMobile": null,
-      "pageCoverLocation": null,
-      "pageDescription": "",
-      "pageCharacteristicsMedia": [],
+      "pageCoverLocation": {
+        "place": "",
+        "coordinates": "",
+        "dateTime": "",
+        "sunPosition": ""
+      },
+      "pageDescription": "123",
+      "pageCharacteristicsMedia": [
+        {
+          "type": "image",
+          "alt": "davos_interior_variant-02_architectural-morning.png",
+          "src": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.avif",
+          "fallbackSrc": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_davos_interior_variant_02_architectural_morning_e703495c7a.png",
+              "width": 234
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_davos_interior_variant_02_architectural_morning_e703495c7a.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/medium_davos_interior_variant_02_architectural_morning_e703495c7a.png",
+              "width": 750
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/large_davos_interior_variant_02_architectural_morning_e703495c7a.png",
+              "width": 1000
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.png",
+              "width": 1536
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.avif",
+              "width": 1536
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/davos_interior_variant_02_architectural_morning_e703495c7a.webp",
+              "width": 1536
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v3-01.png",
+          "src": "/uploads/v3_01_fa34d05ee4.avif",
+          "fallbackSrc": "/uploads/v3_01_fa34d05ee4.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_v3_01_fa34d05ee4.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_v3_01_fa34d05ee4.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/medium_v3_01_fa34d05ee4.png",
+              "width": 750
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/large_v3_01_fa34d05ee4.png",
+              "width": 1000
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/v3_01_fa34d05ee4.png",
+              "width": 7012
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/v3_01_fa34d05ee4.avif",
+              "width": 7012
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v3_01_fa34d05ee4.webp",
+              "width": 7012
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v3-02.png",
+          "src": "/uploads/v3_02_851486594e.avif",
+          "fallbackSrc": "/uploads/v3_02_851486594e.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_v3_02_851486594e.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_v3_02_851486594e.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/medium_v3_02_851486594e.png",
+              "width": 750
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/large_v3_02_851486594e.png",
+              "width": 1000
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/v3_02_851486594e.png",
+              "width": 5378
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/v3_02_851486594e.avif",
+              "width": 5378
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v3_02_851486594e.webp",
+              "width": 5378
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "v4-03.png",
+          "src": "/uploads/v4_03_747b9d77a5.avif",
+          "fallbackSrc": "/uploads/v4_03_747b9d77a5.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_v4_03_747b9d77a5.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_v4_03_747b9d77a5.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/medium_v4_03_747b9d77a5.png",
+              "width": 750
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/large_v4_03_747b9d77a5.png",
+              "width": 1000
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/v4_03_747b9d77a5.png",
+              "width": 1167
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/v4_03_747b9d77a5.avif",
+              "width": 1167
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/v4_03_747b9d77a5.webp",
+              "width": 1167
+            }
+          ]
+        }
+      ],
       "pageMaterials": [],
       "coverDescription": "Трикотаж, стёганный на холконе",
       "layersCatalog": "1. высокоэластичная пена \"flexi\" (10мм)\n2. кокосовая койра (10мм)\n3. термовойлок\n4. 500 пружин на одно спальное место (h – 140мм)\n5. термовойлок\n6. кокосовая койра (10мм)\n7. высокоэластичная пена \"flexi\" (10мм)\n8. еврокаркас",
@@ -1123,51 +822,6 @@
       ],
       "features": [],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Эвер Фоам 10 — коллекция Classic",
-          "src": "/uploads/ever_foam_10_4db418ff47.avif",
-          "fallbackSrc": "/uploads/ever_foam_10_4db418ff47.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_ever_foam_10_4db418ff47.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_ever_foam_10_4db418ff47.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_ever_foam_10_4db418ff47.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_ever_foam_10_4db418ff47.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/ever_foam_10_4db418ff47.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/ever_foam_10_4db418ff47.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/ever_foam_10_4db418ff47.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Эвер Фоам 10 — коллекция Classic",
@@ -1300,51 +954,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Эвер Фоам 16 — коллекция Classic",
-          "src": "/uploads/ever_foam_16_2fb4eb1cba.avif",
-          "fallbackSrc": "/uploads/ever_foam_16_2fb4eb1cba.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_ever_foam_16_2fb4eb1cba.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_ever_foam_16_2fb4eb1cba.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_ever_foam_16_2fb4eb1cba.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_ever_foam_16_2fb4eb1cba.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/ever_foam_16_2fb4eb1cba.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/ever_foam_16_2fb4eb1cba.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/ever_foam_16_2fb4eb1cba.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/ever_foam_16_2fb4eb1cba.avif",
       "imageAlt": "Эвер Фоам 16 — коллекция Classic",
       "pageCoverDesktop": null,
@@ -1389,51 +998,6 @@
       ],
       "features": [],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Эвер Фоам 20 — коллекция Classic",
-          "src": "/uploads/ever_foam_20_b1af34b875.avif",
-          "fallbackSrc": "/uploads/ever_foam_20_b1af34b875.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_ever_foam_20_b1af34b875.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_ever_foam_20_b1af34b875.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_ever_foam_20_b1af34b875.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_ever_foam_20_b1af34b875.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/ever_foam_20_b1af34b875.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/ever_foam_20_b1af34b875.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/ever_foam_20_b1af34b875.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Эвер Фоам 20 — коллекция Classic",
@@ -1566,51 +1130,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Ортофоам Стандарт — коллекция Flexi",
-          "src": "/uploads/ortofoam_standard_50cf10ea6d.avif",
-          "fallbackSrc": "/uploads/ortofoam_standard_50cf10ea6d.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_ortofoam_standard_50cf10ea6d.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_ortofoam_standard_50cf10ea6d.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_ortofoam_standard_50cf10ea6d.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_ortofoam_standard_50cf10ea6d.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/ortofoam_standard_50cf10ea6d.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/ortofoam_standard_50cf10ea6d.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/ortofoam_standard_50cf10ea6d.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/ortofoam_standard_50cf10ea6d.avif",
       "imageAlt": "Ортофоам Стандарт — коллекция Flexi",
       "pageCoverDesktop": null,
@@ -1655,51 +1174,6 @@
       ],
       "features": [],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Ортофоам Плюс — коллекция Flexi",
-          "src": "/uploads/ortofoam_plus_160ac099ba.avif",
-          "fallbackSrc": "/uploads/ortofoam_plus_160ac099ba.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_ortofoam_plus_160ac099ba.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_ortofoam_plus_160ac099ba.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_ortofoam_plus_160ac099ba.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_ortofoam_plus_160ac099ba.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/ortofoam_plus_160ac099ba.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/ortofoam_plus_160ac099ba.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/ortofoam_plus_160ac099ba.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Ортофоам Плюс — коллекция Flexi",
@@ -1791,51 +1265,6 @@
         "dualFirmness"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Хард Формат — коллекция Flexi",
-          "src": "/uploads/hard_format_0d6264cc49.avif",
-          "fallbackSrc": "/uploads/hard_format_0d6264cc49.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_hard_format_0d6264cc49.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_hard_format_0d6264cc49.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_hard_format_0d6264cc49.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_hard_format_0d6264cc49.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/hard_format_0d6264cc49.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/hard_format_0d6264cc49.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/hard_format_0d6264cc49.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Хард Формат — коллекция Flexi",
@@ -1972,51 +1401,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Скай Фоам — коллекция Flexi",
-          "src": "/uploads/sky_foam_0fbe8b34a5.avif",
-          "fallbackSrc": "/uploads/sky_foam_0fbe8b34a5.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_sky_foam_0fbe8b34a5.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_sky_foam_0fbe8b34a5.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_sky_foam_0fbe8b34a5.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_sky_foam_0fbe8b34a5.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/sky_foam_0fbe8b34a5.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/sky_foam_0fbe8b34a5.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/sky_foam_0fbe8b34a5.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/sky_foam_0fbe8b34a5.avif",
       "imageAlt": "Скай Фоам — коллекция Flexi",
       "pageCoverDesktop": null,
@@ -2106,51 +1490,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Эволюшен — коллекция Flexi",
-          "src": "/uploads/evolution_42ab6a5690.avif",
-          "fallbackSrc": "/uploads/evolution_42ab6a5690.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_evolution_42ab6a5690.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_evolution_42ab6a5690.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_evolution_42ab6a5690.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_evolution_42ab6a5690.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/evolution_42ab6a5690.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/evolution_42ab6a5690.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/evolution_42ab6a5690.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/evolution_42ab6a5690.avif",
       "imageAlt": "Эволюшен — коллекция Flexi",
       "pageCoverDesktop": null,
@@ -2196,51 +1535,6 @@
       ],
       "features": [],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Гранд — коллекция Flexi",
-          "src": "/uploads/grand_1bea9a4b63.avif",
-          "fallbackSrc": "/uploads/grand_1bea9a4b63.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_grand_1bea9a4b63.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_grand_1bea9a4b63.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_grand_1bea9a4b63.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_grand_1bea9a4b63.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/grand_1bea9a4b63.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/grand_1bea9a4b63.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/grand_1bea9a4b63.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Гранд — коллекция Flexi",
@@ -2377,51 +1671,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Империо — коллекция Relax",
-          "src": "/uploads/imperio_8069a3faa1.avif",
-          "fallbackSrc": "/uploads/imperio_8069a3faa1.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_imperio_8069a3faa1.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_imperio_8069a3faa1.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_imperio_8069a3faa1.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_imperio_8069a3faa1.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/imperio_8069a3faa1.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/imperio_8069a3faa1.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/imperio_8069a3faa1.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/imperio_8069a3faa1.avif",
       "imageAlt": "Империо — коллекция Relax",
       "pageCoverDesktop": null,
@@ -2513,51 +1762,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Люксор — коллекция Relax",
-          "src": "/uploads/luxor_adb0d9305d.avif",
-          "fallbackSrc": "/uploads/luxor_adb0d9305d.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_luxor_adb0d9305d.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_luxor_adb0d9305d.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_luxor_adb0d9305d.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_luxor_adb0d9305d.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/luxor_adb0d9305d.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/luxor_adb0d9305d.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/luxor_adb0d9305d.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/luxor_adb0d9305d.avif",
       "imageAlt": "Люксор — коллекция Relax",
       "pageCoverDesktop": null,
@@ -2605,51 +1809,6 @@
         "edgeSupport"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Галакси — коллекция Relax",
-          "src": "/uploads/galaksi_29d31b0292.avif",
-          "fallbackSrc": "/uploads/galaksi_29d31b0292.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_galaksi_29d31b0292.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_galaksi_29d31b0292.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_galaksi_29d31b0292.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_galaksi_29d31b0292.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/galaksi_29d31b0292.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/galaksi_29d31b0292.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/galaksi_29d31b0292.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Галакси — коллекция Relax",
@@ -2786,51 +1945,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Дискавери — коллекция Relax",
-          "src": "/uploads/discovery_caf02c8839.avif",
-          "fallbackSrc": "/uploads/discovery_caf02c8839.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_discovery_caf02c8839.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_discovery_caf02c8839.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_discovery_caf02c8839.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_discovery_caf02c8839.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/discovery_caf02c8839.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/discovery_caf02c8839.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/discovery_caf02c8839.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/discovery_caf02c8839.avif",
       "imageAlt": "Дискавери — коллекция Relax",
       "pageCoverDesktop": null,
@@ -2877,223 +1991,6 @@
         "edgeSupport"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Давос — коллекция Relax",
-          "src": "/uploads/davos_f60728f139.avif",
-          "fallbackSrc": "/uploads/davos_f60728f139.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_davos_f60728f139.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_davos_f60728f139.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_davos_f60728f139.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_davos_f60728f139.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/davos_f60728f139.png",
-              "width": 1254
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/davos_f60728f139.avif",
-              "width": 1254
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/davos_f60728f139.webp",
-              "width": 1254
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "davos_product-extreme-macro_pilot-03.png",
-          "src": "/uploads/davos_product_extreme_macro_pilot_03_c9cc9e687e.avif",
-          "fallbackSrc": "/uploads/davos_product_extreme_macro_pilot_03_c9cc9e687e.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_davos_product_extreme_macro_pilot_03_c9cc9e687e.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_davos_product_extreme_macro_pilot_03_c9cc9e687e.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_davos_product_extreme_macro_pilot_03_c9cc9e687e.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_davos_product_extreme_macro_pilot_03_c9cc9e687e.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/davos_product_extreme_macro_pilot_03_c9cc9e687e.png",
-              "width": 1254
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/davos_product_extreme_macro_pilot_03_c9cc9e687e.avif",
-              "width": 1254
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/davos_product_extreme_macro_pilot_03_c9cc9e687e.webp",
-              "width": 1254
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "davos_product-studio_pilot-01.png",
-          "src": "/uploads/davos_product_studio_pilot_01_605d8327e4.avif",
-          "fallbackSrc": "/uploads/davos_product_studio_pilot_01_605d8327e4.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_davos_product_studio_pilot_01_605d8327e4.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_davos_product_studio_pilot_01_605d8327e4.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_davos_product_studio_pilot_01_605d8327e4.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_davos_product_studio_pilot_01_605d8327e4.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/davos_product_studio_pilot_01_605d8327e4.png",
-              "width": 1254
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/davos_product_studio_pilot_01_605d8327e4.avif",
-              "width": 1254
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/davos_product_studio_pilot_01_605d8327e4.webp",
-              "width": 1254
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "davos_interior_pilot-01.png",
-          "src": "/uploads/davos_interior_pilot_01_37e208e0c8.avif",
-          "fallbackSrc": "/uploads/davos_interior_pilot_01_37e208e0c8.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_davos_interior_pilot_01_37e208e0c8.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_davos_interior_pilot_01_37e208e0c8.png",
-              "width": 499
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_davos_interior_pilot_01_37e208e0c8.png",
-              "width": 749
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_davos_interior_pilot_01_37e208e0c8.png",
-              "width": 998
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/davos_interior_pilot_01_37e208e0c8.png",
-              "width": 1145
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/davos_interior_pilot_01_37e208e0c8.avif",
-              "width": 1145
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/davos_interior_pilot_01_37e208e0c8.webp",
-              "width": 1145
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "davos_material-textile-top_01.png",
-          "src": "/uploads/davos_material_textile_top_01_8162c06b96.avif",
-          "fallbackSrc": "/uploads/davos_material_textile_top_01_8162c06b96.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_davos_material_textile_top_01_8162c06b96.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_davos_material_textile_top_01_8162c06b96.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_davos_material_textile_top_01_8162c06b96.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_davos_material_textile_top_01_8162c06b96.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/davos_material_textile_top_01_8162c06b96.png",
-              "width": 1254
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/davos_material_textile_top_01_8162c06b96.avif",
-              "width": 1254
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/davos_material_textile_top_01_8162c06b96.webp",
-              "width": 1254
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Давос — коллекция Relax",
@@ -3572,223 +2469,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "davos_product-closeup_pilot-02.png",
-          "src": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.avif",
-          "fallbackSrc": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_davos_product_closeup_pilot_02_649b6aaf25.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_davos_product_closeup_pilot_02_649b6aaf25.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_davos_product_closeup_pilot_02_649b6aaf25.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_davos_product_closeup_pilot_02_649b6aaf25.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.png",
-              "width": 1254
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.avif",
-              "width": 1254
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.webp",
-              "width": 1254
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "Давос — коллекция Relax",
-          "src": "/uploads/v1_01_1990c78964.avif",
-          "fallbackSrc": "/uploads/v1_01_1990c78964.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v1_01_1990c78964.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v1_01_1990c78964.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v1_01_1990c78964.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v1_01_1990c78964.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v1_01_1990c78964.png",
-              "width": 6463
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v1_01_1990c78964.avif",
-              "width": 6463
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v1_01_1990c78964.webp",
-              "width": 6463
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v1-02.png",
-          "src": "/uploads/v1_02_6916d35e7e.avif",
-          "fallbackSrc": "/uploads/v1_02_6916d35e7e.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v1_02_6916d35e7e.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v1_02_6916d35e7e.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v1_02_6916d35e7e.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v1_02_6916d35e7e.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v1_02_6916d35e7e.png",
-              "width": 4643
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v1_02_6916d35e7e.avif",
-              "width": 4643
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v1_02_6916d35e7e.webp",
-              "width": 4643
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v1-03.png",
-          "src": "/uploads/v1_03_4bf5175478.avif",
-          "fallbackSrc": "/uploads/v1_03_4bf5175478.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v1_03_4bf5175478.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v1_03_4bf5175478.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v1_03_4bf5175478.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v1_03_4bf5175478.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v1_03_4bf5175478.png",
-              "width": 2975
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v1_03_4bf5175478.avif",
-              "width": 2975
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v1_03_4bf5175478.webp",
-              "width": 2975
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v1-04.png",
-          "src": "/uploads/v1_04_28ea1829a5.avif",
-          "fallbackSrc": "/uploads/v1_04_28ea1829a5.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v1_04_28ea1829a5.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v1_04_28ea1829a5.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v1_04_28ea1829a5.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v1_04_28ea1829a5.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v1_04_28ea1829a5.png",
-              "width": 1890
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v1_04_28ea1829a5.avif",
-              "width": 1890
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v1_04_28ea1829a5.webp",
-              "width": 1890
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/davos_product_closeup_pilot_02_649b6aaf25.avif",
       "imageAlt": "davos_product-closeup_pilot-02.png",
       "pageCoverDesktop": null,
@@ -3835,223 +2515,6 @@
         "edgeSupport"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Давос — коллекция Relax",
-          "src": "/uploads/v2_01_fee14dbf1d.avif",
-          "fallbackSrc": "/uploads/v2_01_fee14dbf1d.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v2_01_fee14dbf1d.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v2_01_fee14dbf1d.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v2_01_fee14dbf1d.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v2_01_fee14dbf1d.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v2_01_fee14dbf1d.png",
-              "width": 6889
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v2_01_fee14dbf1d.avif",
-              "width": 6889
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v2_01_fee14dbf1d.webp",
-              "width": 6889
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v2-02.png",
-          "src": "/uploads/v2_02_f1f083a631.avif",
-          "fallbackSrc": "/uploads/v2_02_f1f083a631.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v2_02_f1f083a631.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v2_02_f1f083a631.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v2_02_f1f083a631.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v2_02_f1f083a631.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v2_02_f1f083a631.png",
-              "width": 2716
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v2_02_f1f083a631.avif",
-              "width": 2716
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v2_02_f1f083a631.webp",
-              "width": 2716
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v2-03.png",
-          "src": "/uploads/v2_03_d21eacf59f.avif",
-          "fallbackSrc": "/uploads/v2_03_d21eacf59f.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v2_03_d21eacf59f.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v2_03_d21eacf59f.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v2_03_d21eacf59f.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v2_03_d21eacf59f.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v2_03_d21eacf59f.png",
-              "width": 1861
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v2_03_d21eacf59f.avif",
-              "width": 1861
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v2_03_d21eacf59f.webp",
-              "width": 1861
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v2-04.png",
-          "src": "/uploads/v2_04_44704b27e2.avif",
-          "fallbackSrc": "/uploads/v2_04_44704b27e2.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v2_04_44704b27e2.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v2_04_44704b27e2.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v2_04_44704b27e2.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v2_04_44704b27e2.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v2_04_44704b27e2.png",
-              "width": 1861
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v2_04_44704b27e2.avif",
-              "width": 1861
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v2_04_44704b27e2.webp",
-              "width": 1861
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v2-05.png",
-          "src": "/uploads/v2_05_d867e03bae.avif",
-          "fallbackSrc": "/uploads/v2_05_d867e03bae.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v2_05_d867e03bae.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v2_05_d867e03bae.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v2_05_d867e03bae.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v2_05_d867e03bae.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v2_05_d867e03bae.png",
-              "width": 1217
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v2_05_d867e03bae.avif",
-              "width": 1217
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v2_05_d867e03bae.webp",
-              "width": 1217
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Давос — коллекция Relax",
@@ -4530,223 +2993,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Давос — коллекция Relax",
-          "src": "/uploads/v3_01_fa34d05ee4.avif",
-          "fallbackSrc": "/uploads/v3_01_fa34d05ee4.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v3_01_fa34d05ee4.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v3_01_fa34d05ee4.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v3_01_fa34d05ee4.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v3_01_fa34d05ee4.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v3_01_fa34d05ee4.png",
-              "width": 7012
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v3_01_fa34d05ee4.avif",
-              "width": 7012
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v3_01_fa34d05ee4.webp",
-              "width": 7012
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v3-02.png",
-          "src": "/uploads/v3_02_851486594e.avif",
-          "fallbackSrc": "/uploads/v3_02_851486594e.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v3_02_851486594e.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v3_02_851486594e.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v3_02_851486594e.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v3_02_851486594e.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v3_02_851486594e.png",
-              "width": 5378
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v3_02_851486594e.avif",
-              "width": 5378
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v3_02_851486594e.webp",
-              "width": 5378
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v3-03.png",
-          "src": "/uploads/v3_03_a183cb95bd.avif",
-          "fallbackSrc": "/uploads/v3_03_a183cb95bd.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v3_03_a183cb95bd.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v3_03_a183cb95bd.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v3_03_a183cb95bd.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v3_03_a183cb95bd.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v3_03_a183cb95bd.png",
-              "width": 2543
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v3_03_a183cb95bd.avif",
-              "width": 2543
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v3_03_a183cb95bd.webp",
-              "width": 2543
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v3-04.png",
-          "src": "/uploads/v3_04_2afd03ad73.avif",
-          "fallbackSrc": "/uploads/v3_04_2afd03ad73.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v3_04_2afd03ad73.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v3_04_2afd03ad73.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v3_04_2afd03ad73.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v3_04_2afd03ad73.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v3_04_2afd03ad73.png",
-              "width": 2135
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v3_04_2afd03ad73.avif",
-              "width": 2135
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v3_04_2afd03ad73.webp",
-              "width": 2135
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v3-05.png",
-          "src": "/uploads/v3_05_4fb616afc4.avif",
-          "fallbackSrc": "/uploads/v3_05_4fb616afc4.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v3_05_4fb616afc4.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v3_05_4fb616afc4.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v3_05_4fb616afc4.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v3_05_4fb616afc4.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v3_05_4fb616afc4.png",
-              "width": 1913
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v3_05_4fb616afc4.avif",
-              "width": 1913
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v3_05_4fb616afc4.webp",
-              "width": 1913
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/v3_01_fa34d05ee4.avif",
       "imageAlt": "Давос — коллекция Relax",
       "pageCoverDesktop": null,
@@ -4793,203 +3039,6 @@
         "edgeSupport"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Давос — коллекция Relax",
-          "src": "/uploads/v4_01_d336014a25.avif",
-          "fallbackSrc": "/uploads/v4_01_d336014a25.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v4_01_d336014a25.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v4_01_d336014a25.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v4_01_d336014a25.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v4_01_d336014a25.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v4_01_d336014a25.png",
-              "width": 2214
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v4_01_d336014a25.avif",
-              "width": 2214
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v4_01_d336014a25.webp",
-              "width": 2214
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v4-02.png",
-          "src": "/uploads/v4_02_2e0d970ea1.avif",
-          "fallbackSrc": "/uploads/v4_02_2e0d970ea1.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v4_02_2e0d970ea1.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v4_02_2e0d970ea1.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v4_02_2e0d970ea1.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v4_02_2e0d970ea1.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v4_02_2e0d970ea1.png",
-              "width": 1292
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v4_02_2e0d970ea1.avif",
-              "width": 1292
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v4_02_2e0d970ea1.webp",
-              "width": 1292
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v4-03.png",
-          "src": "/uploads/v4_03_747b9d77a5.avif",
-          "fallbackSrc": "/uploads/v4_03_747b9d77a5.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v4_03_747b9d77a5.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v4_03_747b9d77a5.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_v4_03_747b9d77a5.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_v4_03_747b9d77a5.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v4_03_747b9d77a5.png",
-              "width": 1167
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v4_03_747b9d77a5.avif",
-              "width": 1167
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v4_03_747b9d77a5.webp",
-              "width": 1167
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v4-04.png",
-          "src": "/uploads/v4_04_42e61f97d2.avif",
-          "fallbackSrc": "/uploads/v4_04_42e61f97d2.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v4_04_42e61f97d2.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v4_04_42e61f97d2.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v4_04_42e61f97d2.png",
-              "width": 615
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v4_04_42e61f97d2.avif",
-              "width": 615
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v4_04_42e61f97d2.webp",
-              "width": 615
-            }
-          ]
-        },
-        {
-          "type": "image",
-          "alt": "v4-05.png",
-          "src": "/uploads/v4_05_eeb572e79b.avif",
-          "fallbackSrc": "/uploads/v4_05_eeb572e79b.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_v4_05_eeb572e79b.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_v4_05_eeb572e79b.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/v4_05_eeb572e79b.png",
-              "width": 560
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/v4_05_eeb572e79b.avif",
-              "width": 560
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/v4_05_eeb572e79b.webp",
-              "width": 560
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Давос — коллекция Relax",
@@ -5278,51 +3327,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Давос Микс — коллекция Relax",
-          "src": "/uploads/davos_mix_cbba0a9e32.avif",
-          "fallbackSrc": "/uploads/davos_mix_cbba0a9e32.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_davos_mix_cbba0a9e32.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_davos_mix_cbba0a9e32.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_davos_mix_cbba0a9e32.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_davos_mix_cbba0a9e32.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/davos_mix_cbba0a9e32.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/davos_mix_cbba0a9e32.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/davos_mix_cbba0a9e32.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/davos_mix_cbba0a9e32.avif",
       "imageAlt": "Давос Микс — коллекция Relax",
       "pageCoverDesktop": null,
@@ -5372,51 +3376,6 @@
         "dualFirmness"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Элио — коллекция Relax",
-          "src": "/uploads/elio_d91de9f2ca.avif",
-          "fallbackSrc": "/uploads/elio_d91de9f2ca.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_elio_d91de9f2ca.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_elio_d91de9f2ca.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_elio_d91de9f2ca.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_elio_d91de9f2ca.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/elio_d91de9f2ca.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/elio_d91de9f2ca.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/elio_d91de9f2ca.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Элио — коллекция Relax",
@@ -5552,51 +3511,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Премьер — коллекция Relax",
-          "src": "/uploads/premier_2c2d5c8a99.avif",
-          "fallbackSrc": "/uploads/premier_2c2d5c8a99.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_premier_2c2d5c8a99.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_premier_2c2d5c8a99.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_premier_2c2d5c8a99.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_premier_2c2d5c8a99.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/premier_2c2d5c8a99.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/premier_2c2d5c8a99.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/premier_2c2d5c8a99.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/premier_2c2d5c8a99.avif",
       "imageAlt": "Премьер — коллекция Relax",
       "pageCoverDesktop": null,
@@ -5688,51 +3602,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Премьер Люкс — коллекция Relax",
-          "src": "/uploads/premier_lux_d2f5d4e27c.avif",
-          "fallbackSrc": "/uploads/premier_lux_d2f5d4e27c.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_premier_lux_d2f5d4e27c.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_premier_lux_d2f5d4e27c.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_premier_lux_d2f5d4e27c.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_premier_lux_d2f5d4e27c.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/premier_lux_d2f5d4e27c.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/premier_lux_d2f5d4e27c.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/premier_lux_d2f5d4e27c.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/premier_lux_d2f5d4e27c.avif",
       "imageAlt": "Премьер Люкс — коллекция Relax",
       "pageCoverDesktop": null,
@@ -5780,51 +3649,6 @@
         "edgeSupport"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Импринт — коллекция Relax",
-          "src": "/uploads/imprint_8388805d62.avif",
-          "fallbackSrc": "/uploads/imprint_8388805d62.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_imprint_8388805d62.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_imprint_8388805d62.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_imprint_8388805d62.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_imprint_8388805d62.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/imprint_8388805d62.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/imprint_8388805d62.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/imprint_8388805d62.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Импринт — коллекция Relax",
@@ -5961,51 +3785,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Релакс Плюс — коллекция Relax",
-          "src": "/uploads/relax_plus_e0c55db1b5.avif",
-          "fallbackSrc": "/uploads/relax_plus_e0c55db1b5.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_relax_plus_e0c55db1b5.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_relax_plus_e0c55db1b5.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_relax_plus_e0c55db1b5.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_relax_plus_e0c55db1b5.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/relax_plus_e0c55db1b5.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/relax_plus_e0c55db1b5.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/relax_plus_e0c55db1b5.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/relax_plus_e0c55db1b5.avif",
       "imageAlt": "Релакс Плюс — коллекция Relax",
       "pageCoverDesktop": null,
@@ -6053,51 +3832,6 @@
         "edgeSupport"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Ларго — коллекция Relax",
-          "src": "/uploads/largo_bd4c921f15.avif",
-          "fallbackSrc": "/uploads/largo_bd4c921f15.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_largo_bd4c921f15.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_largo_bd4c921f15.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_largo_bd4c921f15.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_largo_bd4c921f15.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/largo_bd4c921f15.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/largo_bd4c921f15.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/largo_bd4c921f15.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Ларго — коллекция Relax",
@@ -6234,51 +3968,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Твин — коллекция Trend",
-          "src": "/uploads/twin_32ba60f7b8.avif",
-          "fallbackSrc": "/uploads/twin_32ba60f7b8.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_twin_32ba60f7b8.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_twin_32ba60f7b8.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_twin_32ba60f7b8.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_twin_32ba60f7b8.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/twin_32ba60f7b8.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/twin_32ba60f7b8.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/twin_32ba60f7b8.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/twin_32ba60f7b8.avif",
       "imageAlt": "Твин — коллекция Trend",
       "pageCoverDesktop": null,
@@ -6327,51 +4016,6 @@
         "dualFirmness"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Релакс — коллекция Trend",
-          "src": "/uploads/relax_trend_55248b6852.avif",
-          "fallbackSrc": "/uploads/relax_trend_55248b6852.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_relax_trend_55248b6852.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_relax_trend_55248b6852.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_relax_trend_55248b6852.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_relax_trend_55248b6852.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/relax_trend_55248b6852.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/relax_trend_55248b6852.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/relax_trend_55248b6852.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Релакс — коллекция Trend",
@@ -6506,51 +4150,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Оригинал — коллекция Trend",
-          "src": "/uploads/original_aff309d5fc.avif",
-          "fallbackSrc": "/uploads/original_aff309d5fc.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_original_aff309d5fc.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_original_aff309d5fc.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_original_aff309d5fc.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_original_aff309d5fc.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/original_aff309d5fc.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/original_aff309d5fc.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/original_aff309d5fc.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/original_aff309d5fc.avif",
       "imageAlt": "Оригинал — коллекция Trend",
       "pageCoverDesktop": null,
@@ -6598,51 +4197,6 @@
         "edgeSupport"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Эдванс — коллекция Trend",
-          "src": "/uploads/advance_3b197e92a3.avif",
-          "fallbackSrc": "/uploads/advance_3b197e92a3.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_advance_3b197e92a3.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_advance_3b197e92a3.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_advance_3b197e92a3.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_advance_3b197e92a3.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/advance_3b197e92a3.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/advance_3b197e92a3.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/advance_3b197e92a3.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Эдванс — коллекция Trend",
@@ -6779,51 +4333,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Оптима — коллекция Trend",
-          "src": "/uploads/optima_36d543128e.avif",
-          "fallbackSrc": "/uploads/optima_36d543128e.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_optima_36d543128e.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_optima_36d543128e.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_optima_36d543128e.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_optima_36d543128e.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/optima_36d543128e.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/optima_36d543128e.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/optima_36d543128e.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/optima_36d543128e.avif",
       "imageAlt": "Оптима — коллекция Trend",
       "pageCoverDesktop": null,
@@ -6870,51 +4379,6 @@
         "edgeSupport"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Динамик — коллекция Trend",
-          "src": "/uploads/dynamic_2522e44e03.avif",
-          "fallbackSrc": "/uploads/dynamic_2522e44e03.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_dynamic_2522e44e03.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_dynamic_2522e44e03.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_dynamic_2522e44e03.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_dynamic_2522e44e03.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/dynamic_2522e44e03.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/dynamic_2522e44e03.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/dynamic_2522e44e03.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Динамик — коллекция Trend",
@@ -7052,51 +4516,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Спейс — коллекция Trend",
-          "src": "/uploads/space_d3a4a357c4.avif",
-          "fallbackSrc": "/uploads/space_d3a4a357c4.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_space_d3a4a357c4.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_space_d3a4a357c4.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_space_d3a4a357c4.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_space_d3a4a357c4.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/space_d3a4a357c4.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/space_d3a4a357c4.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/space_d3a4a357c4.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/space_d3a4a357c4.avif",
       "imageAlt": "Спейс — коллекция Trend",
       "pageCoverDesktop": null,
@@ -7145,51 +4564,6 @@
         "dualFirmness"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Сенсо — коллекция Trend",
-          "src": "/uploads/senso_a20c7ebe8c.avif",
-          "fallbackSrc": "/uploads/senso_a20c7ebe8c.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_senso_a20c7ebe8c.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_senso_a20c7ebe8c.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_senso_a20c7ebe8c.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_senso_a20c7ebe8c.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/senso_a20c7ebe8c.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/senso_a20c7ebe8c.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/senso_a20c7ebe8c.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Сенсо — коллекция Trend",
@@ -7325,51 +4699,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Лидер — коллекция Trend",
-          "src": "/uploads/lider_0a44c1d610.avif",
-          "fallbackSrc": "/uploads/lider_0a44c1d610.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_lider_0a44c1d610.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_lider_0a44c1d610.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_lider_0a44c1d610.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_lider_0a44c1d610.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/lider_0a44c1d610.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/lider_0a44c1d610.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/lider_0a44c1d610.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/lider_0a44c1d610.avif",
       "imageAlt": "Лидер — коллекция Trend",
       "pageCoverDesktop": null,
@@ -7417,51 +4746,6 @@
         "edgeSupport"
       ],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Гравити — коллекция Trend",
-          "src": "/uploads/gravity_bd49fb1798.avif",
-          "fallbackSrc": "/uploads/gravity_bd49fb1798.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_gravity_bd49fb1798.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_gravity_bd49fb1798.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_gravity_bd49fb1798.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_gravity_bd49fb1798.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/gravity_bd49fb1798.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/gravity_bd49fb1798.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/gravity_bd49fb1798.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Гравити — коллекция Trend",
@@ -7598,51 +4882,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Мэджик — коллекция Trend",
-          "src": "/uploads/magic_88318c046d.avif",
-          "fallbackSrc": "/uploads/magic_88318c046d.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_magic_88318c046d.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_magic_88318c046d.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_magic_88318c046d.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_magic_88318c046d.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/magic_88318c046d.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/magic_88318c046d.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/magic_88318c046d.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/magic_88318c046d.avif",
       "imageAlt": "Мэджик — коллекция Trend",
       "pageCoverDesktop": null,
@@ -7687,51 +4926,6 @@
       ],
       "features": [],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Флип Стандарт — коллекция Топеры",
-          "src": "/uploads/flip_standard_95327ae0cb.avif",
-          "fallbackSrc": "/uploads/flip_standard_95327ae0cb.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_flip_standard_95327ae0cb.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_flip_standard_95327ae0cb.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_flip_standard_95327ae0cb.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_flip_standard_95327ae0cb.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/flip_standard_95327ae0cb.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/flip_standard_95327ae0cb.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/flip_standard_95327ae0cb.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Флип Стандарт — коллекция Топеры",
@@ -7864,51 +5058,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Флип Плюс — коллекция Топеры",
-          "src": "/uploads/flip_plus_172f296634.avif",
-          "fallbackSrc": "/uploads/flip_plus_172f296634.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_flip_plus_172f296634.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_flip_plus_172f296634.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_flip_plus_172f296634.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_flip_plus_172f296634.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/flip_plus_172f296634.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/flip_plus_172f296634.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/flip_plus_172f296634.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/flip_plus_172f296634.avif",
       "imageAlt": "Флип Плюс — коллекция Топеры",
       "pageCoverDesktop": null,
@@ -7953,51 +5102,6 @@
       ],
       "features": [],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Эффект — коллекция Топеры",
-          "src": "/uploads/effect_2758decd3c.avif",
-          "fallbackSrc": "/uploads/effect_2758decd3c.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_effect_2758decd3c.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_effect_2758decd3c.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_effect_2758decd3c.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_effect_2758decd3c.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/effect_2758decd3c.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/effect_2758decd3c.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/effect_2758decd3c.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Эффект — коллекция Топеры",
@@ -8131,51 +5235,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Дуал — коллекция Топеры",
-          "src": "/uploads/dual_f689094c66.avif",
-          "fallbackSrc": "/uploads/dual_f689094c66.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_dual_f689094c66.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_dual_f689094c66.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_dual_f689094c66.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_dual_f689094c66.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/dual_f689094c66.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/dual_f689094c66.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/dual_f689094c66.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/dual_f689094c66.avif",
       "imageAlt": "Дуал — коллекция Топеры",
       "pageCoverDesktop": null,
@@ -8221,51 +5280,6 @@
       ],
       "features": [],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Делюкс Мемори — коллекция Топеры",
-          "src": "/uploads/deluxe_memory_a643a05849.avif",
-          "fallbackSrc": "/uploads/deluxe_memory_a643a05849.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_deluxe_memory_a643a05849.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_deluxe_memory_a643a05849.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_deluxe_memory_a643a05849.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_deluxe_memory_a643a05849.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/deluxe_memory_a643a05849.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/deluxe_memory_a643a05849.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/deluxe_memory_a643a05849.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Делюкс Мемори — коллекция Топеры",
@@ -8398,51 +5412,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Делюкс Латекс — коллекция Топеры",
-          "src": "/uploads/deluxe_latex_b5f31cac38.avif",
-          "fallbackSrc": "/uploads/deluxe_latex_b5f31cac38.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_deluxe_latex_b5f31cac38.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_deluxe_latex_b5f31cac38.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_deluxe_latex_b5f31cac38.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_deluxe_latex_b5f31cac38.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/deluxe_latex_b5f31cac38.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/deluxe_latex_b5f31cac38.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/deluxe_latex_b5f31cac38.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/deluxe_latex_b5f31cac38.avif",
       "imageAlt": "Делюкс Латекс — коллекция Топеры",
       "pageCoverDesktop": null,
@@ -8531,51 +5500,6 @@
           ]
         }
       ],
-      "detailGallery": [
-        {
-          "type": "image",
-          "alt": "Софт — коллекция Топеры",
-          "src": "/uploads/soft_topper_d350ee9685.avif",
-          "fallbackSrc": "/uploads/soft_topper_d350ee9685.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_soft_topper_d350ee9685.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_soft_topper_d350ee9685.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_soft_topper_d350ee9685.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_soft_topper_d350ee9685.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/soft_topper_d350ee9685.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/soft_topper_d350ee9685.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/soft_topper_d350ee9685.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
       "imageUrl": "/uploads/soft_topper_d350ee9685.avif",
       "imageAlt": "Софт — коллекция Топеры",
       "pageCoverDesktop": null,
@@ -8618,51 +5542,6 @@
       "fillings": [],
       "features": [],
       "gallery": [
-        {
-          "type": "image",
-          "alt": "Сенсетив — коллекция Топеры",
-          "src": "/uploads/sensitive_8aa448ed87.avif",
-          "fallbackSrc": "/uploads/sensitive_8aa448ed87.png",
-          "sources": [
-            {
-              "type": "image/png",
-              "src": "/uploads/thumbnail_sensitive_8aa448ed87.png",
-              "width": 156
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/small_sensitive_8aa448ed87.png",
-              "width": 500
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/medium_sensitive_8aa448ed87.png",
-              "width": 750
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/large_sensitive_8aa448ed87.png",
-              "width": 1000
-            },
-            {
-              "type": "image/png",
-              "src": "/uploads/sensitive_8aa448ed87.png",
-              "width": 1034
-            },
-            {
-              "type": "image/avif",
-              "src": "/uploads/sensitive_8aa448ed87.avif",
-              "width": 1034
-            },
-            {
-              "type": "image/webp",
-              "src": "/uploads/sensitive_8aa448ed87.webp",
-              "width": 1034
-            }
-          ]
-        }
-      ],
-      "detailGallery": [
         {
           "type": "image",
           "alt": "Сенсетив — коллекция Топеры",
