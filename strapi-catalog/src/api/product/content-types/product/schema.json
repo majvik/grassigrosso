@@ -236,7 +236,7 @@
       "default": true
     },
     "sort_order": {
-      "displayName": "Порядок сортировки",
+      "displayName": "Позиция в каталоге",
       "type": "integer",
       "default": 0
     },

@@ -38,6 +38,8 @@ const PRODUCT_PAGE_EDIT_ROWS = [
   [{ name: 'page_materials', size: 12 }],
 ];
 
+const PRODUCT_HIDDEN_FIELDS = new Set(['image_url']);
+
 /**
  * Sync Content Manager edit/list labels from schema attribute displayName (Russian).
  * CM caches English attr names on first load. Prefer labels from on-disk schema JSON
@@ -82,9 +84,15 @@ async function syncPagesCmsAdminLabels(strapi) {
       }
     }
     if (options.productPageLayout && cfg.layouts?.edit) {
+      for (const fieldName of PRODUCT_HIDDEN_FIELDS) {
+        if (cfg.metadatas[fieldName]?.edit && cfg.metadatas[fieldName].edit.visible !== false) {
+          cfg.metadatas[fieldName].edit.visible = false;
+          changed = true;
+        }
+      }
       const used = new Set(PRODUCT_PAGE_EDIT_ORDER);
       const remainingRows = cfg.layouts.edit
-        .map((row) => row.filter((field) => !used.has(field.name)))
+        .map((row) => row.filter((field) => !used.has(field.name) && !PRODUCT_HIDDEN_FIELDS.has(field.name)))
         .filter((row) => row.length > 0);
       const nextLayout = [...PRODUCT_PAGE_EDIT_ROWS, ...remainingRows];
       if (JSON.stringify(cfg.layouts.edit) !== JSON.stringify(nextLayout)) {

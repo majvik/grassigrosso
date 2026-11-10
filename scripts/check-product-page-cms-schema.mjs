@@ -27,6 +27,7 @@ if ('bento_gallery' in attributes) failures.push('legacy bento_gallery must be r
 
 expectAttribute('gallery', { type: 'component', repeatable: true, component: 'catalog.product-gallery-item' })
 if ('detail_gallery' in attributes) failures.push('duplicate detail_gallery must be removed')
+if (attributes.sort_order?.displayName !== 'Позиция в каталоге') failures.push('sort_order admin label must be "Позиция в каталоге"')
 expectAttribute('page_cover_desktop', { type: 'media', multiple: false })
 expectAttribute('page_cover_mobile', { type: 'media', multiple: false })
 expectAttribute('page_description', { type: 'text' })
@@ -57,6 +58,7 @@ for (const name of ['title', 'lead']) {
 if (material.description?.type !== 'text') failures.push('product-material-slide.description must be text')
 
 const adminSync = fs.readFileSync(path.join(root, 'strapi-catalog/src/api/catalog/utils/sync-pages-cms-admin-labels.js'), 'utf8')
+if (!adminSync.includes("const PRODUCT_HIDDEN_FIELDS = new Set(['image_url'])")) failures.push('legacy image_url must be hidden from Product admin')
 const orderedPageFields = [
   'page_cover_desktop',
   'page_cover_mobile',
