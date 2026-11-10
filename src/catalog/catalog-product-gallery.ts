@@ -1,4 +1,5 @@
 import type { CatalogProductMediaItem } from './catalog-api'
+import { buildResponsivePictureHtml, installResponsiveMediaFallbacks } from '../media/responsive-media'
 
 export type CatalogGallerySlideSnapshot = {
   type: 'image' | 'video'
@@ -18,6 +19,11 @@ export type CatalogProductMediaHtmlOptions = {
 const GALLERY_ROOT_SELECTOR = '[data-catalog-card-media]'
 const INTERACT_FLAG = 'data-catalog-gallery-did-interact'
 const LEGACY_INIT_FLAG = 'data-catalog-gallery-init'
+const EMPTY_CATALOG_MEDIA: CatalogProductMediaItem = {
+  type: 'image',
+  src: '',
+  alt: '',
+}
 
 const galleryControllers = new WeakMap<HTMLElement, { destroy: () => void }>()
 
@@ -81,43 +87,17 @@ export function normalizeCatalogGalleryItems(
     })
   }
 
-  return out.slice(0, 5)
+  return out
 }
 
 function buildPictureHtml(item: CatalogProductMediaItem, eager: boolean, sizes = '100vw'): string {
-  const alt = escapeHtml(item.alt || '')
-  const loading = eager ? 'eager' : 'lazy'
-  const fetchPriority = eager ? ' fetchpriority="high"' : ''
-  const fallbackSrc = escapeHtml(item.fallbackSrc || item.src)
-
-  if (!item.sources?.length) {
-    return `<img src="${escapeHtml(item.src)}" alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} />`
-  }
-
-  const sourcesByType = new Map<string, typeof item.sources>()
-  item.sources.forEach((source) => {
-    const rows = sourcesByType.get(source.type) || []
-    rows.push(source)
-    sourcesByType.set(source.type, rows)
+  return buildResponsivePictureHtml({
+    src: item.fallbackSrc || item.src,
+    slotId: 'catalog-card',
+    alt: item.alt || '',
+    sizes,
+    eager,
   })
-  const sourcesHtml = [...sourcesByType.entries()]
-    .sort(([typeA], [typeB]) => {
-      const priority = (type: string) => /avif/i.test(type) ? 0 : /webp/i.test(type) ? 1 : 2
-      return priority(typeA) - priority(typeB)
-    })
-    .map(([type, sources]) => {
-      const srcset = sources
-        .map((source) => `${source.src}${source.width ? ` ${source.width}w` : ''}`)
-        .join(', ')
-      return `<source type="${escapeHtml(type)}" srcset="${escapeHtml(srcset)}" sizes="${escapeHtml(sizes)}" />`
-    })
-    .join('')
-  const fallbackCandidates = item.sources
-    .filter((source) => source.width && !/avif|webp/i.test(source.type))
-    .map((source) => `${source.src} ${source.width}w`)
-    .join(', ')
-  const fallbackSrcset = fallbackCandidates ? ` srcset="${escapeHtml(fallbackCandidates)}" sizes="${escapeHtml(sizes)}"` : ''
-  return `<picture>${sourcesHtml}<img src="${fallbackSrc}"${fallbackSrcset} alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} /></picture>`
 }
 
 function buildSlideHtml(item: CatalogProductMediaItem, index: number, eager: boolean, sizes = '100vw'): string {
@@ -252,8 +232,9 @@ export function mountCatalogProductMedia(
   fallback?: { imageUrl?: string | null; imageAlt?: string | null },
 ): void {
   const gallery = normalizeCatalogGalleryItems(rawGallery, fallback)
+  const displayGallery = gallery.length ? gallery : [EMPTY_CATALOG_MEDIA]
   applyCatalogProductMediaHostAttributes(host, gallery, options)
-  const { slidesHtml, dotsBlock } = buildCatalogProductMediaInnerHtml(gallery, options.eagerFirstSlide === true, options.imageSizes)
+  const { slidesHtml, dotsBlock } = buildCatalogProductMediaInnerHtml(displayGallery, options.eagerFirstSlide === true, options.imageSizes)
   host.innerHTML =
     `<div class="catalogue-new-card-media-viewport" data-catalog-gallery-viewport tabindex="-1">` +
     slidesHtml +
@@ -267,11 +248,12 @@ export function buildCatalogProductMediaHtml(
   fallback?: { imageUrl?: string | null; imageAlt?: string | null },
 ): string {
   const gallery = normalizeCatalogGalleryItems(rawGallery, fallback)
+  const displayGallery = gallery.length ? gallery : [EMPTY_CATALOG_MEDIA]
   const rootClass = escapeHtml(options.rootClass || 'catalogue-new-card-media')
   const productSlug = options.productSlug ? escapeHtml(options.productSlug) : ''
   const slugAttr = productSlug ? ` data-product-slug="${productSlug}"` : ''
   const { slidesHtml, dotsBlock, carousel } = buildCatalogProductMediaInnerHtml(
-    gallery,
+    displayGallery,
     options.eagerFirstSlide === true,
     options.imageSizes,
   )
@@ -662,6 +644,7 @@ export function initCatalogProductGalleries(
   root: ParentNode = document,
   options: { lazyBind?: boolean } = {},
 ): void {
+  installResponsiveMediaFallbacks(root instanceof Document || root instanceof Element ? root : document)
   const lazyBind = options.lazyBind !== false && document.body.dataset.page === 'catalog'
   collectGalleryHosts(root).forEach((el) => {
     el.removeAttribute(LEGACY_INIT_FLAG)

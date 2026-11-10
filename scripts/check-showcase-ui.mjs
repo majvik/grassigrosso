@@ -101,7 +101,7 @@ try {
       titleActions: Boolean(document.querySelector('[data-product-title-actions]')),
       titleFavourite: Boolean(document.querySelector('[data-product-title-actions] [data-shared-product-favourite]')),
       titleShare: Boolean(document.querySelector('[data-product-title-actions] [data-shared-product-share].catalogue-new-shared-product-icon-action')),
-      gallery: Boolean(document.querySelector('[data-product-detail-slider][data-media-source="detail"]')),
+      gallery: Boolean(document.querySelector('[data-product-detail-slider][data-media-source="prototype"]')),
       galleryItems: (() => {
         try {
           return document.querySelectorAll('[data-product-detail-slider] .catalog-hero-slide').length
@@ -139,20 +139,20 @@ try {
   assert.equal(state.titleFavourite, true)
   assert.equal(state.titleShare, true)
   assert.equal(state.gallery, true)
-  assert.equal(state.specs, true)
+  assert.equal(state.specs, false)
   assert.equal(state.editorialPage, true)
-  assert.equal(state.editorialMasthead, true)
+  assert.equal(state.editorialMasthead, false)
   assert.equal(state.editorialStage, true)
   assert.equal(state.editorialInfo, true)
   assert.equal(state.legacyBentoItems, 0)
-  assert.equal(state.editorialSpecGroups, 2)
+  assert.equal(state.editorialSpecGroups, 0)
   assert.equal(state.editorialSpecTabs, 0)
   assert.equal(state.fillerCopy, false)
   assert.equal(state.editorialEyebrow, false)
   assert.equal(state.editorialSectionLabel, false)
-  assert.equal(state.commerceSlot, true)
+  assert.equal(state.commerceSlot, false)
   assert.equal(state.firmnessScale, true)
-  assert.equal(state.similar, true)
+  assert.equal(state.similar, false)
   assert.equal(state.quickViewModal, false)
 
   const favouriteBefore = await browser.cdp.evaluate(`document.querySelector('[data-shared-product-favourite]')?.getAttribute('aria-pressed')`)

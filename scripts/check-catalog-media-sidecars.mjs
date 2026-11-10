@@ -7,6 +7,7 @@ import { createRequire } from 'node:module'
 const require = createRequire(import.meta.url)
 const { preferAvifVariant } = require('../strapi-catalog/src/api/catalog/utils/prefer-avif.js')
 const { resolveImageMedia, resolveVideoMedia } = require('../strapi-catalog/src/api/catalog/utils/resolve-media-sources.js')
+const { buildProductGallery } = require('../strapi-catalog/src/api/catalog/utils/build-product-gallery.js')
 
 function touch(file, mtimeMs) {
   const date = new Date(mtimeMs)
@@ -56,6 +57,14 @@ try {
   assert.equal(resolveVideoMedia('/uploads/clip.mp4', publicDir).src, '/uploads/clip.mp4')
   touch(webm, now + 1000)
   assert.equal(resolveVideoMedia('/uploads/clip.mp4', publicDir).src, '/uploads/clip.webm')
+
+  const unlimited = buildProductGallery({
+    name: 'Test',
+    gallery: Array.from({ length: 7 }, (_, index) => ({
+      slide_image: { url: `/uploads/item-${index}.png`, mime: 'image/png', width: 1200, name: `item-${index}` },
+    })),
+  })
+  assert.equal(unlimited.gallery.length, 7, 'all CMS gallery images must be preserved')
 
   console.log('check:catalog-media-sidecars ok')
 } finally {

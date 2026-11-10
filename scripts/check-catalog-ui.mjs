@@ -8,7 +8,7 @@ import { shouldRunBrowserSmoke } from './lib/catalog-smoke-env.mjs'
 
 const baseUrl = String(process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5174').replace(/\/+$/, '')
 const runBrowser = shouldRunBrowserSmoke(baseUrl)
-const EXPECTED_PRODUCT_COUNT = 47
+const EXPECTED_PRODUCT_COUNT = 43
 const MIN_INITIAL_CARDS = 6
 const MAX_INITIAL_CARDS = 12
 const EXPECTED_CLASSIC_FILTER_COUNT = '6'
@@ -108,6 +108,34 @@ try {
     failures.push(`expected ${MIN_INITIAL_CARDS}-${MAX_INITIAL_CARDS} visible cards during initial viewport fill, got ${initial.visible}`)
   }
 
+  const deferredGallery = await waitFor(evaluate, 'deferred catalog gallery image loads', `(() => {
+    const root = [...document.querySelectorAll('[data-catalog-card-media][data-catalog-gallery-enabled="true"]')]
+      .find((item) => item.querySelector('[data-catalog-gallery-dot="1"]'))
+    if (!root) return { skipped: true }
+    const dot = root?.querySelector('[data-catalog-gallery-dot="1"]')
+    if (!dot) return false
+    dot.click()
+    const image = root.querySelector('[data-catalog-gallery-slide="1"] img')
+    if (!image || !image.complete || image.naturalWidth === 0) return false
+    return image.dataset.placeholderApplied === 'true'
+      ? false
+      : { src: image.currentSrc, naturalWidth: image.naturalWidth }
+  })()`, 15000)
+  if (!deferredGallery) failures.push('second catalog gallery image fell back to a placeholder')
+
+  await evaluate(`document.querySelector('.catalogue-new-chip[data-filter-group="collection"][data-value="relax"]')?.click()`)
+  const davosPlaceholder = await waitFor(evaluate, 'Davos catalog placeholder loads', `(() => {
+    const image = document.querySelector('[data-catalog-card-media][data-product-slug="davos"] img')
+    if (!image || !image.complete || image.naturalWidth === 0) return false
+    const current = new URL(image.currentSrc || image.src, location.href).pathname
+    return current.startsWith('/media-placeholders/catalog-card.')
+      ? { current }
+      : false
+  })()`, 15000)
+  if (!davosPlaceholder) failures.push('Davos catalog card remained empty instead of rendering the gray placeholder')
+  await evaluate(`document.querySelector('.catalogue-new-reset')?.click()`)
+  await waitFor(evaluate, 'catalog filters reset after Davos placeholder check', `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '${EXPECTED_PRODUCT_COUNT}'`)
+
   await evaluate(`(() => {
     const chip = document.querySelector('.catalogue-new-chip[data-filter-group="collection"][data-value="classic"]')
     if (!chip) return false
@@ -189,104 +217,75 @@ try {
   })()`)
   if (!productPage) failures.push('card did not open the new product page with the selected slug')
 
+  await send('Page.navigate', { url: `${baseUrl}/catalog?product=aspect` })
+  const aspectMedia = await waitFor(evaluate, 'non-Davos cover and product slider media', `(() => {
+    const cover = document.querySelector('img[data-product-cover-media]')
+    const slider = document.querySelector('picture[data-media-slot="product-slider"] img')
+    if (!cover || !slider || !slider.complete || slider.naturalWidth === 0) return false
+    const coverUrl = new URL(cover.currentSrc || cover.src, location.href).pathname
+    const sliderStyle = getComputedStyle(slider)
+    return coverUrl === '/media-placeholders/product-cover-desktop.svg'
+      && sliderStyle.objectFit === 'cover'
+      && slider.clientWidth > 0
+      && slider.clientHeight > 0
+      && slider.dataset.placeholderApplied !== 'true'
+      ? { coverUrl, sliderUrl: slider.currentSrc }
+      : false
+  })()`, 30000)
+  if (!aspectMedia) failures.push('Aspect must use the neutral SVG cover and a real cover-fit slider image')
+
+  for (const slug of ['orient', 'orient-plus']) {
+    await send('Page.navigate', { url: `${baseUrl}/catalog?product=${slug}` })
+    const mediaFallback = await waitFor(evaluate, `${slug} uses saved CMS media`, `(() => {
+      const image = document.querySelector('picture[data-media-slot="product-slider"] img')
+      if (!image || !image.complete || image.naturalWidth === 0) return false
+      const current = new URL(image.currentSrc, location.href).pathname
+      return current.startsWith('/uploads/')
+        && image.dataset.placeholderApplied !== 'true'
+        ? { current }
+        : false
+    })()`, 30000)
+    if (!mediaFallback) failures.push(`${slug} did not render its saved Strapi media`)
+  }
+
+  await send('Page.navigate', { url: `${baseUrl}/catalog?product=davos` })
+  const clearedDavos = await waitFor(evaluate, 'cleared Davos uses neutral placeholders only', `(() => {
+    const slider = document.querySelector('picture[data-media-slot="product-slider"] img')
+    const cover = document.querySelector('img[data-product-cover-media]')
+    if (!slider || !cover || !slider.complete || slider.naturalWidth === 0) return false
+    const sliderUrl = new URL(slider.currentSrc, location.href).pathname
+    const coverUrl = new URL(cover.currentSrc, location.href).pathname
+    return sliderUrl.startsWith('/media-placeholders/product-slider.')
+      && coverUrl.startsWith('/media-placeholders/product-cover-')
+      && !document.querySelector('[data-product-editorial-gallery]')
+      ? { sliderUrl, coverUrl }
+      : false
+  })()`, 30000)
+  if (!clearedDavos) failures.push('cleared Davos still exposes hardcoded media instead of neutral placeholders')
+
   await send('Page.navigate', { url: `${baseUrl}/catalog?product=orient` })
   await waitFor(evaluate, 'legacy compatibility product restored for remaining checks', `Boolean(document.querySelector('.catalogue-new-shared-product[data-product-editorial]:not([hidden])'))`, 30000)
 
-  const editorialDesktop = await waitFor(evaluate, 'product page uses editorial desktop layout without quick view', `(() => {
+  await waitFor(evaluate, 'product page uses the approved prototype layout without quick view', `(() => {
     const page = document.querySelector('.catalogue-new-shared-product[data-product-editorial]:not([hidden])')
-    const masthead = page?.querySelector('[data-product-masthead]')
     const stage = page?.querySelector('[data-product-media-stage]')
     const info = page?.querySelector('[data-product-info-band]')
-    const futureAction = page?.querySelector('[data-product-commerce-action-slot]')
     const legacyMediaWall = page?.querySelector('[data-product-media-wall], [data-bento-area]')
-    const specGroups = page?.querySelectorAll('[data-product-spec-group]').length || 0
-    const specTabs = page?.querySelectorAll('[data-spec-segment]').length || 0
-    const fillerCopy = page?.querySelector('.catalogue-new-shared-product-action-copy')
-    const eyebrow = page?.querySelector('.catalogue-new-shared-product-eyebrow')
-    const sectionLabel = page?.querySelector('.catalogue-new-shared-product-section-label')
-    const titleActions = page?.querySelector('[data-product-title-actions]')
-    const titleFavourite = titleActions?.querySelector('[data-shared-product-favourite]')
-    const titleShare = titleActions?.querySelector('[data-shared-product-share].catalogue-new-shared-product-icon-action')
-    const shareHelp = page?.querySelector('[data-filter-help-open="productShare"]')
-    const tags = page?.querySelector('.catalogue-new-shared-product-tags')
-    const firstSpec = page?.querySelector('.catalogue-new-shared-product-spec')
-    const specGroupsRoot = page?.querySelector('.catalogue-new-shared-product-spec-groups')
-    const contact = page?.querySelector('[data-shared-product-contact]')
-    const actions = page?.querySelector('.catalogue-new-shared-product-actions')
-    const detailSlider = page?.querySelector('[data-product-detail-slider][data-media-source="detail"]')
-    if (!page || !masthead || !stage || !info || !futureAction || document.querySelector('#catalogueImageModal')) return false
-    const ordered = Boolean(stage.compareDocumentPosition(masthead) & Node.DOCUMENT_POSITION_FOLLOWING)
-      && Boolean(masthead.compareDocumentPosition(info) & Node.DOCUMENT_POSITION_FOLLOWING)
-    const stageRect = stage.getBoundingClientRect()
-    const ratio = stageRect.width / Math.max(1, stageRect.height)
-    const infoColumns = getComputedStyle(info).gridTemplateColumns.split(' ').filter(Boolean).length
-    const tagsMarginTop = tags ? parseFloat(getComputedStyle(tags).marginTop) : 0
-    const specColumns = firstSpec ? getComputedStyle(firstSpec).gridTemplateColumns.split(' ').map((value) => parseFloat(value)) : []
-    const specWidth = firstSpec?.getBoundingClientRect().width || 0
-    const specGroupColumns = specGroupsRoot ? getComputedStyle(specGroupsRoot).gridTemplateColumns.split(' ').filter(Boolean).length : 0
-    const contactDecoration = contact ? getComputedStyle(contact).textDecorationLine : ''
-    const actionsBorderTop = actions ? parseFloat(getComputedStyle(actions).borderTopWidth) : 0
-    const titleSize = parseFloat(getComputedStyle(page.querySelector('.catalogue-new-shared-product-title')).fontSize)
-    const shareRect = titleShare?.getBoundingClientRect()
-    return ordered
-      && ratio >= 1.45
-      && infoColumns === 1
-      && specGroups === 2
-      && specTabs === 0
-      && !fillerCopy
-      && !eyebrow
-      && !sectionLabel
-      && titleActions
-      && titleFavourite
-      && titleShare
-      && detailSlider
+    const titleActions = document.querySelector('[data-product-title-actions]')
+    const titleFavourite = titleActions?.querySelector('.catalogue-new-image-modal-favourite')
+    const titleShare = titleActions?.querySelector('.catalogue-new-favourites-share-link-btn')
+    const broken = [...page?.querySelectorAll('img') || []].filter((img) => img.complete && img.naturalWidth === 0)
+    return Boolean(page && stage && info && titleActions && titleFavourite && titleShare)
       && !legacyMediaWall
-      && !shareHelp
-      && specGroupColumns === 2
-      && actionsBorderTop >= 1
-      && titleSize <= 112
-      && shareRect && Math.abs(shareRect.width - shareRect.height) < 1
+      && !document.querySelector('#catalogueImageModal')
+      && broken.length === 0
   })()`)
-  if (!editorialDesktop) {
-    const diagnostic = await evaluate(`(() => {
-      const page = document.querySelector('.catalogue-new-shared-product[data-product-editorial]:not([hidden])')
-      const stage = page?.querySelector('[data-product-media-stage]')
-      const masthead = page?.querySelector('[data-product-masthead]')
-      const info = page?.querySelector('[data-product-info-band]')
-      const share = page?.querySelector('[data-shared-product-share].catalogue-new-shared-product-icon-action')
-      const rect = share?.getBoundingClientRect()
-      return {
-        page: Boolean(page), stage: Boolean(stage), masthead: Boolean(masthead), info: Boolean(info),
-        ratio: stage ? stage.getBoundingClientRect().width / Math.max(1, stage.getBoundingClientRect().height) : 0,
-        infoColumns: info ? getComputedStyle(info).gridTemplateColumns : '',
-        specGroups: page?.querySelectorAll('[data-product-spec-group]').length || 0,
-        specGroupColumns: page?.querySelector('.catalogue-new-shared-product-spec-groups') ? getComputedStyle(page.querySelector('.catalogue-new-shared-product-spec-groups')).gridTemplateColumns : '',
-        detailSlider: Boolean(page?.querySelector('[data-product-detail-slider][data-media-source="detail"]')),
-        actionsBorder: page?.querySelector('.catalogue-new-shared-product-actions') ? getComputedStyle(page.querySelector('.catalogue-new-shared-product-actions')).borderTopWidth : '',
-        titleSize: page?.querySelector('.catalogue-new-shared-product-title') ? getComputedStyle(page.querySelector('.catalogue-new-shared-product-title')).fontSize : '',
-        share: rect ? [rect.width, rect.height] : null,
-      }
-    })()`)
-    console.error('editorial diagnostic', diagnostic)
-  }
 
   await send('Page.navigate', { url: `${baseUrl}/catalog?product=imperio` })
   await waitFor(evaluate, 'product beyond initial catalogue batch opens directly', `(() => {
     const page = document.querySelector('.catalogue-new-shared-product:not([hidden])')
     return location.search === '?product=imperio'
       && page?.querySelector('.catalogue-new-shared-product-title')?.textContent?.trim() === 'Империо'
-  })()`, 30000)
-
-  const similarClicked = await evaluate(`(() => {
-    const button = document.querySelector('[data-shared-product-similar]')
-    if (!button) return false
-    button.click()
-    return true
-  })()`)
-  if (!similarClicked) failures.push('similar-products action is missing')
-  await waitFor(evaluate, 'similar-products filters are applied in catalogue', `(() => {
-    const active = [...document.querySelectorAll('[data-filter-group][aria-pressed="true"], [data-filter-group].is-active')]
-    return location.search === '?similar=imperio' && active.length >= 2
   })()`, 30000)
 
   await send('Page.navigate', { url: `${baseUrl}/catalog?product=imperio` })

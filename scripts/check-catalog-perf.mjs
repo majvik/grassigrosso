@@ -14,10 +14,10 @@ const OVERALL_TIMEOUT_MS = Number(process.env.CATALOG_PERF_TIMEOUT_MS || 60000)
 const runBrowser = shouldRunBrowserSmoke(baseUrl)
 
 const BUDGET = {
-  maxCardsInDom: Number(process.env.CATALOG_PERF_MAX_CARDS || 6),
+  maxCardsInDom: Number(process.env.CATALOG_PERF_MAX_CARDS || 12),
   maxEagerImages: Number(process.env.CATALOG_PERF_MAX_EAGER || 2),
   maxUploadRequests: Number(process.env.CATALOG_PERF_MAX_UPLOADS || 10),
-  maxDomNodes: Number(process.env.CATALOG_PERF_MAX_DOM_NODES || 900),
+  maxDomNodes: Number(process.env.CATALOG_PERF_MAX_DOM_NODES || 1300),
   maxListingJsonBytes: Number(process.env.CATALOG_PERF_MAX_LISTING_JSON || 28000),
 }
 

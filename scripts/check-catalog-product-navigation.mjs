@@ -5,6 +5,9 @@ const share = fs.readFileSync('src/catalog/catalog-share.ts', 'utf8')
 const controller = fs.readFileSync('src/catalog/catalog-listing-controller.ts', 'utf8')
 const prototype = fs.readFileSync('src/components/pages/ProductPagePrototype.tsx', 'utf8')
 const catalogPage = fs.readFileSync('src/components/pages/CatalogPage.tsx', 'utf8')
+const gallery = fs.readFileSync('src/catalog/catalog-product-gallery.ts', 'utf8')
+const hero = fs.readFileSync('src/catalog/catalog-hero.ts', 'utf8')
+const galleryFeed = fs.readFileSync('strapi-catalog/src/api/catalog/utils/build-product-gallery.js', 'utf8')
 const failures = []
 
 if (!share.includes("const url = catalogUrl()") || share.includes("url.pathname = '/product-page-prototype'")) {
@@ -48,6 +51,18 @@ if (!prototype.includes('split(/<br')) {
 }
 if (!prototype.includes('PRODUCT_MEDIA_PLACEHOLDER_SRC') || !prototype.includes("image.dataset.placeholderApplied = 'true'")) {
   failures.push('broken product media must fall back to a local placeholder')
+}
+if (!prototype.includes('/media-placeholders/product-cover-desktop.svg') || !prototype.includes('/media-placeholders/product-cover-mobile.svg')) {
+  failures.push('product SVG covers must use neutral desktop/mobile placeholders')
+}
+if (!prototype.includes('ResponsivePicture') || !prototype.includes('catalogFallback')) {
+  failures.push('product raster media must use the shared responsive picture fallback')
+}
+if (!hero.includes('installResponsiveMediaFallbacks(sliderRoot)')) {
+  failures.push('catalog hero must recover missing responsive variants with a neutral placeholder')
+}
+if (gallery.includes('return out.slice(0, 5)') || galleryFeed.includes('MAX_GALLERY_ITEMS')) {
+  failures.push('product gallery must not impose a five-item limit')
 }
 
 if (failures.length) {

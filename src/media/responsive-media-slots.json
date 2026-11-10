@@ -1,0 +1,10 @@
+[
+  { "id": "catalog-card", "width": 470, "height": 470, "fit": "cover", "placeholder": true },
+  { "id": "catalog-hero", "width": 640, "height": 360, "fit": "cover", "placeholder": true },
+  { "id": "download-catalog", "width": 440, "height": 440, "fit": "contain", "placeholder": true },
+  { "id": "product-slider", "width": 470, "height": 470, "fit": "cover", "placeholder": true },
+  { "id": "product-fullscreen", "width": 500, "height": 500, "fit": "contain", "placeholder": true },
+  { "id": "product-characteristics", "width": 500, "height": 500, "fit": "cover", "placeholder": true },
+  { "id": "product-material", "width": 500, "height": 500, "fit": "cover", "placeholder": true },
+  { "id": "video-poster", "width": 1600, "height": 900, "fit": "cover", "placeholder": true }
+]

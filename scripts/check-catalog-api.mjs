@@ -153,9 +153,6 @@ if (products) {
     if (!Array.isArray(product.gallery)) {
       failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery must be an array`)
     } else {
-      if (product.gallery.length > 5) {
-        failures.push(`/api/catalog/products: ${product.slug || '(unknown)'} gallery exceeds 5 items`)
-      }
       const seenGallery = new Set()
       for (const item of product.gallery) {
         if (!item || typeof item !== 'object') {

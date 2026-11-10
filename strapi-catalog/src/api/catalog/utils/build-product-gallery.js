@@ -6,8 +6,6 @@ const {
   resolvePosterMedia,
 } = require('./resolve-media-sources');
 
-const MAX_GALLERY_ITEMS = 5;
-
 function mediaUrl(media) {
   if (!media) return '';
   return String(media.url || '').trim();
@@ -157,7 +155,6 @@ function buildProductGallery(row) {
 
   const galleryRows = Array.isArray(row?.gallery) ? row.gallery : [];
   for (const galleryRow of galleryRows) {
-    if (items.length >= MAX_GALLERY_ITEMS) break;
     pushItem(items, seen, itemFromGalleryComponentRow(galleryRow, fallbackName));
   }
 
@@ -165,7 +162,7 @@ function buildProductGallery(row) {
     pushItem(items, seen, itemFromLegacyMedia(null, row?.image_url, fallbackName));
   }
 
-  const gallery = items.slice(0, MAX_GALLERY_ITEMS);
+  const gallery = items;
   const first = gallery[0];
   const imageUrl =
     first?.type === 'image'
@@ -179,7 +176,6 @@ function buildProductGallery(row) {
 }
 
 module.exports = {
-  MAX_GALLERY_ITEMS,
   buildProductGallery,
   itemFromLegacyMedia,
 };

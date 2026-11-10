@@ -7,94 +7,15 @@ import { readCatalogFavourites, writeCatalogFavourites } from '@/catalog/catalog
 import { copyTextWithToast, flashCatalogShareLinkCopiedLabel } from '@/catalog/catalog-share'
 import { initCatalogHeroSlider } from '@/catalog-hero-slider.js'
 import { getCatalogProductsFullFeed, type CatalogProduct, type CatalogProductMediaItem } from '@/catalog/catalog-api'
+import { ResponsivePicture } from '@/components/ui/ResponsivePicture'
 import styles from './ProductPagePrototype.module.css'
 
-const DAVOS_MEDIA = [
-  'davos_f60728f139',
-  'davos_product_extreme_macro_pilot_03_c9cc9e687e',
-  'davos_product_studio_pilot_01_605d8327e4',
-  'davos_interior_pilot_01_37e208e0c8',
-  'davos_material_textile_top_01_8162c06b96',
-] as const
-
-const DAVOS_EDITORIAL_MEDIA = [
-  'davos_gallery_knit_detail_01',
-  'davos_gallery_coir_detail_02',
-  'davos_gallery_dark_textile_03',
-  'davos_gallery_quilt_detail_04',
-  'davos_gallery_foam_detail_05',
-] as const
-
-const DAVOS_EDITORIAL_CAPTIONS = [
-  'Мягкая, приятная на ощупь поверхность.',
-  'Добавляет жёсткость и плотную опору.',
-  'Защищает боковины и завершает отделку.',
-  'Отдельные тканевые карманы позволяют пружинам работать независимо.',
-  'Упругий материал для поддержки и сохранения формы.',
-] as const
-
-const DAVOS_EDITORIAL_TITLES = [
-  'Трикотаж',
-  'Кокосовая койра',
-  'Боковая ткань',
-  'Чехлы пружин',
-  'Пена',
-] as const
-
-const DAVOS_EDITORIAL_DETAILS = [
-  'Трикотаж представляет собой полотно из переплетённых петель. Такая структура позволяет ткани растягиваться и подстраиваться под поверхность. На матрасе трикотаж образует внешний слой чехла: это ткань, к которой мы прикасаемся через постельное бельё. Стёжка соединяет её с мягким наполнением чехла.',
-  'Койра представляет собой натуральное волокно из наружной оболочки кокосового ореха. Его отделяют от оболочки и очищают. Из волокон делают канаты, циновки и наполнители для мебели и матрасов. В «Давосе» слой койры расположен с обеих сторон пружинного блока и помогает создать плотную поверхность для сна.',
-  'Боковая ткань служит наружной обивкой по периметру матраса. Она закрывает края внутренних слоёв и придаёт изделию законченный вид. На этом крупном плане видна мягкая ворсистая фактура. Она создаёт визуальный контраст со светлой поверхностью и подчёркивает форму боковины.',
-  'В независимом пружинном блоке каждая пружина помещена в отдельный тканевый карман. Пружины не соединены между собой общей металлической спиралью. Под нагрузкой они сжимаются по отдельности. Карманы удерживают пружины на своих местах и отделяют соседние витки друг от друга.',
-  'Пена представляет собой материал с ячеистой структурой. Под нагрузкой ячейки сжимаются, а после её снятия материал стремится вернуться к исходной форме. В матрасах пенные элементы используют для упругой опоры и формирования отдельных частей конструкции. Крупный план показывает фактуру материала; расположение слоёв можно посмотреть на схеме выше.',
-] as const
-
-const DAVOS_SIZES = [
-  [140, 190],
-  [140, 200],
-  [160, 190],
-  [160, 200],
-  [180, 190],
-  [180, 200],
-] as const
-
-// The layout accepts 1, 4, or 6 frames. Davos currently has one product-layer image.
-const DAVOS_CHARACTERISTICS_MEDIA = [
-  'davos_material_layers_detail_01',
-] as const
-
-// Static Figma export for now; this same slot can later receive the animated SVG.
-// Mobile remains a separate static source below.
-const PRODUCT_COVER_DESKTOP_SRC = '/product-page-prototype/davos-product-cover-desktop-full.svg?v=20261109-1'
-const PRODUCT_COVER_MOBILE_SRC = '/product-page-prototype/davos-product-cover-mobile.svg?v=20261109-1'
 const PRODUCT_COVER_LOCATION_LINE_SRC = '/product-page-prototype/cover-location-line.svg'
-const PRODUCT_MEDIA_PLACEHOLDER_SRC = '/product-page-prototype/davos_f60728f139.png'
+const PRODUCT_MEDIA_PLACEHOLDER_SRC = '/media-placeholders/product-slider.png'
+const PRODUCT_COVER_DESKTOP_PLACEHOLDER_SRC = '/media-placeholders/product-cover-desktop.svg'
+const PRODUCT_COVER_MOBILE_PLACEHOLDER_SRC = '/media-placeholders/product-cover-mobile.svg'
 
-const DAVOS_LAYERS = [
-  'кокосовая койра (20мм)',
-  'хлопковый войлок',
-  '1000 пружин на одно спальное место (h – 140мм)',
-  'хлопковый войлок',
-  'кокосовая койра (20мм)',
-  'татами борт',
-] as const
-
-function PrototypePicture({ basename, eager = false, fallbackExtension = 'png', alt = 'Матрас Давос' }: { basename: string; eager?: boolean; fallbackExtension?: 'jpg' | 'png'; alt?: string }) {
-  const root = `/product-page-prototype/${basename}`
-  return (
-    <picture>
-      <source type="image/avif" srcSet={`${root}.avif`} />
-      <source type="image/webp" srcSet={`${root}.webp`} />
-      <img
-        src={`${root}.${fallbackExtension}`}
-        alt={alt}
-        loading={eager ? 'eager' : 'lazy'}
-        fetchPriority={eager ? 'high' : 'auto'}
-        decoding="async"
-      />
-    </picture>
-  )
-}
+const EMPTY_PRODUCT_MEDIA: CatalogProductMediaItem = { type: 'image', src: '', alt: '' }
 
 function centerVisibleImageContent(image: HTMLImageElement) {
   const sampleSize = 256
@@ -130,7 +51,7 @@ function centerVisibleImageContent(image: HTMLImageElement) {
   }
 }
 
-function ProductMedia({ media, eager = false, alt, centerTransparentContent = false }: { media: CatalogProductMediaItem; eager?: boolean; alt: string; centerTransparentContent?: boolean }) {
+function ProductMedia({ media, eager = false, alt, centerTransparentContent = false, slotId = 'product-slider' }: { media: CatalogProductMediaItem; eager?: boolean; alt: string; centerTransparentContent?: boolean; slotId?: 'product-slider' | 'product-characteristics' | 'product-material' | 'product-fullscreen' | 'catalog-card' }) {
   if (media.type === 'video') {
     return (
       <video
@@ -145,33 +66,27 @@ function ProductMedia({ media, eager = false, alt, centerTransparentContent = fa
     )
   }
 
-  return (
-    <img
-      src={media.fallbackSrc || media.src}
-      alt={media.alt || alt}
-      loading={eager ? 'eager' : 'lazy'}
-      fetchPriority={eager ? 'high' : 'auto'}
-      decoding="async"
-      onLoad={(event) => {
-        if (centerTransparentContent) centerVisibleImageContent(event.currentTarget)
-      }}
-      onError={(event) => {
-        const image = event.currentTarget
-        if (image.dataset.placeholderApplied === 'true') return
-        image.dataset.placeholderApplied = 'true'
-        image.src = PRODUCT_MEDIA_PLACEHOLDER_SRC
-        image.removeAttribute('srcset')
-      }}
-    />
-  )
+  return <ResponsivePicture
+    src={media.fallbackSrc || media.src}
+    slotId={slotId}
+    alt={media.alt || alt}
+    eager={eager}
+    catalogFallback
+    onLoad={(event) => {
+      if (centerTransparentContent) centerVisibleImageContent(event.currentTarget)
+    }}
+  />
 }
 
 function TextWithBreaks({ text }: { text: string }) {
   return <>{text.split(/<br\s*\/?\s*>|\n/gi).map((line, index) => <span key={`${index}-${line}`}>{index > 0 && <br />}{line}</span>)}</>
 }
 
-function ProductCoverPicture({ desktop, mobile, productName, useDavosFallback }: { desktop?: CatalogProductMediaItem | null; mobile?: CatalogProductMediaItem | null; productName: string; useDavosFallback: boolean }) {
+function ProductCoverPicture({ desktop, mobile, productName }: { desktop?: CatalogProductMediaItem | null; mobile?: CatalogProductMediaItem | null; productName: string }) {
   const readyRef = useRef(false)
+  const resolveCoverSource = (media: CatalogProductMediaItem | null | undefined, placeholderSource: string) => media?.fallbackSrc || media?.src || placeholderSource
+  const desktopSource = resolveCoverSource(desktop, PRODUCT_COVER_DESKTOP_PLACEHOLDER_SRC)
+  const mobileSource = resolveCoverSource(mobile, PRODUCT_COVER_MOBILE_PLACEHOLDER_SRC)
 
   function announceReady() {
     if (readyRef.current) return
@@ -180,11 +95,11 @@ function ProductCoverPicture({ desktop, mobile, productName, useDavosFallback }:
   }
 
   return (
-    <picture>
-      {(mobile || useDavosFallback) && <source media="(max-width: 900px)" type="image/svg+xml" srcSet={mobile?.fallbackSrc || mobile?.src || PRODUCT_COVER_MOBILE_SRC} />}
+    <picture data-product-cover-picture>
+      <source media="(max-width: 900px)" type="image/svg+xml" srcSet={mobileSource} />
       <img
         data-product-cover-media
-        src={desktop?.fallbackSrc || desktop?.src || PRODUCT_COVER_DESKTOP_SRC}
+        src={desktopSource}
         alt={desktop?.alt || `Матрас ${productName} в интерьере`}
         loading="eager"
         fetchPriority="high"
@@ -194,7 +109,7 @@ function ProductCoverPicture({ desktop, mobile, productName, useDavosFallback }:
           const image = event.currentTarget
           if (image.dataset.placeholderApplied !== 'true') {
             image.dataset.placeholderApplied = 'true'
-            image.src = PRODUCT_COVER_DESKTOP_SRC
+            image.src = PRODUCT_COVER_DESKTOP_PLACEHOLDER_SRC
           }
           announceReady()
         }}
@@ -203,7 +118,7 @@ function ProductCoverPicture({ desktop, mobile, productName, useDavosFallback }:
   )
 }
 
-function ProductPrototypeSlider({ media, productName, fallbackToDavos, onOpenGallery }: { media: CatalogProductMediaItem[]; productName: string; fallbackToDavos: boolean; onOpenGallery: (items: CatalogProductMediaItem[], index: number) => void }) {
+function ProductPrototypeSlider({ media, productName, onOpenGallery }: { media: CatalogProductMediaItem[]; productName: string; onOpenGallery: (items: CatalogProductMediaItem[], index: number) => void }) {
   const sliderRef = useRef<HTMLDivElement>(null)
   const initializedRef = useRef(false)
 
@@ -213,7 +128,7 @@ function ProductPrototypeSlider({ media, productName, fallbackToDavos, onOpenGal
     initCatalogHeroSlider(sliderRef.current)
   }, [])
 
-  const sliderItems = media.length ? media : fallbackToDavos ? DAVOS_MEDIA : []
+  const sliderItems = media.length ? media : [EMPTY_PRODUCT_MEDIA]
 
   return (
     <div
@@ -227,7 +142,7 @@ function ProductPrototypeSlider({ media, productName, fallbackToDavos, onOpenGal
     >
       <div className="catalog-hero-slides">
         {sliderItems.map((item, index) => {
-          const key = typeof item === 'string' ? item : item.fallbackSrc || item.src
+          const key = item.fallbackSrc || item.src || 'product-placeholder'
           return (
           <div
             key={key}
@@ -242,15 +157,10 @@ function ProductPrototypeSlider({ media, productName, fallbackToDavos, onOpenGal
               data-product-slider-gallery-trigger
               aria-label={`Открыть изображение ${index + 1} во весь экран`}
               onClick={() => {
-                const galleryItems = sliderItems.map((entry) => typeof entry === 'string'
-                  ? { type: 'image' as const, src: `/product-page-prototype/${entry}.png`, alt: `Матрас ${productName}` }
-                  : entry)
-                onOpenGallery(galleryItems, index)
+                if (media.length) onOpenGallery(sliderItems, index)
               }}
             >
-              {typeof item === 'string'
-                ? <PrototypePicture basename={item} eager={index === 0} alt={`Матрас ${productName}`} />
-                : <ProductMedia media={item} eager={index === 0} alt={`Матрас ${productName}`} />}
+              <ProductMedia media={item} eager={index === 0} alt={`Матрас ${productName}`} />
             </button>
           </div>
           )
@@ -273,7 +183,7 @@ function ProductPrototypeSlider({ media, productName, fallbackToDavos, onOpenGal
       <div className="catalog-hero-dots" role="tablist" aria-label="Слайды позиции">
         {sliderItems.map((item, index) => (
           <button
-            key={typeof item === 'string' ? item : item.fallbackSrc || item.src}
+            key={item.fallbackSrc || item.src || `product-placeholder-${index}`}
             type="button"
             className={`catalog-hero-dot${index === 0 ? ' is-active' : ''}`}
             role="tab"
@@ -331,7 +241,7 @@ function FullscreenProductGallery({ items, initialIndex, open, onOpenChange, pro
       <div className={styles.fullscreenGallery} data-product-fullscreen-gallery role="dialog" aria-modal="true" aria-labelledby="product-fullscreen-gallery-title">
           <h2 className={styles.visuallyHidden} id="product-fullscreen-gallery-title">Галерея товара {productName}</h2>
           <div className={styles.fullscreenGalleryStage}>
-            <ProductMedia media={active} eager alt={`${productName}, изображение ${index + 1}`} centerTransparentContent />
+            <ProductMedia media={active} eager alt={`${productName}, изображение ${index + 1}`} centerTransparentContent slotId="product-fullscreen" />
           </div>
           {hasNavigation && <>
             <button type="button" className={`${styles.fullscreenGalleryNav} ${styles.fullscreenGalleryPrev}`} aria-label="Предыдущее изображение" onClick={() => setIndex((index - 1 + items.length) % items.length)}>
@@ -351,7 +261,7 @@ function FullscreenProductGallery({ items, initialIndex, open, onOpenChange, pro
 
 function FirmnessScale({ score }: { score: number }) {
   return (
-    <section className="catalogue-new-firmness-scale">
+    <section className="catalogue-new-firmness-scale" data-product-firmness-scale>
       <h3 className="catalogue-new-firmness-title">Жесткость</h3>
       <div className="catalogue-new-firmness-row is-single">
         <div className="catalogue-new-firmness-track" aria-hidden="true">
@@ -376,10 +286,10 @@ function SizeCardIcon({ width, height }: { width: number; height: number }) {
   )
 }
 
-function EditorialGallery({ materials, useDavosFallback }: { materials: NonNullable<CatalogProduct['pageMaterials']>; useDavosFallback: boolean }) {
+function EditorialGallery({ materials }: { materials: NonNullable<CatalogProduct['pageMaterials']> }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const intentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const galleryItems = materials.length ? materials : useDavosFallback ? DAVOS_EDITORIAL_MEDIA : []
+  const galleryItems = materials
 
   function scheduleActive(index: number) {
     if (intentTimerRef.current) clearTimeout(intentTimerRef.current)
@@ -417,10 +327,10 @@ function EditorialGallery({ materials, useDavosFallback }: { materials: NonNulla
       onPointerLeave={clearActive}
     >
       {galleryItems.map((item, index) => {
-        const basename = typeof item === 'string' ? item : item.image.fallbackSrc || item.image.src
-        const title = typeof item === 'string' ? DAVOS_EDITORIAL_TITLES[index] : item.title
-        const lead = typeof item === 'string' ? DAVOS_EDITORIAL_CAPTIONS[index] : item.lead
-        const details = typeof item === 'string' ? DAVOS_EDITORIAL_DETAILS[index] : item.description
+        const basename = item.image.fallbackSrc || item.image.src
+        const title = item.title
+        const lead = item.lead
+        const details = item.description
         return (
         <figure
           className={`${styles.editorialGalleryItem}${activeIndex === index ? ` ${styles.editorialGalleryItemActive}` : ''}`}
@@ -432,9 +342,7 @@ function EditorialGallery({ materials, useDavosFallback }: { materials: NonNulla
           onFocus={() => setActiveIndex(index)}
           onKeyDown={(event) => handleKeyDown(event, index)}
         >
-          {typeof item === 'string'
-            ? <PrototypePicture basename={basename} eager={index === 0} />
-            : <ProductMedia media={item.image} eager={index === 0} alt={title || 'Материал матраса'} />}
+          <ProductMedia media={item.image} eager={index === 0} alt={title || 'Материал матраса'} slotId="product-material" />
           <figcaption className={styles.editorialGalleryCaption}>
             <strong>{title}</strong>
             <span className={styles.editorialGalleryCaptionLead}><TextWithBreaks text={String(lead || '')} /></span>
@@ -447,7 +355,7 @@ function EditorialGallery({ materials, useDavosFallback }: { materials: NonNulla
         {galleryItems.map((item, index) => (
           <span
             className={activeIndex === index ? styles.editorialGalleryHitAreaActive : undefined}
-            key={`hit-${typeof item === 'string' ? item : item.image.fallbackSrc || item.image.src}`}
+            key={`hit-${item.image.fallbackSrc || item.image.src}`}
             onPointerEnter={() => scheduleActive(index)}
           />
         ))}
@@ -504,7 +412,6 @@ export function ProductPagePrototype() {
   if (!catalogLoaded) return null
 
   const productName = String(product?.name || (requestedSlug === 'davos' ? 'Давос' : requestedSlug))
-  const useDavosFallback = requestedSlug === 'davos'
   const collectionSlug = String(product?.collectionSlug || '').trim()
   const collectionName = String(product?.collectionName || collectionSlug)
   const normalizedCollectionName = collectionName.trim().toLocaleLowerCase('ru-RU')
@@ -519,14 +426,12 @@ export function ProductPagePrototype() {
       })
       .slice(0, 3)
     : []
-  const tags = Array.isArray(product?.tags) ? product.tags.map(String).filter(Boolean) : useDavosFallback ? ['Пружинный', 'Жесткий'] : []
-  const description = String(product?.pageDescription || (requestedSlug === 'davos'
-    ? 'Натуральная кокосовая койра с обеих сторон придаёт матрасу жёсткость. Независимые пружины реагируют на нагрузку по отдельности и поддерживают тело, а хлопковый войлок разделяет слои наполнения. Трикотажный чехол делает прикосновение мягче. Матрас рассчитан на нагрузку до 160 кг на спальное место.'
-    : ''))
+  const tags = Array.isArray(product?.tags) ? product.tags.map(String).filter(Boolean) : []
+  const description = String(product?.pageDescription || '')
   const typeLabel = tags[0] || String(product?.mattressType || '')
   const loadLabel = product?.maxLoadKg ? `до ${product.maxLoadKg} кг` : ''
   const firmnessScore = Math.max(1, Math.min(10, Number(product?.firmnessSide1 || product?.firmnessSide2 || 9)))
-  const sizes = (Array.isArray(product?.sizes) ? product.sizes : DAVOS_SIZES)
+  const sizes = (Array.isArray(product?.sizes) ? product.sizes : [])
     .map((value) => {
       if (Array.isArray(value)) return [Number(value[0]), Number(value[1])] as const
       const match = String(value).match(/(\d+)\D+(\d+)/)
@@ -537,23 +442,25 @@ export function ProductPagePrototype() {
   const coverLocation = product?.pageCoverLocation
   const characteristicsMedia = product?.pageCharacteristicsMedia?.length
     ? product.pageCharacteristicsMedia
-    : useDavosFallback
-      ? DAVOS_CHARACTERISTICS_MEDIA
-      : product?.gallery?.slice(0, 1) || []
+    : [EMPTY_PRODUCT_MEDIA]
 
   return (
     <>
       <figure className={`${styles.productCover} product-cover-image`} data-product-cover-image>
-        <ProductCoverPicture desktop={product?.pageCoverDesktop} mobile={product?.pageCoverMobile} productName={productName} useDavosFallback />
-        <div className={styles.coverLocation} data-product-cover-location>
+        <ProductCoverPicture
+          desktop={product?.pageCoverDesktop}
+          mobile={product?.pageCoverMobile}
+          productName={productName}
+        />
+        {coverLocation && <div className={styles.coverLocation} data-product-cover-location>
           <img className={styles.coverLocationLine} src={PRODUCT_COVER_LOCATION_LINE_SRC} alt="" aria-hidden="true" />
           <p>
-            <TextWithBreaks text={coverLocation?.place || 'Тоскана, Италия'} /><br />
-            <TextWithBreaks text={coverLocation?.coordinates || '43,7696° N / 11,2558° E'} /><br />
-            <TextWithBreaks text={coverLocation?.dateTime || '15.09.2026 · 08:30 CEST · UTC+2'} /><br />
-            <TextWithBreaks text={coverLocation?.sunPosition || 'Азимут 101,5° · Высота 16,7°'} />
+            <TextWithBreaks text={coverLocation.place || ''} /><br />
+            <TextWithBreaks text={coverLocation.coordinates || ''} /><br />
+            <TextWithBreaks text={coverLocation.dateTime || ''} /><br />
+            <TextWithBreaks text={coverLocation.sunPosition || ''} />
           </p>
-        </div>
+        </div>}
         <a className={styles.coverBack} href="/catalog" data-product-cover-back aria-label="Назад в каталог">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M19 12H5m6-6-6 6 6 6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
@@ -563,6 +470,7 @@ export function ProductPagePrototype() {
         <div className={`catalogue-new-shared-product-title-actions ${styles.coverActions}`} data-product-title-actions>
           <button
             type="button"
+            data-shared-product-favourite
             className={`catalogue-new-image-modal-favourite catalogue-new-shared-product-icon-action${favourite ? ' is-active' : ''}`}
             aria-pressed={favourite}
             aria-label={favourite ? 'Удалить из избранного' : 'Добавить в избранное'}
@@ -571,7 +479,7 @@ export function ProductPagePrototype() {
             <img className="catalogue-new-image-modal-favourite-icon--empty" src="/icons/favourite-empty.svg" alt="" aria-hidden="true" />
             <img className="catalogue-new-image-modal-favourite-icon--full" src="/icons/favourite-full.svg" alt="" aria-hidden="true" />
           </button>
-          <button type="button" className="catalogue-new-favourites-share-link-btn catalogue-new-shared-product-icon-action" aria-label="Скопировать ссылку" onClick={copyPrototypeLink}>
+          <button type="button" data-shared-product-share className="catalogue-new-favourites-share-link-btn catalogue-new-shared-product-icon-action" aria-label="Скопировать ссылку" onClick={copyPrototypeLink}>
             <span className="catalogue-new-favourites-share-link-label catalogue-new-shared-product-share-label">Скопировать ссылку</span>
             <span className="catalogue-new-favourites-share-link-icon" aria-hidden="true">
               <img className="catalogue-new-favourites-share-icon--default" src="/icons/share-default.svg" alt="" />
@@ -586,7 +494,7 @@ export function ProductPagePrototype() {
           <div className="catalogue-new-shared-product-shell">
             <div className={styles.productIntro}>
               <div className={`catalogue-new-shared-product-stage ${styles.productSlider}`} data-product-media-stage>
-                <ProductPrototypeSlider media={product?.gallery || []} productName={productName} fallbackToDavos={useDavosFallback} onOpenGallery={openFullscreenGallery} />
+                <ProductPrototypeSlider media={product?.gallery || []} productName={productName} onOpenGallery={openFullscreenGallery} />
               </div>
               <div className={styles.productSummary}>
                 <p className={styles.collection}>Коллекция {collectionName}</p>
@@ -622,38 +530,36 @@ export function ProductPagePrototype() {
                 </div>
                 <h4 className={styles.layersTitle}>Наполнение</h4>
                 <ol className={styles.layersList}>
-                  {(layers.length ? layers : useDavosFallback ? DAVOS_LAYERS : []).map((layer, index) => <li key={`${index}-${layer}`}>{layer}</li>)}
+                  {layers.map((layer, index) => <li key={`${index}-${layer}`}>{layer}</li>)}
                 </ol>
                 <dl className={`${styles.characteristicsSpecs} ${styles.coverSpec}`}>
                   <div>
                     <dt>Чехол</dt>
-                    <dd><TextWithBreaks text={String(product?.coverDescription || (useDavosFallback ? 'Премиальный трикотаж с объёмной стежкой на холконе' : ''))} /></dd>
+                    <dd><TextWithBreaks text={String(product?.coverDescription || '')} /></dd>
                   </div>
                 </dl>
               </div>
               <figure className={styles.characteristicsMedia} data-media-count={characteristicsMedia.length}>
                 {characteristicsMedia.map((item, index) => {
-                  const galleryItems = characteristicsMedia.map((entry) => typeof entry === 'string'
-                    ? { type: 'image' as const, src: `/product-page-prototype/${entry}.png`, alt: `${productName} — характеристики` }
-                    : entry)
+                  const galleryItems = characteristicsMedia.filter((entry) => Boolean(entry.src))
                   return (
                     <button
                       type="button"
                       className={styles.characteristicsMediaButton}
                       data-product-characteristics-gallery-trigger
                       aria-label={`Открыть изображение характеристики ${index + 1} во весь экран`}
-                      key={typeof item === 'string' ? item : item.fallbackSrc || item.src}
-                      onClick={() => openFullscreenGallery(galleryItems, index)}
+                      key={item.fallbackSrc || item.src || `characteristics-placeholder-${index}`}
+                      onClick={() => {
+                        if (galleryItems.length) openFullscreenGallery(galleryItems, index)
+                      }}
                     >
-                      {typeof item === 'string'
-                        ? <PrototypePicture basename={item} />
-                        : <ProductMedia media={item} alt={`${productName} — характеристики`} />}
+                      <ProductMedia media={item} alt={`${productName} — характеристики`} slotId="product-characteristics" />
                     </button>
                   )
                 })}
               </figure>
             </section>
-            <EditorialGallery materials={product?.pageMaterials || []} useDavosFallback={useDavosFallback} />
+            <EditorialGallery materials={product?.pageMaterials || []} />
             <section className={styles.positionCta} data-product-position-cta>
               <div className={styles.positionCtaHeading}>
                 <p className={styles.positionCtaEyebrow}>Персональная консультация</p>
@@ -661,7 +567,7 @@ export function ProductPagePrototype() {
               </div>
               <div className={styles.positionCtaContent}>
                 <p>Ответим на вопросы о модели «{productName}», наличии размеров и условиях заказа.</p>
-                <a href={`/contacts?product=${encodeURIComponent(requestedSlug)}#contact-form`}>Связаться по позиции</a>
+                <a data-shared-product-contact href={`/contacts?product=${encodeURIComponent(requestedSlug)}#contact-form`}>Связаться по позиции</a>
               </div>
             </section>
             {relatedCollectionProducts.length > 0 && <section className={styles.collectionSection} data-related-collection>
@@ -678,8 +584,8 @@ export function ProductPagePrototype() {
                   return <article className={styles.collectionCard} key={relatedSlug}>
                     <a className={styles.collectionCardMedia} href={`/catalog?product=${encodeURIComponent(relatedSlug)}`} aria-label={`Открыть ${relatedName}`}>
                       {relatedMedia
-                        ? <ProductMedia media={relatedMedia} alt={`Матрас ${relatedName}`} />
-                        : <img src={String(relatedProduct.imageUrl || PRODUCT_MEDIA_PLACEHOLDER_SRC)} alt={`Матрас ${relatedName}`} loading="lazy" />}
+                        ? <ProductMedia media={relatedMedia} alt={`Матрас ${relatedName}`} slotId="catalog-card" />
+                        : <ResponsivePicture src={String(relatedProduct.imageUrl || '')} slotId="catalog-card" alt={`Матрас ${relatedName}`} catalogFallback />}
                     </a>
                     <div className={styles.collectionCardBody}>
                       <h3><a href={`/catalog?product=${encodeURIComponent(relatedSlug)}`}>{relatedName}</a></h3>

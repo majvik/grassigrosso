@@ -1,4 +1,5 @@
 import type { CatalogHeroFeed, CatalogHeroSlide } from './catalog-api'
+import { buildResponsivePictureHtml, installResponsiveMediaFallbacks } from '../media/responsive-media'
 
 function escapeAttr(value: unknown): string {
   return String(value ?? '')
@@ -61,13 +62,11 @@ function slideSrcMatchesExisting(existingSlide: Element, slide: CatalogHeroSlide
   )
 }
 
-function renderSlide(slide: CatalogHeroSlide, index: number): string {
+function renderSlide(slide: CatalogHeroSlide, index: number, slotId: 'catalog-hero' | 'download-catalog'): string {
   const active = index === 0
   const activeClass = active ? ' is-active' : ''
   const ariaHidden = active ? 'false' : 'true'
   const id = `catalog-hero-slide-${index}`
-  const loading = index === 0 ? 'eager' : 'lazy'
-  const fetchPriority = index === 0 ? ' fetchpriority="high"' : ''
   const alt = escapeAttr(slide.alt || '')
   const src = escapeAttr(slide.src || '')
 
@@ -77,7 +76,14 @@ function renderSlide(slide: CatalogHeroSlide, index: number): string {
     return `<div class="catalog-hero-slide${activeClass}" id="${id}" data-slide="${index}" aria-hidden="${ariaHidden}"><video${poster ? ` poster="${poster}"` : ''} muted loop playsinline preload="none" aria-label="${alt}"><source src="${src}" type="${mime}" /></video></div>`
   }
 
-  return `<div class="catalog-hero-slide${activeClass}" id="${id}" data-slide="${index}" aria-hidden="${ariaHidden}"><img src="${src}" alt="${alt}" loading="${loading}" decoding="async"${fetchPriority} /></div>`
+  const picture = buildResponsivePictureHtml({
+    src: slide.src || '',
+    slotId,
+    alt: slide.alt || '',
+    sizes: '100vw',
+    eager: index === 0,
+  })
+  return `<div class="catalog-hero-slide${activeClass}" id="${id}" data-slide="${index}" aria-hidden="${ariaHidden}">${picture}</div>`
 }
 
 function renderDot(index: number): string {
@@ -102,18 +108,20 @@ export function applyCatalogHeroFeed(sliderRoot: Element, data: CatalogHeroFeed)
   }
 
   const slides = Array.isArray(data.slides) ? data.slides : []
+  const slotId = document.body.dataset.page === 'download-catalog' ? 'download-catalog' : 'catalog-hero'
   const existingSlides = [...slidesRoot.querySelectorAll('.catalog-hero-slide')]
   const slidesHtml = slides
     .map((slide, index) => {
       if (index === 0 && slideSrcMatchesExisting(existingSlides[0], slide)) {
         return existingSlides[0].outerHTML
       }
-      return renderSlide(slide, index)
+      return renderSlide(slide, index, slotId)
     })
     .join('')
 
   slidesRoot.innerHTML = slidesHtml
   dotsRoot.innerHTML = slides.map((_, index) => renderDot(index)).join('')
+  installResponsiveMediaFallbacks(sliderRoot)
 }
 
 export function setDownloadCatalogMediaDisplayMode(
