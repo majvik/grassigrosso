@@ -170,7 +170,9 @@ function getCatalogStrapiCache(key, options = {}) {
   if (!row) return undefined;
   const now = Date.now();
   if (now <= row.expires) return row.body;
-  if (allowStale && row.staleUntil && now <= row.staleUntil) return row.body;
+  if (row.staleUntil && now <= row.staleUntil) {
+    return allowStale ? row.body : undefined;
+  }
   catalogStrapiResponseCache.delete(key);
   return undefined;
 }
