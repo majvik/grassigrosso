@@ -249,6 +249,8 @@ function slimCatalogProductsForListing(items) {
       pageDescription,
       pageCharacteristicsMedia,
       pageMaterials,
+      strapiDocumentId,
+      isActive,
       ...rest
     } = item;
     const gallery = Array.isArray(rest.gallery)

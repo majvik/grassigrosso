@@ -286,6 +286,9 @@ if (listingProducts) {
         `/api/catalog/products?view=listing: ${product.slug || '(unknown)'} gallery must have at most 1 item`,
       )
     }
+    if (Object.hasOwn(product, 'strapiDocumentId') || Object.hasOwn(product, 'isActive')) {
+      failures.push(`/api/catalog/products?view=listing: ${product.slug || '(unknown)'} must omit full-feed identity and activity fields`)
+    }
   }
   const orient = listingItems.find((product) => product.slug === 'orient')
   if (orient && Array.isArray(orient.gallery) && orient.gallery.length !== 1) {

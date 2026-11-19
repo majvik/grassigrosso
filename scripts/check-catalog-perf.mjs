@@ -85,7 +85,7 @@ async function waitFor(evaluate, label, expression, timeoutMs = 30000) {
 }
 
 function assertListingPayload(listingPayload) {
-  const listingBytes = JSON.stringify(listingPayload).length
+  const listingBytes = Buffer.byteLength(JSON.stringify(listingPayload), 'utf8')
   if (listingBytes > BUDGET.maxListingJsonBytes) {
     failures.push(`listing JSON ${listingBytes} B exceeds budget ${BUDGET.maxListingJsonBytes} B`)
   }
@@ -95,6 +95,9 @@ function assertListingPayload(listingPayload) {
   }
   if (orient?.layersCatalog) {
     failures.push('listing orient must not include layersCatalog')
+  }
+  if ((listingPayload.items || []).some((item) => Object.hasOwn(item, 'strapiDocumentId') || Object.hasOwn(item, 'isActive'))) {
+    failures.push('listing items must omit full-feed identity and activity fields')
   }
   return listingBytes
 }

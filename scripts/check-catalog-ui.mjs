@@ -261,7 +261,7 @@ try {
       ? { sliderUrl, coverUrl }
       : false
   })()`, 30000)
-  if (!clearedDavos) failures.push('cleared Davos still exposes hardcoded media instead of neutral placeholders')
+  if (!clearedDavos) failures.push('cleared Davos still exposes temporary media instead of neutral placeholders')
 
   await send('Page.navigate', { url: `${baseUrl}/catalog?product=orient` })
   await waitFor(evaluate, 'legacy compatibility product restored for remaining checks', `Boolean(document.querySelector('.catalogue-new-shared-product[data-product-editorial]:not([hidden])'))`, 30000)
