@@ -113,7 +113,7 @@ module.exports = {
       strapi.db.query('api::product.product').findMany({
         where: { is_active: true },
         populate: {
-          collection: true,
+          collection: { populate: ['page_cover_desktop', 'page_cover_mobile'] },
           tags: true,
           media: true,
           gallery: {
@@ -191,6 +191,8 @@ module.exports = {
         .filter((item) => item.image);
       const mattressType = row.mattress_type_option?.slug || mapMattressType(row.mattress_type || '');
       const sidedness = { двусторонний: 'doubleSided', односторонний: 'singleSided' }[row.sidedness];
+      const collectionPageCoverDesktop = itemFromLegacyMedia(row.collection?.page_cover_desktop, '', row.collection?.name);
+      const collectionPageCoverMobile = itemFromLegacyMedia(row.collection?.page_cover_mobile, '', row.collection?.name);
       const collectionSlugFromRelation = row.collection?.slug || '';
       const collectionSlug = collectionSlugFromRelation
         || (mattressType === 'topper' ? 'topper' : '');
@@ -205,6 +207,8 @@ module.exports = {
       firmnessSide1: Number.isInteger(row.firmness_side1) ? row.firmness_side1 : null,
       firmnessSide2: Number.isInteger(row.firmness_side2) ? row.firmness_side2 : null,
       mattressType,
+      ...(collectionPageCoverDesktop && { collectionPageCoverDesktop }),
+      ...(collectionPageCoverMobile && { collectionPageCoverMobile }),
       ...(sidedness && { sidedness }),
       heightCm: Number(row.height_cm || 0),
       maxLoadKg: Number(row.max_load_kg || 0),

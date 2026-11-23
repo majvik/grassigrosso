@@ -101,6 +101,17 @@ async function syncPagesCmsAdminLabels(strapi) {
         changed = true;
       }
     }
+    if (options.collectionPageCovers && cfg.layouts?.edit) {
+      const coverFields = ['page_cover_desktop', 'page_cover_mobile'];
+      const rows = cfg.layouts.edit
+        .map((row) => row.filter((field) => !coverFields.includes(field.name)))
+        .filter((row) => row.length > 0);
+      rows.push(coverFields.map((name) => ({ name, size: 6 })));
+      if (JSON.stringify(cfg.layouts.edit) !== JSON.stringify(rows)) {
+        cfg.layouts.edit = rows;
+        changed = true;
+      }
+    }
     if (!changed) return;
     await strapi.db
       .connection('strapi_core_store_settings')
@@ -115,6 +126,7 @@ async function syncPagesCmsAdminLabels(strapi) {
   for (const [uid, labels] of Object.entries(labelsByUid.contentTypes)) {
     await patchStore(`plugin_content_manager_configuration_content_types::${uid}`, labels, {
       productPageLayout: uid === 'api::product.product',
+      collectionPageCovers: uid === 'api::collection.collection',
     });
   }
 

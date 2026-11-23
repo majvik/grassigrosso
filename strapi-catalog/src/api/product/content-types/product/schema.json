@@ -186,7 +186,7 @@
       "component": "catalog.product-gallery-item"
     },
     "page_cover_desktop": {
-      "displayName": "Обложка страницы — SVG для компьютеров",
+      "displayName": "Обложка страницы товара — десктоп",
       "type": "media",
       "multiple": false,
       "required": false,
@@ -196,7 +196,7 @@
       ]
     },
     "page_cover_mobile": {
-      "displayName": "Обложка страницы — SVG для телефонов",
+      "displayName": "Обложка страницы товара — мобильные",
       "type": "media",
       "multiple": false,
       "required": false,

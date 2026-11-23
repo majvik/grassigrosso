@@ -6,17 +6,15 @@ import { FaqSection } from '@/components/marketing/shared-page-sections'
 import { readCatalogFavourites, writeCatalogFavourites } from '@/catalog/catalog-favourites'
 import { copyTextWithToast, flashCatalogShareLinkCopiedLabel } from '@/catalog/catalog-share'
 import { initCatalogHeroSlider } from '@/catalog-hero-slider.js'
-import { getCatalogFirmnessRows } from '@/catalog/catalog-firmness-scale'
+import { CatalogFirmnessScale } from '@/components/ui/CatalogFirmnessScale'
 import { formatConstructionType } from '@/catalog/catalog-modal'
 import { getCatalogProductsFullFeed, type CatalogProduct, type CatalogProductMediaItem } from '@/catalog/catalog-api'
+import { CatalogPageCover } from '@/components/ui/CatalogPageCover'
 import { ResponsivePicture } from '@/components/ui/ResponsivePicture'
 import styles from './ProductPagePrototype.module.css'
 
 const PRODUCT_COVER_LOCATION_LINE_SRC = '/product-page-prototype/cover-location-line.svg'
 const PRODUCT_MEDIA_PLACEHOLDER_SRC = '/media-placeholders/product-slider.png'
-const PRODUCT_COVER_DESKTOP_PLACEHOLDER_SRC = '/media-placeholders/product-cover-desktop.svg'
-const PRODUCT_COVER_MOBILE_PLACEHOLDER_SRC = '/media-placeholders/product-cover-mobile.svg'
-
 const EMPTY_PRODUCT_MEDIA: CatalogProductMediaItem = { type: 'image', src: '', alt: '' }
 
 function centerVisibleImageContent(image: HTMLImageElement) {
@@ -82,42 +80,6 @@ function ProductMedia({ media, eager = false, alt, centerTransparentContent = fa
 
 function TextWithBreaks({ text }: { text: string }) {
   return <>{text.split(/<br\s*\/?\s*>|\n/gi).map((line, index) => <span key={`${index}-${line}`}>{index > 0 && <br />}{line}</span>)}</>
-}
-
-function ProductCoverPicture({ desktop, mobile, productName }: { desktop?: CatalogProductMediaItem | null; mobile?: CatalogProductMediaItem | null; productName: string }) {
-  const readyRef = useRef(false)
-  const resolveCoverSource = (media: CatalogProductMediaItem | null | undefined, placeholderSource: string) => media?.fallbackSrc || media?.src || placeholderSource
-  const desktopSource = resolveCoverSource(desktop, PRODUCT_COVER_DESKTOP_PLACEHOLDER_SRC)
-  const mobileSource = resolveCoverSource(mobile, PRODUCT_COVER_MOBILE_PLACEHOLDER_SRC)
-
-  function announceReady() {
-    if (readyRef.current) return
-    readyRef.current = true
-    window.dispatchEvent(new CustomEvent('product-cover-ready'))
-  }
-
-  return (
-    <picture data-product-cover-picture>
-      <source media="(max-width: 900px)" type="image/svg+xml" srcSet={mobileSource} />
-      <img
-        data-product-cover-media
-        src={desktopSource}
-        alt={desktop?.alt || `Матрас ${productName} в интерьере`}
-        loading="eager"
-        fetchPriority="high"
-        decoding="async"
-        onLoad={announceReady}
-        onError={(event) => {
-          const image = event.currentTarget
-          if (image.dataset.placeholderApplied !== 'true') {
-            image.dataset.placeholderApplied = 'true'
-            image.src = PRODUCT_COVER_DESKTOP_PLACEHOLDER_SRC
-          }
-          announceReady()
-        }}
-      />
-    </picture>
-  )
 }
 
 function ProductPrototypeSlider({ media, productName, onOpenGallery }: { media: CatalogProductMediaItem[]; productName: string; onOpenGallery: (items: CatalogProductMediaItem[], index: number) => void }) {
@@ -258,31 +220,6 @@ function FullscreenProductGallery({ items, initialIndex, open, onOpenChange, pro
       <button type="button" className={styles.fullscreenGalleryClose} aria-label="Закрыть галерею" onClick={() => onOpenChange(false)}>×</button>
     </div>,
     document.body,
-  )
-}
-
-function FirmnessScale({ side1, side2 }: {
-  side1: CatalogProduct['firmnessSide1']
-  side2: CatalogProduct['firmnessSide2']
-}) {
-  const rows = getCatalogFirmnessRows(side1, side2)
-  if (!rows.length) return null
-
-  return (
-    <section className="catalogue-new-firmness-scale" data-product-firmness-scale>
-      <h3 className="catalogue-new-firmness-title">Жесткость</h3>
-      {rows.map(({ label, score }) => (
-        <div key={label} className={`catalogue-new-firmness-row${label ? '' : ' is-single'}`}>
-          {label && <span className="catalogue-new-firmness-label">{label}</span>}
-          <div className="catalogue-new-firmness-track" aria-hidden="true">
-            {Array.from({ length: 10 }, (_, index) => (
-              <span key={index} className={`catalogue-new-firmness-segment${index < score ? ' is-filled' : ''}`} />
-            ))}
-          </div>
-          <span className="catalogue-new-firmness-score">{score}/10</span>
-        </div>
-      ))}
-    </section>
   )
 }
 
@@ -457,10 +394,11 @@ export function ProductPagePrototype() {
   return (
     <>
       <figure className={`${styles.productCover} product-cover-image`} data-product-cover-image>
-        <ProductCoverPicture
+        <CatalogPageCover
+          product
           desktop={product?.pageCoverDesktop}
           mobile={product?.pageCoverMobile}
-          productName={productName}
+          alt={product?.pageCoverDesktop?.alt || `Матрас ${productName} в интерьере`}
         />
         {coverLocation && <div className={styles.coverLocation} data-product-cover-location>
           <img className={styles.coverLocationLine} src={PRODUCT_COVER_LOCATION_LINE_SRC} alt="" aria-hidden="true" />
@@ -523,7 +461,7 @@ export function ProductPagePrototype() {
                   <div><dt>Тип конструкции</dt><dd>{typeLabel}</dd></div>
                   <div><dt>Нагрузка</dt><dd>{loadLabel}</dd></div>
                 </dl>
-                <FirmnessScale side1={product?.firmnessSide1} side2={product?.firmnessSide2} />
+                <CatalogFirmnessScale side1={product?.firmnessSide1} side2={product?.firmnessSide2} />
               </div>
             </div>
             <section className={styles.characteristicsBlock} data-product-info-band>

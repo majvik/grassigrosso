@@ -939,14 +939,424 @@
       "features": [
         "edgeSupport"
       ],
-      "gallery": [],
-      "imageUrl": "",
-      "imageAlt": "Коллекция Давос",
-      "pageCoverDesktop": null,
-      "pageCoverMobile": null,
-      "pageCoverLocation": null,
+      "gallery": [
+        {
+          "type": "image",
+          "alt": "RELAX_Davos_canonical-v1-04.png",
+          "src": "/uploads/RELAX_Davos_canonical_v1_04_eeb5daf824.avif",
+          "fallbackSrc": "/uploads/RELAX_Davos_canonical_v1_04_eeb5daf824.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_RELAX_Davos_canonical_v1_04_eeb5daf824.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_RELAX_Davos_canonical_v1_04_eeb5daf824.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/medium_RELAX_Davos_canonical_v1_04_eeb5daf824.png",
+              "width": 750
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/large_RELAX_Davos_canonical_v1_04_eeb5daf824.png",
+              "width": 1000
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/RELAX_Davos_canonical_v1_04_eeb5daf824.png",
+              "width": 1890
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/RELAX_Davos_canonical_v1_04_eeb5daf824.avif",
+              "width": 1890
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/RELAX_Davos_canonical_v1_04_eeb5daf824.webp",
+              "width": 1890
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "RELAX_Davos_canonical-v3-05.png",
+          "src": "/uploads/RELAX_Davos_canonical_v3_05_0c191567dc.avif",
+          "fallbackSrc": "/uploads/RELAX_Davos_canonical_v3_05_0c191567dc.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_RELAX_Davos_canonical_v3_05_0c191567dc.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_RELAX_Davos_canonical_v3_05_0c191567dc.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/medium_RELAX_Davos_canonical_v3_05_0c191567dc.png",
+              "width": 750
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/large_RELAX_Davos_canonical_v3_05_0c191567dc.png",
+              "width": 1000
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/RELAX_Davos_canonical_v3_05_0c191567dc.png",
+              "width": 1913
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/RELAX_Davos_canonical_v3_05_0c191567dc.avif",
+              "width": 1913
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/RELAX_Davos_canonical_v3_05_0c191567dc.webp",
+              "width": 1913
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "RELAX_Davos_canonical-v4-01.png",
+          "src": "/uploads/RELAX_Davos_canonical_v4_01_cb1e8fa2b9.avif",
+          "fallbackSrc": "/uploads/RELAX_Davos_canonical_v4_01_cb1e8fa2b9.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_RELAX_Davos_canonical_v4_01_cb1e8fa2b9.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_RELAX_Davos_canonical_v4_01_cb1e8fa2b9.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/medium_RELAX_Davos_canonical_v4_01_cb1e8fa2b9.png",
+              "width": 750
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/large_RELAX_Davos_canonical_v4_01_cb1e8fa2b9.png",
+              "width": 1000
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/RELAX_Davos_canonical_v4_01_cb1e8fa2b9.png",
+              "width": 2214
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/RELAX_Davos_canonical_v4_01_cb1e8fa2b9.avif",
+              "width": 2214
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/RELAX_Davos_canonical_v4_01_cb1e8fa2b9.webp",
+              "width": 2214
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "RELAX_Davos_canonical-v3-02.png",
+          "src": "/uploads/RELAX_Davos_canonical_v3_02_c7f307cbda.avif",
+          "fallbackSrc": "/uploads/RELAX_Davos_canonical_v3_02_c7f307cbda.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_RELAX_Davos_canonical_v3_02_c7f307cbda.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_RELAX_Davos_canonical_v3_02_c7f307cbda.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/medium_RELAX_Davos_canonical_v3_02_c7f307cbda.png",
+              "width": 750
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/large_RELAX_Davos_canonical_v3_02_c7f307cbda.png",
+              "width": 1000
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/RELAX_Davos_canonical_v3_02_c7f307cbda.png",
+              "width": 5378
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/RELAX_Davos_canonical_v3_02_c7f307cbda.avif",
+              "width": 5378
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/RELAX_Davos_canonical_v3_02_c7f307cbda.webp",
+              "width": 5378
+            }
+          ]
+        }
+      ],
+      "imageUrl": "/uploads/RELAX_Davos_canonical_v1_04_eeb5daf824.avif",
+      "imageAlt": "RELAX_Davos_canonical-v1-04.png",
+      "pageCoverDesktop": {
+        "type": "image",
+        "alt": "RELAX_Davos_canonical-v1-01.png",
+        "src": "/uploads/RELAX_Davos_canonical_v1_01_da219f0821.avif",
+        "fallbackSrc": "/uploads/RELAX_Davos_canonical_v1_01_da219f0821.png",
+        "sources": [
+          {
+            "type": "image/png",
+            "src": "/uploads/thumbnail_RELAX_Davos_canonical_v1_01_da219f0821.png",
+            "width": 245
+          },
+          {
+            "type": "image/png",
+            "src": "/uploads/small_RELAX_Davos_canonical_v1_01_da219f0821.png",
+            "width": 500
+          },
+          {
+            "type": "image/png",
+            "src": "/uploads/medium_RELAX_Davos_canonical_v1_01_da219f0821.png",
+            "width": 750
+          },
+          {
+            "type": "image/png",
+            "src": "/uploads/large_RELAX_Davos_canonical_v1_01_da219f0821.png",
+            "width": 1000
+          },
+          {
+            "type": "image/png",
+            "src": "/uploads/RELAX_Davos_canonical_v1_01_da219f0821.png",
+            "width": 6463
+          },
+          {
+            "type": "image/avif",
+            "src": "/uploads/RELAX_Davos_canonical_v1_01_da219f0821.avif",
+            "width": 6463
+          },
+          {
+            "type": "image/webp",
+            "src": "/uploads/RELAX_Davos_canonical_v1_01_da219f0821.webp",
+            "width": 6463
+          }
+        ]
+      },
+      "pageCoverMobile": {
+        "type": "image",
+        "alt": "RELAX_Davos_canonical-v1-01.png",
+        "src": "/uploads/RELAX_Davos_canonical_v1_01_f520c463f2.avif",
+        "fallbackSrc": "/uploads/RELAX_Davos_canonical_v1_01_f520c463f2.png",
+        "sources": [
+          {
+            "type": "image/png",
+            "src": "/uploads/thumbnail_RELAX_Davos_canonical_v1_01_f520c463f2.png",
+            "width": 156
+          },
+          {
+            "type": "image/png",
+            "src": "/uploads/small_RELAX_Davos_canonical_v1_01_f520c463f2.png",
+            "width": 500
+          },
+          {
+            "type": "image/png",
+            "src": "/uploads/medium_RELAX_Davos_canonical_v1_01_f520c463f2.png",
+            "width": 750
+          },
+          {
+            "type": "image/png",
+            "src": "/uploads/large_RELAX_Davos_canonical_v1_01_f520c463f2.png",
+            "width": 1000
+          },
+          {
+            "type": "image/png",
+            "src": "/uploads/RELAX_Davos_canonical_v1_01_f520c463f2.png",
+            "width": 6463
+          },
+          {
+            "type": "image/avif",
+            "src": "/uploads/RELAX_Davos_canonical_v1_01_f520c463f2.avif",
+            "width": 6463
+          },
+          {
+            "type": "image/webp",
+            "src": "/uploads/RELAX_Davos_canonical_v1_01_f520c463f2.webp",
+            "width": 6463
+          }
+        ]
+      },
+      "pageCoverLocation": {
+        "place": "",
+        "coordinates": "",
+        "dateTime": "",
+        "sunPosition": ""
+      },
       "pageDescription": "Матрас подойдёт тем, кто предпочитает выраженно жёсткую поверхность. С обеих сторон блока из 1000 пружин на спальное место лежат по два сантиметра кокосовой койры. Жёсткость обеих сторон — 9 из 10. Объёмная стёжка трикотажного чехла даёт более мягкое первое касание, а усиленный периметр сохраняет плотность края.",
-      "pageCharacteristicsMedia": [],
+      "pageCharacteristicsMedia": [
+        {
+          "type": "image",
+          "alt": "RELAX_Davos_canonical-v4-03.png",
+          "src": "/uploads/RELAX_Davos_canonical_v4_03_9a46d64dc7.avif",
+          "fallbackSrc": "/uploads/RELAX_Davos_canonical_v4_03_9a46d64dc7.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_RELAX_Davos_canonical_v4_03_9a46d64dc7.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_RELAX_Davos_canonical_v4_03_9a46d64dc7.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/medium_RELAX_Davos_canonical_v4_03_9a46d64dc7.png",
+              "width": 750
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/large_RELAX_Davos_canonical_v4_03_9a46d64dc7.png",
+              "width": 1000
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/RELAX_Davos_canonical_v4_03_9a46d64dc7.png",
+              "width": 1167
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/RELAX_Davos_canonical_v4_03_9a46d64dc7.avif",
+              "width": 1167
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/RELAX_Davos_canonical_v4_03_9a46d64dc7.webp",
+              "width": 1167
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "RELAX_Davos_canonical-v3-07.png",
+          "src": "/uploads/RELAX_Davos_canonical_v3_07_f9121015ca.avif",
+          "fallbackSrc": "/uploads/RELAX_Davos_canonical_v3_07_f9121015ca.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_RELAX_Davos_canonical_v3_07_f9121015ca.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_RELAX_Davos_canonical_v3_07_f9121015ca.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/medium_RELAX_Davos_canonical_v3_07_f9121015ca.png",
+              "width": 750
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/RELAX_Davos_canonical_v3_07_f9121015ca.png",
+              "width": 887
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/RELAX_Davos_canonical_v3_07_f9121015ca.avif",
+              "width": 887
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/RELAX_Davos_canonical_v3_07_f9121015ca.webp",
+              "width": 887
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "RELAX_Davos_canonical-v4-04.png",
+          "src": "/uploads/RELAX_Davos_canonical_v4_04_51db1f9985.avif",
+          "fallbackSrc": "/uploads/RELAX_Davos_canonical_v4_04_51db1f9985.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_RELAX_Davos_canonical_v4_04_51db1f9985.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_RELAX_Davos_canonical_v4_04_51db1f9985.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/RELAX_Davos_canonical_v4_04_51db1f9985.png",
+              "width": 615
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/RELAX_Davos_canonical_v4_04_51db1f9985.avif",
+              "width": 615
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/RELAX_Davos_canonical_v4_04_51db1f9985.webp",
+              "width": 615
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "alt": "RELAX_Davos_canonical-v4-05.png",
+          "src": "/uploads/RELAX_Davos_canonical_v4_05_7f546de5dd.avif",
+          "fallbackSrc": "/uploads/RELAX_Davos_canonical_v4_05_7f546de5dd.png",
+          "sources": [
+            {
+              "type": "image/png",
+              "src": "/uploads/thumbnail_RELAX_Davos_canonical_v4_05_7f546de5dd.png",
+              "width": 156
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/small_RELAX_Davos_canonical_v4_05_7f546de5dd.png",
+              "width": 500
+            },
+            {
+              "type": "image/png",
+              "src": "/uploads/RELAX_Davos_canonical_v4_05_7f546de5dd.png",
+              "width": 560
+            },
+            {
+              "type": "image/avif",
+              "src": "/uploads/RELAX_Davos_canonical_v4_05_7f546de5dd.avif",
+              "width": 560
+            },
+            {
+              "type": "image/webp",
+              "src": "/uploads/RELAX_Davos_canonical_v4_05_7f546de5dd.webp",
+              "width": 560
+            }
+          ]
+        }
+      ],
       "pageMaterials": [],
       "coverDescription": "премиальный трикотаж с объемной стёжкой на холконе и пеной \"flexi\"; боковина из искусственной замши",
       "layersCatalog": "кокосовая койра  2 см\nхлопковый войлок\n 1000 пружин на одно спальное место\nхлопковый войлок\nкокосовая койра  2 см\n\nтатами борт /ПВВ 50 кг м.куб/",

@@ -10,6 +10,7 @@
 }
 
 .heroMedia,
+.heroMedia picture,
 .heroMedia img {
   display: block;
   width: 100%;
@@ -173,6 +174,25 @@
   line-height: 1.1;
 }
 
+.specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin: 24px 0 0;
+}
+
+.specs dt {
+  color: var(--color-text-gray);
+}
+
+.specs dd {
+  margin: 4px 0 0;
+}
+
+.productContent :global(.catalogue-new-firmness-scale) {
+  margin-top: 24px;
+}
+
 .productContent p {
   max-width: 42ch;
   margin: 32px 0 0;
@@ -305,7 +325,13 @@
     gap: 32px;
   }
 
+  .productContent p {
+    max-width: none;
+    overflow-wrap: anywhere;
+  }
+
   .productImage {
+    grid-row: 1;
     aspect-ratio: 1;
   }
 }

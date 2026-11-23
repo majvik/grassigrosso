@@ -22,6 +22,26 @@
       "required": true,
       "unique": true
     },
+    "page_cover_desktop": {
+      "displayName": "Обложка коллекции в каталоге — десктоп",
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "page_cover_mobile": {
+      "displayName": "Обложка коллекции в каталоге — мобильные",
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
     "sort_order": {
       "displayName": "Порядок сортировки",
       "type": "integer",

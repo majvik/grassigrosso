@@ -128,17 +128,17 @@ try {
   if (!deferredGallery) failures.push('second catalog gallery image fell back to a placeholder')
 
   await evaluate(`document.querySelector('.catalogue-new-chip[data-filter-group="collection"][data-value="relax"]')?.click()`)
-  const davosPlaceholder = await waitFor(evaluate, 'Davos catalog placeholder loads', `(() => {
+  const davosPlaceholder = await waitFor(evaluate, 'Davos catalog image loads', `(() => {
     const image = document.querySelector('[data-catalog-card-media][data-product-slug="davos"] img')
     if (!image || !image.complete || image.naturalWidth === 0) return false
     const current = new URL(image.currentSrc || image.src, location.href).pathname
-    return current.startsWith('/media-placeholders/catalog-card.')
+    return current.startsWith('/uploads/') && current.includes('RELAX_Davos_canonical_')
       ? { current }
       : false
   })()`, 15000)
-  if (!davosPlaceholder) failures.push('Davos catalog card remained empty instead of rendering the gray placeholder')
+  if (!davosPlaceholder) failures.push('Davos catalog card did not load the saved image')
   await evaluate(`document.querySelector('.catalogue-new-reset')?.click()`)
-  await waitFor(evaluate, 'catalog filters reset after Davos placeholder check', `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '${EXPECTED_PRODUCT_COUNT}'`)
+  await waitFor(evaluate, 'catalog filters reset after Davos media check', `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '${EXPECTED_PRODUCT_COUNT}'`)
 
   for (const [type, count] of [['spring', 27], ['doubleSided', 20]]) {
     await evaluate(`document.querySelector('.catalogue-new-chip[data-filter-group="type"][data-value="${type}"]')?.click()`)
@@ -264,19 +264,19 @@ try {
   }
 
   await send('Page.navigate', { url: `${baseUrl}/catalog?product=davos` })
-  const clearedDavos = await waitFor(evaluate, 'cleared Davos uses neutral placeholders only', `(() => {
+  const clearedDavos = await waitFor(evaluate, 'Davos uses the saved gallery and cover', `(() => {
     const slider = document.querySelector('picture[data-media-slot="product-slider"] img')
     const cover = document.querySelector('img[data-product-cover-media]')
     if (!slider || !cover || !slider.complete || slider.naturalWidth === 0) return false
     const sliderUrl = new URL(slider.currentSrc, location.href).pathname
     const coverUrl = new URL(cover.currentSrc, location.href).pathname
-    return sliderUrl.startsWith('/media-placeholders/product-slider.')
-      && coverUrl.startsWith('/media-placeholders/product-cover-')
+    return sliderUrl.includes('/uploads/') && sliderUrl.includes('RELAX_Davos_canonical_')
+      && coverUrl.includes('/uploads/') && coverUrl.includes('RELAX_Davos_canonical_')
       && !document.querySelector('[data-product-editorial-gallery]')
       ? { sliderUrl, coverUrl }
       : false
   })()`, 30000)
-  if (!clearedDavos) failures.push('cleared Davos still exposes temporary media instead of neutral placeholders')
+  if (!clearedDavos) failures.push('Davos did not load its saved gallery and cover')
 
   await send('Page.navigate', { url: `${baseUrl}/catalog?product=orient` })
   await waitFor(evaluate, 'legacy compatibility product restored for remaining checks', `Boolean(document.querySelector('.catalogue-new-shared-product[data-product-editorial]:not([hidden])'))`, 30000)
@@ -336,8 +336,10 @@ try {
       ])
       const tags = [...document.querySelectorAll('.catalogue-new-shared-product-tags .catalogue-new-tag')]
         .map((tag) => tag.textContent.trim())
+      const hasDescription = [...document.querySelectorAll('[data-product-editorial] p')]
+        .some((p) => p.textContent.includes('14 сантиметров пены Flexi'))
       return (${JSON.stringify(slug)} !== 'hard-format'
-          || (tags.includes('Беспружинный') && !tags.includes('Пружинный')))
+          || (tags.includes('Беспружинный') && !tags.includes('Пружинный') && hasDescription))
         && JSON.stringify(actual) === JSON.stringify(${JSON.stringify(expected)})
     })()`)
   }
@@ -372,6 +374,60 @@ try {
     return infoColumns === 1 && pageRect.right <= document.documentElement.clientWidth + 1
   })()`)
   await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+
+  await evaluate(`document.querySelector('[data-related-collection] a[href="/catalog?collection=relax"]')?.click()`)
+  await waitFor(evaluate, 'product collection link opens the full Relax template', `(() => {
+    const products = document.querySelector('[data-collection-products]')
+    return location.search === '?collection=relax'
+      && document.querySelector('[data-collection-hero] h1')?.textContent.trim() === 'Relax'
+      && document.querySelector('[data-collection-hero-media] img')?.getAttribute('src') === '/media-placeholders/product-cover-desktop.svg'
+      && !!products?.querySelector('article p')?.textContent.trim()
+      && products.querySelector('article p').nextElementSibling?.matches('dl')
+      && !![...(products?.querySelectorAll('dt') || [])].find((field) => field.textContent.trim() === 'Тип конструкции')
+      && !![...(products?.querySelectorAll('dt') || [])].find((field) => field.textContent.trim() === 'Нагрузка')
+      && !!products?.querySelector('a[href="/catalog?product=imperio"]')
+      && !products.querySelector('a[href="/catalog?product=hard-format"]')
+      && !document.querySelector('.catalogue-new-sidebar, .catalogue-new-results')
+  })()`, 15000)
+  for (const width of [390, 768]) {
+    await send('Emulation.setDeviceMetricsOverride', { width, height: 844, deviceScaleFactor: 1, mobile: true })
+    await waitFor(evaluate, 'collection mobile description fills the card and divider follows the CTA', `(() => {
+      const article = document.querySelector('[data-collection-products] article')
+      const divider = article?.nextElementSibling
+      const description = article?.querySelector('p')
+      const cta = article?.querySelector('a:not([aria-label])')
+      const image = article?.querySelector('img[alt^="Матрас"]')
+      const cover = document.querySelector('[data-collection-hero-media] img')
+      if (!description || !cta || !image || !divider?.hasAttribute('data-collection-divider')) return false
+      const box = (element) => element.getBoundingClientRect()
+      return cover?.currentSrc.endsWith('/media-placeholders/product-cover-mobile.svg')
+        && Math.abs(box(description).width - box(article).width) < 1
+        && box(image).bottom <= box(cta).top
+        && box(cta).bottom <= box(divider).top
+    })()`)
+  }
+  await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+  await evaluate(`document.querySelector('[data-collection-products] a[href="/catalog?product=imperio"]')?.click()`)
+  await waitFor(evaluate, 'collection card links back to the product page', `(() =>
+    location.search === '?product=imperio' && !!document.querySelector('[data-product-editorial]')
+  )()`)
+  await send('Page.navigate', { url: `${baseUrl}/catalog?collection=flexi` })
+  await waitFor(evaluate, 'collection template shows the requested collection', `(() => {
+    const products = document.querySelector('[data-collection-products]')
+    const firmnessRows = (slug) => {
+      const card = products?.querySelector('a[href="/catalog?product=' + slug + '"]')?.closest('article')
+      return [...(card?.querySelectorAll('[data-product-firmness-scale] .catalogue-new-firmness-row') || [])]
+        .map((row) => [
+          row.querySelector('.catalogue-new-firmness-label')?.textContent.trim() || '',
+          row.querySelector('.catalogue-new-firmness-score')?.textContent.trim(),
+        ])
+    }
+    return document.querySelector('[data-collection-hero] h1')?.textContent.trim() === 'Flexi'
+      && JSON.stringify(firmnessRows('hard-format')) === JSON.stringify([['Сторона 1', '7/10'], ['Сторона 2', '8/10']])
+      && JSON.stringify(firmnessRows('balance-comfort')) === JSON.stringify([['', '7/10']])
+      && !!products?.querySelector('a[href="/catalog?product=hard-format"]')
+      && !products.querySelector('a[href="/catalog?product=imperio"]')
+  })()`, 15000)
 
   await send('Page.navigate', { url: `${baseUrl}/catalog` })
   await waitFor(evaluate, 'returned from product page to catalogue', `location.search === '' && Boolean(document.querySelector('.catalogue-new-card'))`)

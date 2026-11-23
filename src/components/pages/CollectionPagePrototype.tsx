@@ -1,51 +1,15 @@
-import { useEffect, useRef, type CSSProperties, type MouseEvent } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react'
 
+import { getCatalogProductsFullFeed, type CatalogProduct } from '@/catalog/catalog-api'
+import { formatConstructionType } from '@/catalog/catalog-modal'
+import { CatalogFirmnessScale } from '@/components/ui/CatalogFirmnessScale'
+import { CatalogPageCover } from '@/components/ui/CatalogPageCover'
+import { ResponsivePicture } from '@/components/ui/ResponsivePicture'
 import { copyTextWithToast, flashCatalogShareLinkCopiedLabel } from '@/catalog/catalog-share'
 
 import styles from './CollectionPagePrototype.module.css'
 
-const COLLECTION_PRODUCTS = [
-  {
-    name: 'Империо', slug: 'imperio', media: 'imperio_8069a3faa1',
-    description: 'Двусторонняя модель с разными ощущениями жёсткости и усиленной поддержкой по всей площади.',
-    tags: ['Пружинный', 'Разная жёсткость сторон'],
-  },
-  {
-    name: 'Люксор', slug: 'luxor', media: 'luxor_adb0d9305d',
-    description: 'Высокий матрас средней жёсткости для комфортного сна и равномерного распределения нагрузки.',
-    tags: ['Пружинный', 'Средний'],
-  },
-  {
-    name: 'Галакси', slug: 'galaksi', media: 'galaksi_29d31b0292',
-    description: 'Сбалансированная модель с выраженной упругостью и стабильной поддержкой позвоночника.',
-    tags: ['Пружинный', 'Средний'],
-  },
-  {
-    name: 'Дискавери', slug: 'discovery', media: 'discovery_caf02c8839',
-    description: 'Плотная конструкция для тех, кто предпочитает жёсткую поверхность и уверенную опору.',
-    tags: ['Пружинный', 'Жёсткий'],
-  },
-  {
-    name: 'Давос', slug: 'davos', media: 'davos_f60728f139',
-    description: 'Жёсткий матрас с натуральной кокосовой койрой с обеих сторон и усиленным периметром.',
-    tags: ['Пружинный', 'Жёсткий'],
-  },
-] as const
-
-function CollectionPicture({ basename, alt }: { basename: string; alt: string }) {
-  const root = `/collection-page-prototype/${basename}`
-  return (
-    <picture>
-      <source type="image/avif" srcSet={`${root}.avif`} />
-      <source type="image/webp" srcSet={`${root}.webp`} />
-      <img src={`${root}.png`} alt={alt} loading="lazy" decoding="async" />
-    </picture>
-  )
-}
-
-function CollectionHero() {
-  const desktopRoot = '/collection-page-prototype/davos_interior_pilot_01_37e208e0c8'
-  const mobileRoot = '/collection-page-prototype/davos_product_studio_pilot_01_605d8327e4'
+function CollectionHero({ name, product }: { name: string; product: CatalogProduct }) {
   const heroRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -83,18 +47,13 @@ function CollectionHero() {
       data-collection-hero
       style={{ '--collection-parallax-y': '0px' } as CSSProperties}
     >
-      <picture className={styles.heroMedia} data-collection-hero-media>
-        <source media="(max-width: 900px)" type="image/avif" srcSet={`${mobileRoot}.avif`} />
-        <source media="(max-width: 900px)" type="image/webp" srcSet={`${mobileRoot}.webp`} />
-        <source media="(max-width: 900px)" type="image/png" srcSet={`${mobileRoot}.png`} />
-        <source type="image/avif" srcSet={`${desktopRoot}.avif`} />
-        <source type="image/webp" srcSet={`${desktopRoot}.webp`} />
-        <img src={`${desktopRoot}.png`} alt="Коллекция Relax" loading="eager" fetchPriority="high" decoding="async" />
-      </picture>
+      <div className={styles.heroMedia} data-collection-hero-media>
+        <CatalogPageCover desktop={product.collectionPageCoverDesktop} mobile={product.collectionPageCoverMobile} alt={`Коллекция ${name}`} />
+      </div>
       <div className={styles.heroShade} aria-hidden="true" />
       <div className={styles.heroTitle}>
-        <p>Коллекция Релакс</p>
-        <h1>Relax</h1>
+        <p>Коллекция</p>
+        <h1>{name}</h1>
       </div>
       <div className={`catalogue-new-shared-product-title-actions ${styles.heroActions}`} data-collection-actions>
         <button type="button" className="catalogue-new-favourites-share-link-btn catalogue-new-shared-product-icon-action" aria-label="Скопировать ссылку на коллекцию" onClick={copyCollectionLink}>
@@ -110,41 +69,74 @@ function CollectionHero() {
   )
 }
 
-export function CollectionPagePrototype() {
+export function CollectionPagePrototype({ collectionSlug = 'relax' }: { collectionSlug?: string }) {
+  const [products, setProducts] = useState<CatalogProduct[] | null>(null)
   useEffect(() => {
     document.documentElement.classList.add('collection-page-prototype-view')
     return () => document.documentElement.classList.remove('collection-page-prototype-view')
   }, [])
 
+  useEffect(() => {
+    let active = true
+    getCatalogProductsFullFeed().then((items) => {
+      if (active) setProducts(items.filter((item) => item.slug && item.collectionSlug === collectionSlug))
+    }).catch(() => {
+      if (active) setProducts([])
+    })
+    return () => { active = false }
+  }, [collectionSlug])
+
+  if (!products) return null
+  if (!products.length) {
+    return <section className={styles.products}>
+      <h1>Коллекция не найдена</h1>
+      <a href="/catalog">Перейти в каталог</a>
+    </section>
+  }
+
+  const collectionName = products[0].collectionName || collectionSlug
   return (
     <>
-      <CollectionHero />
-      <section className={styles.products} aria-label="Позиции коллекции Relax" data-collection-products>
-        {COLLECTION_PRODUCTS.map((product, index) => (
-          <div className={styles.productEntry} key={product.slug}>
-            {index > 0 ? <div className={styles.divider} aria-hidden="true" /> : null}
-            <article className={styles.productCard}>
-              <div className={styles.productContent}>
-                <div>
-                  <div className={styles.productHeading}>
-                    <h2>{product.name}</h2>
-                    <div className={styles.tags}>
-                      {product.tags.map((tag) => <span key={tag}>{tag}</span>)}
+      <CollectionHero name={collectionName} product={products[0]} />
+      <section className={styles.products} aria-label={`Позиции коллекции ${collectionName}`} data-collection-products>
+        {products.map((product, index) => {
+          const name = product.name || product.slug || ''
+          const href = `/catalog?product=${encodeURIComponent(product.slug || '')}`
+          const tags = product.tags?.filter((tag): tag is string => typeof tag === 'string' && Boolean(tag)) || []
+          const media = product.gallery?.[0]
+          const image = media?.type === 'image' ? media.src : media?.poster || product.imageUrl || ''
+          return (
+            <div className={styles.productEntry} key={product.slug}>
+
+              <article className={styles.productCard}>
+                <div className={styles.productContent}>
+                  <div>
+                    <div className={styles.productHeading}>
+                      <h2>{name}</h2>
+                      <div className={styles.tags}>
+                        {tags.map((tag) => <span key={tag}>{tag}</span>)}
+                      </div>
                     </div>
+                    {product.pageDescription && <p>{product.pageDescription}</p>}
+                    <dl className={styles.specs}>
+                      <div><dt>Тип конструкции</dt><dd>{formatConstructionType(product.mattressType, product.sidedness)}</dd></div>
+                      <div><dt>Нагрузка</dt><dd>{product.maxLoadKg ? `до ${product.maxLoadKg} кг` : '—'}</dd></div>
+                    </dl>
+                    <CatalogFirmnessScale side1={product.firmnessSide1} side2={product.firmnessSide2} />
                   </div>
-                  <p>{product.description}</p>
+                  <a href={href}>
+                    <span>Подробнее</span>
+                    <img src="/arrow-small.svg" alt="" />
+                  </a>
                 </div>
-                <a href={`/catalog?product=${product.slug}`}>
-                  <span>Подробнее</span>
-                  <img src="/arrow-small.svg" alt="" />
+                <a className={styles.productImage} href={href} aria-label={`Открыть ${name}`}>
+                  <ResponsivePicture src={image} alt={`Матрас ${name}`} slotId="catalog-card" sizes="(max-width: 900px) 100vw, 50vw" catalogFallback />
                 </a>
-              </div>
-              <a className={styles.productImage} href={`/catalog?product=${product.slug}`} aria-label={`Открыть ${product.name}`}>
-                <CollectionPicture basename={product.media} alt={`Матрас ${product.name}`} />
-              </a>
-            </article>
-          </div>
-        ))}
+              </article>
+              {index < products.length - 1 && <div className={styles.divider} data-collection-divider aria-hidden="true" />}
+            </div>
+          )
+        })}
       </section>
     </>
   )

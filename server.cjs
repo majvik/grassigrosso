@@ -226,7 +226,7 @@ function slimCatalogGalleryItem(item) {
     src: String(item.src || ''),
   };
   if (item.alt) slim.alt = String(item.alt);
-  if (item.fallbackSrc) slim.fallbackSrc = String(item.fallbackSrc);
+  if (item.fallbackSrc && item.fallbackSrc !== item.src) slim.fallbackSrc = String(item.fallbackSrc);
   if (type === 'video') {
     if (item.mime) slim.mime = String(item.mime);
     if (item.poster) slim.poster = String(item.poster);
@@ -243,6 +243,8 @@ function slimCatalogProductsForListing(items) {
       coverDescription,
       imageUrl,
       imageAlt,
+      collectionPageCoverDesktop,
+      collectionPageCoverMobile,
       pageCoverDesktop,
       pageCoverMobile,
       pageCoverLocation,
@@ -253,6 +255,7 @@ function slimCatalogProductsForListing(items) {
       isActive,
       isRecommended,
       gallery: fullGallery,
+      features,
       ...rest
     } = item;
     const gallery = Array.isArray(fullGallery)
@@ -262,6 +265,7 @@ function slimCatalogProductsForListing(items) {
       ...rest,
       ...(isRecommended === true && { isRecommended: true }),
       ...(gallery.length && { gallery }),
+      ...(features?.length && { features }),
     };
   });
 }
@@ -534,6 +538,7 @@ function mapStrapiProduct(item) {
     slug: node.slug || '',
     collectionName,
     collectionSlug,
+    pageDescription: String(node.page_description ?? node.pageDescription ?? '').trim(),
     firmness,
     mattressType,
     heightCm: Number(node.height_cm ?? node.heightCm ?? 0),

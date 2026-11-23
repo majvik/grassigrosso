@@ -104,6 +104,8 @@ export type CatalogProduct = {
   imageUrl?: string | null
   imageAlt?: string | null
   gallery?: CatalogProductMediaItem[]
+  collectionPageCoverDesktop?: CatalogProductMediaItem | null
+  collectionPageCoverMobile?: CatalogProductMediaItem | null
   pageCoverDesktop?: CatalogProductMediaItem | null
   pageCoverMobile?: CatalogProductMediaItem | null
   pageCoverLocation?: {

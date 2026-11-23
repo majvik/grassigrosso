@@ -24,7 +24,6 @@
       "fillings": [
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Беспружинный",
         "Средняя жесткость"
@@ -62,7 +61,6 @@
       "fillings": [
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Беспружинный",
         "Средняя жесткость"
@@ -101,9 +99,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [
-        "dualFirmness"
-      ],
       "tags": [
         "Беспружинный",
         "Разная жесткость сторон"
@@ -115,6 +110,9 @@
           "alt": "Хард Формат — коллекция Flexi",
           "fallbackSrc": "/uploads/hard_format_0d6264cc49.png"
         }
+      ],
+      "features": [
+        "dualFirmness"
       ]
     },
     {
@@ -142,9 +140,6 @@
         "orthoFoam",
         "memoryEffect"
       ],
-      "features": [
-        "dualFirmness"
-      ],
       "tags": [
         "Беспружинный",
         "Разная жесткость сторон"
@@ -156,6 +151,9 @@
           "alt": "Скай Фоам — коллекция Flexi",
           "fallbackSrc": "/uploads/sky_foam_0fbe8b34a5.png"
         }
+      ],
+      "features": [
+        "dualFirmness"
       ]
     },
     {
@@ -185,7 +183,6 @@
         "memoryEffect",
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Беспружинный",
         "Средняя жесткость"
@@ -225,7 +222,6 @@
         "nanoFoam",
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Беспружинный",
         "Жесткий"
@@ -266,10 +262,6 @@
         "nanoFoam",
         "biCotton"
       ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -281,6 +273,10 @@
           "alt": "Империо — коллекция Relax",
           "fallbackSrc": "/uploads/imperio_8069a3faa1.png"
         }
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
       ]
     },
     {
@@ -309,9 +305,6 @@
         "orthoFoam",
         "memoryEffect"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Мягкий"
@@ -323,6 +316,9 @@
           "alt": "Люксор — коллекция Relax",
           "fallbackSrc": "/uploads/luxor_adb0d9305d.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -351,9 +347,6 @@
         "orthoFoam",
         "nanoFoam"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Мягкий"
@@ -365,6 +358,9 @@
           "alt": "Галакси — коллекция Relax",
           "fallbackSrc": "/uploads/galaksi_29d31b0292.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -394,9 +390,6 @@
         "orthoFoam",
         "forplit"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Средний"
@@ -408,6 +401,9 @@
           "alt": "Дискавери — коллекция Relax",
           "fallbackSrc": "/uploads/discovery_caf02c8839.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -435,12 +431,20 @@
       "fillings": [
         "coir"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Жесткий"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/RELAX_Davos_canonical_v1_04_eeb5daf824.avif",
+          "alt": "RELAX_Davos_canonical-v1-04.png",
+          "fallbackSrc": "/uploads/RELAX_Davos_canonical_v1_04_eeb5daf824.png"
+        }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -469,10 +473,6 @@
         "coir",
         "latex"
       ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -484,6 +484,10 @@
           "alt": "Давос Микс — коллекция Relax",
           "fallbackSrc": "/uploads/davos_mix_cbba0a9e32.png"
         }
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
       ]
     },
     {
@@ -513,10 +517,6 @@
         "coir",
         "latex"
       ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
       "tags": [
         "Разная жесткость сторон",
         "Пружинный"
@@ -528,6 +528,10 @@
           "alt": "Элио — коллекция Relax",
           "fallbackSrc": "/uploads/elio_d91de9f2ca.png"
         }
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
       ]
     },
     {
@@ -556,9 +560,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Средняя жесткость"
@@ -570,6 +571,9 @@
           "alt": "Премьер — коллекция Relax",
           "fallbackSrc": "/uploads/premier_2c2d5c8a99.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -598,9 +602,6 @@
         "coir",
         "latex"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Средняя жесткость"
@@ -612,6 +613,9 @@
           "alt": "Премьер Люкс — коллекция Relax",
           "fallbackSrc": "/uploads/premier_lux_d2f5d4e27c.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -640,9 +644,6 @@
         "memoryEffect",
         "coir"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Средняя жесткость"
@@ -654,6 +655,9 @@
           "alt": "Импринт — коллекция Relax",
           "fallbackSrc": "/uploads/imprint_8388805d62.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -682,10 +686,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -697,6 +697,10 @@
           "alt": "Релакс Плюс — коллекция Relax",
           "fallbackSrc": "/uploads/relax_plus_e0c55db1b5.png"
         }
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
       ]
     },
     {
@@ -725,9 +729,6 @@
         "orthoFoam",
         "coir"
       ],
-      "features": [
-        "dualFirmness"
-      ],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -739,6 +740,9 @@
           "alt": "Твин — коллекция Trend",
           "fallbackSrc": "/uploads/twin_32ba60f7b8.png"
         }
+      ],
+      "features": [
+        "dualFirmness"
       ]
     },
     {
@@ -767,9 +771,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [
-        "dualFirmness"
-      ],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -781,6 +782,9 @@
           "alt": "Релакс — коллекция Trend",
           "fallbackSrc": "/uploads/relax_trend_55248b6852.png"
         }
+      ],
+      "features": [
+        "dualFirmness"
       ]
     },
     {
@@ -809,7 +813,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Пружинный",
         "Средняя жесткость"
@@ -849,9 +852,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [
-        "dualFirmness"
-      ],
       "tags": [
         "Разная жесткость сторон",
         "Пружинный"
@@ -863,6 +863,9 @@
           "alt": "Оптима — коллекция Trend",
           "fallbackSrc": "/uploads/optima_36d543128e.png"
         }
+      ],
+      "features": [
+        "dualFirmness"
       ]
     },
     {
@@ -890,7 +893,6 @@
       "fillings": [
         "coir"
       ],
-      "features": [],
       "tags": [
         "Пружинный"
       ],
@@ -929,9 +931,6 @@
         "orthoFoam",
         "coir"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Средняя жесткость"
@@ -943,6 +942,9 @@
           "alt": "Лидер — коллекция Trend",
           "fallbackSrc": "/uploads/lider_0a44c1d610.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -971,9 +973,6 @@
         "orthoFoam",
         "coir"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -985,6 +984,9 @@
           "alt": "Гравити — коллекция Trend",
           "fallbackSrc": "/uploads/gravity_bd49fb1798.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -1014,7 +1016,6 @@
         "latex",
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Средняя жесткость",
         "Пружинный"
@@ -1047,12 +1048,12 @@
         "orthoFoam",
         "forplit"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Средняя жесткость"
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -1073,7 +1074,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Беспружинный",
         "Средняя жесткость"
@@ -1103,9 +1103,6 @@
       "fillings": [
         "orthoFoam"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Средний"
@@ -1118,6 +1115,9 @@
           "alt": "Ориент — коллекция Classic",
           "fallbackSrc": "/uploads/orient_2c3e41f94d.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -1145,10 +1145,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -1161,6 +1157,10 @@
           "alt": "Ориент Плюс — коллекция Classic",
           "fallbackSrc": "/uploads/orient_plus_833986e934.png"
         }
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
       ]
     },
     {
@@ -1188,9 +1188,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Средний"
@@ -1203,6 +1200,9 @@
           "alt": "Аспект — коллекция Classic",
           "fallbackSrc": "/uploads/aspect_0b78cde0d6.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -1229,7 +1229,6 @@
       "fillings": [
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Беспружинный",
         "Средний"
@@ -1268,7 +1267,6 @@
       "fillings": [
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Беспружинный",
         "Средний"
@@ -1307,7 +1305,6 @@
       "fillings": [
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Беспружинный",
         "Средний"
@@ -1347,9 +1344,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Жесткий"
@@ -1361,6 +1355,9 @@
           "alt": "Ларго — коллекция Relax",
           "fallbackSrc": "/uploads/largo_bd4c921f15.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -1387,9 +1384,6 @@
       "fillings": [
         "nanoFoam"
       ],
-      "features": [
-        "edgeSupport"
-      ],
       "tags": [
         "Пружинный",
         "Средний"
@@ -1401,6 +1395,9 @@
           "alt": "Оригинал — коллекция Trend",
           "fallbackSrc": "/uploads/original_aff309d5fc.png"
         }
+      ],
+      "features": [
+        "edgeSupport"
       ]
     },
     {
@@ -1429,10 +1426,6 @@
         "latex",
         "nanoFoam"
       ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -1444,6 +1437,10 @@
           "alt": "Спейс — коллекция Trend",
           "fallbackSrc": "/uploads/space_d3a4a357c4.png"
         }
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
       ]
     },
     {
@@ -1471,10 +1468,6 @@
         "coir",
         "latex"
       ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
@@ -1486,6 +1479,10 @@
           "alt": "Сенсо — коллекция Trend",
           "fallbackSrc": "/uploads/senso_a20c7ebe8c.png"
         }
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
       ]
     },
     {
@@ -1512,7 +1509,6 @@
       "fillings": [
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Топер",
         "Средний"
@@ -1550,7 +1546,6 @@
       "fillings": [
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Топер",
         "Средний"
@@ -1588,7 +1583,6 @@
       "fillings": [
         "coir"
       ],
-      "features": [],
       "tags": [
         "Топер",
         "Средний"
@@ -1627,7 +1621,6 @@
         "coir",
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Топер",
         "Средний"
@@ -1666,7 +1659,6 @@
         "memoryEffect",
         "orthoFoam"
       ],
-      "features": [],
       "tags": [
         "Топер",
         "Средний"
@@ -1704,7 +1696,6 @@
       "fillings": [
         "latex"
       ],
-      "features": [],
       "tags": [
         "Топер",
         "Средний"
@@ -1742,7 +1733,6 @@
       "fillings": [
         "memoryEffect"
       ],
-      "features": [],
       "tags": [
         "Топер",
         "Средний"
@@ -1778,7 +1768,6 @@
         "180x200"
       ],
       "fillings": [],
-      "features": [],
       "tags": [
         "Топер",
         "Средний"

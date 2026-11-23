@@ -619,6 +619,8 @@ export interface ApiCollectionCollection extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    page_cover_desktop: Schema.Attribute.Media<'images' | 'files'>;
+    page_cover_mobile: Schema.Attribute.Media<'images' | 'files'>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'> &
       Schema.Attribute.Required &

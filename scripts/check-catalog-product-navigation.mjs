@@ -4,6 +4,7 @@ import fs from 'node:fs'
 const share = fs.readFileSync('src/catalog/catalog-share.ts', 'utf8')
 const controller = fs.readFileSync('src/catalog/catalog-listing-controller.ts', 'utf8')
 const prototype = fs.readFileSync('src/components/pages/ProductPagePrototype.tsx', 'utf8')
+const catalogCover = fs.readFileSync('src/components/ui/CatalogPageCover.tsx', 'utf8')
 const catalogPage = fs.readFileSync('src/components/pages/CatalogPage.tsx', 'utf8')
 const gallery = fs.readFileSync('src/catalog/catalog-product-gallery.ts', 'utf8')
 const hero = fs.readFileSync('src/catalog/catalog-hero.ts', 'utf8')
@@ -49,10 +50,10 @@ if (prototype.includes('href="/catalog?collection=relax"') || prototype.includes
 if (!prototype.includes('split(/<br')) {
   failures.push('CMS text fields must support explicit <br> line breaks')
 }
-if (!prototype.includes('PRODUCT_MEDIA_PLACEHOLDER_SRC') || !prototype.includes("image.dataset.placeholderApplied = 'true'")) {
+if (!prototype.includes('PRODUCT_MEDIA_PLACEHOLDER_SRC') || !catalogCover.includes('onError={recoverCover}')) {
   failures.push('broken product media must fall back to a local placeholder')
 }
-if (!prototype.includes('/media-placeholders/product-cover-desktop.svg') || !prototype.includes('/media-placeholders/product-cover-mobile.svg')) {
+if (!catalogCover.includes('/media-placeholders/product-cover-desktop.svg') || !catalogCover.includes('/media-placeholders/product-cover-mobile.svg')) {
   failures.push('product SVG covers must use neutral desktop/mobile placeholders')
 }
 if (!prototype.includes('ResponsivePicture') || !prototype.includes('catalogFallback')) {
