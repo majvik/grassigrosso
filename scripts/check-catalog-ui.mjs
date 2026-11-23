@@ -270,13 +270,41 @@ try {
     if (!slider || !cover || !slider.complete || slider.naturalWidth === 0) return false
     const sliderUrl = new URL(slider.currentSrc, location.href).pathname
     const coverUrl = new URL(cover.currentSrc, location.href).pathname
-    return sliderUrl.includes('/uploads/') && sliderUrl.includes('RELAX_Davos_canonical_')
-      && coverUrl.includes('/uploads/') && coverUrl.includes('RELAX_Davos_canonical_')
+    return sliderUrl.includes('/uploads/responsive/') && sliderUrl.includes('--product-slider')
+      && coverUrl.includes('/uploads/responsive/') && coverUrl.includes('--product-cover-desktop')
       && !document.querySelector('[data-product-editorial-gallery]')
       ? { sliderUrl, coverUrl }
       : false
   })()`, 30000)
   if (!clearedDavos) failures.push('Davos did not load its saved gallery and cover')
+
+  for (const [width, height] of [[1440, 900], [390, 700]]) {
+    await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 2, mobile: width < 540 })
+    await evaluate(`document.querySelector('[data-product-characteristics-gallery-trigger]')?.click()`)
+    for (let slide = 0; slide < 4; slide++) {
+      const expectedVariant = width < 540 ? '--product-fullscreen-mobile@2x.' : '--product-fullscreen@2x.'
+      const previous = slide ? await evaluate(`document.querySelector('[data-product-fullscreen-gallery] picture img')?.currentSrc`) : null
+      if (slide) await evaluate(`document.querySelector('[data-product-fullscreen-gallery] [aria-label="Следующее изображение"]')?.click()`)
+      await waitFor(evaluate, `characteristics slide ${slide + 1} fits and is centered at ${width}x${height}`, `(() => {
+        const dialog = document.querySelector('[data-product-fullscreen-gallery]')
+        const picture = dialog?.querySelector('picture[data-media-slot="product-fullscreen"]')
+        const image = picture?.querySelector('img')
+        if (!image?.naturalWidth || !image.complete
+          || !image.currentSrc.includes('/uploads/responsive/')
+          || !image.currentSrc.includes(${JSON.stringify(expectedVariant)}) || image.currentSrc === ${JSON.stringify(previous)}) return false
+        const photo = image.getBoundingClientRect()
+        const stage = picture.parentElement.getBoundingClientRect()
+        return getComputedStyle(image).objectFit === 'contain'
+          && Math.abs(photo.width / photo.height - image.naturalWidth / image.naturalHeight) < 0.02
+          && photo.width <= stage.width + 1 && photo.height <= stage.height + 1
+          && (${slide} > 0 || Math.min(stage.width - photo.width, stage.height - photo.height) < 2)
+          && Math.abs(photo.left + photo.right - stage.left - stage.right) < 3
+          && Math.abs(photo.top + photo.bottom - stage.top - stage.bottom) < 3
+      })()`, 4500)
+    }
+    await evaluate(`document.querySelector('[aria-label="Закрыть галерею"]')?.click()`)
+  }
+  await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
   await send('Page.navigate', { url: `${baseUrl}/catalog?product=orient` })
   await waitFor(evaluate, 'legacy compatibility product restored for remaining checks', `Boolean(document.querySelector('.catalogue-new-shared-product[data-product-editorial]:not([hidden])'))`, 30000)

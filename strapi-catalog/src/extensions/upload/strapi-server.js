@@ -25,15 +25,23 @@ function extendUploadPlugin(plugin, options = {}) {
     return result;
   };
 
-  const originalUpload = plugin.services.upload.upload;
-  plugin.services.upload.upload = async function responsiveUpload(params, options) {
-    return decorateResult(await originalUpload.call(this, params, options));
-  };
+  function decorateService(service) {
+    const { upload, replace } = service;
+    service.upload = async function responsiveUpload(...args) {
+      return decorateResult(await upload.apply(this, args));
+    };
+    service.replace = async function responsiveReplace(...args) {
+      return decorateResult(await replace.apply(this, args));
+    };
+    return service;
+  }
 
-  const originalReplace = plugin.services.upload.replace;
-  plugin.services.upload.replace = async function responsiveReplace(id, params, options) {
-    return decorateResult(await originalReplace.call(this, id, params, options));
-  };
+  const uploadFactory = plugin.services.upload;
+  plugin.services.upload = typeof uploadFactory === 'function'
+    ? function createResponsiveUploadService(...args) {
+      return decorateService(uploadFactory.apply(this, args));
+    }
+    : decorateService(uploadFactory);
   return plugin;
 }
 

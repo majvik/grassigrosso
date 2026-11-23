@@ -51,7 +51,7 @@ async function generateUploadResponsiveVariants({ file, publicDir, slots }) {
     const scaleX = (slot.width * 2) / metadata.width;
     const scaleY = (slot.height * 2) / metadata.height;
     const requiredScale = slot.fit === 'contain' ? Math.min(scaleX, scaleY) : Math.max(scaleX, scaleY);
-    if (requiredScale > 1) {
+    if (requiredScale > 1 && slot.fit !== 'inside') {
       skipped.push(slot.id);
       continue;
     }

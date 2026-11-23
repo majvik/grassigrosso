@@ -40,6 +40,7 @@ for (const required of ['dist', 'src', 'config', 'scripts', 'types', 'public', '
   )
 }
 
+assert(dockerfile.includes('COPY --from=build /app/src/media/responsive-media-slots.json ./src/media/responsive-media-slots.json'), 'runtime Strapi upload generator requires the media slot registry')
 assert(dockerfile.includes('/app/strapi-catalog/package.json'), 'runtime Strapi package.json copy missing')
 assert(dockerfile.includes('/app/strapi-catalog/package-lock.json'), 'runtime Strapi lockfile copy missing')
 

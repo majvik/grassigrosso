@@ -6,7 +6,7 @@ export type ResponsiveMediaSlot = {
   height: number
   width2x: number
   height2x: number
-  fit: 'cover' | 'contain'
+  fit: 'cover' | 'contain' | 'inside'
   placeholder: boolean
 }
 

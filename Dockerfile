@@ -57,6 +57,7 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./
 COPY --from=build /app/server.cjs ./
 COPY --from=build /app/lib ./lib
+COPY --from=build /app/src/media/responsive-media-slots.json ./src/media/responsive-media-slots.json
 COPY --from=build /app/dist ./dist
 
 # Keep locally-authored Strapi content (seed/uploads/schemas/Admin) in the image,

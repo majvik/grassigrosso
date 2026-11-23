@@ -17,41 +17,7 @@ const PRODUCT_COVER_LOCATION_LINE_SRC = '/product-page-prototype/cover-location-
 const PRODUCT_MEDIA_PLACEHOLDER_SRC = '/media-placeholders/product-slider.png'
 const EMPTY_PRODUCT_MEDIA: CatalogProductMediaItem = { type: 'image', src: '', alt: '' }
 
-function centerVisibleImageContent(image: HTMLImageElement) {
-  const sampleSize = 256
-  const canvas = document.createElement('canvas')
-  canvas.width = sampleSize
-  canvas.height = sampleSize
-  const context = canvas.getContext('2d', { willReadFrequently: true })
-  if (!context) return
-
-  try {
-    context.drawImage(image, 0, 0, sampleSize, sampleSize)
-    const pixels = context.getImageData(0, 0, sampleSize, sampleSize).data
-    let minX = sampleSize
-    let minY = sampleSize
-    let maxX = -1
-    let maxY = -1
-    for (let y = 0; y < sampleSize; y += 1) {
-      for (let x = 0; x < sampleSize; x += 1) {
-        if (pixels[((y * sampleSize + x) * 4) + 3] < 8) continue
-        minX = Math.min(minX, x)
-        minY = Math.min(minY, y)
-        maxX = Math.max(maxX, x)
-        maxY = Math.max(maxY, y)
-      }
-    }
-    if (maxX < minX || maxY < minY) return
-    const centerX = ((minX + maxX + 1) / 2) / sampleSize
-    const centerY = ((minY + maxY + 1) / 2) / sampleSize
-    image.style.setProperty('--fullscreen-media-shift-x', `${(0.5 - centerX) * 100}%`)
-    image.style.setProperty('--fullscreen-media-shift-y', `${(0.5 - centerY) * 100}%`)
-  } catch {
-    // Cross-origin or unsupported image data: geometric centering remains active.
-  }
-}
-
-function ProductMedia({ media, eager = false, alt, centerTransparentContent = false, slotId = 'product-slider' }: { media: CatalogProductMediaItem; eager?: boolean; alt: string; centerTransparentContent?: boolean; slotId?: 'product-slider' | 'product-characteristics' | 'product-material' | 'product-fullscreen' | 'catalog-card' }) {
+function ProductMedia({ media, eager = false, alt, slotId = 'product-slider' }: { media: CatalogProductMediaItem; eager?: boolean; alt: string; slotId?: 'product-slider' | 'product-characteristics' | 'product-material' | 'product-fullscreen' | 'catalog-card' }) {
   if (media.type === 'video') {
     return (
       <video
@@ -69,12 +35,16 @@ function ProductMedia({ media, eager = false, alt, centerTransparentContent = fa
   return <ResponsivePicture
     src={media.fallbackSrc || media.src}
     slotId={slotId}
+    mobileSlotId={slotId === 'product-fullscreen' ? 'product-fullscreen-mobile' : undefined}
+    onLoad={slotId === 'product-fullscreen' ? ({ currentTarget: image }) => {
+      const density = /@2x\.[^/?]+(?:[?#]|$)/.test(image.currentSrc) ? 2 : 1
+      if (!image.naturalWidth || !image.naturalHeight) return
+      image.style.setProperty('--gallery-photo-width', `${image.naturalWidth * density}px`)
+      image.style.setProperty('--gallery-photo-aspect', String(image.naturalWidth / image.naturalHeight))
+    } : undefined}
     alt={media.alt || alt}
     eager={eager}
     catalogFallback
-    onLoad={(event) => {
-      if (centerTransparentContent) centerVisibleImageContent(event.currentTarget)
-    }}
   />
 }
 
@@ -205,7 +175,7 @@ function FullscreenProductGallery({ items, initialIndex, open, onOpenChange, pro
       <div className={styles.fullscreenGallery} data-product-fullscreen-gallery role="dialog" aria-modal="true" aria-labelledby="product-fullscreen-gallery-title">
           <h2 className={styles.visuallyHidden} id="product-fullscreen-gallery-title">Галерея товара {productName}</h2>
           <div className={styles.fullscreenGalleryStage}>
-            <ProductMedia media={active} eager alt={`${productName}, изображение ${index + 1}`} centerTransparentContent slotId="product-fullscreen" />
+            <ProductMedia key={index} media={active} eager alt={`${productName}, изображение ${index + 1}`} slotId="product-fullscreen" />
           </div>
           {hasNavigation && <>
             <button type="button" className={`${styles.fullscreenGalleryNav} ${styles.fullscreenGalleryPrev}`} aria-label="Предыдущее изображение" onClick={() => setIndex((index - 1 + items.length) % items.length)}>

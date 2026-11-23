@@ -32,7 +32,7 @@ export async function generateResponsiveVariants({ source, outputDir, basename, 
   const scaleX = (width * 2) / metadata.width
   const scaleY = (height * 2) / metadata.height
   const requiredScale = fit === 'contain' ? Math.min(scaleX, scaleY) : Math.max(scaleX, scaleY)
-  if (requiredScale > 1) {
+  if (requiredScale > 1 && fit !== 'inside') {
     throw new Error(`Source is too small for the requested 2x variant; upscale is forbidden: ${source}`)
   }
 
@@ -46,7 +46,7 @@ export async function generateResponsiveVariants({ source, outputDir, basename, 
       outputs.push(output)
       const force = process.env.RESPONSIVE_MEDIA_FORCE === '1'
         || (process.env.RESPONSIVE_MEDIA_FORCE_PRODUCT_SLIDER === '1' && basename.endsWith('--product-slider'))
-      if (!force && await isFresh(sourceMtime, output)) continue
+      if (!force && process.env.RESPONSIVE_MEDIA_FORCE_SLOT !== basename.split('--').at(-1) && await isFresh(sourceMtime, output)) continue
       let pipeline = sharp(source).resize(width * density, height * density, {
         fit,
         position: 'centre',
@@ -66,9 +66,9 @@ function graySvg(width, height) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label=""><rect width="100%" height="100%" fill="#e7e7e7"/></svg>\n`
 }
 
-export async function generateSlotPlaceholders(outputDir = path.join(repoRoot, 'public/media-placeholders')) {
+export async function generateSlotPlaceholders(outputDir = path.join(repoRoot, 'public/media-placeholders'), selectedSlot = '') {
   await fs.mkdir(outputDir, { recursive: true })
-  const slots = (await loadSlotRegistry()).filter((slot) => slot.placeholder)
+  const slots = (await loadSlotRegistry()).filter((slot) => slot.placeholder && (!selectedSlot || slot.id === selectedSlot))
   const generated = []
   for (const slot of slots) {
     for (const density of [1, 2]) {
@@ -91,7 +91,7 @@ export async function generateSlotPlaceholders(outputDir = path.join(repoRoot, '
       }
     }
   }
-  for (const [name, width, height] of [
+  if (!selectedSlot) for (const [name, width, height] of [
     ['product-cover-desktop.svg', 2100, 900],
     ['product-cover-mobile.svg', 900, 1200],
   ]) {
@@ -102,7 +102,7 @@ export async function generateSlotPlaceholders(outputDir = path.join(repoRoot, '
   return generated
 }
 
-async function generateProductPrototypeVariants() {
+async function generateProductPrototypeVariants(selectedSlot = '') {
   const sourceDir = path.join(repoRoot, 'public/product-page-prototype')
   const outputDir = path.join(sourceDir, 'responsive')
   const slots = new Map((await loadSlotRegistry()).map((slot) => [slot.id, slot]))
@@ -113,8 +113,9 @@ async function generateProductPrototypeVariants() {
     const basename = path.basename(filename, path.extname(filename))
     const slotIds = filename.startsWith('related-')
       ? ['catalog-card']
-      : ['product-slider', 'product-fullscreen', 'product-characteristics', 'product-material']
+      : ['product-slider', 'product-fullscreen', 'product-fullscreen-mobile', 'product-characteristics', 'product-material']
     for (const slotId of slotIds) {
+      if (selectedSlot && slotId !== selectedSlot) continue
       const slot = slots.get(slotId)
       if (!slot) continue
       const result = await generateResponsiveVariants({
@@ -131,7 +132,7 @@ async function generateProductPrototypeVariants() {
   return generated
 }
 
-async function generateCatalogSnapshotVariants() {
+async function generateCatalogSnapshotVariants(only = '', selectedSlot = '') {
   const snapshotPath = path.join(repoRoot, 'public/catalog-products-listing.snapshot.json')
   const uploadsDir = path.join(repoRoot, 'strapi-catalog/public/uploads')
   const outputDir = path.join(uploadsDir, 'responsive')
@@ -141,6 +142,8 @@ async function generateCatalogSnapshotVariants() {
   const addSource = (url, slotIds) => {
     if (!url) return
     const filename = path.basename(String(url).split(/[?#]/)[0])
+    if (only && !filename.startsWith(only)) return
+    if (path.extname(filename).toLowerCase() === '.svg') return
     const existing = sourceSlots.get(filename) || new Set()
     slotIds.forEach((slotId) => existing.add(slotId))
     sourceSlots.set(filename, existing)
@@ -148,7 +151,7 @@ async function generateCatalogSnapshotVariants() {
   for (const item of snapshot.items || []) {
     for (const media of item.gallery || []) {
       const url = media.fallbackSrc || media.src
-      if (media.type === 'image') addSource(url, ['catalog-card', 'product-slider', 'product-fullscreen', 'product-characteristics', 'product-material'])
+      if (media.type === 'image') addSource(url, ['catalog-card', 'product-slider', 'product-fullscreen', 'product-fullscreen-mobile', 'product-characteristics', 'product-material'])
     }
   }
   const heroSnapshot = JSON.parse(await fs.readFile(path.join(repoRoot, 'public/catalog-hero.snapshot.json'), 'utf8'))
@@ -157,11 +160,19 @@ async function generateCatalogSnapshotVariants() {
   }
   const fullSnapshot = JSON.parse(await fs.readFile(path.join(repoRoot, 'public/catalog-products.snapshot.json'), 'utf8'))
   for (const item of fullSnapshot.items || []) {
+    for (const [slot, mediaItems] of [
+      ['product-cover-desktop', [item.pageCoverDesktop, item.collectionPageCoverDesktop]],
+      ['product-cover-mobile', [item.pageCoverMobile, item.collectionPageCoverMobile]],
+    ]) {
+      for (const media of mediaItems) if (media?.type === 'image') addSource(media.fallbackSrc || media.src, [slot])
+    }
+    if (item.imageUrl && !item.gallery?.length) addSource(item.imageUrl, ['catalog-card'])
+
     for (const media of item.gallery || []) {
-      if (media.type === 'image') addSource(media.fallbackSrc || media.src, ['catalog-card', 'product-slider', 'product-fullscreen'])
+      if (media.type === 'image') addSource(media.fallbackSrc || media.src, ['catalog-card', 'product-slider', 'product-fullscreen', 'product-fullscreen-mobile'])
     }
     for (const media of item.pageCharacteristicsMedia || []) {
-      if (media.type === 'image') addSource(media.fallbackSrc || media.src, ['product-characteristics', 'product-fullscreen'])
+      if (media.type === 'image') addSource(media.fallbackSrc || media.src, ['product-characteristics', 'product-fullscreen', 'product-fullscreen-mobile'])
     }
   }
   const downloadSnapshot = JSON.parse(await fs.readFile(path.join(repoRoot, 'public/download-catalog-slides.snapshot.json'), 'utf8'))
@@ -180,6 +191,7 @@ async function generateCatalogSnapshotVariants() {
     }
     const basename = path.basename(filename, path.extname(filename))
     for (const slotId of slotIds) {
+      if (selectedSlot && slotId !== selectedSlot) continue
       const slot = slots.get(slotId)
       try {
         const result = await generateResponsiveVariants({
@@ -200,9 +212,12 @@ async function generateCatalogSnapshotVariants() {
 }
 
 async function main() {
-  const placeholders = await generateSlotPlaceholders()
-  const productVariants = await generateProductPrototypeVariants()
-  const catalogVariants = await generateCatalogSnapshotVariants()
+  const only = process.argv.find((arg) => arg.startsWith('--only='))?.slice('--only='.length) || ''
+  const slot = process.argv.find((arg) => arg.startsWith('--slot='))?.slice('--slot='.length) || ''
+  if (slot && !(await loadSlotRegistry()).some(({ id }) => id === slot)) throw new Error(`Unknown media slot: ${slot}`)
+  const placeholders = only ? [] : await generateSlotPlaceholders(undefined, slot)
+  const productVariants = only ? [] : await generateProductPrototypeVariants(slot)
+  const catalogVariants = await generateCatalogSnapshotVariants(only, slot)
   console.log(`[responsive-media] generated placeholders: ${placeholders.length}; product variants: ${productVariants.length}; catalog variants: ${catalogVariants.generated.length}; skipped: ${catalogVariants.skipped.length}`)
   if (catalogVariants.skipped.length) console.warn(catalogVariants.skipped.join('\n'))
 }

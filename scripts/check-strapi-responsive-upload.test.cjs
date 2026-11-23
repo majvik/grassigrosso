@@ -55,6 +55,24 @@ test('does not upscale undersized uploads', async (t) => {
   assert.deepEqual(result.skipped, ['catalog-card']);
 });
 
+test('fullscreen variants preserve portrait proportions without enlargement', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'grassigrosso-fullscreen-'));
+  t.after(() => fs.rm(root, { recursive: true, force: true }));
+  const uploads = path.join(root, 'uploads');
+  await fs.mkdir(uploads);
+  await sharp({ create: { width: 300, height: 600, channels: 4, background: '#fff' } }).png().toFile(path.join(uploads, 'portrait.png'));
+  const result = await generateUploadResponsiveVariants({
+    file: { url: '/uploads/portrait.png', ext: '.png', mime: 'image/png' },
+    publicDir: root,
+    slots: [{ id: 'product-fullscreen', width: 500, height: 500, fit: 'inside' }],
+  });
+  assert.equal(result.generated.length, 6);
+  for (const file of result.generated) {
+    const {width,height} = await sharp(file).metadata();
+    assert.deepEqual([width,height], file.includes('@2x') ? [300,600] : [250,500]);
+  }
+});
+
 test('removes stale variants when a replacement is too small', async (t) => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'grassigrosso-upload-hook-'));
   t.after(() => fs.rm(root, { recursive: true, force: true }));
@@ -75,10 +93,10 @@ test('Strapi extension generates variants after both upload and replace', async 
   const calls = [];
   const plugin = {
     services: {
-      upload: {
+      upload: () => ({
         async upload() { return [{ url: '/uploads/new.png', mime: 'image/png', ext: '.png' }]; },
         async replace() { return { url: '/uploads/replaced.png', mime: 'image/png', ext: '.png' }; },
-      },
+      }),
     },
   };
   extendUploadPlugin(plugin, {
@@ -89,8 +107,9 @@ test('Strapi extension generates variants after both upload and replace', async 
       return { generated: ['variant'], skipped: [] };
     },
   });
-  await plugin.services.upload.upload({});
-  await plugin.services.upload.replace(1, {});
+  const uploadService = plugin.services.upload({});
+  await uploadService.upload({});
+  await uploadService.replace(1, {});
   assert.deepEqual(calls.map(({ file, publicDir }) => [file.url, publicDir]), [
     ['/uploads/new.png', '/virtual/public'],
     ['/uploads/replaced.png', '/virtual/public'],

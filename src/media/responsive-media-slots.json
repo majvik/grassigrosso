@@ -3,8 +3,11 @@
   { "id": "catalog-hero", "width": 640, "height": 360, "fit": "cover", "placeholder": true },
   { "id": "download-catalog", "width": 440, "height": 440, "fit": "contain", "placeholder": true },
   { "id": "product-slider", "width": 470, "height": 470, "fit": "cover", "placeholder": true },
-  { "id": "product-fullscreen", "width": 500, "height": 500, "fit": "contain", "placeholder": true },
+  { "id": "product-fullscreen", "width": 1024, "height": 1024, "fit": "inside", "placeholder": true },
+  { "id": "product-fullscreen-mobile", "width": 512, "height": 512, "fit": "inside", "placeholder": true },
   { "id": "product-characteristics", "width": 500, "height": 500, "fit": "cover", "placeholder": true },
   { "id": "product-material", "width": 500, "height": 500, "fit": "cover", "placeholder": true },
+  { "id": "product-cover-desktop", "width": 1440, "height": 617, "fit": "cover", "placeholder": false },
+  { "id": "product-cover-mobile", "width": 480, "height": 480, "fit": "cover", "placeholder": false },
   { "id": "video-poster", "width": 1600, "height": 900, "fit": "cover", "placeholder": true }
 ]

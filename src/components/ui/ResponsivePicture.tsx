@@ -5,6 +5,7 @@ import { applyResponsiveOriginalFallback, applyResponsivePlaceholder, buildRespo
 export function ResponsivePicture({
   src,
   slotId,
+  mobileSlotId,
   alt = '',
   sizes = '100vw',
   eager = false,
@@ -14,6 +15,7 @@ export function ResponsivePicture({
 }: {
   src: string
   slotId: string
+  mobileSlotId?: string
   alt?: string
   sizes?: string
   eager?: boolean
@@ -24,8 +26,15 @@ export function ResponsivePicture({
   const pictureRef = useRef<HTMLPictureElement>(null)
   const media = useMemo(() => buildResponsiveMediaSet(src, slotId, catalogFallback && !src), [src, slotId, catalogFallback])
 
+  const mobile = useMemo(() => mobileSlotId
+    ? buildResponsiveMediaSet(src, mobileSlotId, catalogFallback && !src)
+    : null, [src, mobileSlotId, catalogFallback])
+
   return (
     <picture ref={pictureRef} data-responsive-picture data-media-slot={slotId}>
+      {mobile?.sources.map((source) => (
+        <source key={source.type} media="(max-width: 900px)" type={source.type} srcSet={source.srcSet} sizes={sizes} />
+      ))}
       {media.sources.map((source) => (
         <source key={source.type} type={source.type} srcSet={source.srcSet} sizes={sizes} />
       ))}
@@ -44,7 +53,8 @@ export function ResponsivePicture({
         onLoad={onLoad}
         onError={catalogFallback ? (event) => {
           if (applyResponsiveOriginalFallback(pictureRef.current, event.currentTarget, src)) return
-          applyResponsivePlaceholder(pictureRef.current, event.currentTarget, slotId)
+          applyResponsivePlaceholder(pictureRef.current, event.currentTarget,
+            mobileSlotId && window.matchMedia('(max-width: 900px)').matches ? mobileSlotId : slotId)
         } : undefined}
       />
     </picture>
