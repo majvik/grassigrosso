@@ -70,6 +70,7 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
   const cardMetaHtml = buildCatalogCardMetaHtmlFromDataset({
     firmness,
     type: mattressType,
+    sidedness: item.sidedness || undefined,
     height: heightCm ? String(heightCm) : '',
     loadRange,
     heightRange,
@@ -94,6 +95,7 @@ export function buildCatalogueCardHtml(item: CatalogProduct): string {
         data-firmness-side1="${Number.isInteger(firmnessSide1) ? firmnessSide1 : ''}"
         data-firmness-side2="${Number.isInteger(firmnessSide2) ? firmnessSide2 : ''}"
         data-type="${escapeHtml(mattressType)}"
+        data-sidedness="${escapeHtml(item.sidedness || '')}"
         data-height="${heightCm}"
         data-load="${maxLoadKg}"
         ${SITE_CAPABILITIES.prices ? `data-price="${Number.isFinite(priceRub) && priceRub > 0 ? priceRub : ''}"` : ''}

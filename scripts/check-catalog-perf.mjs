@@ -164,7 +164,7 @@ try {
     await waitFor(
       evaluate,
       'catalog results loaded',
-      `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '43'`,
+      `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '${listingPayload.items.length}'`,
     )
 
     const metrics = await evaluate(`(() => {

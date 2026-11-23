@@ -84,6 +84,11 @@
       "relation": "manyToOne",
       "target": "api::mattress-type-option.mattress-type-option"
     },
+    "sidedness": {
+      "displayName": "Сторонность конструкции",
+      "type": "enumeration",
+      "enum": ["двусторонний", "односторонний"]
+    },
     "price_rub": {
       "displayName": "Цена (₽)",
       "type": "integer",

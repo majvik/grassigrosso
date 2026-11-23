@@ -148,7 +148,7 @@ export function DownloadCatalogPage() {
         {data.back_label}
       </a>
 
-      <div className="catalogue-new-shared-product-shell">
+      <div className={`catalogue-new-shared-product-shell ${styles.shell}`}>
         <div className={styles.media} data-download-media="">
           <DownloadCatalogSlider />
         </div>

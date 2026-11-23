@@ -58,6 +58,7 @@ export function buildCatalogCardMetaFromProduct(
     firmnessSide1: parseFirmnessScore(product.firmnessSide1),
     firmnessSide2: parseFirmnessScore(product.firmnessSide2),
     type: String(product.mattressType || '').trim(),
+    sidedness: product.sidedness || undefined,
     height: Number(product.heightCm || 0),
     load: Number(product.maxLoadKg || 0),
     price: Number(product.priceRub || 0),

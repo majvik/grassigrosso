@@ -7,6 +7,7 @@ import {
 export type CatalogCardDataset = {
   firmness?: string
   type?: string
+  sidedness?: string
   height?: string
   load?: string
   loadRange?: string
@@ -41,8 +42,8 @@ const modalLabelMaps = {
     spring: 'Пружинный',
     nospring: 'Беспружинный',
     topper: 'Топер',
-    doubleSided: 'Двухсторонние',
-    singleSided: 'Односторонние',
+    doubleSided: 'Двусторонний',
+    singleSided: 'Односторонний',
   },
   loadRange: {
     upTo120: 'до 120 кг',
@@ -84,6 +85,13 @@ function mapValue(value: unknown, map: Record<string, string>): string {
   return map[key] || key
 }
 
+export function formatConstructionType(type?: string | null, sidedness?: string | null): string {
+  return [...new Set([type, sidedness])]
+    .map((value) => mapValue(value, modalLabelMaps.type))
+    .filter(Boolean)
+    .join(', ')
+}
+
 function readSizes(dataset: CatalogCardDataset): string[] {
   const parsed = parseCsv(dataset.sizes)
   if (parsed.length) return parsed
@@ -102,7 +110,7 @@ export function buildCatalogModalSpecGroups(dataset: CatalogCardDataset): Catalo
   const loadLabel = mapValue(dataset.loadRange, modalLabelMaps.loadRange)
 
   const main: CatalogModalSpec[] = [
-    { label: 'Тип матраса', value: mapValue(dataset.type, modalLabelMaps.type) },
+    { label: 'Тип конструкции', value: formatConstructionType(dataset.type, dataset.sidedness) },
     { label: 'Нагрузка', value: loadLabel },
     { label: 'Размер', value: sizes.length ? formatCatalogSizeList(sizes) : '' },
   ].filter((spec) => spec.value)
@@ -193,7 +201,7 @@ export function buildCatalogCardMetaHtmlFromDataset(dataset: CatalogCardDataset)
     { label: 'Высота', value: byLabel.get('Высота') || '' },
     { label: 'Нагрузка', value: byLabel.get('Нагрузка') || '' },
     { label: 'Жесткость', value: byLabel.get('Жесткость') || '' },
-    { label: 'Тип матраса', value: byLabel.get('Тип матраса') || '' },
+    { label: 'Тип конструкции', value: byLabel.get('Тип конструкции') || '' },
     { label: 'Размер', value: byLabel.get('Размер') || '' },
     { label: 'Чехол', value: byLabel.get('Чехол') || '' },
     { label: 'Наполнение', value: byLabel.get('Наполнение') || byLabel.get('Наполнители') || '' },

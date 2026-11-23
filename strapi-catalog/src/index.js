@@ -306,23 +306,13 @@ module.exports = {
       }
 
       const layersText = String(product.layers_catalog || '').trim();
-      if (layersText) {
-        const inferredSlugs = inferFillingSlugsFromLayers(layersText);
-        const currentSlugs = new Set(
-          (Array.isArray(product.filling_options) ? product.filling_options : [])
-            .map((row) => String(row?.slug || '').trim())
-            .filter(Boolean),
-        );
-        const mergedSlugs = new Set([...currentSlugs, ...inferredSlugs]);
-        const missing = [...inferredSlugs].some((slug) => !currentSlugs.has(slug));
-        if (missing) {
-          const fillingIds = [...mergedSlugs]
-            .map((slug) => fillingOptions.get(slug)?.id)
-            .filter(Boolean);
-          if (fillingIds.length) {
-            data.filling_options = fillingIds;
-            fillingOptionsLinked += 1;
-          }
+      if (layersText && !hasFillingRelations && !data.filling_options?.length) {
+        const fillingIds = [...inferFillingSlugsFromLayers(layersText)]
+          .map((slug) => fillingOptions.get(slug)?.id)
+          .filter(Boolean);
+        if (fillingIds.length) {
+          data.filling_options = fillingIds;
+          fillingOptionsLinked += 1;
         }
       }
 

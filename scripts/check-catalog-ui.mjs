@@ -8,7 +8,7 @@ import { shouldRunBrowserSmoke } from './lib/catalog-smoke-env.mjs'
 
 const baseUrl = String(process.env.CATALOG_UI_BASE_URL || 'http://127.0.0.1:5174').replace(/\/+$/, '')
 const runBrowser = shouldRunBrowserSmoke(baseUrl)
-const EXPECTED_PRODUCT_COUNT = 43
+const EXPECTED_PRODUCT_COUNT = 45
 const MIN_INITIAL_CARDS = 6
 const MAX_INITIAL_CARDS = 12
 const EXPECTED_CLASSIC_FILTER_COUNT = '6'
@@ -97,6 +97,10 @@ try {
     results: document.querySelector('.catalogue-new-results strong')?.textContent?.trim() || '',
     consoleErrors: window.__catalogSmokeErrors || 0,
   }))()`)
+  if (await evaluate(`[...document.querySelectorAll('.catalogue-new-card')]
+    .some((card) => card.dataset.productName?.endsWith(' OLD'))`)) {
+    failures.push('OLD products must stay behind the current products, even when recommended')
+  }
   if (initial.url !== '/catalog') failures.push(`expected /catalog, got ${initial.url}`)
   if (initial.results !== String(EXPECTED_PRODUCT_COUNT)) {
     failures.push(`expected ${EXPECTED_PRODUCT_COUNT} results, got ${initial.results}`)
@@ -135,6 +139,15 @@ try {
   if (!davosPlaceholder) failures.push('Davos catalog card remained empty instead of rendering the gray placeholder')
   await evaluate(`document.querySelector('.catalogue-new-reset')?.click()`)
   await waitFor(evaluate, 'catalog filters reset after Davos placeholder check', `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '${EXPECTED_PRODUCT_COUNT}'`)
+
+  for (const [type, count] of [['spring', 27], ['doubleSided', 20]]) {
+    await evaluate(`document.querySelector('.catalogue-new-chip[data-filter-group="type"][data-value="${type}"]')?.click()`)
+    await waitFor(evaluate, `construction filter ${type} includes the double-sided spring products`,
+      `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '${count}'`)
+    await evaluate(`document.querySelector('.catalogue-new-reset')?.click()`)
+    await waitFor(evaluate, 'construction filter reset',
+      `document.querySelector('.catalogue-new-results strong')?.textContent?.trim() === '${EXPECTED_PRODUCT_COUNT}'`)
+  }
 
   await evaluate(`(() => {
     const chip = document.querySelector('.catalogue-new-chip[data-filter-group="collection"][data-value="classic"]')
@@ -233,6 +246,8 @@ try {
       : false
   })()`, 30000)
   if (!aspectMedia) failures.push('Aspect must use the neutral SVG cover and a real cover-fit slider image')
+  await waitFor(evaluate, 'absent workbook product displays OLD in the title',
+    `document.querySelector('.catalogue-new-shared-product-title')?.textContent?.trim() === 'Аспект OLD'`)
 
   for (const slug of ['orient', 'orient-plus']) {
     await send('Page.navigate', { url: `${baseUrl}/catalog?product=${slug}` })
@@ -280,6 +295,52 @@ try {
       && !document.querySelector('#catalogueImageModal')
       && broken.length === 0
   })()`)
+
+  await send('Page.navigate', { url: `${baseUrl}/catalog?product=lider` })
+  await waitFor(evaluate, 'product renders both construction types with the Strapi name', `(() => {
+    const page = document.querySelector('.catalogue-new-shared-product:not([hidden])')
+    return page?.querySelector('.catalogue-new-shared-product-title')?.textContent?.trim() === 'Лидер Грей Софт'
+      && [...page.querySelectorAll('dd')].some((cell) => cell.textContent.trim() === 'Пружинный, Двусторонний')
+  })()`)
+
+  for (const [slug, name, type] of [
+    ['supreme-grey-soft', 'Суприм Грей Софт', 'Пружинный, Двусторонний'],
+    ['balance-comfort', 'Баланс Кофморт', 'Беспружинный'],
+  ]) {
+    await send('Page.navigate', { url: `${baseUrl}/catalog?product=${slug}` })
+    await waitFor(evaluate, `${slug} opens with its Strapi characteristics and placeholder`, `(() => {
+      const page = document.querySelector('.catalogue-new-shared-product:not([hidden])')
+      const slider = page?.querySelector('picture[data-media-slot="product-slider"] img')
+      const coverLabel = [...(page?.querySelectorAll('dt') || [])].find((label) => label.textContent.trim() === 'Чехол')
+      const cover = coverLabel?.nextElementSibling
+      const singleLineCover = ${JSON.stringify(slug)} !== 'supreme-grey-soft'
+        || (cover?.textContent.trim() === 'трикотаж gray soft с объёмной стежкой на холконе' && !cover.querySelector('br'))
+      return singleLineCover && page?.querySelector('.catalogue-new-shared-product-title')?.textContent?.trim() === ${JSON.stringify(name)}
+        && [...page.querySelectorAll('dd')].some((cell) => cell.textContent.trim() === ${JSON.stringify(type)})
+        && slider?.complete && slider.naturalWidth > 0
+        && new URL(slider.currentSrc || slider.src, location.href).pathname.startsWith('/media-placeholders/product-slider.')
+    })()`)
+  }
+
+  for (const [slug, expected] of [
+    ['hard-format', [['Сторона 1', '7/10', 7], ['Сторона 2', '8/10', 8]]],
+    ['balance-comfort', [['', '7/10', 7]]],
+  ]) {
+    await send('Page.navigate', { url: `${baseUrl}/catalog?product=${slug}` })
+    await waitFor(evaluate, `${slug} renders the Strapi firmness scores`, `(() => {
+      const rows = [...document.querySelectorAll('[data-product-firmness-scale] .catalogue-new-firmness-row')]
+      const actual = rows.map((row) => [
+        row.querySelector('.catalogue-new-firmness-label')?.textContent.trim() || '',
+        row.querySelector('.catalogue-new-firmness-score')?.textContent.trim(),
+        row.querySelectorAll('.catalogue-new-firmness-segment.is-filled').length,
+      ])
+      const tags = [...document.querySelectorAll('.catalogue-new-shared-product-tags .catalogue-new-tag')]
+        .map((tag) => tag.textContent.trim())
+      return (${JSON.stringify(slug)} !== 'hard-format'
+          || (tags.includes('Беспружинный') && !tags.includes('Пружинный')))
+        && JSON.stringify(actual) === JSON.stringify(${JSON.stringify(expected)})
+    })()`)
+  }
 
   await send('Page.navigate', { url: `${baseUrl}/catalog?product=imperio` })
   await waitFor(evaluate, 'product beyond initial catalogue batch opens directly', `(() => {

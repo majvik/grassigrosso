@@ -251,14 +251,17 @@ function slimCatalogProductsForListing(items) {
       pageMaterials,
       strapiDocumentId,
       isActive,
+      isRecommended,
+      gallery: fullGallery,
       ...rest
     } = item;
-    const gallery = Array.isArray(rest.gallery)
-      ? rest.gallery.slice(0, 1).map(slimCatalogGalleryItem).filter(Boolean)
+    const gallery = Array.isArray(fullGallery)
+      ? fullGallery.slice(0, 1).map(slimCatalogGalleryItem).filter(Boolean)
       : [];
     return {
       ...rest,
-      gallery,
+      ...(isRecommended === true && { isRecommended: true }),
+      ...(gallery.length && { gallery }),
     };
   });
 }

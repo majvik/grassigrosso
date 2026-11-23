@@ -190,6 +190,7 @@ module.exports = {
         }))
         .filter((item) => item.image);
       const mattressType = row.mattress_type_option?.slug || mapMattressType(row.mattress_type || '');
+      const sidedness = { двусторонний: 'doubleSided', односторонний: 'singleSided' }[row.sidedness];
       const collectionSlugFromRelation = row.collection?.slug || '';
       const collectionSlug = collectionSlugFromRelation
         || (mattressType === 'topper' ? 'topper' : '');
@@ -204,6 +205,7 @@ module.exports = {
       firmnessSide1: Number.isInteger(row.firmness_side1) ? row.firmness_side1 : null,
       firmnessSide2: Number.isInteger(row.firmness_side2) ? row.firmness_side2 : null,
       mattressType,
+      ...(sidedness && { sidedness }),
       heightCm: Number(row.height_cm || 0),
       maxLoadKg: Number(row.max_load_kg || 0),
       priceRub: (() => {
@@ -248,13 +250,16 @@ module.exports = {
       pageDescription: String(row.page_description || '').trim(),
       pageCharacteristicsMedia,
       pageMaterials,
-      coverDescription: String(row.cover_description || '').trim(),
+      coverDescription: String(row.cover_description || '').replace(/\s+/g, ' ').trim(),
       layersCatalog: String(row.layers_catalog || '').trim(),
       tags: Array.isArray(row.tags) ? row.tags.map((tag) => tag.name).filter(Boolean) : [],
       isRecommended: row.is_recommended === true,
       isActive: row.is_active !== false
     };
     });
+
+    const isOld = (item) => item.name.trimEnd().endsWith(' OLD');
+    items.sort((a, b) => Number(isOld(a)) - Number(isOld(b)));
 
     let sections = { ...DEFAULT_CATALOG_LISTING_SECTIONS };
     try {

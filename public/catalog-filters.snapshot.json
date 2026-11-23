@@ -172,6 +172,11 @@
         "slug": "forplit",
         "name": "Форплит",
         "sortOrder": 5
+      },
+      {
+        "slug": "biCotton",
+        "name": "bi cotton",
+        "sortOrder": 7
       }
     ],
     "features": [

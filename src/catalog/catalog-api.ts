@@ -88,6 +88,7 @@ export type CatalogProduct = {
   firmnessSide1?: number | string | null
   firmnessSide2?: number | string | null
   mattressType?: string | null
+  sidedness?: string | null
   heightCm?: number | string | null
   maxLoadKg?: number | string | null
   /** Price in whole rubles from Strapi `price_rub`. */

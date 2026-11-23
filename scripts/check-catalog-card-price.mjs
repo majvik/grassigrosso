@@ -87,6 +87,13 @@ assert.ok(compareCatalogCardMeta(expensive, cheap, 'price-desc') < 0)
 assert.ok(compareCatalogCardMeta(missing, cheap, 'price-asc') > 0)
 assert.ok(compareCatalogCardMeta(missing, cheap, 'price-desc') > 0)
 assert.ok(compareCatalogCardMeta(mid, cheap, 'price-asc') > 0)
+const old = { ...cheap, name: 'Матрас OLD', height: 10, initialOrder: 0 }
+const current = { ...expensive, name: 'Матрас', height: 20, initialOrder: 1 }
+for (const sort of ['default', 'price-asc', 'price-desc', 'height-asc', 'height-desc', 'load-desc', 'firmness-asc', 'firmness-desc']) {
+  assert.ok(compareCatalogCardMeta(old, current, sort) > 0, sort)
+  assert.ok(compareCatalogCardMeta(current, old, sort) < 0, sort)
+}
+
 
 const sortOptionsSource = fs.readFileSync(
   path.join(root, 'src/components/pages/catalog-page-data.ts'),

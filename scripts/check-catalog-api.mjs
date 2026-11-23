@@ -129,10 +129,21 @@ if (filters) {
   }
 }
 
+function checkOldProductsLast(path, items) {
+  const firstOld = items.findIndex((product) => product.name?.endsWith(' OLD'))
+  if (firstOld <= 0 || items.slice(firstOld).some((product) => !product.name?.endsWith(' OLD'))) {
+    failures.push(`${path}: products marked OLD must follow all current products`)
+  }
+}
+
 const products = await readJson('/api/catalog/products')
 if (products) {
   const items = assertList('/api/catalog/products', products.items, 'items')
+  checkOldProductsLast('/api/catalog/products', items)
   for (const product of items) {
+    if (/[\r\n]/.test(product.coverDescription || '')) {
+      failures.push(`/api/catalog/products: ${product.slug} has a line break in coverDescription`)
+    }
     for (const field of ['firmnessSide1', 'firmnessSide2']) {
       const value = product[field]
       if (value !== null && value !== undefined && (!Number.isInteger(value) || value < 1 || value > 10)) {
@@ -249,9 +260,14 @@ if (products) {
     }
   }
 
+  const lider = items.find((product) => product.slug === 'lider')
+  if (lider?.name !== 'Лидер Грей Софт' || lider?.mattressType !== 'spring' || lider?.sidedness !== 'doubleSided') {
+    failures.push('lider must expose its mixed-case name and both construction types')
+  }
+
   const relaxPlus = items.find((product) => product.slug === 'relax-plus')
-  if (!relaxPlus || relaxPlus.firmnessSide1 !== 5 || relaxPlus.firmnessSide2 !== 7) {
-    failures.push('/api/catalog/products: relax-plus must expose firmness scores 5/7')
+  if (!relaxPlus || relaxPlus.firmnessSide1 !== 7 || relaxPlus.firmnessSide2 !== 5) {
+    failures.push('/api/catalog/products: relax-plus must expose firmness scores 7/5')
   }
 
   const nanoFoamProducts = items.filter((product) => (product.fillings || []).includes('nanoFoam'))
@@ -277,6 +293,7 @@ if (products) {
 const listingProducts = await readJson('/api/catalog/products?view=listing')
 if (listingProducts) {
   const listingItems = assertList('/api/catalog/products?view=listing', listingProducts.items, 'items')
+  checkOldProductsLast('/api/catalog/products?view=listing', listingItems)
   if (listingProducts.view !== 'listing') {
     failures.push('/api/catalog/products?view=listing: missing view=listing marker')
   }
@@ -290,6 +307,11 @@ if (listingProducts) {
       failures.push(`/api/catalog/products?view=listing: ${product.slug || '(unknown)'} must omit full-feed identity and activity fields`)
     }
   }
+  const lider = listingItems.find((product) => product.slug === 'lider')
+  if (lider?.name !== 'Лидер Грей Софт' || lider?.mattressType !== 'spring' || lider?.sidedness !== 'doubleSided') {
+    failures.push('lider must expose its mixed-case name and both construction types')
+  }
+
   const orient = listingItems.find((product) => product.slug === 'orient')
   if (orient && Array.isArray(orient.gallery) && orient.gallery.length !== 1) {
     failures.push('/api/catalog/products?view=listing: orient must expose exactly 1 gallery slide')

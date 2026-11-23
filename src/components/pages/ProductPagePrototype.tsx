@@ -6,6 +6,8 @@ import { FaqSection } from '@/components/marketing/shared-page-sections'
 import { readCatalogFavourites, writeCatalogFavourites } from '@/catalog/catalog-favourites'
 import { copyTextWithToast, flashCatalogShareLinkCopiedLabel } from '@/catalog/catalog-share'
 import { initCatalogHeroSlider } from '@/catalog-hero-slider.js'
+import { getCatalogFirmnessRows } from '@/catalog/catalog-firmness-scale'
+import { formatConstructionType } from '@/catalog/catalog-modal'
 import { getCatalogProductsFullFeed, type CatalogProduct, type CatalogProductMediaItem } from '@/catalog/catalog-api'
 import { ResponsivePicture } from '@/components/ui/ResponsivePicture'
 import styles from './ProductPagePrototype.module.css'
@@ -259,18 +261,27 @@ function FullscreenProductGallery({ items, initialIndex, open, onOpenChange, pro
   )
 }
 
-function FirmnessScale({ score }: { score: number }) {
+function FirmnessScale({ side1, side2 }: {
+  side1: CatalogProduct['firmnessSide1']
+  side2: CatalogProduct['firmnessSide2']
+}) {
+  const rows = getCatalogFirmnessRows(side1, side2)
+  if (!rows.length) return null
+
   return (
     <section className="catalogue-new-firmness-scale" data-product-firmness-scale>
       <h3 className="catalogue-new-firmness-title">Жесткость</h3>
-      <div className="catalogue-new-firmness-row is-single">
-        <div className="catalogue-new-firmness-track" aria-hidden="true">
-          {Array.from({ length: 10 }, (_, index) => (
-            <span key={index} className={`catalogue-new-firmness-segment${index < score ? ' is-filled' : ''}`} />
-          ))}
+      {rows.map(({ label, score }) => (
+        <div key={label} className={`catalogue-new-firmness-row${label ? '' : ' is-single'}`}>
+          {label && <span className="catalogue-new-firmness-label">{label}</span>}
+          <div className="catalogue-new-firmness-track" aria-hidden="true">
+            {Array.from({ length: 10 }, (_, index) => (
+              <span key={index} className={`catalogue-new-firmness-segment${index < score ? ' is-filled' : ''}`} />
+            ))}
+          </div>
+          <span className="catalogue-new-firmness-score">{score}/10</span>
         </div>
-        <span className="catalogue-new-firmness-score">{score}/10</span>
-      </div>
+      ))}
     </section>
   )
 }
@@ -428,9 +439,8 @@ export function ProductPagePrototype() {
     : []
   const tags = Array.isArray(product?.tags) ? product.tags.map(String).filter(Boolean) : []
   const description = String(product?.pageDescription || '')
-  const typeLabel = tags[0] || String(product?.mattressType || '')
+  const typeLabel = formatConstructionType(product?.mattressType, product?.sidedness)
   const loadLabel = product?.maxLoadKg ? `до ${product.maxLoadKg} кг` : ''
-  const firmnessScore = Math.max(1, Math.min(10, Number(product?.firmnessSide1 || product?.firmnessSide2 || 9)))
   const sizes = (Array.isArray(product?.sizes) ? product.sizes : [])
     .map((value) => {
       if (Array.isArray(value)) return [Number(value[0]), Number(value[1])] as const
@@ -510,10 +520,10 @@ export function ProductPagePrototype() {
                   <TextWithBreaks text={description} />
                 </p>
                 <dl className={styles.primarySpecs}>
-                  <div><dt>Тип матраса</dt><dd>{typeLabel}</dd></div>
+                  <div><dt>Тип конструкции</dt><dd>{typeLabel}</dd></div>
                   <div><dt>Нагрузка</dt><dd>{loadLabel}</dd></div>
                 </dl>
-                <FirmnessScale score={firmnessScore} />
+                <FirmnessScale side1={product?.firmnessSide1} side2={product?.firmnessSide2} />
               </div>
             </div>
             <section className={styles.characteristicsBlock} data-product-info-band>
@@ -535,7 +545,7 @@ export function ProductPagePrototype() {
                 <dl className={`${styles.characteristicsSpecs} ${styles.coverSpec}`}>
                   <div>
                     <dt>Чехол</dt>
-                    <dd><TextWithBreaks text={String(product?.coverDescription || '')} /></dd>
+                    <dd>{product?.coverDescription}</dd>
                   </div>
                 </dl>
               </div>

@@ -68,6 +68,14 @@
   }
 }
 
+@media (width > 900px) {
+  .page .shell {
+    grid-template-columns: minmax(360px, 0.92fr) minmax(0, 1.08fr);
+    align-items: start;
+    gap: 64px;
+  }
+}
+
 @media (max-width: 900px) {
   .page {
     padding-bottom: var(--space-8);

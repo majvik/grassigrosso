@@ -89,6 +89,7 @@
     "check:catalog-card-list-meta": "node scripts/check-catalog-card-list-meta.mjs",
     "check:catalog-price-filter": "node scripts/check-catalog-price-filter.mjs",
     "check:catalog-recommended-section": "node scripts/check-catalog-recommended-section.mjs",
+    "check:download-catalog-layout": "node scripts/check-download-catalog-layout.mjs",
     "check:catalog-ui": "node scripts/check-catalog-ui.mjs",
     "check:catalog-smart-selector": "node scripts/check-catalog-smart-selector.mjs",
     "check:modal-system": "node scripts/check-modal-system.mjs",

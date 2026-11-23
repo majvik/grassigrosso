@@ -22,18 +22,23 @@ function buildRow(score: number, label = ''): string {
   )
 }
 
-export function buildCatalogFirmnessScaleHtml(side1Value: unknown, side2Value: unknown): string {
+export function getCatalogFirmnessRows(side1Value: unknown, side2Value: unknown) {
   const side1 = normalizeScore(side1Value)
   const side2 = normalizeScore(side2Value)
   const fallback = side1 ?? side2
-  if (fallback === null) return ''
-  const rows = side1 !== null && side2 !== null && side1 !== side2
-    ? buildRow(side1, 'Сторона 1') + buildRow(side2, 'Сторона 2')
-    : buildRow(fallback)
+  if (fallback === null) return []
+  return side1 !== null && side2 !== null && side1 !== side2
+    ? [{ score: side1, label: 'Сторона 1' }, { score: side2, label: 'Сторона 2' }]
+    : [{ score: fallback, label: '' }]
+}
+
+export function buildCatalogFirmnessScaleHtml(side1Value: unknown, side2Value: unknown): string {
+  const rows = getCatalogFirmnessRows(side1Value, side2Value)
+  if (!rows.length) return ''
   return (
     `<section class="catalogue-new-firmness-scale" data-product-firmness-scale>` +
     `<h3 class="catalogue-new-firmness-title">Жесткость</h3>` +
-    rows +
+    rows.map(({ score, label }) => buildRow(score, label)).join('') +
     `</section>`
   )
 }

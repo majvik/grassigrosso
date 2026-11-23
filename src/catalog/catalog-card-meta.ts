@@ -41,6 +41,7 @@ export function readCatalogueCardMeta(card: HTMLElement, index: number): Catalog
     firmnessSide1: dataset.firmnessSide1 && Number.isInteger(Number(dataset.firmnessSide1)) ? Number(dataset.firmnessSide1) : null,
     firmnessSide2: dataset.firmnessSide2 && Number.isInteger(Number(dataset.firmnessSide2)) ? Number(dataset.firmnessSide2) : null,
     type: String(dataset.type || ''),
+    sidedness: dataset.sidedness,
     height: Number(dataset.height || 0),
     load: Number(dataset.load || 0),
     price: Number(dataset.price || 0),

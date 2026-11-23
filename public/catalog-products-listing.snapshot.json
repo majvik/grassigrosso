@@ -1,250 +1,7 @@
 {
   "items": [
     {
-      "name": "Ориент",
-      "slug": "orient",
-      "collectionName": "Classic",
-      "collectionSlug": "classic",
-      "firmness": "medium",
-      "firmnessSide1": 4,
-      "firmnessSide2": 4,
-      "mattressType": "spring",
-      "heightCm": 19,
-      "maxLoadKg": 120,
-      "loadRange": "upTo120",
-      "heightRange": "mid",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "orthoFoam"
-      ],
-      "features": [
-        "edgeSupport"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/orient_2c3e41f94d.avif",
-          "alt": "Ориент — коллекция Classic",
-          "fallbackSrc": "/uploads/orient_2c3e41f94d.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Средний"
-      ],
-      "isRecommended": true
-    },
-    {
-      "name": "Ориент Плюс",
-      "slug": "orient-plus",
-      "collectionName": "Classic",
-      "collectionSlug": "classic",
-      "firmness": "dualFirmness",
-      "firmnessSide1": 4,
-      "firmnessSide2": 6,
-      "mattressType": "spring",
-      "heightCm": 20,
-      "maxLoadKg": 120,
-      "loadRange": "upTo120",
-      "heightRange": "mid",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "coir",
-        "orthoFoam"
-      ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/orient_plus_833986e934.avif",
-          "alt": "Ориент Плюс — коллекция Classic",
-          "fallbackSrc": "/uploads/orient_plus_833986e934.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": true
-    },
-    {
-      "name": "Аспект",
-      "slug": "aspect",
-      "collectionName": "Classic",
-      "collectionSlug": "classic",
-      "firmness": "medium",
-      "firmnessSide1": 5,
-      "firmnessSide2": 5,
-      "mattressType": "spring",
-      "heightCm": 20,
-      "maxLoadKg": 120,
-      "loadRange": "upTo120",
-      "heightRange": "mid",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "coir",
-        "orthoFoam"
-      ],
-      "features": [
-        "edgeSupport"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/aspect_0b78cde0d6.avif",
-          "alt": "Аспект — коллекция Classic",
-          "fallbackSrc": "/uploads/aspect_0b78cde0d6.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Средний"
-      ],
-      "isRecommended": true
-    },
-    {
-      "name": "Эвер Фоам 10",
-      "slug": "ever-foam-10",
-      "collectionName": "Classic",
-      "collectionSlug": "classic",
-      "firmness": "medium",
-      "firmnessSide1": 5,
-      "firmnessSide2": 5,
-      "mattressType": "nospring",
-      "heightCm": 10,
-      "maxLoadKg": 120,
-      "loadRange": "upTo120",
-      "heightRange": "low",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "orthoFoam"
-      ],
-      "features": [],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/ever_foam_10_4db418ff47.avif",
-          "alt": "Эвер Фоам 10 — коллекция Classic",
-          "fallbackSrc": "/uploads/ever_foam_10_4db418ff47.png"
-        }
-      ],
-      "tags": [
-        "Беспружинный",
-        "Средний"
-      ],
-      "isRecommended": true
-    },
-    {
-      "name": "Эвер Фоам 16",
-      "slug": "ever-foam-16",
-      "collectionName": "Classic",
-      "collectionSlug": "classic",
-      "firmness": "medium",
-      "firmnessSide1": 5,
-      "firmnessSide2": 5,
-      "mattressType": "nospring",
-      "heightCm": 16,
-      "maxLoadKg": 120,
-      "loadRange": "upTo120",
-      "heightRange": "low",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "orthoFoam"
-      ],
-      "features": [],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/ever_foam_16_2fb4eb1cba.avif",
-          "alt": "Эвер Фоам 16 — коллекция Classic",
-          "fallbackSrc": "/uploads/ever_foam_16_2fb4eb1cba.png"
-        }
-      ],
-      "tags": [
-        "Беспружинный",
-        "Средний"
-      ],
-      "isRecommended": true
-    },
-    {
-      "name": "Эвер Фоам 20",
-      "slug": "ever-foam-20",
-      "collectionName": "Classic",
-      "collectionSlug": "classic",
-      "firmness": "medium",
-      "firmnessSide1": 5,
-      "firmnessSide2": 5,
-      "mattressType": "nospring",
-      "heightCm": 20,
-      "maxLoadKg": 120,
-      "loadRange": "upTo120",
-      "heightRange": "mid",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "orthoFoam"
-      ],
-      "features": [],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/ever_foam_20_b1af34b875.avif",
-          "alt": "Эвер Фоам 20 — коллекция Classic",
-          "fallbackSrc": "/uploads/ever_foam_20_b1af34b875.png"
-        }
-      ],
-      "tags": [
-        "Беспружинный",
-        "Средний"
-      ],
-      "isRecommended": true
-    },
-    {
-      "name": "Ортофоам Стандарт",
+      "name": "Орто Фоам",
       "slug": "ortofoam-standard",
       "collectionName": "Flexi",
       "collectionSlug": "flexi",
@@ -268,6 +25,10 @@
         "orthoFoam"
       ],
       "features": [],
+      "tags": [
+        "Беспружинный",
+        "Средняя жесткость"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -275,15 +36,10 @@
           "alt": "Ортофоам Стандарт — коллекция Flexi",
           "fallbackSrc": "/uploads/ortofoam_standard_50cf10ea6d.png"
         }
-      ],
-      "tags": [
-        "Беспружинный",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Ортофоам Плюс",
+      "name": "Орто Фоам Плюс",
       "slug": "ortofoam-plus",
       "collectionName": "Flexi",
       "collectionSlug": "flexi",
@@ -307,6 +63,10 @@
         "orthoFoam"
       ],
       "features": [],
+      "tags": [
+        "Беспружинный",
+        "Средняя жесткость"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -314,12 +74,7 @@
           "alt": "Ортофоам Плюс — коллекция Flexi",
           "fallbackSrc": "/uploads/ortofoam_plus_160ac099ba.png"
         }
-      ],
-      "tags": [
-        "Беспружинный",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Хард Формат",
@@ -349,6 +104,10 @@
       "features": [
         "dualFirmness"
       ],
+      "tags": [
+        "Беспружинный",
+        "Разная жесткость сторон"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -356,12 +115,7 @@
           "alt": "Хард Формат — коллекция Flexi",
           "fallbackSrc": "/uploads/hard_format_0d6264cc49.png"
         }
-      ],
-      "tags": [
-        "Беспружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Скай Фоам",
@@ -373,7 +127,7 @@
       "firmnessSide2": 6,
       "mattressType": "nospring",
       "heightCm": 21,
-      "maxLoadKg": 140,
+      "maxLoadKg": 160,
       "loadRange": "upTo160",
       "heightRange": "mid",
       "sizes": [
@@ -385,12 +139,15 @@
         "180x200"
       ],
       "fillings": [
-        "memoryEffect",
         "orthoFoam",
-        "nanoFoam"
+        "memoryEffect"
       ],
       "features": [
         "dualFirmness"
+      ],
+      "tags": [
+        "Беспружинный",
+        "Разная жесткость сторон"
       ],
       "gallery": [
         {
@@ -399,19 +156,14 @@
           "alt": "Скай Фоам — коллекция Flexi",
           "fallbackSrc": "/uploads/sky_foam_0fbe8b34a5.png"
         }
-      ],
-      "tags": [
-        "Беспружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Эволюшен",
       "slug": "evolution",
       "collectionName": "Flexi",
       "collectionSlug": "flexi",
-      "firmness": "hard",
+      "firmness": "medium",
       "firmnessSide1": 7,
       "firmnessSide2": 7,
       "mattressType": "nospring",
@@ -428,10 +180,16 @@
         "180x200"
       ],
       "fillings": [
+        "biCotton",
+        "nanoFoam",
         "memoryEffect",
         "orthoFoam"
       ],
       "features": [],
+      "tags": [
+        "Беспружинный",
+        "Средняя жесткость"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -439,12 +197,7 @@
           "alt": "Эволюшен — коллекция Flexi",
           "fallbackSrc": "/uploads/evolution_42ab6a5690.png"
         }
-      ],
-      "tags": [
-        "Беспружинный",
-        "Жесткий"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Гранд",
@@ -452,8 +205,8 @@
       "collectionName": "Flexi",
       "collectionSlug": "flexi",
       "firmness": "hard",
-      "firmnessSide1": 9,
-      "firmnessSide2": 9,
+      "firmnessSide1": 8,
+      "firmnessSide2": 8,
       "mattressType": "nospring",
       "heightCm": 24,
       "maxLoadKg": 180,
@@ -469,9 +222,14 @@
       ],
       "fillings": [
         "coir",
+        "nanoFoam",
         "orthoFoam"
       ],
       "features": [],
+      "tags": [
+        "Беспружинный",
+        "Жесткий"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -479,12 +237,7 @@
           "alt": "Гранд — коллекция Flexi",
           "fallbackSrc": "/uploads/grand_1bea9a4b63.png"
         }
-      ],
-      "tags": [
-        "Беспружинный",
-        "Жесткий"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Империо",
@@ -495,6 +248,7 @@
       "firmnessSide1": 6,
       "firmnessSide2": 4,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 24,
       "maxLoadKg": 140,
       "loadRange": "upTo160",
@@ -509,11 +263,16 @@
       ],
       "fillings": [
         "memoryEffect",
-        "orthoFoam"
+        "nanoFoam",
+        "biCotton"
       ],
       "features": [
         "edgeSupport",
         "dualFirmness"
+      ],
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
       ],
       "gallery": [
         {
@@ -522,22 +281,18 @@
           "alt": "Империо — коллекция Relax",
           "fallbackSrc": "/uploads/imperio_8069a3faa1.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Люксор",
       "slug": "luxor",
       "collectionName": "Relax",
       "collectionSlug": "relax",
-      "firmness": "medium",
+      "firmness": "soft",
       "firmnessSide1": 6,
       "firmnessSide2": 6,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 26,
       "maxLoadKg": 160,
       "loadRange": "upTo160",
@@ -551,11 +306,15 @@
         "180x200"
       ],
       "fillings": [
-        "memoryEffect",
-        "orthoFoam"
+        "orthoFoam",
+        "memoryEffect"
       ],
       "features": [
         "edgeSupport"
+      ],
+      "tags": [
+        "Пружинный",
+        "Мягкий"
       ],
       "gallery": [
         {
@@ -564,22 +323,18 @@
           "alt": "Люксор — коллекция Relax",
           "fallbackSrc": "/uploads/luxor_adb0d9305d.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Галакси",
       "slug": "galaksi",
       "collectionName": "Relax",
       "collectionSlug": "relax",
-      "firmness": "medium",
+      "firmness": "soft",
       "firmnessSide1": 6,
       "firmnessSide2": 6,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 26,
       "maxLoadKg": 160,
       "loadRange": "upTo160",
@@ -599,6 +354,10 @@
       "features": [
         "edgeSupport"
       ],
+      "tags": [
+        "Пружинный",
+        "Мягкий"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -606,22 +365,18 @@
           "alt": "Галакси — коллекция Relax",
           "fallbackSrc": "/uploads/galaksi_29d31b0292.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Дискавери",
       "slug": "discovery",
       "collectionName": "Relax",
       "collectionSlug": "relax",
-      "firmness": "hard",
+      "firmness": "medium",
       "firmnessSide1": 8,
       "firmnessSide2": 8,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 27,
       "maxLoadKg": 160,
       "loadRange": "upTo160",
@@ -642,6 +397,10 @@
       "features": [
         "edgeSupport"
       ],
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -649,12 +408,7 @@
           "alt": "Дискавери — коллекция Relax",
           "fallbackSrc": "/uploads/discovery_caf02c8839.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Жесткий"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Давос",
@@ -665,6 +419,7 @@
       "firmnessSide1": 9,
       "firmnessSide2": 9,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 22,
       "maxLoadKg": 150,
       "loadRange": "upTo160",
@@ -683,12 +438,10 @@
       "features": [
         "edgeSupport"
       ],
-      "gallery": [],
       "tags": [
         "Пружинный",
         "Жесткий"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Давос Микс",
@@ -699,6 +452,7 @@
       "firmnessSide1": 7,
       "firmnessSide2": 9,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 23,
       "maxLoadKg": 150,
       "loadRange": "upTo160",
@@ -719,6 +473,10 @@
         "edgeSupport",
         "dualFirmness"
       ],
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -726,12 +484,7 @@
           "alt": "Давос Микс — коллекция Relax",
           "fallbackSrc": "/uploads/davos_mix_cbba0a9e32.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Элио",
@@ -742,6 +495,7 @@
       "firmnessSide1": 5,
       "firmnessSide2": 7,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 23,
       "maxLoadKg": 140,
       "loadRange": "upTo160",
@@ -755,13 +509,17 @@
         "180x200"
       ],
       "fillings": [
+        "nanoFoam",
         "coir",
-        "latex",
-        "nanoFoam"
+        "latex"
       ],
       "features": [
         "edgeSupport",
         "dualFirmness"
+      ],
+      "tags": [
+        "Разная жесткость сторон",
+        "Пружинный"
       ],
       "gallery": [
         {
@@ -770,22 +528,18 @@
           "alt": "Элио — коллекция Relax",
           "fallbackSrc": "/uploads/elio_d91de9f2ca.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Премьер",
       "slug": "premier",
       "collectionName": "Relax",
       "collectionSlug": "relax",
-      "firmness": "hard",
+      "firmness": "medium",
       "firmnessSide1": 7,
       "firmnessSide2": 7,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 24,
       "maxLoadKg": 140,
       "loadRange": "upTo160",
@@ -805,6 +559,10 @@
       "features": [
         "edgeSupport"
       ],
+      "tags": [
+        "Пружинный",
+        "Средняя жесткость"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -812,22 +570,18 @@
           "alt": "Премьер — коллекция Relax",
           "fallbackSrc": "/uploads/premier_2c2d5c8a99.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Жесткий"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Премьер Люкс",
       "slug": "premier-lux",
       "collectionName": "Relax",
       "collectionSlug": "relax",
-      "firmness": "hard",
+      "firmness": "medium",
       "firmnessSide1": 7,
       "firmnessSide2": 7,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 24,
       "maxLoadKg": 140,
       "loadRange": "upTo160",
@@ -847,6 +601,10 @@
       "features": [
         "edgeSupport"
       ],
+      "tags": [
+        "Пружинный",
+        "Средняя жесткость"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -854,12 +612,7 @@
           "alt": "Премьер Люкс — коллекция Relax",
           "fallbackSrc": "/uploads/premier_lux_d2f5d4e27c.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Жесткий"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Импринт",
@@ -870,6 +623,7 @@
       "firmnessSide1": 6,
       "firmnessSide2": 6,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 23,
       "maxLoadKg": 140,
       "loadRange": "upTo160",
@@ -883,11 +637,15 @@
         "180x200"
       ],
       "fillings": [
-        "coir",
-        "memoryEffect"
+        "memoryEffect",
+        "coir"
       ],
       "features": [
         "edgeSupport"
+      ],
+      "tags": [
+        "Пружинный",
+        "Средняя жесткость"
       ],
       "gallery": [
         {
@@ -896,12 +654,7 @@
           "alt": "Импринт — коллекция Relax",
           "fallbackSrc": "/uploads/imprint_8388805d62.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
       "name": "Релакс Плюс",
@@ -909,9 +662,10 @@
       "collectionName": "Relax",
       "collectionSlug": "relax",
       "firmness": "dualFirmness",
-      "firmnessSide1": 5,
-      "firmnessSide2": 7,
+      "firmnessSide1": 7,
+      "firmnessSide2": 5,
       "mattressType": "spring",
+      "sidedness": "doubleSided",
       "heightCm": 21,
       "maxLoadKg": 140,
       "loadRange": "upTo160",
@@ -932,6 +686,10 @@
         "edgeSupport",
         "dualFirmness"
       ],
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -939,15 +697,633 @@
           "alt": "Релакс Плюс — коллекция Relax",
           "fallbackSrc": "/uploads/relax_plus_e0c55db1b5.png"
         }
+      ]
+    },
+    {
+      "name": "Твин",
+      "slug": "twin",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "dualFirmness",
+      "firmnessSide1": 4,
+      "firmnessSide2": 7,
+      "mattressType": "spring",
+      "sidedness": "doubleSided",
+      "heightCm": 20,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam",
+        "coir"
+      ],
+      "features": [
+        "dualFirmness"
       ],
       "tags": [
         "Пружинный",
         "Разная жесткость сторон"
       ],
-      "isRecommended": false
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/twin_32ba60f7b8.avif",
+          "alt": "Твин — коллекция Trend",
+          "fallbackSrc": "/uploads/twin_32ba60f7b8.png"
+        }
+      ]
     },
     {
-      "name": "Ларго",
+      "name": "Релакс",
+      "slug": "relax-trend",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "dualFirmness",
+      "firmnessSide1": 6,
+      "firmnessSide2": 4,
+      "mattressType": "spring",
+      "sidedness": "doubleSided",
+      "heightCm": 21,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "dualFirmness"
+      ],
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/relax_trend_55248b6852.avif",
+          "alt": "Релакс — коллекция Trend",
+          "fallbackSrc": "/uploads/relax_trend_55248b6852.png"
+        }
+      ]
+    },
+    {
+      "name": "Эдванс",
+      "slug": "advance",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "medium",
+      "firmnessSide1": 6,
+      "firmnessSide2": 6,
+      "mattressType": "spring",
+      "sidedness": "doubleSided",
+      "heightCm": 22,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [],
+      "tags": [
+        "Пружинный",
+        "Средняя жесткость"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/advance_3b197e92a3.avif",
+          "alt": "Эдванс — коллекция Trend",
+          "fallbackSrc": "/uploads/advance_3b197e92a3.png"
+        }
+      ]
+    },
+    {
+      "name": "Оптима",
+      "slug": "optima",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "dualFirmness",
+      "firmnessSide1": 6,
+      "firmnessSide2": 7,
+      "mattressType": "spring",
+      "sidedness": "doubleSided",
+      "heightCm": 22,
+      "maxLoadKg": 130,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "dualFirmness"
+      ],
+      "tags": [
+        "Разная жесткость сторон",
+        "Пружинный"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/optima_36d543128e.avif",
+          "alt": "Оптима — коллекция Trend",
+          "fallbackSrc": "/uploads/optima_36d543128e.png"
+        }
+      ]
+    },
+    {
+      "name": "Динамик",
+      "slug": "dynamic",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "hard",
+      "firmnessSide1": 7,
+      "firmnessSide2": 7,
+      "mattressType": "spring",
+      "sidedness": "doubleSided",
+      "heightCm": 21,
+      "maxLoadKg": 130,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir"
+      ],
+      "features": [],
+      "tags": [
+        "Пружинный"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/dynamic_2522e44e03.avif",
+          "alt": "Динамик — коллекция Trend",
+          "fallbackSrc": "/uploads/dynamic_2522e44e03.png"
+        }
+      ]
+    },
+    {
+      "name": "Лидер Грей Софт",
+      "slug": "lider",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "medium",
+      "firmnessSide1": 7,
+      "firmnessSide2": 7,
+      "mattressType": "spring",
+      "sidedness": "doubleSided",
+      "heightCm": 25,
+      "maxLoadKg": 180,
+      "loadRange": "upTo180",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam",
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "tags": [
+        "Пружинный",
+        "Средняя жесткость"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/lider_0a44c1d610.avif",
+          "alt": "Лидер — коллекция Trend",
+          "fallbackSrc": "/uploads/lider_0a44c1d610.png"
+        }
+      ]
+    },
+    {
+      "name": "Гравити Грей Софт",
+      "slug": "gravity",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "hard",
+      "firmnessSide1": 8,
+      "firmnessSide2": 8,
+      "mattressType": "spring",
+      "sidedness": "doubleSided",
+      "heightCm": 26,
+      "maxLoadKg": 180,
+      "loadRange": "upTo180",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam",
+        "coir"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/gravity_bd49fb1798.avif",
+          "alt": "Гравити — коллекция Trend",
+          "fallbackSrc": "/uploads/gravity_bd49fb1798.png"
+        }
+      ]
+    },
+    {
+      "name": "Мэджик Грей Софт",
+      "slug": "magic",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "medium",
+      "firmnessSide1": 8,
+      "firmnessSide2": 8,
+      "mattressType": "spring",
+      "sidedness": "doubleSided",
+      "heightCm": 27,
+      "maxLoadKg": 180,
+      "loadRange": "upTo180",
+      "heightRange": "high",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "latex",
+        "orthoFoam"
+      ],
+      "features": [],
+      "tags": [
+        "Средняя жесткость",
+        "Пружинный"
+      ],
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/magic_88318c046d.avif",
+          "alt": "Мэджик — коллекция Trend",
+          "fallbackSrc": "/uploads/magic_88318c046d.png"
+        }
+      ]
+    },
+    {
+      "name": "Суприм Грей Софт",
+      "slug": "supreme-grey-soft",
+      "collectionName": "Trend",
+      "collectionSlug": "trend",
+      "firmness": "medium",
+      "firmnessSide1": 6,
+      "firmnessSide2": 6,
+      "mattressType": "spring",
+      "sidedness": "doubleSided",
+      "heightCm": 26,
+      "maxLoadKg": 180,
+      "loadRange": "upTo180",
+      "heightRange": "high",
+      "sizes": [],
+      "fillings": [
+        "orthoFoam",
+        "forplit"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "tags": [
+        "Пружинный",
+        "Средняя жесткость"
+      ]
+    },
+    {
+      "name": "Баланс Кофморт",
+      "slug": "balance-comfort",
+      "collectionName": "Flexi",
+      "collectionSlug": "flexi",
+      "firmness": "medium",
+      "firmnessSide1": 7,
+      "firmnessSide2": 7,
+      "mattressType": "nospring",
+      "heightCm": 18,
+      "maxLoadKg": 140,
+      "loadRange": "upTo160",
+      "heightRange": "mid",
+      "sizes": [],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [],
+      "tags": [
+        "Беспружинный",
+        "Средняя жесткость"
+      ]
+    },
+    {
+      "name": "Ориент OLD",
+      "slug": "orient",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "medium",
+      "firmnessSide1": 4,
+      "firmnessSide2": 4,
+      "mattressType": "spring",
+      "heightCm": 19,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
+      "isRecommended": true,
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/orient_2c3e41f94d.avif",
+          "alt": "Ориент — коллекция Classic",
+          "fallbackSrc": "/uploads/orient_2c3e41f94d.png"
+        }
+      ]
+    },
+    {
+      "name": "Ориент Плюс OLD",
+      "slug": "orient-plus",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "dualFirmness",
+      "firmnessSide1": 4,
+      "firmnessSide2": 6,
+      "mattressType": "spring",
+      "heightCm": 20,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport",
+        "dualFirmness"
+      ],
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
+      "isRecommended": true,
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/orient_plus_833986e934.avif",
+          "alt": "Ориент Плюс — коллекция Classic",
+          "fallbackSrc": "/uploads/orient_plus_833986e934.png"
+        }
+      ]
+    },
+    {
+      "name": "Аспект OLD",
+      "slug": "aspect",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
+      "mattressType": "spring",
+      "heightCm": 20,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "coir",
+        "orthoFoam"
+      ],
+      "features": [
+        "edgeSupport"
+      ],
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
+      "isRecommended": true,
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/aspect_0b78cde0d6.avif",
+          "alt": "Аспект — коллекция Classic",
+          "fallbackSrc": "/uploads/aspect_0b78cde0d6.png"
+        }
+      ]
+    },
+    {
+      "name": "Эвер Фоам 10 OLD",
+      "slug": "ever-foam-10",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
+      "mattressType": "nospring",
+      "heightCm": 10,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [],
+      "tags": [
+        "Беспружинный",
+        "Средний"
+      ],
+      "isRecommended": true,
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/ever_foam_10_4db418ff47.avif",
+          "alt": "Эвер Фоам 10 — коллекция Classic",
+          "fallbackSrc": "/uploads/ever_foam_10_4db418ff47.png"
+        }
+      ]
+    },
+    {
+      "name": "Эвер Фоам 16 OLD",
+      "slug": "ever-foam-16",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
+      "mattressType": "nospring",
+      "heightCm": 16,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "low",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [],
+      "tags": [
+        "Беспружинный",
+        "Средний"
+      ],
+      "isRecommended": true,
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/ever_foam_16_2fb4eb1cba.avif",
+          "alt": "Эвер Фоам 16 — коллекция Classic",
+          "fallbackSrc": "/uploads/ever_foam_16_2fb4eb1cba.png"
+        }
+      ]
+    },
+    {
+      "name": "Эвер Фоам 20 OLD",
+      "slug": "ever-foam-20",
+      "collectionName": "Classic",
+      "collectionSlug": "classic",
+      "firmness": "medium",
+      "firmnessSide1": 5,
+      "firmnessSide2": 5,
+      "mattressType": "nospring",
+      "heightCm": 20,
+      "maxLoadKg": 120,
+      "loadRange": "upTo120",
+      "heightRange": "mid",
+      "sizes": [
+        "140x190",
+        "140x200",
+        "160x190",
+        "160x200",
+        "180x190",
+        "180x200"
+      ],
+      "fillings": [
+        "orthoFoam"
+      ],
+      "features": [],
+      "tags": [
+        "Беспружинный",
+        "Средний"
+      ],
+      "isRecommended": true,
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/uploads/ever_foam_20_b1af34b875.avif",
+          "alt": "Эвер Фоам 20 — коллекция Classic",
+          "fallbackSrc": "/uploads/ever_foam_20_b1af34b875.png"
+        }
+      ]
+    },
+    {
+      "name": "Ларго OLD",
       "slug": "largo",
       "collectionName": "Relax",
       "collectionSlug": "relax",
@@ -974,6 +1350,10 @@
       "features": [
         "edgeSupport"
       ],
+      "tags": [
+        "Пружинный",
+        "Жесткий"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -981,101 +1361,10 @@
           "alt": "Ларго — коллекция Relax",
           "fallbackSrc": "/uploads/largo_bd4c921f15.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Жесткий"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Твин",
-      "slug": "twin",
-      "collectionName": "Trend",
-      "collectionSlug": "trend",
-      "firmness": "dualFirmness",
-      "firmnessSide1": 7,
-      "firmnessSide2": 4,
-      "mattressType": "spring",
-      "heightCm": 20,
-      "maxLoadKg": 120,
-      "loadRange": "upTo120",
-      "heightRange": "mid",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "coir",
-        "orthoFoam"
-      ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/twin_32ba60f7b8.avif",
-          "alt": "Твин — коллекция Trend",
-          "fallbackSrc": "/uploads/twin_32ba60f7b8.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": false
-    },
-    {
-      "name": "Релакс",
-      "slug": "relax-trend",
-      "collectionName": "Trend",
-      "collectionSlug": "trend",
-      "firmness": "dualFirmness",
-      "firmnessSide1": 4,
-      "firmnessSide2": 6,
-      "mattressType": "spring",
-      "heightCm": 21,
-      "maxLoadKg": 120,
-      "loadRange": "upTo120",
-      "heightRange": "mid",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "coir",
-        "orthoFoam"
-      ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/relax_trend_55248b6852.avif",
-          "alt": "Релакс — коллекция Trend",
-          "fallbackSrc": "/uploads/relax_trend_55248b6852.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": false
-    },
-    {
-      "name": "Оригинал",
+      "name": "Оригинал OLD",
       "slug": "original",
       "collectionName": "Trend",
       "collectionSlug": "trend",
@@ -1101,6 +1390,10 @@
       "features": [
         "edgeSupport"
       ],
+      "tags": [
+        "Пружинный",
+        "Средний"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1108,141 +1401,10 @@
           "alt": "Оригинал — коллекция Trend",
           "fallbackSrc": "/uploads/original_aff309d5fc.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Эдванс",
-      "slug": "advance",
-      "collectionName": "Trend",
-      "collectionSlug": "trend",
-      "firmness": "medium",
-      "firmnessSide1": 6,
-      "firmnessSide2": 6,
-      "mattressType": "spring",
-      "heightCm": 23,
-      "maxLoadKg": 120,
-      "loadRange": "upTo120",
-      "heightRange": "high",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "coir",
-        "orthoFoam"
-      ],
-      "features": [
-        "edgeSupport"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/advance_3b197e92a3.avif",
-          "alt": "Эдванс — коллекция Trend",
-          "fallbackSrc": "/uploads/advance_3b197e92a3.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Средний"
-      ],
-      "isRecommended": false
-    },
-    {
-      "name": "Оптима",
-      "slug": "optima",
-      "collectionName": "Trend",
-      "collectionSlug": "trend",
-      "firmness": "dualFirmness",
-      "firmnessSide1": 7,
-      "firmnessSide2": 6,
-      "mattressType": "spring",
-      "heightCm": 22,
-      "maxLoadKg": 130,
-      "loadRange": "upTo160",
-      "heightRange": "mid",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "coir",
-        "orthoFoam"
-      ],
-      "features": [
-        "edgeSupport",
-        "dualFirmness"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/optima_36d543128e.avif",
-          "alt": "Оптима — коллекция Trend",
-          "fallbackSrc": "/uploads/optima_36d543128e.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": false
-    },
-    {
-      "name": "Динамик",
-      "slug": "dynamic",
-      "collectionName": "Trend",
-      "collectionSlug": "trend",
-      "firmness": "hard",
-      "firmnessSide1": 7,
-      "firmnessSide2": 7,
-      "mattressType": "spring",
-      "heightCm": 21,
-      "maxLoadKg": 130,
-      "loadRange": "upTo160",
-      "heightRange": "mid",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "coir"
-      ],
-      "features": [
-        "edgeSupport"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/dynamic_2522e44e03.avif",
-          "alt": "Динамик — коллекция Trend",
-          "fallbackSrc": "/uploads/dynamic_2522e44e03.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Жесткий"
-      ],
-      "isRecommended": false
-    },
-    {
-      "name": "Спейс",
+      "name": "Спейс OLD",
       "slug": "space",
       "collectionName": "Trend",
       "collectionSlug": "trend",
@@ -1271,6 +1433,10 @@
         "edgeSupport",
         "dualFirmness"
       ],
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1278,15 +1444,10 @@
           "alt": "Спейс — коллекция Trend",
           "fallbackSrc": "/uploads/space_d3a4a357c4.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Сенсо",
+      "name": "Сенсо OLD",
       "slug": "senso",
       "collectionName": "Trend",
       "collectionSlug": "trend",
@@ -1314,6 +1475,10 @@
         "edgeSupport",
         "dualFirmness"
       ],
+      "tags": [
+        "Пружинный",
+        "Разная жесткость сторон"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1321,142 +1486,10 @@
           "alt": "Сенсо — коллекция Trend",
           "fallbackSrc": "/uploads/senso_a20c7ebe8c.png"
         }
-      ],
-      "tags": [
-        "Пружинный",
-        "Разная жесткость сторон"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Лидер",
-      "slug": "lider",
-      "collectionName": "Trend",
-      "collectionSlug": "trend",
-      "firmness": "hard",
-      "firmnessSide1": 7,
-      "firmnessSide2": 7,
-      "mattressType": "spring",
-      "heightCm": 26,
-      "maxLoadKg": 160,
-      "loadRange": "upTo160",
-      "heightRange": "high",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "coir",
-        "orthoFoam"
-      ],
-      "features": [
-        "edgeSupport"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/lider_0a44c1d610.avif",
-          "alt": "Лидер — коллекция Trend",
-          "fallbackSrc": "/uploads/lider_0a44c1d610.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Жесткий"
-      ],
-      "isRecommended": false
-    },
-    {
-      "name": "Гравити",
-      "slug": "gravity",
-      "collectionName": "Trend",
-      "collectionSlug": "trend",
-      "firmness": "hard",
-      "firmnessSide1": 8,
-      "firmnessSide2": 8,
-      "mattressType": "spring",
-      "heightCm": 25,
-      "maxLoadKg": 160,
-      "loadRange": "upTo160",
-      "heightRange": "high",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "coir",
-        "orthoFoam"
-      ],
-      "features": [
-        "edgeSupport"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/gravity_bd49fb1798.avif",
-          "alt": "Гравити — коллекция Trend",
-          "fallbackSrc": "/uploads/gravity_bd49fb1798.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Жесткий"
-      ],
-      "isRecommended": false
-    },
-    {
-      "name": "Мэджик",
-      "slug": "magic",
-      "collectionName": "Trend",
-      "collectionSlug": "trend",
-      "firmness": "hard",
-      "firmnessSide1": 8,
-      "firmnessSide2": 8,
-      "mattressType": "spring",
-      "heightCm": 27,
-      "maxLoadKg": 160,
-      "loadRange": "upTo160",
-      "heightRange": "high",
-      "sizes": [
-        "140x190",
-        "140x200",
-        "160x190",
-        "160x200",
-        "180x190",
-        "180x200"
-      ],
-      "fillings": [
-        "coir",
-        "latex",
-        "orthoFoam"
-      ],
-      "features": [
-        "edgeSupport"
-      ],
-      "gallery": [
-        {
-          "type": "image",
-          "src": "/uploads/magic_88318c046d.avif",
-          "alt": "Мэджик — коллекция Trend",
-          "fallbackSrc": "/uploads/magic_88318c046d.png"
-        }
-      ],
-      "tags": [
-        "Пружинный",
-        "Жесткий"
-      ],
-      "isRecommended": false
-    },
-    {
-      "name": "Флип Стандарт",
+      "name": "Флип Стандарт OLD",
       "slug": "flip-standard",
       "collectionName": "",
       "collectionSlug": "topper",
@@ -1480,6 +1513,10 @@
         "orthoFoam"
       ],
       "features": [],
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1487,15 +1524,10 @@
           "alt": "Флип Стандарт — коллекция Топеры",
           "fallbackSrc": "/uploads/flip_standard_95327ae0cb.png"
         }
-      ],
-      "tags": [
-        "Топер",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Флип Плюс",
+      "name": "Флип Плюс OLD",
       "slug": "flip-plus",
       "collectionName": "",
       "collectionSlug": "topper",
@@ -1519,6 +1551,10 @@
         "orthoFoam"
       ],
       "features": [],
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1526,15 +1562,10 @@
           "alt": "Флип Плюс — коллекция Топеры",
           "fallbackSrc": "/uploads/flip_plus_172f296634.png"
         }
-      ],
-      "tags": [
-        "Топер",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Эффект",
+      "name": "Эффект OLD",
       "slug": "effect",
       "collectionName": "",
       "collectionSlug": "topper",
@@ -1558,6 +1589,10 @@
         "coir"
       ],
       "features": [],
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1565,15 +1600,10 @@
           "alt": "Эффект — коллекция Топеры",
           "fallbackSrc": "/uploads/effect_2758decd3c.png"
         }
-      ],
-      "tags": [
-        "Топер",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Дуал",
+      "name": "Дуал OLD",
       "slug": "dual",
       "collectionName": "",
       "collectionSlug": "topper",
@@ -1598,6 +1628,10 @@
         "orthoFoam"
       ],
       "features": [],
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1605,15 +1639,10 @@
           "alt": "Дуал — коллекция Топеры",
           "fallbackSrc": "/uploads/dual_f689094c66.png"
         }
-      ],
-      "tags": [
-        "Топер",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Делюкс Мемори",
+      "name": "Делюкс Мемори OLD",
       "slug": "deluxe-memory",
       "collectionName": "",
       "collectionSlug": "topper",
@@ -1638,6 +1667,10 @@
         "orthoFoam"
       ],
       "features": [],
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1645,15 +1678,10 @@
           "alt": "Делюкс Мемори — коллекция Топеры",
           "fallbackSrc": "/uploads/deluxe_memory_a643a05849.png"
         }
-      ],
-      "tags": [
-        "Топер",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Делюкс Латекс",
+      "name": "Делюкс Латекс OLD",
       "slug": "deluxe-latex",
       "collectionName": "",
       "collectionSlug": "topper",
@@ -1677,6 +1705,10 @@
         "latex"
       ],
       "features": [],
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1684,15 +1716,10 @@
           "alt": "Делюкс Латекс — коллекция Топеры",
           "fallbackSrc": "/uploads/deluxe_latex_b5f31cac38.png"
         }
-      ],
-      "tags": [
-        "Топер",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Софт",
+      "name": "Софт OLD",
       "slug": "soft-topper",
       "collectionName": "",
       "collectionSlug": "topper",
@@ -1716,6 +1743,10 @@
         "memoryEffect"
       ],
       "features": [],
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1723,15 +1754,10 @@
           "alt": "Софт — коллекция Топеры",
           "fallbackSrc": "/uploads/soft_topper_d350ee9685.png"
         }
-      ],
-      "tags": [
-        "Топер",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     },
     {
-      "name": "Сенсетив",
+      "name": "Сенсетив OLD",
       "slug": "sensitive",
       "collectionName": "",
       "collectionSlug": "topper",
@@ -1753,6 +1779,10 @@
       ],
       "fillings": [],
       "features": [],
+      "tags": [
+        "Топер",
+        "Средний"
+      ],
       "gallery": [
         {
           "type": "image",
@@ -1760,12 +1790,7 @@
           "alt": "Сенсетив — коллекция Топеры",
           "fallbackSrc": "/uploads/sensitive_8aa448ed87.png"
         }
-      ],
-      "tags": [
-        "Топер",
-        "Средний"
-      ],
-      "isRecommended": false
+      ]
     }
   ],
   "sections": {

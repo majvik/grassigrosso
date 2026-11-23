@@ -27,6 +27,7 @@ esbuild.buildSync({
   format: 'esm',
   platform: 'node',
   outfile: cardBundle,
+  define: { __GRASSIGROSSO_SITE_MODE__: JSON.stringify("commerce") },
 })
 
 const { parseCatalogLayerItems, buildCatalogCardMetaHtmlFromDataset } = await import(
@@ -79,6 +80,7 @@ const cardHtml = buildCatalogueCardHtml({
   collectionSlug: 'classic',
   firmness: 'medium',
   mattressType: 'spring',
+  sidedness: 'doubleSided',
   heightCm: 19,
   maxLoadKg: 120,
   priceRub: 45000,
@@ -86,6 +88,9 @@ const cardHtml = buildCatalogueCardHtml({
   imageUrl: '/uploads/orient.png',
   layersCatalog: layersSample,
 })
+
+assert.match(cardHtml, /data-sidedness="doubleSided"/)
+assert.match(cardHtml, /Пружинный, Двусторонний/)
 
 const footerIdx = cardHtml.indexOf('catalogue-new-card-footer')
 const priceIdx = cardHtml.indexOf('catalogue-new-card-price')

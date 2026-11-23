@@ -57,6 +57,7 @@ import {
   type CatalogFilterState,
   collectAvailableCatalogFilters,
   compareCatalogCardMeta,
+  isOldCatalogProduct,
   matchesCatalogCardMeta,
   resetCatalogFilterState,
   setCatalogSort,
@@ -832,6 +833,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
     const dataset = {
       firmness: meta.firmness,
       type: meta.type,
+      sidedness: meta.sidedness,
       height: String(meta.height || ''),
       load: String(meta.load || ''),
       loadRange: meta.loadRange,
@@ -922,16 +924,9 @@ export function initCatalogListingController(documentRef: Document, scrollOption
 
   function applySorting() {
     if (productCatalog) return
-    const cardsToSort = [...cards]
-    const metaByCard = new Map(cardMeta.map((meta) => [meta.card, meta]))
-    cardsToSort.sort((a, b) => {
-      const metaA = metaByCard.get(a)
-      const metaB = metaByCard.get(b)
-      return compareCatalogCardMeta(metaA, metaB, state.sort)
-    })
-    cardsToSort.forEach((card) => {
-      cardsRootEl.appendChild(card)
-    })
+    cardMeta.sort((a, b) => compareCatalogCardMeta(a, b, state.sort))
+    cards = cardMeta.map((meta) => meta.card)
+    cards.forEach((card) => cardsRootEl.appendChild(card))
   }
 
   function syncUiFromState() {
@@ -961,7 +956,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
         if (isSharedFavouritesView) {
           return Boolean(entry.meta.slug && sharedSlugs.has(entry.meta.slug))
         }
-        if (hasSmartSelection) return matchesSmartHardConstraints(entry.meta)
+        if (hasSmartSelection) return !isOldCatalogProduct(entry.meta.name) && matchesSmartHardConstraints(entry.meta)
         return matchesCatalogCardMeta(entry.meta, state, favSet, priceBounds)
       })
       if (hasSmartSelection && smartPreferenceState) {
@@ -986,9 +981,7 @@ export function initCatalogListingController(documentRef: Document, scrollOption
       if (hasSmartSelection) {
         const selectedProducts = new Set(matchedEntries.map((entry) => entry.product))
         const remainingEntries = productCatalog.filter((entry) => !selectedProducts.has(entry.product))
-        if (state.sort !== 'default') {
-          remainingEntries.sort((a, b) => compareCatalogCardMeta(a.meta, b.meta, state.sort))
-        }
+        remainingEntries.sort((a, b) => compareCatalogCardMeta(a.meta, b.meta, state.sort))
         cardsRootEl.classList.add('has-listing-sections')
         cardsRootEl.innerHTML = buildCatalogListingSectionsHtml(
           matchedEntries.map((entry) => entry.product),
@@ -1001,8 +994,10 @@ export function initCatalogListingController(documentRef: Document, scrollOption
           },
         )
       } else if (useSections) {
-        const recommendedEntries = matchedEntries.filter((entry) => entry.meta.recommended)
-        const restEntries = matchedEntries.filter((entry) => !entry.meta.recommended)
+        const isRecommended = (entry: CatalogProductListingEntry) =>
+          entry.meta.recommended && !isOldCatalogProduct(entry.meta.name)
+        const recommendedEntries = matchedEntries.filter(isRecommended)
+        const restEntries = matchedEntries.filter((entry) => !isRecommended(entry))
         const visibleRest = restEntries.slice(0, visibleCardsLimit)
         const sections = normalizeCatalogListingSections(getLastCatalogListingSections())
         cardsRootEl.classList.add('has-listing-sections')

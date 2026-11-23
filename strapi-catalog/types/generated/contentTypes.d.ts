@@ -1409,6 +1409,12 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
         number
       >;
     publishedAt: Schema.Attribute.DateTime;
+    sidedness: Schema.Attribute.Enumeration<
+      [
+        '\u0434\u0432\u0443\u0441\u0442\u043E\u0440\u043E\u043D\u043D\u0438\u0439',
+        '\u043E\u0434\u043D\u043E\u0441\u0442\u043E\u0440\u043E\u043D\u043D\u0438\u0439',
+      ]
+    >;
     sizes: Schema.Attribute.Relation<
       'manyToMany',
       'api::mattress-size.mattress-size'

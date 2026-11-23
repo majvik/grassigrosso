@@ -39,6 +39,7 @@ export type CatalogCardMeta<TCard = unknown> = {
   firmnessSide1?: number | null
   firmnessSide2?: number | null
   type: string
+  sidedness?: string
   height: number
   load: number
   price: number
@@ -147,11 +148,18 @@ function catalogPriceSortValue(price: number | undefined): number {
   return Number.isFinite(n) && n > 0 ? n : Number.POSITIVE_INFINITY
 }
 
+export function isOldCatalogProduct(name: string | undefined): boolean {
+  return name?.trimEnd().endsWith(' OLD') ?? false
+}
+
 export function compareCatalogCardMeta<TCard>(
   metaA: CatalogCardMeta<TCard> | undefined,
   metaB: CatalogCardMeta<TCard> | undefined,
   sort: string,
 ): number {
+  const oldOrder = Number(isOldCatalogProduct(metaA?.name)) - Number(isOldCatalogProduct(metaB?.name))
+  if (oldOrder) return oldOrder
+
   if (sort === 'price-asc') {
     return catalogPriceSortValue(metaA?.price) - catalogPriceSortValue(metaB?.price)
   }
@@ -190,7 +198,7 @@ export function matchesCatalogCardMeta<TCard>(
 ): boolean {
   const matchCollection = !state.collection.size || state.collection.has(meta.collection)
   const matchFirmness = !state.firmness.size || state.firmness.has(meta.firmness)
-  const matchType = !state.type.size || state.type.has(meta.type)
+  const matchType = !state.type.size || state.type.has(meta.type) || state.type.has(meta.sidedness || '')
   const matchSize = intersectsSet(meta.sizes, state.size)
   const matchLoad = meta.loadRange
     ? !state.loadRange.size || state.loadRange.has(meta.loadRange)
